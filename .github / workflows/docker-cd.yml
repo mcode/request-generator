@@ -2,9 +2,7 @@ name: Docker Image CD
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [ ci-cd ]
 
 jobs:
   docker-cd: 
