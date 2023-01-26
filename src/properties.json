@@ -2,10 +2,10 @@
   "realm": "ClientFhirServer",
   "client": "app-login",
   "auth": "http://localhost:8180/auth",
-  "server": "http://localhost:8090",
+  "server": "http://localhost:9020",
   "ehr_server": "http://localhost:8080/test-ehr/r4",
   "ehr_base": "http://localhost:8080/test-ehr/r4",
-  "cds_service":"http://localhost:8090/cds-services",
+  "cds_service":"http://localhost:9020/cds-services",
   "order_sign": "rems-order-sign",
   "order_select": "rems-order-select",
   "user": "alice",
@@ -14,5 +14,5 @@
   "alt_drug": true, 
   "launch_url": "http://localhost:3005/launch",
   "response_expiration_days": 30,
-  "pims_server": "http://localhost:3010"
+  "pims_server": "http://localhost:4210"
 }
