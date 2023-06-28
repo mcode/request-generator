@@ -15,3 +15,20 @@ This should open a browser window directed to http://localhost:3000. The request
 
 ## Versions
 This application requires node v20.0 or greater.
+
+### How To Override Defaults
+The .env file contains the default URI paths, these can be overwritten from the start command as follows:
+ `REACT_APP_REMS_HOOKS_PATH=http://example.com PORT=6000 npm start`
+ 
+Following are a list of modifiable paths: 
+
+| URI Name      | Default |
+| ----------- | ----------- |
+| LAUNCH_URL  | `http://localhost:3000`  |
+| URL_FILTER  | `http://localhost:3000/*`        |
+| EHR_SERVER  | `http://localhost:8080/ehr-server/`  |
+| HOME_PAGE   | `http://localhost:8080`  |
+| WORKER      | `/service-worker.js`  |
+
+* Might not need this note, depends on if double checking reveals a need to rename
+ *Note that .env values can only be accessed by react app starting with `REACT_APP_`*

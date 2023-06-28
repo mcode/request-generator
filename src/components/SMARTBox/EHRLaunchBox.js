@@ -17,7 +17,7 @@ export default class EHRLaunchBox extends Component {
                 <div>
                     <label className="ehr-setting">Select EHR: </label>
                     <select>
-                        <option value="http://localhost:8080/ehr-server/">Local</option>
+                        <option value={process.env.EHR_SERVER}>Local</option>
                     </select>
                     <div className="ehr-setting">
                         Note: Only the local EHR is supported at this time for EHR launch
