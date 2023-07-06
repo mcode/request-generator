@@ -46,7 +46,7 @@ function createJwt(keypair, baseUrl, cdsUrl) {
         "alg": "RS256",
         "typ": "JWT",
         "kid": kid,
-        "jku": (process.env.REACT_APP_PUBLIC_KEYS ? process.env.REACT_APP_PUBLIC_KEYS : config.public_keys)
+        "jku": (process.env.REACT_APP_PUBLIC_KEYS)
     };
 
     const body = {
@@ -78,7 +78,7 @@ function setupKeys(callback) {
     "id": kid
   };
 
-  fetch(`${(process.env.REACT_APP_PUBLIC_KEYS ? process.env.REACT_APP_PUBLIC_KEYS : config.public_keys)}/`, {
+  fetch(`${(process.env.REACT_APP_PUBLIC_KEYS)}/`, {
     "body": JSON.stringify(pubPem),
     "headers": {
         "Content-Type": "application/json"

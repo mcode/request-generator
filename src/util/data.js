@@ -1,5 +1,6 @@
 import config from '../properties.json';
-
+// import dotenv from 'dotenv';
+// dotenv.config();
 
 const types = {
     error: "errorClass",
@@ -16,7 +17,7 @@ const headers = {
     },
     "cdsUrl": {
         "display": "CRD Server",
-        "value": (process.env.REACT_APP_CDS_SERVICE ? process.env.REACT_APP_CDS_SERVICE : config.cds_service),
+        "value": (process.env.REACT_APP_CDS_SERVICE),
         "key":"cdsUrl"
     },
     "orderSelect": {
@@ -51,7 +52,7 @@ const headers = {
     },
     "pimsUrl" : {
         "display": "PIMS Server",
-        "value": (process.env.PIMS_URL ? process.env.PIMS_URL : config.pims_server),
+        "value": (process.env.PIMS_URL),
         "key": "pimsUrl"
     }
 }
