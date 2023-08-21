@@ -4,48 +4,27 @@
   "private": true,
   "homepage": "http://localhost:8080",
   "dependencies": {
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/lab": "^4.0.0-alpha.61",
-    "@mui/icons-material": "^5.10.6",
-    "@mui/material": "^5.10.6",
-    "axios": "^0.18.0",
-    "base64url": "^3.0.0",
-    "classnames": "^2.2.6",
+    "axios": "^1.4.0",
     "clone": "^2.1.2",
     "dotenv": "^16.3.1",
     "env-var": "^7.3.1",
     "fhirclient": "^2.3.1",
-    "json-server": "^0.16.3",
+    "json-server": "^0.17.3",
     "jsrsasign": "^10.2.0",
-    "keypair": "^1.0.1",
     "lodash": "^4.17.15",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-loader-spinner": "^2.1.0",
-    "react-markdown": "^4.3.1",
-    "react-router-dom": "^6.3.0",
-    "react-scripts": "^3.4.1",
-    "sass": "^1.32.8",
-    "semantic-ui-react": "^0.82.3",
-    "terra-base": "^3.19.0",
-    "terra-button": "^2.19.0",
-    "terra-card": "^2.18.0",
-    "terra-text": "^2.18.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.15.0",
+    "react-scripts": "^2.1.3",
+    "semantic-ui-react": "^2.1.4"
   },
   "scripts": {
     "start": "concurrently --kill-others \"json-server --watch src/db.json -p 3001 --host 0.0.0.0\" \"react-scripts start\"",
-    "production": "json-server --watch src/db.json -p 3000 --host 0.0.0.0 --static build",
-    "startx": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "production": "json-server --watch src/db.json -p 3000 --host 0.0.0.0 --static build"
   },
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "fs": "0.0.1-security",
-    "jju": "^1.4.0"
+    "concurrently": "^8.2.0"
   },
   "browserslist": {
     "production": [
