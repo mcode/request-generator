@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import { Dropdown, Header } from 'semantic-ui-react'
+import { Dropdown, Header } from "semantic-ui-react";
 import { getAge } from "../../util/fhir";
 import FHIR from "fhirclient";
-import "./smart.css";
+// import "./smart.css";
 
-
-export default class SMARTBox extends Component {
+export default class PatientBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,8 +36,7 @@ export default class SMARTBox extends Component {
       code = request.codeCodeableConcept.coding[0];
     } else if (request.resourceType === "ServiceRequest") {
       code = request.code.coding[0];
-    } else if (request.resourceType === "MedicationRequest"
-      || request.resourceType === "MedicationDispense") {
+    } else if (request.resourceType === "MedicationRequest" || request.resourceType === "MedicationDispense") {
       code = request.medicationCodeableConcept.coding[0];
     }
     if (code) {
@@ -66,10 +64,8 @@ export default class SMARTBox extends Component {
       key: request.id,
       text: "(" + code.code + ") " + code.display,
       value: JSON.stringify(request),
-      content: (
-        <Header content={code.code + " (" + request.resourceType + ")"} subheader={code.display} />
-      )
-    }
+      content: <Header content={code.code + " (" + request.resourceType + ")"} subheader={code.display} />,
+    };
     options.push(option);
   }
 
@@ -79,7 +75,12 @@ export default class SMARTBox extends Component {
     this.props.clearCallback();
     if (this.state.request !== "none") {
       const request = JSON.parse(this.state.request);
-      if (request.resourceType === "DeviceRequest" || request.resourceType === "ServiceRequest" || request.resourceType === "MedicationRequest" || request.resourceType === "MedicationDispense") {
+      if (
+        request.resourceType === "DeviceRequest" ||
+        request.resourceType === "ServiceRequest" ||
+        request.resourceType === "MedicationRequest" ||
+        request.resourceType === "MedicationDispense"
+      ) {
         this.updatePrefetchRequest(request);
       } else {
         this.props.clearCallback();
@@ -100,15 +101,17 @@ export default class SMARTBox extends Component {
     this.props.callback(request.resourceType, request);
     const queries = this.props.updatePrefetchCallback(request, "request", "patient", "practitioner");
     queries.forEach((query, queryKey) => {
-      const urlQuery = this.props.ehrUrl + '/' + query;
+      const urlQuery = this.props.ehrUrl + "/" + query;
       fetch(urlQuery, {
         method: "GET",
-      }).then((response) => {
-        const responseJson = response.json()
-        return responseJson;
-      }).then((resource) => {
-        this.props.callbackMap("prefetchedResources", queryKey, resource);
-      });
+      })
+        .then((response) => {
+          const responseJson = response.json();
+          return responseJson;
+        })
+        .then((resource) => {
+          this.props.callbackMap("prefetchedResources", queryKey, resource);
+        });
     });
     this.props.callback("request", request);
     const coding = this.getCoding(request);
@@ -168,7 +171,7 @@ export default class SMARTBox extends Component {
   handleRequestChange(e, data) {
     if (data.value === "none") {
       this.setState({
-        request: "none"
+        request: "none",
       });
     } else {
       let request = JSON.parse(data.value);
@@ -178,7 +181,7 @@ export default class SMARTBox extends Component {
         code: coding.code,
         system: coding.system,
         display: coding.display,
-        response: "none"
+        response: "none",
       });
     }
   }
@@ -186,19 +189,17 @@ export default class SMARTBox extends Component {
   handleResponseChange(e, data) {
     if (data.value === "none") {
       this.setState({
-        response: "none"
+        response: "none",
       });
     } else {
       this.setState({
-        response: data.value
+        response: data.value,
       });
     }
   }
 
   getRequests() {
-    const client = FHIR.client(
-      this.props.params
-    );
+    const client = FHIR.client(this.props.params);
     const patientId = this.props.patient.id;
     this.getDeviceRequest(patientId, client);
     this.getServiceRequest(patientId, client);
@@ -207,22 +208,25 @@ export default class SMARTBox extends Component {
   }
 
   /**
-   * Retrieve QuestionnaireResponse 
+   * Retrieve QuestionnaireResponse
    */
   getResponses() {
-    const client = FHIR.client(
-      this.props.params
-    );
+    const client = FHIR.client(this.props.params);
     const patientId = this.props.patient.id;
 
     let updateDate = new Date();
     updateDate.setDate(updateDate.getDate() - this.props.responseExpirationDays);
     client
-      .request(`QuestionnaireResponse?_lastUpdated=gt${updateDate.toISOString().split('T')[0]}&status=in-progress&subject=Patient/${patientId}`, {
-        resolveReferences: ["subject"],
-        graph: false,
-        flat: true,
-      })
+      .request(
+        `QuestionnaireResponse?_lastUpdated=gt${
+          updateDate.toISOString().split("T")[0]
+        }&status=in-progress&subject=Patient/${patientId}`,
+        {
+          resolveReferences: ["subject"],
+          graph: false,
+          flat: true,
+        }
+      )
       .then((result) => {
         this.setState({ questionnaireResponses: result });
       });
@@ -234,10 +238,8 @@ export default class SMARTBox extends Component {
       key: qr.id,
       text: display,
       value: JSON.stringify(qr),
-      content: (
-        <Header content={"QuestionnaireResponse"} subheader={display} />
-      )
-    }
+      content: <Header content={"QuestionnaireResponse"} subheader={display} />,
+    };
     options.push(option);
   }
 
@@ -245,13 +247,11 @@ export default class SMARTBox extends Component {
     const patient = this.props.patient;
     let name = "";
     if (patient.name) {
-      name = (
-        <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>
-      );
+      name = <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>;
     }
 
     // add all of the requests to the list of options
-    let options = []
+    let options = [];
     let responseOptions = [];
     let returned = false;
     if (this.state.deviceRequests.data) {
@@ -275,72 +275,72 @@ export default class SMARTBox extends Component {
     if (this.state.medicationDispenses.data) {
       this.state.medicationDispenses.data.forEach((e) => {
         this.makeOption(e, options);
-      })
-    };
+      });
+    }
 
     if (this.state.questionnaireResponses.data) {
       returned = true;
-      this.state.questionnaireResponses.data.forEach(qr => this.makeQROption(qr, responseOptions));
+      this.state.questionnaireResponses.data.forEach((qr) => this.makeQROption(qr, responseOptions));
     }
 
-    let noResults = 'No results found.'
+    let noResults = "No results found.";
     if (!returned) {
-      noResults = 'Loading...';
+      noResults = "Loading...";
     }
 
     return (
       <div>
-        <div
-          className="patient-selection-box"
-          key={patient.id}
-          onClick={() => {
-            this.updateValues(patient);
-          }}
-        >
+        <div className="patient-selection-box" key={patient.id}>
           <div className="patient-info">
             <span style={{ fontWeight: "bold" }}>ID</span>: {patient.id}
             {/* <a className="more-info">
                                 {text}
                             </a> */}
             <div>
-              <span style={{ fontWeight: "bold" }}>Name</span>:{" "}
-              {name ? name : "N/A"}
+              <span style={{ fontWeight: "bold" }}>Name</span>: {name ? name : "N/A"}
             </div>
             <div>
-              <span style={{ fontWeight: "bold" }}>Gender</span>:{" "}
-              {patient.gender}
+              <span style={{ fontWeight: "bold" }}>Gender</span>: {patient.gender}
             </div>
             <div>
-              <span style={{ fontWeight: "bold" }}>Age</span>:{" "}
-              {getAge(patient.birthDate)}
+              <span style={{ fontWeight: "bold" }}>Age</span>: {getAge(patient.birthDate)}
             </div>
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px" }}>
-              Request:
-            </span>
+            <span style={{ fontWeight: "bold", marginRight: "5px" }}>Request:</span>
             <Dropdown
-              search searchInput={{ type: 'text' }}
-              selection fluid options={options}
-              placeholder='Choose an option'
+              search
+              searchInput={{ type: "text" }}
+              selection
+              fluid
+              options={options}
+              placeholder="Choose an option"
               noResultsMessage={noResults}
               onChange={this.handleRequestChange}
               onOpen={this.getRequests}
             />
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px" }}>
-              In Progress Form:
-            </span>
+            <span style={{ fontWeight: "bold", marginRight: "5px" }}>In Progress Form:</span>
             <Dropdown
-              search searchInput={{ type: 'text' }}
-              selection fluid options={responseOptions}
-              placeholder='Choose an option'
+              search
+              searchInput={{ type: "text" }}
+              selection
+              fluid
+              options={responseOptions}
+              placeholder="Choose an option"
               noResultsMessage={noResults}
               onChange={this.handleResponseChange}
               onOpen={this.getResponses}
             />
           </div>
+          <button
+            onClick={() => {
+              this.updateValues(patient);
+            }}
+          >
+            Select
+          </button>
         </div>
       </div>
     );

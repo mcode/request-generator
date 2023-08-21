@@ -1,70 +1,74 @@
-import React, { Component } from 'react';
-import './SettingsBox.css';
-import InputBox from '../Inputs/InputBox';
-import CheckBox from '../Inputs/CheckBox';
-export default class SettingsBox extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
+import React, { Component } from "react";
+// import './SettingsBox.css';
+import { Button, Checkbox, Container, Header, Input } from "semantic-ui-react";
 
-        this.updateCB = this.updateCB.bind(this);
+function SettingControl(props) {
+  const { display, header, type, value, update } = props;
+
+  switch (type) {
+    case "input":
+      return <Input value={value} onChange={(e) => update(e.currentTarget.value)} label={display} />;
+
+    case "check":
+      return <Checkbox toggle label={display} checked={value} onChange={(_e, { checked }) => update(checked)} />;
+
+    case "button":
+      return (
+        <Button key={header} onClick={() => update(value)}>
+          {display}
+        </Button>
+      );
+    case "spacer":
+      return <br key={header} />;
+    case "line":
+      return <hr key={header} />;
+    default:
+      return <Input disabled key={header} label={display} value={value} />;
+  }
+}
+
+/*
+const headers = {
+      ehrUrl: {
+        type: "input",
+        display: "EHR Server",
+        value: this.state.ehrUrl,
+        key: "ehrUrl",
+      },
+      ...etc
     }
+*/
 
-    componentDidMount(){
+export class SettingsBox extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
 
-    }
+    this.updateCB = this.updateCB.bind(this);
+  }
 
-    updateCB(elementName, value) {
-        this.props.updateCB(elementName, value);
-    }
+  updateCB(elementName, value) {
+    this.props.updateCB(elementName, value);
+  }
 
-    render() {
-        const headers = this.props.headers;
+  render() {
+    const headers = this.props.headers;
 
-        return (
-            <div>
-                {Object.keys(headers).map((header)=>{
-                    let value = headers[header].value;
-                    let type = headers[header].type;
-                    let display = headers[header].display;
-                    switch(type) {
-                        case "input":
-                            return <div key={header}>
-                                <p className="setting-header">{display}</p>
-                                <InputBox 
-                                    extraClass = "setting-input"
-                                    value = {value}
-                                    updateCB = {this.updateCB}
-                                    elementName = {header}/>
-                            </div>
-                        case "check":
-                            return <div key={header}>
-                                <p className="setting-header">{display}
-                                <CheckBox
-                                    extraClass = "setting-checkbox"
-                                    extraInnerClass = "setting-inner-checkbox"
-                                    toggle = {value}
-                                    updateCB={this.updateCB}
-                                    elementName = {header} />
-                                    </p>
-                                <p>&nbsp;</p>
-                            </div>
-                        case "button":
-                            return <div key={header}>
-                                <button className={"setting-btn btn btn-class"} onClick={value}>{display}</button>
-                                </div>
-                        case "spacer":
-                            return <div key={header}><br></br></div>
-                        case "line":
-                            return <div key={header}><hr></hr></div>
-                        default:
-                            return <div key={header}><p className="setting-header">{display}</p></div>
-                    }
-                    
-                })}
-            </div>
-
-        )
-    }
+    return (
+      <Container>
+        <Header>Settings</Header>
+        <div
+          style={{
+            display: "grid",
+            gridAutoFlow: "row",
+            gap: "0.5em",
+          }}
+        >
+          {Object.values(headers).map((h) => (
+            <SettingControl {...h} update={(value) => this.updateCB(h.key, value)} />
+          ))}
+        </div>
+      </Container>
+    );
+  }
 }

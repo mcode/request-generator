@@ -1,96 +1,77 @@
-.smartBox{
-    position: absolute;
-    left:15%;
-    top:15%;
-    margin-bottom:50px;
-    display:block;
-    height:825px;
-    width:70%;
-    z-index:1;
-    font-size:14px;
-    background-color: #f9f9f9;
-    border: 1px solid black;
+.smartBox {
+  box-sizing: border-box;
+  /* position: absolute;
+  left: 15%;
+  top: 15%;
+  margin-bottom: 50px;
+  display: block;
+  max-height: 70vh;
+  width: 70vw; */
+  /* z-index: 1; */
+  font-size: 14px;
+  background-color: #f9f9f9;
+  border: 1px solid black;
+  box-shadow: 2px 2px 6px black;
+  background: white;
 }
 
-iframe{
-    width:100%;
-    height:100%;
+iframe {
+  width: 100%;
+  height: 100%;
 }
 
-.patient-selection-box{
-    width:100%;
-    height:100px;
-    padding:10px;
-    flex:.5;
-    border-bottom:3px solid black;
-    background-color:#e2e2e2;
+.patient-selection-box {
+  background-color: #e2e2e2;
+  border-bottom: 3px solid black;
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+  padding: 0.5em;
 }
 
-.patient-selection-box:hover{
-    background-color:white;
-    cursor: pointer;
+.patient-selection-box:hover {
+  background-color: white;
+  cursor: pointer;
+}
+.patient-selection-box button {
+  align-self: center;
 }
 
-.smartExit{
 
-    height:24px;
-    border-style: solid;
-    border-color:black;
-    background-color: #d9534f;
-    color:white;
-    font-family: 'Courier New', Courier, monospace;
-    border-width: 0px 0px 0px 1px;
-    float:right;
-}
-
-.smartHeader {
-    background-color: #5f636a;
-    display:block;
-    border-bottom: 1px solid black;
-    height:25px;
-}
-.smartMinimize{
-    position:absolute;
-    right:-25px;
-    border: 2px solid gray;
-    width:27px;
-    top:21px;
-}
-
-.minimizedFrame{
-    border-style: solid;
-    border-color: blue gray gray gray;
-    border-width: 2px;
-    padding: 2px;
-    margin-left: 10px;
+.minimizedFrame {
+  border-style: solid;
+  border-color: blue gray gray gray;
+  border-width: 2px;
+  padding: 2px;
+  margin-left: 10px;
 }
 .hideSmartBox {
-    display:none;
+  display: none;
 }
 
 .more-info {
-    float:right;
+  float: right;
 }
 
 .patient-info {
-    display:inline-block;
-    width: 300px;
+  display: inline-block;
+  width: 300px;
 }
 
 .request-info {
-    display: inline-block;
-    width:350px;
-    vertical-align: top; /* here */
-
+  display: inline-block;
+  width: 350px;
+  vertical-align: top; /* here */
 }
 
 .ehr-setting {
-    margin: 10px;
+  margin: 10px;
 }
 
-.ui.header.text, .sub.header {
-    text-align: left;
+.ui.header.text,
+.sub.header {
+  text-align: left;
 }
 .ui.header.text {
-    font-size: 1em;
+  font-size: 1em;
 }

@@ -1,18 +1,17 @@
-import React, { Component } from "react";
 import FHIR from "fhirclient";
-import SMARTBox from "../SMARTBox/SMARTBox";
-import PatientBox from "../SMARTBox/PatientBox";
-import CheckBox from '../Inputs/CheckBox';
-import { types, defaultValues, shortNameMap } from "../../util/data";
-import { getAge } from "../../util/fhir";
-import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import _ from "lodash";
-import "./request.css";
+import React, { Component } from "react";
+import { Button, Checkbox, Container, Dropdown, Grid, Input, Loader, Message, Placeholder } from "semantic-ui-react";
+import buildNewRxRequest from "../../util/buildScript.2017071.js";
+import { defaultValues, shortNameMap, types } from "../../util/data";
+import { getAge } from "../../util/fhir";
+import PatientBox from "../SMARTBox/PatientBox";
+// import "./request.css";
+import env from "env-var";
 import { PrefetchTemplate } from "../../PrefetchTemplate";
 import { retrieveLaunchContext } from "../../util/util";
-import env from 'env-var';
 
-export default class RequestBox extends Component {
+export class RequestBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,50 +26,39 @@ export default class RequestBox extends Component {
       request: {},
       gatherCount: 0,
       response: {},
-      deidentifyRecords: false
+      deidentifyRecords: false,
     };
-
-    this.renderRequestResources = this.renderRequestResources.bind(this);
-    this.renderPatientInfo = this.renderPatientInfo.bind(this);
-    this.renderOtherInfo = this.renderOtherInfo.bind(this);
-    this.renderResource = this.renderResource.bind(this);
-    this.renderPrefetchedResources = this.renderPrefetchedResources.bind(this);
-    this.renderError = this.renderError.bind(this);
-    this.buildLaunchLink = this.buildLaunchLink.bind(this);
-    this.updateDeidentifyCheckbox = this.updateDeidentifyCheckbox.bind(this);
   }
 
   // TODO - see how to submit response for alternative therapy
-  replaceRequestAndSubmit(request) {
+  replaceRequestAndSubmit = (request) => {
     this.setState({ request: request });
     // Prepare the prefetch.
     const prefetch = this.prepPrefetch();
     // Submit the CRD request.
     this.props.submitInfo(prefetch, request, this.state.patient, "order-sign", this.state.deidentifyRecords);
-  }
-
-  componentDidMount() {}
+  };
 
   exitSmart = () => {
     this.setState({ openPatient: false });
   };
 
-  prepPrefetch() {
+  prepPrefetch = () => {
     const preppedResources = new Map();
     Object.keys(this.state.prefetchedResources).forEach((resourceKey) => {
-      let resourceList = []
-      if(Array.isArray(this.state.prefetchedResources[resourceKey])){
+      let resourceList = [];
+      if (Array.isArray(this.state.prefetchedResources[resourceKey])) {
         resourceList = this.state.prefetchedResources[resourceKey].map((resource) => {
           return resource;
-        })
+        });
       } else {
-        resourceList = this.state.prefetchedResources[resourceKey]
+        resourceList = this.state.prefetchedResources[resourceKey];
       }
 
       preppedResources.set(resourceKey, resourceList);
     });
     return preppedResources;
-  }
+  };
 
   submit = () => {
     if (!_.isEmpty(this.state.request)) {
@@ -90,16 +78,16 @@ export default class RequestBox extends Component {
 
   updateStateList = (elementName, text) => {
     this.setState((prevState) => {
-      return {[elementName]: [...prevState[elementName], text]}
+      return { [elementName]: [...prevState[elementName], text] };
     });
   };
 
   updateStateMap = (elementName, key, text) => {
     this.setState((prevState) => {
-      if(!prevState[elementName][key]){
+      if (!prevState[elementName][key]) {
         prevState[elementName][key] = [];
       }
-      return {[elementName]: {...prevState[elementName], [key]: text}};
+      return { [elementName]: { ...prevState[elementName], [key]: text } };
     });
   };
 
@@ -108,19 +96,17 @@ export default class RequestBox extends Component {
       prefetchedResources: new Map(),
       practitioner: {},
       coverage: {},
-      response: {}
+      response: {},
     });
   };
 
   getPatients = () => {
     this.setState({ openPatient: true });
-    const params = {serverUrl: env.get('REACT_APP_EHR_SERVER').asString()};
+    const params = { serverUrl: env.get("REACT_APP_EHR_SERVER").asString() };
     if (this.props.access_token.access_token) {
-        params["tokenResponse"] = {access_token: this.props.access_token.access_token}
+      params["tokenResponse"] = { access_token: this.props.access_token.access_token };
     }
-    const client = FHIR.client(
-      params
-    );
+    const client = FHIR.client(params);
 
     client
       .request("Patient?_sort=identifier&_count=12", { flat: true })
@@ -136,13 +122,11 @@ export default class RequestBox extends Component {
       });
   };
 
-  renderPatientInfo() {
+  renderPatientInfo = () => {
     const patient = this.state.patient;
     let name;
     if (patient.name) {
-      name = (
-        <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>
-      );
+      name = <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>;
     } else {
       name = "N/A";
     }
@@ -152,78 +136,63 @@ export default class RequestBox extends Component {
           <span style={{ fontWeight: "bold" }}>Demographics</span>
         </div>
         <div className="info lower-border">Name: {name}</div>
-        <div className="info lower-border">
-          Age: {patient.birthDate ? getAge(patient.birthDate) : "N/A"}
-        </div>
-        <div className="info lower-border">
-          Gender: {patient.gender ? patient.gender : "N/A"}
-        </div>
-        <div className="info lower-border">
-          State: {this.state.patientState ? this.state.patientState : "N/A"}
-        </div>
+        <div className="info lower-border">Age: {patient.birthDate ? getAge(patient.birthDate) : "N/A"}</div>
+        <div className="info lower-border">Gender: {patient.gender ? patient.gender : "N/A"}</div>
+        <div className="info lower-border">State: {this.state.patientState ? this.state.patientState : "N/A"}</div>
         {this.renderOtherInfo()}
         {this.renderQRInfo()}
       </div>
     );
-  }
+  };
 
-  renderOtherInfo() {
+  renderOtherInfo = () => {
     return (
       <div className="other-info">
         <div className="lower-border">
           <span style={{ fontWeight: "bold" }}>Coding</span>
         </div>
+        <div className="info lower-border">Code: {this.state.code ? this.state.code : "N/A"}</div>
         <div className="info lower-border">
-          Code: {this.state.code ? this.state.code : "N/A"}
+          System: {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : "N/A"}
         </div>
-        <div className="info lower-border">
-          System:{" "}
-          {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : "N/A"}
-        </div>
-        <div className="info lower-border">
-          Display: {this.state.display ? this.state.display : "N/A"}
-        </div>
+        <div className="info lower-border">Display: {this.state.display ? this.state.display : "N/A"}</div>
       </div>
     );
-  }
+  };
 
-  renderQRInfo() {
+  renderQRInfo = () => {
     const qrResponse = this.state.response;
     return (
       <div className="questionnaire-response">
         <div className="lower-border">
           <span style={{ fontWeight: "bold" }}>In Progress Form</span>
-          </div>
-          <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : "N/A"}</div>
-          <div className="info lower-border">
-            Author: {qrResponse.author ? qrResponse.author.reference : "N/A"}
-          </div>
-          <div className="info lower-border">
-            Date: {qrResponse.authored ? qrResponse.authored : "N/A"}
-          </div>
         </div>
+        <div className="info lower-border">Form: {qrResponse.questionnaire ? qrResponse.questionnaire : "N/A"}</div>
+        <div className="info lower-border">Author: {qrResponse.author ? qrResponse.author.reference : "N/A"}</div>
+        <div className="info lower-border">Date: {qrResponse.authored ? qrResponse.authored : "N/A"}</div>
+      </div>
     );
-  }
+  };
 
-  renderPrefetchedResources() {
+  renderPrefetchedResources = () => {
     const prefetchMap = new Map(Object.entries(this.state.prefetchedResources));
     if (prefetchMap.size > 0) {
       return this.renderRequestResources(prefetchMap);
     }
-  }
+  };
 
-  renderRequestResources(requestResources) {
+  renderRequestResources = (requestResources) => {
     var renderedPrefetches = new Map();
     requestResources.forEach((resourceList, resourceKey) => {
       const renderedList = [];
-      if(Array.isArray(resourceList)){
+      if (Array.isArray(resourceList)) {
         resourceList.forEach((resource) => {
           console.log("Request resources:" + JSON.stringify(requestResources));
           console.log("Request key:" + resourceKey);
-          renderedList.push(this.renderResource(resource))
+          renderedList.push(this.renderResource(resource));
         });
       } else {
-        renderedList.push(this.renderResource(resourceList))
+        renderedList.push(this.renderResource(resourceList));
       }
 
       renderedPrefetches.set(resourceKey, renderedList);
@@ -235,14 +204,18 @@ export default class RequestBox extends Component {
         <div className="prefetch-header">Prefetched</div>
         {Array.from(renderedPrefetches.keys()).map((resourceKey) => {
           const currentRenderedPrefetch = renderedPrefetches.get(resourceKey);
-          return (<div key = {resourceKey}><div className="prefetch-subheader">{resourceKey + " Resources"}</div>
-            {currentRenderedPrefetch}</div>);
+          return (
+            <div key={resourceKey}>
+              <div className="prefetch-subheader">{resourceKey + " Resources"}</div>
+              {currentRenderedPrefetch}
+            </div>
+          );
         })}
       </div>
     );
-  }
+  };
 
-  renderResource(resource) {
+  renderResource = (resource) => {
     let value = <div>N/A</div>;
     if (!resource.id) {
       resource = resource.resource;
@@ -252,27 +225,20 @@ export default class RequestBox extends Component {
       var resourceType = resource.resourceType;
       value = (
         <div key={resourceId}>
-          <span style={{ textTransform: "capitalize" }}>{resourceType}</span>:{" "}
-          {resourceType}/{resourceId}{" "}
-          .....<span className="checkmark glyphicon glyphicon-ok"></span>
+          <span style={{ textTransform: "capitalize" }}>{resourceType}</span>: {resourceType}/{resourceId} .....
+          <span className="checkmark glyphicon glyphicon-ok"></span>
         </div>
       );
     } else {
       value = (
         <div key={"UNKNOWN"}>
-          <span style={{ textTransform: "capitalize" }}>{"UNKNOWN"}</span>{" "}
-          .....<span className="remove glyphicon glyphicon-remove"></span>
+          <span style={{ textTransform: "capitalize" }}>{"UNKNOWN"}</span> .....
+          <span className="remove glyphicon glyphicon-remove"></span>
         </div>
       );
     }
     return value;
-  }
-
-  renderError() {
-    return (
-      <span className="patient-error">{this.state.patientList.message}</span>
-    );
-  }
+  };
 
   launchSmartOnFhirApp = () => {
     console.log("Launch SMART on FHIR App");
@@ -286,35 +252,39 @@ export default class RequestBox extends Component {
     let link = {
       appContext: "user=" + userId + "&patient=" + this.state.patient.id,
       type: "smart",
-      url: this.props.smartAppUrl
-    }
+      url: this.props.smartAppUrl,
+    };
 
     retrieveLaunchContext(
-      link, this.props.fhirAccessToken,
-        this.state.patient.id, this.props.fhirServerUrl, this.props.fhirVersion
+      link,
+      this.props.fhirAccessToken,
+      this.state.patient.id,
+      this.props.fhirServerUrl,
+      this.props.fhirVersion
     ).then((result) => {
-        link = result;
-        console.log(link);
-        // launch the application in a new window
-        window.open(link.url, '_blank');
+      link = result;
+      console.log(link);
+      // launch the application in a new window
+      window.open(link.url, "_blank");
     });
-  }
+  };
 
   /**
    * Relaunch DTR using the available context
    */
   relaunch = (e) => {
-    this.buildLaunchLink()
-      .then(link => {
-        //e.preventDefault();
-        window.open(link.url, "_blank");
-      });
-  }
+    this.buildLaunchLink().then((link) => {
+      //e.preventDefault();
+      window.open(link.url, "_blank");
+    });
+  };
 
   buildLaunchLink() {
     // build appContext and URL encode it
     let appContext = "";
-    let order = undefined, coverage = undefined, response = undefined;
+    let order = undefined,
+      coverage = undefined,
+      response = undefined;
 
     if (!this.isOrderNotSelected()) {
       if (Object.keys(this.state.request).length > 0) {
@@ -325,38 +295,41 @@ export default class RequestBox extends Component {
       }
     }
 
-    if(order) {
-      appContext += `order=${order}`
+    if (order) {
+      appContext += `order=${order}`;
 
-      if(coverage) {
-        appContext += `&coverage=${coverage}`
+      if (coverage) {
+        appContext += `&coverage=${coverage}`;
       }
     }
-    
-    if(Object.keys(this.state.response).length > 0) {
+
+    if (Object.keys(this.state.response).length > 0) {
       response = `QuestionnaireResponse/${this.state.response.id}`;
     }
-    
-    if(order && response) {
-      appContext += `&response=${response}`
+
+    if (order && response) {
+      appContext += `&response=${response}`;
     } else if (!order && response) {
-      appContext += `response=${response}`
-    } 
+      appContext += `response=${response}`;
+    }
 
     const link = {
       appContext: encodeURIComponent(appContext),
       type: "smart",
-      url: this.props.launchUrl
-    }
+      url: this.props.launchUrl,
+    };
 
     let linkCopy = Object.assign({}, link);
-   
+
     return retrieveLaunchContext(
-      linkCopy, this.props.fhirAccessToken,
-        this.state.patient.id, this.props.fhirServerUrl, this.props.fhirVersion
+      linkCopy,
+      this.props.fhirAccessToken,
+      this.state.patient.id,
+      this.props.fhirServerUrl,
+      this.props.fhirVersion
     ).then((result) => {
-        linkCopy = result;
-        return linkCopy;
+      linkCopy = result;
+      return linkCopy;
     });
   }
 
@@ -367,131 +340,138 @@ export default class RequestBox extends Component {
     console.log("sendRx: " + this.props.pimsUrl);
 
     // build the NewRx Message
-    var newRx = buildNewRxRequest(this.state.prefetchedResources.patient, 
+    var newRx = buildNewRxRequest(
+      this.state.prefetchedResources.patient,
       this.state.prefetchedResources.practitioner,
-      this.state.request);
+      this.state.request
+    );
     console.log(newRx);
     const serializer = new XMLSerializer();
-    
+
     // send the message to the prescriber
     this.props.consoleLog("Sending Rx to PIMS", types.info);
     fetch(this.props.pimsUrl, {
-      method: 'POST',
+      method: "POST",
       //mode: 'no-cors',
       headers: {
-        'Accept': 'application/xml',
-        'Content-Type': 'application/xml'
+        "Accept": "application/xml",
+        "Content-Type": "application/xml",
       },
-      body: serializer.serializeToString(newRx)
+      body: serializer.serializeToString(newRx),
     })
-    .then(response => {
-      console.log("sendRx response: ");
-      console.log(response);
-      this.props.consoleLog("Successfully sent Rx to PIMS", types.info);
-    })
-    .catch(error => {
-      console.log("sendRx error: ");
-      this.props.consoleLog("Server returned error sending Rx to PIMS: ", types.error);
-      this.props.consoleLog(error.message);
-      console.log(error);
+      .then((response) => {
+        console.log("sendRx response: ");
+        console.log(response);
+        this.props.consoleLog("Successfully sent Rx to PIMS", types.info);
+      })
+      .catch((error) => {
+        console.log("sendRx error: ");
+        this.props.consoleLog("Server returned error sending Rx to PIMS: ", types.error);
+        this.props.consoleLog(error.message);
+        console.log(error);
+      });
+  };
+
+  isOrderNotSelected = () => Object.keys(this.state.request).length === 0;
+
+  isPatientNotSelected = () => Object.keys(this.state.patient).length === 0;
+
+  handlePatientToggle = (open) => {
+    this.setState((prev) => {
+      if (!prev.openPatient) {
+        this.getPatients();
+      }
+
+      return { ...prev, openPatient: !prev.openPatient };
     });
+  };
 
-  }
-
-  isOrderNotSelected() {
-    return Object.keys(this.state.request).length === 0;
-  }
-
-  isPatientNotSelected() {
-    return Object.keys(this.state.patient).length === 0;
-  }
-
-  updateDeidentifyCheckbox(elementName, value) {
+  updateDeidentifyCheckbox = (elementName, value) => {
     this.setState({ deidentifyRecords: value });
-  }
+  };
 
-  render() {
-    const params = {};
-    params['serverUrl'] = this.props.ehrUrl;
+  render = () => {
+    const { codeValues, deidentifyRecords, openPatient, patient, patientList, response } = this.state;
+    const params = { serverUrl: this.props.ehrUrl };
     if (this.props.access_token) {
-        params['tokenResponse'] = {access_token: this.props.access_token.access_token};
+      params.tokenResponse = { access_token: this.props.access_token.access_token };
     }
-    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading ;
-    const disableLaunchDTR = this.isOrderNotSelected() && Object.keys(this.state.response).length === 0;
+    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
+    const disableLaunchDTR = this.isOrderNotSelected() && Object.keys(response).length === 0;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
-    return (
-      <div>
-        <div className="request">
-          {this.state.openPatient ? (
-            <div>
-              <SMARTBox exitSmart={this.exitSmart}>
-                <div className="patient-box">
-                  {this.state.patientList instanceof Error
-                    ? this.renderError()
-                    : this.state.patientList.map((patient) => {
-                        return (
-                          <PatientBox
-                            key={patient.id}
-                            patient={patient}
-                            params = {params}
-                            callback={this.updateStateElement}
-                            callbackList={this.updateStateList}
-                            callbackMap={this.updateStateMap}
-                            updatePrefetchCallback={
-                              PrefetchTemplate.generateQueries
-                            }
-                            clearCallback={this.clearState}
-                            ehrUrl={this.props.ehrUrl}
-                            options={this.state.codeValues}
-                            responseExpirationDays={this.props.responseExpirationDays}
-                          />
-                        );
-                      })}
-                </div>
-              </SMARTBox>
-            </div>
-          ) : (
-            ""
+
+    return this.props.loading ? (
+      <Placeholder />
+    ) : (
+      <Grid>
+        <Grid.Column>
+          <Button onClick={this.handlePatientToggle}>{patient?.name ?? "Select a patient..."}</Button>
+          {openPatient && (
+            <Container className="patient-list">
+              {patientList instanceof Error ? (
+                <Message negative header="Problem retrieving patient list">
+                  <p>{patientList.message}</p>
+                </Message>
+              ) : patientList.length === 0 ? (
+                <Loader />
+              ) : (
+                patientList.map((p) => (
+                  <Dropdown.Item key={p.id}>
+                    <PatientBox
+                      callback={this.updateStateElement}
+                      callbackList={this.updateStateList}
+                      callbackMap={this.updateStateMap}
+                      clearCallback={this.clearState}
+                      ehrUrl={this.props.ehrUrl}
+                      options={codeValues}
+                      params={params}
+                      patient={p}
+                      responseExpirationDays={this.props.responseExpirationDays}
+                      updatePrefetchCallback={PrefetchTemplate.generateQueries}
+                    />
+                  </Dropdown.Item>
+                ))
+              )}
+            </Container>
           )}
 
-          <div>
-            <button className="select-button" onClick={this.getPatients}>
-              Patient Select:
-            </button>
-            <div className="request-header">
-              {this.state.patient.id ? this.state.patient.id : "N/A"}
-            </div>
-            <div>
+          {this.isPatientNotSelected() ? (
+            <Message>No patient selected</Message>
+          ) : (
+            <>
+              <Input disabled label="Patient ID" value={patient.id ?? "N/A"} />
+
               {this.renderPatientInfo()}
               {this.renderPrefetchedResources()}
-            </div>
-            <div>
-              <b>Deidentify Records</b>
-              <CheckBox
-                toggle = {this.state.deidentifyRecords}
+              <Checkbox
+                label="Deidentify Records"
+                toggle={deidentifyRecords}
                 updateCB={this.updateDeidentifyCheckbox}
-                elementName = "deidentifyCheckbox" 
-                />
-            </div>
-          </div>
-        </div>
+                elementName="deidentifyCheckbox"
+              />
+            </>
+          )}
+        </Grid.Column>
+
         <div id="fse" className={"spinner " + (this.props.loading ? "visible" : "invisible")}>
           <div className="ui active right inline loader"></div>
-        </div> 
-        <button className={"submit-btn btn btn-class "} onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-          Launch SMART on FHIR App
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.sendRx} disabled={disableSendRx}>
-          Send Rx to PIMS
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.relaunch} disabled={disableLaunchDTR}>
-          Relaunch DTR
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.submit} disabled={disableSendToCRD}>
-          Submit to REMS-Admin
-        </button>
-      </div>
+        </div>
+        <Grid.Row className="crd-request-generator-buttons">
+          <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
+            Launch SMART on FHIR App
+          </Button>
+          <Button onClick={this.submit} disabled={disableSendToCRD}>
+            Submit to REMS-Admin
+          </Button>
+          <Button onClick={this.sendRx} disabled={disableSendRx}>
+            Send Rx to PIMS
+          </Button>
+          <Button onClick={this.relaunch} disabled={disableLaunchDTR}>
+            Relaunch DTR
+          </Button>
+        </Grid.Row>
+      </Grid>
     );
-  }
+  };
 }

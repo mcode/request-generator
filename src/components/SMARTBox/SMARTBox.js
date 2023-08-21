@@ -1,36 +1,20 @@
-import React, {Component} from 'react';
-import './smart.css';
-export default class SMARTBox extends Component {
-    constructor(props){
-        super(props);
-        this.state={
-            minimized: false
-        };
+import React, { useState } from "react";
+// import "./smart.css";
+import { Button } from "semantic-ui-react";
 
-        this.minimizeSmart = this.minimizeSmart.bind(this);
-    }
+export default function SMARTBox(props) {
+  const { children, title = "" } = props;
+  const [visible, setVisible] = useState(true);
 
-    minimizeSmart(){
-        this.setState({"minimized":!this.state.minimized})
-    }
-
-
-    render() {
-        return (
-            <div>
-                <div>
-
-                    <div className="smartBox">
-                        <div className="smartHeader">
-                            <button 
-                            className="smartExit"
-                            onClick={this.props.exitSmart}>X</button>
-                        </div>
-                        {this.props.children}
-                    </div>
-                </div>
-            </div>
-
-        )
-    }
+  return (
+    visible && (
+      <section className="smartBox">
+        <header>
+          <h5>{title}</h5>
+          <Button icon="close" onClick={() => setVisible(false)} />
+        </header>
+        {children}
+      </section>
+    )
+  );
 }

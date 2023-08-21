@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {fhir} from '../../util/fhir';
-import './smart.css';
+// import './smart.css';
 import env from 'env-var';
 
 export default class EHRLaunchBox extends Component {
