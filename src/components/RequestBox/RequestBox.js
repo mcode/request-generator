@@ -11,6 +11,8 @@ import "./request.css";
 import { PrefetchTemplate } from "../../PrefetchTemplate";
 import { retrieveLaunchContext } from "../../util/util";
 import env from 'env-var';
+import PersonIcon from '@mui/icons-material/Person';
+import { Button, ButtonGroup } from '@mui/material';
 
 export default class RequestBox extends Component {
   constructor(props) {
@@ -456,11 +458,11 @@ export default class RequestBox extends Component {
           )}
 
           <div>
-            <button className="select-button" onClick={this.getPatients}>
-              Patient Select:
-            </button>
+            <Button variant='outlined' onClick={this.getPatients} startIcon={<PersonIcon />}>
+                Select a patient
+            </Button>
             <div className="request-header">
-              {this.state.patient.id ? this.state.patient.id : "N/A"}
+              {this.state.patient.id ? <span>Patient: {this.state.patient.id}</span> : <em>No patient selected</em>}
             </div>
             <div>
               {this.renderPatientInfo()}
@@ -476,21 +478,16 @@ export default class RequestBox extends Component {
             </div>
           </div>
         </div>
-        <div id="fse" className={"spinner " + (this.props.loading ? "visible" : "invisible")}>
-          <div className="ui active right inline loader"></div>
-        </div> 
-        <button className={"submit-btn btn btn-class "} onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-          Launch SMART on FHIR App
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.sendRx} disabled={disableSendRx}>
-          Send Rx to PIMS
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.relaunch} disabled={disableLaunchDTR}>
-          Relaunch DTR
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.submit} disabled={disableSendToCRD}>
-          Submit to REMS-Admin
-        </button>
+        {this.state.patient.id ?
+        <div className="action-btns">
+          <ButtonGroup variant="outlined" aria-label="outlined button group">
+            <Button onClick={this.relaunch} disabled={disableLaunchDTR}>Relaunch DTR</Button>
+            <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>Launch SMART on FHIR App</Button>
+            <Button onClick={this.sendRx} disabled={disableSendRx}>Send Rx to PIMS</Button>
+            <Button onClick={this.submit} disabled={disableSendToCRD}>Submit to REMS-Admin</Button>
+          </ButtonGroup>
+        </div>
+      : <span />}
       </div>
     );
   }
