@@ -391,16 +391,9 @@ export default class RequestBuilder extends Component {
         return (
             <div>
                 <div className="nav-header">
-                    {/* <button className={"launch-button left-button btn btn-class " + (this.state.ehrLaunch ? "active" : "not-active")} onClick={() => this.updateStateElement("ehrLaunch", true)}>EHR Launch</button>
-                    <button className={"launch-button right-button btn btn-class " + (!this.state.ehrLaunch ? "active" : "not-active")} onClick={() => this.updateStateElement("ehrLaunch", false)}>Standalone</button> */}
                     <button className={"btn btn-class settings " + (this.state.showSettings ? "active" : "not-active")} onClick={() => this.updateStateElement("showSettings", !this.state.showSettings)}><span className="glyphicon glyphicon-cog settings-icon" /></button>
 
                 </div>
-
-                {/* {this.state.ehrLaunch?
-                                    <SMARTBox exitSmart={this.exitSmart}>
-                                    <EHRLaunchBox></EHRLaunchBox>
-                                </SMARTBox>:null} */}
                 <div className="form-group container left-form">
                     <div id="settings-header">
 
@@ -432,21 +425,6 @@ export default class RequestBuilder extends Component {
 
                     </div>
                     <br />
-                    {/* <button className={"submit-btn btn btn-class " + (!total ? "button-error" : total === 1 ? "button-ready" : "button-empty-fields")} onClick={this.startLoading}>
-                        Submit
-                    </button> */}
-                    {/* 
-
-                    <CheckBox elementName="oauth" displayName="OAuth" updateCB={this.updateStateElement} />
-                    <CheckBox elementName="prefetch" displayName="Include Prefetch" updateCB={this.updateStateElement} />
-                    <div id="fse" className={"spinner " + (this.state.loading ? "visible" : "invisible")}>
-                        <Loader
-                            type="Oval"
-                            color="#222222"
-                            height="16"
-                            width="16"
-                        />
-                    </div> */}
 
                     <br />
                     <br />

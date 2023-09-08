@@ -138,6 +138,8 @@ export default class RequestBox extends Component {
       });
   };
 
+  emptyField = <span className="empty-field">empty</span>;
+
   renderPatientInfo() {
     const patient = this.state.patient;
     if (Object.keys(patient).length === 0) {
@@ -152,7 +154,7 @@ export default class RequestBox extends Component {
         <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>
       );
     } else {
-      name = <span className="empty-field">empty</span>;
+      name = this.emptyField;
     }
     return (
       <div className="demographics">
@@ -161,13 +163,13 @@ export default class RequestBox extends Component {
         </div>
         <div className="info lower-border">Name: {name}</div>
         <div className="info lower-border">
-          Age: {patient.birthDate ? getAge(patient.birthDate) : "N/A"}
+          Age: {patient.birthDate ? getAge(patient.birthDate) : this.emptyField}
         </div>
         <div className="info lower-border">
-          Gender: {patient.gender ? patient.gender : "N/A"}
+          Gender: {patient.gender ? patient.gender : this.emptyField}
         </div>
         <div className="info lower-border">
-          State: {this.state.patientState ? this.state.patientState : <span className="empty-field">empty</span>}
+          State: {this.state.patientState ? this.state.patientState : this.emptyField}
         </div>
         {this.renderOtherInfo()}
         {this.renderQRInfo()}
@@ -182,14 +184,14 @@ export default class RequestBox extends Component {
           <span style={{ fontWeight: "bold" }}>Coding</span>
         </div>
         <div className="info lower-border">
-          Code: {this.state.code ? this.state.code : <span className="empty-field">empty</span>}
+          Code: {this.state.code ? this.state.code : this.emptyField}
         </div>
         <div className="info lower-border">
           System:{" "}
-          {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : <span className="empty-field">empty</span>}
+          {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : this.emptyField}
         </div>
         <div className="info lower-border">
-          Display: {this.state.display ? this.state.display : <span className="empty-field">empty</span>}
+          Display: {this.state.display ? this.state.display : this.emptyField}
         </div>
       </div>
     );
@@ -202,12 +204,12 @@ export default class RequestBox extends Component {
         <div className="lower-border">
           <span style={{ fontWeight: "bold" }}>In Progress Form</span>
           </div>
-          <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : <span className="empty-field">empty</span>}</div>
+          <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : this.emptyField}</div>
           <div className="info lower-border">
-            Author: {qrResponse.author ? qrResponse.author.reference : <span className="empty-field">empty</span>}
+            Author: {qrResponse.author ? qrResponse.author.reference : this.emptyField}
           </div>
           <div className="info lower-border">
-            Date: {qrResponse.authored ? qrResponse.authored :<span className="empty-field">empty</span>}
+            Date: {qrResponse.authored ? qrResponse.authored : this.emptyField}
           </div>
         </div>
     );
