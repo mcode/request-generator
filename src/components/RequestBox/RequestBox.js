@@ -201,16 +201,22 @@ export default class RequestBox extends Component {
     const qrResponse = this.state.response;
     return (
       <div className="questionnaire-response">
-        <div className="lower-border">
-          <span style={{ fontWeight: "bold" }}>In Progress Form</span>
-          </div>
-          <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : this.emptyField}</div>
-          <div className="info lower-border">
-            Author: {qrResponse.author ? qrResponse.author.reference : this.emptyField}
-          </div>
-          <div className="info lower-border">
-            Date: {qrResponse.authored ? qrResponse.authored : this.emptyField}
-          </div>
+        {qrResponse.questionnaire ? 
+          <>
+            <div className="lower-border">
+              <span style={{ fontWeight: "bold" }}>In Progress Form</span>
+            </div>
+            <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : this.emptyField}</div>
+            <div className="info lower-border">
+              Author: {qrResponse.author ? qrResponse.author.reference : this.emptyField}
+            </div>
+            <div className="info lower-border">
+              Date: {qrResponse.authored ? qrResponse.authored : this.emptyField}
+            </div>
+          </>
+          :
+          <div/>
+        }
         </div>
     );
   }
