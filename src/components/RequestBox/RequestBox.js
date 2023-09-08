@@ -11,6 +11,8 @@ import "./request.css";
 import { PrefetchTemplate } from "../../PrefetchTemplate";
 import { retrieveLaunchContext } from "../../util/util";
 import env from 'env-var';
+import PersonIcon from '@mui/icons-material/Person';
+import { Button, ButtonGroup } from '@mui/material';
 
 export default class RequestBox extends Component {
   constructor(props) {
@@ -136,15 +138,23 @@ export default class RequestBox extends Component {
       });
   };
 
+  emptyField = <span className="empty-field">empty</span>;
+
   renderPatientInfo() {
     const patient = this.state.patient;
+    if (Object.keys(patient).length === 0) {
+      return (
+          <div className="demographics">
+          </div>
+        );
+    }
     let name;
     if (patient.name) {
       name = (
         <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>
       );
     } else {
-      name = "N/A";
+      name = this.emptyField;
     }
     return (
       <div className="demographics">
@@ -153,13 +163,13 @@ export default class RequestBox extends Component {
         </div>
         <div className="info lower-border">Name: {name}</div>
         <div className="info lower-border">
-          Age: {patient.birthDate ? getAge(patient.birthDate) : "N/A"}
+          Age: {patient.birthDate ? getAge(patient.birthDate) : this.emptyField}
         </div>
         <div className="info lower-border">
-          Gender: {patient.gender ? patient.gender : "N/A"}
+          Gender: {patient.gender ? patient.gender : this.emptyField}
         </div>
         <div className="info lower-border">
-          State: {this.state.patientState ? this.state.patientState : "N/A"}
+          State: {this.state.patientState ? this.state.patientState : this.emptyField}
         </div>
         {this.renderOtherInfo()}
         {this.renderQRInfo()}
@@ -174,14 +184,14 @@ export default class RequestBox extends Component {
           <span style={{ fontWeight: "bold" }}>Coding</span>
         </div>
         <div className="info lower-border">
-          Code: {this.state.code ? this.state.code : "N/A"}
+          Code: {this.state.code ? this.state.code : this.emptyField}
         </div>
         <div className="info lower-border">
           System:{" "}
-          {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : "N/A"}
+          {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : this.emptyField}
         </div>
         <div className="info lower-border">
-          Display: {this.state.display ? this.state.display : "N/A"}
+          Display: {this.state.display ? this.state.display : this.emptyField}
         </div>
       </div>
     );
@@ -191,16 +201,22 @@ export default class RequestBox extends Component {
     const qrResponse = this.state.response;
     return (
       <div className="questionnaire-response">
-        <div className="lower-border">
-          <span style={{ fontWeight: "bold" }}>In Progress Form</span>
-          </div>
-          <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : "N/A"}</div>
-          <div className="info lower-border">
-            Author: {qrResponse.author ? qrResponse.author.reference : "N/A"}
-          </div>
-          <div className="info lower-border">
-            Date: {qrResponse.authored ? qrResponse.authored : "N/A"}
-          </div>
+        {qrResponse.questionnaire ? 
+          <>
+            <div className="lower-border">
+              <span style={{ fontWeight: "bold" }}>In Progress Form</span>
+            </div>
+            <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : this.emptyField}</div>
+            <div className="info lower-border">
+              Author: {qrResponse.author ? qrResponse.author.reference : this.emptyField}
+            </div>
+            <div className="info lower-border">
+              Date: {qrResponse.authored ? qrResponse.authored : this.emptyField}
+            </div>
+          </>
+          :
+          <div/>
+        }
         </div>
     );
   }
@@ -417,7 +433,7 @@ export default class RequestBox extends Component {
         params['tokenResponse'] = {access_token: this.props.access_token.access_token};
     }
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading ;
-    const disableLaunchDTR = this.isOrderNotSelected() && Object.keys(this.state.response).length === 0;
+    const disableLaunchDTR = this.isOrderNotSelected() || !this.state.response.questionnaire;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
     return (
@@ -456,41 +472,39 @@ export default class RequestBox extends Component {
           )}
 
           <div>
-            <button className="select-button" onClick={this.getPatients}>
-              Patient Select:
-            </button>
+            <Button variant='contained' onClick={this.getPatients} startIcon={<PersonIcon />}>
+                Select a patient
+            </Button>
             <div className="request-header">
-              {this.state.patient.id ? this.state.patient.id : "N/A"}
+              {this.state.patient.id ? <span>Patient ID: {this.state.patient.id}</span> : <em>No patient selected</em>}
             </div>
             <div>
               {this.renderPatientInfo()}
               {this.renderPrefetchedResources()}
             </div>
-            <div>
-              <b>Deidentify Records</b>
-              <CheckBox
-                toggle = {this.state.deidentifyRecords}
-                updateCB={this.updateDeidentifyCheckbox}
-                elementName = "deidentifyCheckbox" 
-                />
-            </div>
+
+            {this.state.patient.id ? 
+              <div>
+                <b>Deidentify Records</b>
+                <CheckBox
+                  toggle = {this.state.deidentifyRecords}
+                  updateCB={this.updateDeidentifyCheckbox}
+                  elementName = "deidentifyCheckbox" 
+                  />
+              </div> : <div/>
+            }
           </div>
         </div>
-        <div id="fse" className={"spinner " + (this.props.loading ? "visible" : "invisible")}>
-          <div className="ui active right inline loader"></div>
-        </div> 
-        <button className={"submit-btn btn btn-class "} onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-          Launch SMART on FHIR App
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.sendRx} disabled={disableSendRx}>
-          Send Rx to PIMS
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.relaunch} disabled={disableLaunchDTR}>
-          Relaunch DTR
-        </button>
-        <button className={"submit-btn btn btn-class "} onClick={this.submit} disabled={disableSendToCRD}>
-          Submit to REMS-Admin
-        </button>
+        {this.state.patient.id ?
+        <div className="action-btns">
+          <ButtonGroup variant="outlined" aria-label="outlined button group">
+            <Button onClick={this.relaunch} disabled={disableLaunchDTR}>Open In-Progress Form</Button>
+            <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>Launch SMART on FHIR App</Button>
+            <Button onClick={this.sendRx} disabled={disableSendRx}>Send Rx to Pharmacy</Button>
+            <Button onClick={this.submit} disabled={disableSendToCRD}>Sign Order</Button>
+          </ButtonGroup>
+        </div>
+      : <span />}
       </div>
     );
   }
