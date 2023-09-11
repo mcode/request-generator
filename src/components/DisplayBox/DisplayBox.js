@@ -363,13 +363,22 @@ export default class DisplayBox extends Component{
       
               renderedCards.push(builtCard);
             });
+
+            if (renderedCards.length === 0) {
+              return <div>
+                      Nofication Cards ({renderedCards.length})
+                      </div>;
+            }
+            return <div>
+                    Nofication Cards ({renderedCards.length})
+                    <div>
+                      {renderedCards}
+                    </div>
+                  </div>;
+          } else {
+            return <div>
+                  </div>;
           }
-          if (renderedCards.length === 0) { return <div><div className='decision-card alert-warning'>No Cards</div></div>; }
-          return <div>
-                  <div>
-                  {renderedCards}
-                  </div>
-                </div>;
         }
 
         componentDidUpdate() {
