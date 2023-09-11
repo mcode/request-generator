@@ -161,6 +161,7 @@ export default class RequestBuilder extends Component {
                 })
             }).catch(() => {
                 this.consoleLog("No response received from the server", types.error);
+                this.setState({ response: null });
                 this.setState({loading: false});
             });
         } catch (error) {
