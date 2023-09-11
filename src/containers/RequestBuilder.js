@@ -148,6 +148,7 @@ export default class RequestBuilder extends Component {
             }).then(response => {
                 clearTimeout(this.timeout)
                 response.json().then((fhirResponse) => {
+                    console.log(fhirResponse);
                     if (fhirResponse && fhirResponse.status) {
                         this.consoleLog("Server returned status "
                             + fhirResponse.status + ": "
