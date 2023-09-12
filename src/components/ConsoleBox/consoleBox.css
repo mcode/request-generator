@@ -45,22 +45,12 @@
     transition-delay: 0s;
 }
 
-.showHeader:hover{
-    color:#CCCCCC;
-}
-
 .showHeader{
     width:100%;
 }
-.showHeader::after{
-    content:"-";
-}
-.collapseHeader::after{
-    content:"+";
-}
 
 .collapseHeader{
-    width:25px;
+    width: 250px;
     color: black;
     text-align:center;
     border-width: 1px 1px 1px 1px;

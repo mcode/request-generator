@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import React, {Component} from 'react';
 
 export default class ConsoleBox extends Component {
@@ -46,17 +47,15 @@ export default class ConsoleBox extends Component {
       let i = 0;
     return (
         <div>
-
-                <span className={this.state.headerStatus + " consoleHeader"} onClick={this.toggleConsole} >
-
-                </span>
-            <div id="your_div" className = {this.state.showStatus + " consoleMain resize"}>
-
-                {this.props.logs.map(element => {
-                    i++;
-                    return <div key = {i}> <span className={element.type}>{element.content}</span></div>
-                }) }
-            </div>
+          <Button variant='outlined' className={this.state.headerStatus + " consoleHeader"} onClick={this.toggleConsole}>
+            {this.state.showStatus === 'showConsole' ? 'Close console' : 'Open Developer console' }
+          </Button>
+          <div id="your_div" className = {this.state.showStatus + " consoleMain resize"}>
+              {this.props.logs.map(element => {
+                  i++;
+                  return <div key = {i}> <span className={element.type}>{element.content}</span></div>
+              }) }
+          </div>
         </div>
 
     )

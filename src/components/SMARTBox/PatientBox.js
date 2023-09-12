@@ -3,7 +3,8 @@ import { Dropdown, Header } from 'semantic-ui-react'
 import { getAge } from "../../util/fhir";
 import FHIR from "fhirclient";
 import "./smart.css";
-
+import { Button, IconButton } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default class SMARTBox extends Component {
   constructor(props) {
@@ -29,6 +30,12 @@ export default class SMARTBox extends Component {
     this.getResponses = this.getResponses.bind(this);
     this.makeQROption = this.makeQROption.bind(this);
     this.handleResponseChange = this.handleResponseChange.bind(this);
+  }
+
+  componentDidMount() {
+    // get requests and responses on open of patients
+    this.getRequests()
+    this.getResponses();
   }
 
   getCoding(request) {
@@ -64,7 +71,7 @@ export default class SMARTBox extends Component {
 
     let option = {
       key: request.id,
-      text: "(" + code.code + ") " + code.display,
+      text: code.display + " (Medication request: " + code.code + ")",
       value: JSON.stringify(request),
       content: (
         <Header content={code.code + " (" + request.resourceType + ")"} subheader={code.display} />
@@ -256,31 +263,33 @@ export default class SMARTBox extends Component {
     let returned = false;
     if (this.state.deviceRequests.data) {
       returned = true;
-      console.log(this.state.deviceRequests);
       this.state.deviceRequests.data.forEach((e) => {
         this.makeOption(e, options);
       });
     }
     if (this.state.serviceRequests.data) {
+      returned = true;
       this.state.serviceRequests.data.forEach((e) => {
         this.makeOption(e, options);
       });
     }
     if (this.state.medicationRequests.data) {
+      returned = true;
       this.state.medicationRequests.data.forEach((e) => {
         this.makeOption(e, options);
       });
     }
 
     if (this.state.medicationDispenses.data) {
+      returned = true;
       this.state.medicationDispenses.data.forEach((e) => {
         this.makeOption(e, options);
       })
     };
 
     if (this.state.questionnaireResponses.data) {
-      returned = true;
       this.state.questionnaireResponses.data.forEach(qr => this.makeQROption(qr, responseOptions));
+      returned = true;
     }
 
     let noResults = 'No results found.'
@@ -293,15 +302,9 @@ export default class SMARTBox extends Component {
         <div
           className="patient-selection-box"
           key={patient.id}
-          onClick={() => {
-            this.updateValues(patient);
-          }}
         >
           <div className="patient-info">
             <span style={{ fontWeight: "bold" }}>ID</span>: {patient.id}
-            {/* <a className="more-info">
-                                {text}
-                            </a> */}
             <div>
               <span style={{ fontWeight: "bold" }}>Name</span>:{" "}
               {name ? name : "N/A"}
@@ -319,28 +322,37 @@ export default class SMARTBox extends Component {
             <span style={{ fontWeight: "bold", marginRight: "5px" }}>
               Request:
             </span>
-            <Dropdown
-              search searchInput={{ type: 'text' }}
-              selection fluid options={options}
-              placeholder='Choose an option'
-              noResultsMessage={noResults}
-              onChange={this.handleRequestChange}
-              onOpen={this.getRequests}
-            />
+            { !options.length && returned ?
+              <span className="emptyForm">No reqeusts</span>
+            : 
+              <Dropdown
+                search searchInput={{ type: 'text' }}
+                selection fluid options={options}
+                placeholder='Choose an option'
+                noResultsMessage={noResults}
+                onChange={this.handleRequestChange}
+              />
+            }
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px" }}>
+            <span style={{ fontWeight: "bold", marginRight: "5px"}}>
               In Progress Form:
+              <IconButton color="primary" style={{ padding: '0px 5px' }} onClick={this.getResponses}>
+                <RefreshIcon />
+              </IconButton> 
             </span>
-            <Dropdown
-              search searchInput={{ type: 'text' }}
-              selection fluid options={responseOptions}
-              placeholder='Choose an option'
-              noResultsMessage={noResults}
-              onChange={this.handleResponseChange}
-              onOpen={this.getResponses}
-            />
+            { !responseOptions.length && returned ?
+              <span className="emptyForm">No in progress forms</span> :
+              <Dropdown
+                search searchInput={{ type: 'text' }}
+                selection fluid options={responseOptions}
+                placeholder='Choose an option'
+                noResultsMessage={noResults}
+                onChange={this.handleResponseChange}
+              />
+            }
           </div>
+          <Button variant="outlined" size="small" className="select-btn" onClick={() => this.updateValues(patient)}>Select</Button>
         </div>
       </div>
     );

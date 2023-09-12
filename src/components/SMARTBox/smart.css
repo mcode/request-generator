@@ -19,16 +19,12 @@ iframe{
 
 .patient-selection-box{
     width:100%;
-    height:100px;
     padding:10px;
     flex:.5;
     border-bottom:3px solid black;
-    background-color:#e2e2e2;
-}
-
-.patient-selection-box:hover{
-    background-color:white;
-    cursor: pointer;
+    display: grid;
+    grid-template-columns: 15% 35% 35% 10%;
+    column-gap: 5px;
 }
 
 .smartExit{
@@ -74,13 +70,10 @@ iframe{
 
 .patient-info {
     display:inline-block;
-    width: 300px;
 }
 
 .request-info {
-    display: inline-block;
-    width:350px;
-    vertical-align: top; /* here */
+    display: inherit;
 
 }
 
@@ -93,4 +86,23 @@ iframe{
 }
 .ui.header.text {
     font-size: 1em;
+}
+
+.select-btn {
+    height: 40px;
+    align-self: center;
+}
+
+.emptyForm {
+    margin-left: 8px;
+    color: dimgray;
+    font-style: italic;
+}
+
+.ui.fluid.dropdown {
+    height: fit-content;
+}
+
+.ui.dropdown>.text {
+    display: block;
 }

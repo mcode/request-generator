@@ -1,4 +1,6 @@
 .request-header{
+    margin-top: 10px;
+    margin-left: 8px;
     border-width: 1px 1px 2px 2px;
     border-style: solid;
     border-color: transparent transparent black black;
@@ -117,4 +119,13 @@
 .questionnaire-response {
     width: 100%;
     padding:10px 10px 10px 0px;
+}
+
+.action-btns {
+    margin-top: 5px;
+}
+
+.empty-field {
+    color: dimgrey;
+    font-style: italic;
 }
