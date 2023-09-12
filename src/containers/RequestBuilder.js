@@ -51,11 +51,6 @@ export default class RequestBuilder extends Component {
             smartAppUrl: headers.smartAppUrl.value,
             defaultUser: headers.defaultUser.value
         };
-        this.validateMap = {
-            age: (foo => { return isNaN(foo) }),
-            gender: (foo => { return foo !== "male" && foo !== "female" }),
-            code: (foo => { return !foo.match(/^[a-z0-9]+$/i) })
-        };
 
         this.updateStateElement = this.updateStateElement.bind(this);
         this.startLoading = this.startLoading.bind(this);
@@ -98,15 +93,10 @@ export default class RequestBuilder extends Component {
         this.setState({ [elementName]: text });
     }
 
-    onInputChange(event) {
-        this.setState({ [event.target.name]: event.target.value });
-    }
-
     startLoading() {
         this.setState({ loading: true }, () => {
             this.submit_info();
         });
-
     }
 
     timeout = (time) => {
@@ -135,21 +125,21 @@ export default class RequestBuilder extends Component {
         }
         let baseUrl = this.state.baseUrl;
         const jwt = "Bearer " + createJwt(this.state.keypair, baseUrl, cdsUrl);
-        var myHeaders = new Headers({
+        const headers = new Headers({
             "Content-Type": "application/json",
             "authorization": jwt
         });
         try {
             fetch(cdsUrl, {
                 method: "POST",
-                headers: myHeaders,
+                headers: headers,
                 body: JSON.stringify(json_request),
                 signal: this.timeout(10).signal //Timeout set to 10 seconds
             }).then(response => {
                 clearTimeout(this.timeout)
                 response.json().then((fhirResponse) => {
                     console.log(fhirResponse);
-                    if (fhirResponse && fhirResponse.status) {
+                    if (fhirResponse?.status) {
                         this.consoleLog("Server returned status "
                             + fhirResponse.status + ": "
                             + fhirResponse.error, types.error);
@@ -176,28 +166,6 @@ export default class RequestBuilder extends Component {
     takeSuggestion(resource) {
         // when a suggestion is taken, call into the requestBox to resubmit the CRD request with the new request
         this.requestBox.current.replaceRequestAndSubmit(resource);
-    }
-
-    validateState() {
-        const validationResult = {};
-        Object.keys(this.validateMap).forEach(key => {
-            if (this.state[key] && this.validateMap[key](this.state[key])) {
-                // Basically we want to know if we have any errors
-                // or empty fields, and we want the errors to override
-                // the empty fields, so we make errors 0 and unpopulated
-                // fields 2.  Then we just look at whether the product of all
-                // the validations is 0 (error), 1 (valid) , or >1 (some unpopulated fields).
-                validationResult[key] = 0;
-            } else if (this.state[key]) {
-                // the field is populated and valid
-                validationResult[key] = 1;
-            } else {
-                // the field is not populated
-                validationResult[key] = 2
-            }
-        });
-
-        return validationResult;
     }
 
     exitSmart() {
