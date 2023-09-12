@@ -433,7 +433,7 @@ export default class RequestBox extends Component {
         params['tokenResponse'] = {access_token: this.props.access_token.access_token};
     }
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading ;
-    const disableLaunchDTR = this.isOrderNotSelected() || !this.state.response.questionnaire;
+    const disableLaunchDTR = !this.state.response.questionnaire;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
     return (
