@@ -116,7 +116,7 @@ export default class RequestBox extends Component {
 
   getPatients = () => {
     this.setState({ openPatient: true });
-    const params = {serverUrl: env.get('REACT_APP_EHR_SERVER').asString()};
+    const params = {serverUrl: this.props.ehrUrl};
     if (this.props.access_token.access_token) {
         params["tokenResponse"] = {access_token: this.props.access_token.access_token}
     }

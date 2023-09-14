@@ -8,13 +8,18 @@ const types = {
 }
 
 const headers = {
+    "baseUrl": {
+        "display": "Base Server",
+        "value": (env.get('REACT_APP_EHR_BASE').asString()),
+        "key": "baseUrl"
+    },
     "ehrUrl": {
         "display": "EHR Server",
         "value": (env.get('REACT_APP_EHR_SERVER').asString()),
         "key": "ehrUrl"
     },
     "cdsUrl": {
-        "display": "CRD Server",
+        "display": "REMS Admin",
         "value": (env.get('REACT_APP_CDS_SERVICE').asString()),
         "key":"cdsUrl"
     },

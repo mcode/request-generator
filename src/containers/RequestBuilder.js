@@ -8,7 +8,7 @@ import '../components/ConsoleBox/consoleBox.css';
 import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
-import { types, headers, defaultValues } from '../util/data.js';
+import { types, headers as defaultHeaders, defaultValues } from '../util/data.js';
 import { createJwt, login, setupKeys } from '../util/auth';
 import env from 'env-var';
 
@@ -28,11 +28,11 @@ export default class RequestBuilder extends Component {
             logs: [],
             keypair: null,
             config: {},
-            ehrUrl: headers.ehrUrl.value,
-            authUrl: headers.authUrl.value,
-            cdsUrl: headers.cdsUrl.value,
-            orderSelect: headers.orderSelect.value,
-            orderSign: headers.orderSign.value,
+            ehrUrl: defaultHeaders.ehrUrl.value,
+            authUrl: defaultHeaders.authUrl.value,
+            cdsUrl: defaultHeaders.cdsUrl.value,
+            orderSelect: defaultHeaders.orderSelect.value,
+            orderSign: defaultHeaders.orderSign.value,
             showSettings: false,
             ehrLaunch: false,
             patientList: [],
@@ -40,16 +40,16 @@ export default class RequestBuilder extends Component {
             patient: {},
             codeValues: defaultValues,
             currentPatient: null,
-            baseUrl: null,
+            baseUrl: defaultHeaders.baseUrl.value,
             serviceRequests: {},
             currentServiceRequest: null,
             includeConfig: true,
-            alternativeTherapy: headers.alternativeTherapy.value,
-            launchUrl: headers.launchUrl.value,
-            responseExpirationDays: headers.responseExpirationDays.value,
-            pimsUrl: headers.pimsUrl.value,
-            smartAppUrl: headers.smartAppUrl.value,
-            defaultUser: headers.defaultUser.value
+            alternativeTherapy: defaultHeaders.alternativeTherapy.value,
+            launchUrl: defaultHeaders.launchUrl.value,
+            responseExpirationDays: defaultHeaders.responseExpirationDays.value,
+            pimsUrl: defaultHeaders.pimsUrl.value,
+            smartAppUrl: defaultHeaders.smartAppUrl.value,
+            defaultUser: defaultHeaders.defaultUser.value
         };
 
         this.updateStateElement = this.updateStateElement.bind(this);
@@ -62,8 +62,7 @@ export default class RequestBuilder extends Component {
     }
 
     componentDidMount() {
-        let ehr_server = (env.get('REACT_APP_EHR_SERVER').asString());
-        this.setState({baseUrl: ehr_server})
+        this.setState({baseUrl: this.state.baseUrl})
         const callback = (keypair) => {
             this.setState({ keypair });
         }
@@ -248,7 +247,7 @@ export default class RequestBuilder extends Component {
 
 
     render() {
-        const header =
+        const headers =
         {
             "ehrUrl": {
                 "type": "input",
@@ -371,7 +370,7 @@ export default class RequestBuilder extends Component {
                     </div>
                     {this.state.showSettings ?
                         <SettingsBox
-                            headers={header}
+                            headers={headers}
                             updateCB={this.updateStateElement}
                         /> : null}
                     <div>
