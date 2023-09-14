@@ -10,39 +10,26 @@ import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
 import { types, headers as defaultHeaders, defaultValues } from '../util/data.js';
 import { createJwt, login, setupKeys } from '../util/auth';
-import env from 'env-var';
 
 export default class RequestBuilder extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            age: "",
-            gender: null,
-            code: null,
-            codeSystem: null,
             response: null,
             token: null,
-            oauth: false,
             sendPrefetch: true,
             loading: false,
             logs: [],
             keypair: null,
-            config: {},
             ehrUrl: defaultHeaders.ehrUrl.value,
             authUrl: defaultHeaders.authUrl.value,
             cdsUrl: defaultHeaders.cdsUrl.value,
             orderSelect: defaultHeaders.orderSelect.value,
             orderSign: defaultHeaders.orderSign.value,
             showSettings: false,
-            ehrLaunch: false,
-            patientList: [],
             openPatient: false,
             patient: {},
-            codeValues: defaultValues,
-            currentPatient: null,
             baseUrl: defaultHeaders.baseUrl.value,
-            serviceRequests: {},
-            currentServiceRequest: null,
             includeConfig: true,
             alternativeTherapy: defaultHeaders.alternativeTherapy.value,
             launchUrl: defaultHeaders.launchUrl.value,
@@ -287,7 +274,7 @@ export default class RequestBuilder extends Component {
             },
             "launchUrl": {
                 "type": "input",
-                "display": "DTR Launch URL",
+                "display": "DTR Launch URL (QuestionnaireForm)",
                 "value": this.state.launchUrl,
                 "key": "launchUrl"
             },

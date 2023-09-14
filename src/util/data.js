@@ -44,7 +44,7 @@ const headers = {
         "key": "alternativeTherapy"
     }, 
     "launchUrl" : {
-        "display": "DTR Launch URL",
+        "display": "DTR Launch URL (QuestionnaireForm)",
         "value": (env.get('REACT_APP_LAUNCH_URL').asString()),
         "key": "launchUrl"
     },
