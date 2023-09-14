@@ -69,7 +69,7 @@ export default class RequestBuilder extends Component {
 
         setupKeys(callback);
 
-        login().then((response) => { return response.json() }).then((token) => {
+        login({authUrl: this.state.authUrl}).then((response) => { return response.json() }).then((token) => {
             this.setState({ token })
         }).catch((error) =>{
             // fails when keycloak isn't running, add dummy token
