@@ -33,6 +33,7 @@ Following are a list of modifiable paths:
 | REACT_APP_PIMS_SERVER  | `http://localhost:5051/doctorOrders/api/addRx`   |
 | REACT_APP_REALM        |  `ClientFhirServer`                              |
 | REACT_APP_CLIENT       |  `app-login`                                     |
+| REACT_APP_SERVER       |  `http://localhost:8090`                         |
 | REACT_APP_EHR_BASE     |  `http://localhost:8080/test-ehr/r4`             |
 | REACT_APP_ORDER_SIGN   |  `rems-order-sign`                               |
 | REACT_APP_ORDER_SELECT |  `rems-order-select`                             |
