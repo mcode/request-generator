@@ -1,21 +1,25 @@
 import React, { Component } from "react";
-import { Dropdown, Header } from 'semantic-ui-react'
 import { getAge } from "../../util/fhir";
 import FHIR from "fhirclient";
 import "./smart.css";
 import { Button, IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default class SMARTBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      request: "none",
+      request: "",
       deviceRequests: {},
       medicationRequests: {},
       serviceRequests: {},
       medicationDispenses: {},
-      response: "none",
+      response: "",
       questionnaireResponses: {},
     };
 
@@ -30,6 +34,7 @@ export default class SMARTBox extends Component {
     this.getResponses = this.getResponses.bind(this);
     this.makeQROption = this.makeQROption.bind(this);
     this.handleResponseChange = this.handleResponseChange.bind(this);
+    this.makeDropdown = this.makeDropdown.bind(this);
   }
 
   componentDidMount() {
@@ -66,16 +71,33 @@ export default class SMARTBox extends Component {
     return code;
   }
 
+  makeDropdown(options, label, stateVar, stateChange) {
+    console.log(options);
+    return (
+      <Box sx={{ minWidth: 120 }}>
+      <FormControl fullWidth>
+        <InputLabel>{label}</InputLabel>
+        <Select
+          labelId = {`${label}-label`}
+          value= {stateVar}
+          label={label}
+          onChange={stateChange}
+        >
+          {options.map((op) => {
+            return <MenuItem key = {op.key} value = {op.value}>{op.text}</MenuItem>
+          })}
+        </Select>
+      </FormControl>
+    </Box>
+    )
+  }
   makeOption(request, options) {
     let code = this.getCoding(request);
 
     let option = {
       key: request.id,
       text: code.display + " (Medication request: " + code.code + ")",
-      value: JSON.stringify(request),
-      content: (
-        <Header content={code.code + " (" + request.resourceType + ")"} subheader={code.display} />
-      )
+      value: JSON.stringify(request)
     }
     options.push(option);
   }
@@ -84,7 +106,7 @@ export default class SMARTBox extends Component {
     this.props.callback("patient", patient);
     this.props.callback("openPatient", false);
     this.props.clearCallback();
-    if (this.state.request !== "none") {
+    if (this.state.request) {
       const request = JSON.parse(this.state.request);
       if (request.resourceType === "DeviceRequest" || request.resourceType === "ServiceRequest" || request.resourceType === "MedicationRequest" || request.resourceType === "MedicationDispense") {
         this.updatePrefetchRequest(request, patient, this.props.defaultUser);
@@ -96,7 +118,7 @@ export default class SMARTBox extends Component {
       this.updatePrefetchRequest(null, patient, this.props.defaultUser);
     }
 
-    if (this.state.response !== "none") {
+    if (this.state.response) {
       const response = JSON.parse(this.state.response);
       this.updateQRResponse(patient, response);
     }
@@ -199,32 +221,33 @@ export default class SMARTBox extends Component {
       });
   }
 
-  handleRequestChange(e, data) {
-    if (data.value === "none") {
+  handleRequestChange(e) {
+    const data = e.target.value;
+    if (data) {
+      let coding = this.getCoding(JSON.parse(data));
       this.setState({
-        request: "none"
-      });
-    } else {
-      let request = JSON.parse(data.value);
-      let coding = this.getCoding(request);
-      this.setState({
-        request: data.value,
+        request: data,
         code: coding.code,
         system: coding.system,
         display: coding.display,
-        response: "none"
+        response: ""
+      });
+    } else {
+      this.setState({
+        request: ""
       });
     }
   }
 
-  handleResponseChange(e, data) {
-    if (data.value === "none") {
+  handleResponseChange(e) {
+    const data = e.target.value;
+    if (data) {
       this.setState({
-        response: "none"
+        response: data
       });
     } else {
       this.setState({
-        response: data.value
+        response: ""
       });
     }
   }
@@ -267,10 +290,7 @@ export default class SMARTBox extends Component {
     let option = {
       key: qr.id,
       text: display,
-      value: JSON.stringify(qr),
-      content: (
-        <Header content={"QuestionnaireResponse"} subheader={display} />
-      )
+      value: JSON.stringify(qr)
     }
     options.push(option);
   }
@@ -352,13 +372,7 @@ export default class SMARTBox extends Component {
             { !options.length && returned ?
               <span className="emptyForm">No reqeusts</span>
             : 
-              <Dropdown
-                search searchInput={{ type: 'text' }}
-                selection fluid options={options}
-                placeholder='Choose an option'
-                noResultsMessage={noResults}
-                onChange={this.handleRequestChange}
-              />
+              this.makeDropdown(options, "Choose a patient", this.state.request, this.handleRequestChange)
             }
           </div>
           <div className="request-info">
@@ -370,13 +384,7 @@ export default class SMARTBox extends Component {
             </span>
             { !responseOptions.length && returned ?
               <span className="emptyForm">No in progress forms</span> :
-              <Dropdown
-                search searchInput={{ type: 'text' }}
-                selection fluid options={responseOptions}
-                placeholder='Choose an option'
-                noResultsMessage={noResults}
-                onChange={this.handleResponseChange}
-              />
+              this.makeDropdown(responseOptions, "Choose an in-progress form", this.state.response, this.handleResponseChange)
             }
           </div>
           <Button variant="outlined" size="small" className="select-btn" onClick={() => this.updateValues(patient)}>Select</Button>
