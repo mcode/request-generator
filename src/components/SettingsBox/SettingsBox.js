@@ -22,7 +22,6 @@ export default class SettingsBox extends Component {
     render() {
         const view = {
             alternativeTherapy: { display: "Alternative Therapy Cards Allowed", type: 'check' }, 
-            authUrl: { display: "Auth Server", type: "input" },
             baseUrl: { display: "Base Server", type: "input" },
             cdsUrl: { display: "REMS Admin", type: "input" },
             clearQuestionnaireResponses: { display: "Clear EHR QuestionnaireResponses", type: "button" },

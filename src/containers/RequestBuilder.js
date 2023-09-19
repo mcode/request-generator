@@ -26,7 +26,6 @@ export default class RequestBuilder extends Component {
             token: null,
             // Configurable values
             alternativeTherapy: env.get('REACT_APP_ALT_DRUG').asBool(),
-            authUrl: env.get('REACT_APP_AUTH').asString(),
             baseUrl: env.get('REACT_APP_EHR_BASE').asString(),
             cdsUrl: env.get('REACT_APP_CDS_SERVICE').asString(),
             defaultUser: env.get('REACT_APP_DEFAULT_USER').asString(),
@@ -58,7 +57,7 @@ export default class RequestBuilder extends Component {
 
         setupKeys(callback);
 
-        login({authUrl: this.state.authUrl}).then((response) => { return response.json() }).then((token) => {
+        login().then((response) => { return response.json() }).then((token) => {
             this.setState({ token })
         }).catch((error) =>{
             // fails when keycloak isn't running, add dummy token
@@ -238,7 +237,6 @@ export default class RequestBuilder extends Component {
     render() {
         const headersModel = {
             alternativeTherapy: { value: this.state.alternativeTherapy },
-            authUrl: { value: this.state.authUrl },
             baseUrl: { value: this.state.baseUrl },
             cdsUrl: { value: this.state.cdsUrl },
             clearQuestionnaireResponses: { value: this.clearQuestionnaireResponses },

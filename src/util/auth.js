@@ -11,8 +11,8 @@ function makeid() {
     return text.join('');
 }
 
-function login({authUrl}) {
-    const tokenUrl = (authUrl) + "/realms/" + (env.get('REACT_APP_REALM').asString()) + "/protocol/openid-connect/token"
+function login() {
+    const tokenUrl = (env.get('REACT_APP_AUTH').asString()) + "/realms/" + (env.get('REACT_APP_REALM').asString()) + "/protocol/openid-connect/token"
     let params = {
         grant_type: "password",
         username: (env.get('REACT_APP_USER').asString()),
