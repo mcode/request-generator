@@ -8,35 +8,37 @@ import '../components/ConsoleBox/consoleBox.css';
 import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
-import { types, headers as defaultHeaders, defaultValues } from '../util/data.js';
+import { types } from '../util/data.js';
 import { createJwt, login, setupKeys } from '../util/auth';
+import env from 'env-var';
 
 export default class RequestBuilder extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            response: null,
-            token: null,
-            sendPrefetch: true,
+            keypair: null,
             loading: false,
             logs: [],
-            keypair: null,
-            ehrUrl: defaultHeaders.ehrUrl.value,
-            authUrl: defaultHeaders.authUrl.value,
-            cdsUrl: defaultHeaders.cdsUrl.value,
-            orderSelect: defaultHeaders.orderSelect.value,
-            orderSign: defaultHeaders.orderSign.value,
-            showSettings: false,
             openPatient: false,
             patient: {},
-            baseUrl: defaultHeaders.baseUrl.value,
+            response: null,
+            showSettings: false,
+            token: null,
+            // Configurable values
+            alternativeTherapy: env.get('REACT_APP_ALT_DRUG').asBool(),
+            authUrl: env.get('REACT_APP_AUTH').asString(),
+            baseUrl: env.get('REACT_APP_EHR_BASE').asString(),
+            cdsUrl: env.get('REACT_APP_CDS_SERVICE').asString(),
+            defaultUser: env.get('REACT_APP_DEFAULT_USER').asString(),
+            ehrUrl: env.get('REACT_APP_EHR_SERVER').asString(),
             includeConfig: true,
-            alternativeTherapy: defaultHeaders.alternativeTherapy.value,
-            launchUrl: defaultHeaders.launchUrl.value,
-            responseExpirationDays: defaultHeaders.responseExpirationDays.value,
-            pimsUrl: defaultHeaders.pimsUrl.value,
-            smartAppUrl: defaultHeaders.smartAppUrl.value,
-            defaultUser: defaultHeaders.defaultUser.value
+            launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
+            orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
+            orderSign: env.get('REACT_APP_ORDER_SIGN').asString(),
+            pimsUrl: env.get('REACT_APP_PIMS_SERVER').asString(),
+            responseExpirationDays: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),
+            sendPrefetch: true,
+            smartAppUrl: env.get('REACT_APP_SMART_LAUNCH_URL').asString(),
         };
 
         this.updateStateElement = this.updateStateElement.bind(this);
@@ -234,114 +236,24 @@ export default class RequestBuilder extends Component {
 
 
     render() {
-        const headers =
-        {
-            "ehrUrl": {
-                "type": "input",
-                "display": "EHR Server",
-                "value": this.state.ehrUrl,
-                "key": "ehrUrl"
-            },
-            "cdsUrl": {
-                "type": "input",
-                "display": "CRD Server",
-                "value": this.state.cdsUrl,
-                "key": "cdsUrl"
-            },
-            "orderSelect": {
-                "type": "input",
-                "display": "Order Select Rest End Point",
-                "value": this.state.orderSelect,
-                "key": "orderSelect"
-            },
-            "orderSign": {
-                "type": "input",
-                "display": "Order Sign Rest End Point",
-                "value": this.state.orderSign,
-                "key": "orderSign"
-            },
-            "authUrl": {
-                "type": "input",
-                "display": "Auth Server",
-                "value": this.state.authUrl,
-                "key": "authUrl"
-            },
-            "baseUrl": {
-                "type": "input",
-                "display": "Base EHR",
-                "value": this.state.baseUrl,
-                "key": "baseUrl"
-            },
-            "launchUrl": {
-                "type": "input",
-                "display": "DTR Launch URL (QuestionnaireForm)",
-                "value": this.state.launchUrl,
-                "key": "launchUrl"
-            },
-            "responseExpirationDays": {
-                "type": "input",
-                "display": "In Progress Form Expiration Days",
-                "value": this.state.responseExpirationDays,
-                "key": "responseExpirationDays"
-            },
-            "pimsUrl": {
-                "type": "input",
-                "display": "PIMS Server",
-                "value": this.state.pimsUrl,
-                "key": "pimsUrl"
-            },
-            "smartAppUrl": {
-                "type": "input",
-                "display": "SMART App",
-                "value": this.state.smartAppUrl,
-                "key": "smartAppUrl"
-            },
-            "defaultUser": {
-                "type": "input",
-                "display": "Default User",
-                "value": this.state.defaultUser,
-                "key": "defaultUser"
-            },
-            "includeConfig": {
-                "type": "check",
-                "display": "Include Configuration in CRD Request",
-                "value": this.state.includeConfig,
-                "key": "includeConfig"
-            },
-            "alternativeTherapy": {
-                "type": "check",
-                "display": "Alternative Therapy Cards Allowed",
-                "value": this.state.alternativeTherapy,
-                "key": "alternativeTherapy"
-            },
-            "sendPrefetch": {
-              "type": "check",
-              "display": "Send Prefetch",
-              "value": this.state.sendPrefetch,
-              "key": "sendPrefetch"
-            },
-            "resetRemsAdmin": {
-                "type": "button",
-                "display": "Reset REMS-Admin Database",
-                "value": this.resetRemsAdmin,
-                "key": "resetRemsAdmin"
-            },
-            "resetPims": {
-                "type": "button",
-                "display": "Reset PIMS Database",
-                "value": this.resetPims,
-                "key": "resetPims"
-            },
-            "clearQuestionnaireResponses": {
-                "type": "button",
-                "display": "Clear EHR QuestionnaireResponses",
-                "value": this.clearQuestionnaireResponses,
-                "key": "clearQuestionnaireResponses"
-            },
-            "endSpacer": {
-                "type": "line",
-                "key": "endSpacer"
-            }
+        const headersModel = {
+            alternativeTherapy: { value: this.state.alternativeTherapy },
+            authUrl: { value: this.state.authUrl },
+            baseUrl: { value: this.state.baseUrl },
+            cdsUrl: { value: this.state.cdsUrl },
+            clearQuestionnaireResponses: { value: this.clearQuestionnaireResponses },
+            defaultUser: { value: this.state.defaultUser },
+            ehrUrl: { value: this.state.ehrUrl },
+            includeConfig: { value: this.state.includeConfig },
+            launchUrl: { value: this.state.launchUrl },
+            orderSelect: { value: this.state.orderSelect },
+            orderSign: { value: this.state.orderSign },
+            pimsUrl: { value: this.state.pimsUrl },
+            resetPims: { value: this.resetPims },
+            resetRemsAdmin: { value: this.resetRemsAdmin },
+            responseExpirationDays: { value: this.state.responseExpirationDays },
+            sendPrefetch: { value: this.state.sendPrefetch },
+            smartAppUrl: { value: this.state.smartAppUrl }
         }
 
         return (
@@ -357,7 +269,7 @@ export default class RequestBuilder extends Component {
                     </div>
                     {this.state.showSettings ?
                         <SettingsBox
-                            headers={headers}
+                            model={headersModel}
                             updateCB={this.updateStateElement}
                         /> : null}
                     <div>

@@ -1,73 +1,8 @@
-import env from 'env-var';
-
 const types = {
     error: "errorClass",
     info: "infoClass",
     debug: "debugClass",
     warning: "warningClass"
-}
-
-const headers = {
-    "baseUrl": {
-        "display": "Base Server",
-        "value": (env.get('REACT_APP_EHR_BASE').asString()),
-        "key": "baseUrl"
-    },
-    "ehrUrl": {
-        "display": "EHR Server",
-        "value": (env.get('REACT_APP_EHR_SERVER').asString()),
-        "key": "ehrUrl"
-    },
-    "cdsUrl": {
-        "display": "REMS Admin",
-        "value": (env.get('REACT_APP_CDS_SERVICE').asString()),
-        "key":"cdsUrl"
-    },
-    "orderSelect": {
-        "display": "Order Select Rest End Point",
-        "value": (env.get('REACT_APP_ORDER_SELECT').asString()),
-        "key":"orderSelect"
-    },
-    "orderSign": {
-        "display": "Order Sign Rest End Point",
-        "value": (env.get('REACT_APP_ORDER_SIGN').asString()),
-        "key":"orderSign"
-    },
-    "authUrl": {
-        "display": "Auth Server",
-        "value": (env.get('REACT_APP_AUTH').asString()),
-        "key": "authUrl"
-    },
-    "alternativeTherapy": {
-        "display": "Alternative Therapy Cards Allowed",
-        "value": (env.get('REACT_APP_ALT_DRUG').asBool()),
-        "key": "alternativeTherapy"
-    }, 
-    "launchUrl" : {
-        "display": "DTR Launch URL (QuestionnaireForm)",
-        "value": (env.get('REACT_APP_LAUNCH_URL').asString()),
-        "key": "launchUrl"
-    },
-    "responseExpirationDays" : {
-        "display": "In Progress Form Expiration Days",
-        "value": (env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt()),
-        "key": "responseExpirationDays"
-    },
-    "pimsUrl" : {
-        "display": "PIMS Server",
-        "value": (env.get('REACT_APP_PIMS_SERVER').asString()),
-        "key": "pimsUrl"
-    },
-    "smartAppUrl" : {
-        "display": "SMART App",
-        "value": (env.get('REACT_APP_SMART_LAUNCH_URL').asString()),
-        "key": "smartAppUrl"
-    },
-    "defaultUser" : {
-        "display": "Default User",
-        "value": (env.get('REACT_APP_DEFAULT_USER').asString()),
-        "key": "defaultUser"
-    }
 }
 
 const genderOptions = {
@@ -156,7 +91,6 @@ const shortNameMap = {
   export {
       defaultValues,
       genderOptions,
-      headers,
       shortNameMap,
       stateOptions,
       types,

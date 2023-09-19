@@ -20,49 +20,66 @@ export default class SettingsBox extends Component {
     }
 
     render() {
-        const headers = this.props.headers;
+        const view = {
+            alternativeTherapy: { display: "Alternative Therapy Cards Allowed", type: 'check' }, 
+            authUrl: { display: "Auth Server", type: "input" },
+            baseUrl: { display: "Base Server", type: "input" },
+            cdsUrl: { display: "REMS Admin", type: "input" },
+            clearQuestionnaireResponses: { display: "Clear EHR QuestionnaireResponses", type: "button" },
+            defaultUser: { display: "Default User", type: "input" },
+            ehrUrl: { display: "EHR Server", type: "input" },
+            includeConfig: { display: "Include Configuration in CRD Request", type: "check" },
+            launchUrl: { display: "DTR Launch URL (QuestionnaireForm)", type: "input" },
+            orderSelect: { display: "Order Select Rest End Point", type: "input" },
+            orderSign: { display: "Order Sign Rest End Point", type: "input" },
+            pimsUrl: { display: "PIMS Server", type: "input" },
+            resetPims: { display: "Reset PIMS Database", type: "button" },
+            resetRemsAdmin: { display: "Reset REMS-Admin Database", type: "button" },
+            responseExpirationDays: { display: "In Progress Form Expiration Days", type: "input" },
+            sendPrefetch: { display: "Send Prefetch", type: "check" },
+            smartAppUrl: { display: "SMART App", type: "input" }
+        }
 
+        const headers = Object.keys(this.props.model)
+            // Merge the model and the view for rendering
+            .map(key => ({ ...this.props.model[key], ...view[key], key }))
+            // Display the fields in descending order of type. If two fields are the same type, then sort by ascending order of display text.
+            .sort((self, other) => -self.type.localeCompare(other.type) || self.display.localeCompare(other.display));
+        
         return (
             <div>
-                {Object.keys(headers).map((header)=>{
-                    let value = headers[header].value;
-                    let type = headers[header].type;
-                    let display = headers[header].display;
+                {headers.map(({ key, value, type, display }) => {
                     switch(type) {
                         case "input":
-                            return <div key={header}>
+                            return <div key={key}>
                                 <p className="setting-header">{display}</p>
                                 <InputBox 
                                     extraClass = "setting-input"
                                     value = {value}
                                     updateCB = {this.updateCB}
-                                    elementName = {header}/>
+                                    elementName = {key}/>
                             </div>
                         case "check":
-                            return <div key={header}>
+                            return <div key={key}>
                                 <p className="setting-header">{display}
                                 <CheckBox
                                     extraClass = "setting-checkbox"
                                     extraInnerClass = "setting-inner-checkbox"
                                     toggle = {value}
                                     updateCB={this.updateCB}
-                                    elementName = {header} />
+                                    elementName = {key} />
                                     </p>
                                 <p>&nbsp;</p>
                             </div>
                         case "button":
-                            return <div key={header}>
+                            return <div key={key}>
                                 <button className={"setting-btn btn btn-class"} onClick={value}>{display}</button>
-                                </div>
-                        case "spacer":
-                            return <div key={header}><br></br></div>
-                        case "line":
-                            return <div key={header}><hr></hr></div>
+                            </div>
                         default:
-                            return <div key={header}><p className="setting-header">{display}</p></div>
-                    }
+                            return <div key={key}><p className="setting-header">{display}</p></div>
+         }
                     
-                })}
+     })}
             </div>
 
         )
