@@ -50,7 +50,6 @@ export default class RequestBuilder extends Component {
     }
 
     componentDidMount() {
-        this.setState({baseUrl: this.state.baseUrl})
         const callback = (keypair) => {
             this.setState({ keypair });
         }
