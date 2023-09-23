@@ -33,6 +33,7 @@ export default class RequestBuilder extends Component {
             cdsUrl: headers.cdsUrl.value,
             orderSelect: headers.orderSelect.value,
             orderSign: headers.orderSign.value,
+            patientView: headers.patientView.value,
             showSettings: false,
             ehrLaunch: false,
             patientList: [],
@@ -123,12 +124,15 @@ export default class RequestBuilder extends Component {
             "includeConfig": this.state.includeConfig,
             "alternativeTherapy": this.state.alternativeTherapy
         }
-        let json_request = buildRequest(request, patient, this.state.ehrUrl, this.state.token, prefetch, this.state.sendPrefetch, hook, hookConfig, deidentifyRecords);
+        let user = this.state.defaultUser;
+        let json_request = buildRequest(request, user, patient, this.state.ehrUrl, this.state.token, prefetch, this.state.sendPrefetch, hook, hookConfig, deidentifyRecords);
         let cdsUrl = this.state.cdsUrl;
         if (hook === "order-sign") {
             cdsUrl = cdsUrl + "/" + this.state.orderSign;
         } else if (hook === "order-select") {
             cdsUrl = cdsUrl + "/" + this.state.orderSelect;
+        } else if (hook === "patient-view") {
+            cdsUrl = cdsUrl + "/" + this.state.patientView;
         } else {
             this.consoleLog("ERROR: unknown hook type: '", hook, "'");
             return;
@@ -305,6 +309,12 @@ export default class RequestBuilder extends Component {
                 "display": "Order Sign Rest End Point",
                 "value": this.state.orderSign,
                 "key": "orderSign"
+            },
+            "patientView": {
+                "type": "input",
+                "display": "Patient View Rest End Point",
+                "value": this.state.patientView,
+                "key": "patientView"
             },
             "authUrl": {
                 "type": "input",

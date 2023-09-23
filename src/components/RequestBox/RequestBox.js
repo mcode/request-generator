@@ -74,6 +74,16 @@ export default class RequestBox extends Component {
     return preppedResources;
   }
 
+  submitPatientView = () => {
+    this.props.submitInfo(
+      this.prepPrefetch(),
+      null,
+      this.state.patient,
+      "patient-view",
+      this.state.deidentifyRecords
+    );
+  };
+
   submit = () => {
     if (!_.isEmpty(this.state.request)) {
       this.props.submitInfo(
@@ -87,7 +97,14 @@ export default class RequestBox extends Component {
   };
 
   updateStateElement = (elementName, text) => {
-    this.setState({ [elementName]: text });
+    if (elementName == "patient") {
+      // if the patient is updated, submit the patient-view CDS hook
+      this.setState({ [elementName]: text }, () => {
+        this.submitPatientView();
+      });
+    } else {
+      this.setState({ [elementName]: text });
+    }
   };
 
   updateStateList = (elementName, text) => {

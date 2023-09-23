@@ -28,6 +28,11 @@ const headers = {
         "value": (env.get('REACT_APP_ORDER_SIGN').asString()),
         "key":"orderSign"
     },
+    "patientView": {
+        "display": "Patient View Rest End Point",
+        "value": (env.get('REACT_APP_PATIENT_VIEW').asString()),
+        "key":"patientView"
+    },
     "authUrl": {
         "display": "Auth Server",
         "value": (env.get('REACT_APP_AUTH').asString()),
