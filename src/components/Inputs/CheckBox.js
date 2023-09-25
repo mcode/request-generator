@@ -10,15 +10,8 @@ export default class CheckBox extends Component {
     this.onInputChange = this.onInputChange.bind(this);
 
     }
-    onInputChange(event){
-        if(this.state.toggle){
-            this.setState({toggle:false})
-            this.props.updateCB(this.props.elementName, false);
-        }else{
-            this.setState({toggle:true})
-            this.props.updateCB(this.props.elementName, true);
-
-        }
+    onInputChange(_event){
+            this.setState({toggle: !this.state.toggle})
 
     }
     render() {

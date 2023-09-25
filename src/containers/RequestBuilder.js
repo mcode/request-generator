@@ -234,23 +234,23 @@ export default class RequestBuilder extends Component {
 
 
     render() {
-        const headersModel = {
-            alternativeTherapy: { value: this.state.alternativeTherapy },
-            baseUrl: { value: this.state.baseUrl },
-            cdsUrl: { value: this.state.cdsUrl },
-            clearQuestionnaireResponses: { value: this.clearQuestionnaireResponses },
-            defaultUser: { value: this.state.defaultUser },
-            ehrUrl: { value: this.state.ehrUrl },
-            includeConfig: { value: this.state.includeConfig },
-            launchUrl: { value: this.state.launchUrl },
-            orderSelect: { value: this.state.orderSelect },
-            orderSign: { value: this.state.orderSign },
-            pimsUrl: { value: this.state.pimsUrl },
-            resetPims: { value: this.resetPims },
-            resetRemsAdmin: { value: this.resetRemsAdmin },
-            responseExpirationDays: { value: this.state.responseExpirationDays },
-            sendPrefetch: { value: this.state.sendPrefetch },
-            smartAppUrl: { value: this.state.smartAppUrl }
+        const settingsState = {
+            alternativeTherapy: this.state.alternativeTherapy,
+            baseUrl: this.state.baseUrl,
+            cdsUrl: this.state.cdsUrl,
+            clearQuestionnaireResponses: this.clearQuestionnaireResponses,
+            defaultUser: this.state.defaultUser,
+            ehrUrl: this.state.ehrUrl,
+            includeConfig: this.state.includeConfig,
+            launchUrl: this.state.launchUrl,
+            orderSelect: this.state.orderSelect,
+            orderSign: this.state.orderSign,
+            pimsUrl: this.state.pimsUrl,
+            resetPims: this.resetPims,
+            resetRemsAdmin: this.resetRemsAdmin,
+            responseExpirationDays: this.state.responseExpirationDays,
+            sendPrefetch: this.state.sendPrefetch,
+            smartAppUrl: this.state.smartAppUrl
         }
 
         return (
@@ -264,11 +264,11 @@ export default class RequestBuilder extends Component {
 
 
                     </div>
-                    {this.state.showSettings ?
+                    {this.state.showSettings &&
                         <SettingsBox
-                            model={headersModel}
+                            state={settingsState}
                             updateCB={this.updateStateElement}
-                        /> : null}
+                        />}
                     <div>
                         {/*for the ehr launch */}
                         <RequestBox

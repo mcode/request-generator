@@ -1,3 +1,70 @@
+const headerDefinitions = {
+    alternativeTherapy: { 
+        display: "Alternative Therapy Cards Allowed",
+        type: "check"
+    }, 
+    baseUrl: { 
+        display: "Base Server",
+        type: "input"
+    },
+    cdsUrl: { 
+        display: "REMS Admin",
+        type: "input"
+    },
+    clearQuestionnaireResponses: { 
+        display: "Clear EHR QuestionnaireResponses",
+        type: "button"
+    },
+    defaultUser: { 
+        display: "Default User",
+        type: "input"
+    },
+    ehrUrl: { 
+        display: "EHR Server",
+        type: "input"
+    },
+    includeConfig: { 
+        display: "Include Configuration in CRD Request",
+        type: "check"
+    },
+    launchUrl: { 
+        display: "DTR Launch URL (QuestionnaireForm)",
+        type: "input"
+    },
+    orderSelect: { 
+        display: "Order Select Rest End Point",
+        type: "input"
+    },
+    orderSign: { 
+        display: "Order Sign Rest End Point",
+        type: "input"
+    },
+    pimsUrl: { 
+        display: "PIMS Server",
+        type: "input"
+    },
+    resetPims: { 
+        display: "Reset PIMS Database",
+        type: "button"
+    },
+    resetRemsAdmin: { 
+        display: "Reset REMS-Admin Database",
+        type: "button"
+    },
+    responseExpirationDays: { 
+        display: "In Progress Form Expiration Days",
+        type: "input"
+    },
+    sendPrefetch: { 
+        display: "Send Prefetch",
+        type: "check"
+    },
+    smartAppUrl: { 
+        display: "SMART App",
+        type: "input"
+    }
+}
+
 const types = {
     error: "errorClass",
     info: "infoClass",
@@ -91,6 +158,7 @@ const shortNameMap = {
   export {
       defaultValues,
       genderOptions,
+      headerDefinitions,
       shortNameMap,
       stateOptions,
       types,
