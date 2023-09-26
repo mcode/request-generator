@@ -158,25 +158,6 @@ export default class RequestBuilder extends Component {
     }
 
     render() {
-        const settingsState = {
-            alternativeTherapy: this.state.alternativeTherapy,
-            baseUrl: this.state.baseUrl,
-            cdsUrl: this.state.cdsUrl,
-            clearQuestionnaireResponses: this.clearQuestionnaireResponses,
-            defaultUser: this.state.defaultUser,
-            ehrUrl: this.state.ehrUrl,
-            includeConfig: this.state.includeConfig,
-            launchUrl: this.state.launchUrl,
-            orderSelect: this.state.orderSelect,
-            orderSign: this.state.orderSign,
-            pimsUrl: this.state.pimsUrl,
-            resetPims: this.resetPims,
-            resetRemsAdmin: this.resetRemsAdmin,
-            responseExpirationDays: this.state.responseExpirationDays,
-            sendPrefetch: this.state.sendPrefetch,
-            smartAppUrl: this.state.smartAppUrl
-        }
-
         return (
             <div>
                 <div className="nav-header">
