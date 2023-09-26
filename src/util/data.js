@@ -1,3 +1,77 @@
+import FHIR from "fhirclient";
+
+const clearQuestionnaireResponses = ({ ehrUrl, defaultUser, access_token }, consoleLog) => (_event) => {
+    console.log("Clear QuestionnaireResponses from the EHR: " + ehrUrl + " for author " + defaultUser);
+    const client = FHIR.client({ 
+        serverUrl: ehrUrl, 
+        ...(access_token ? { tokenResponse: access_token } : {})
+    });
+    client
+        .request("QuestionnaireResponse?author=" + defaultUser, { flat: true })
+        .then((result) => {
+            console.log(result);
+            result.forEach((resource) => {
+                console.log(resource.id);
+                client
+                    .delete("QuestionnaireResponse/" + resource.id)
+                    .then((result) => {
+                        consoleLog("Successfully deleted QuestionnaireResponse " + resource.id + " from EHR", types.info);
+                        console.log(result);
+                    })
+                    .catch((e) => {
+                        console.log("Failed to delete QuestionnaireResponse " + resource.id);
+                        console.log(e);
+                    });
+            });
+        })
+        .catch((e) => {
+            console.log("Failed to retrieve list of QuestionnaireResponses");
+            console.log(e);
+        });
+};
+
+const resetPims = ({ pimsUrl }, consoleLog) => (_event) => {
+    let url = new URL(pimsUrl);
+    const resetUrl = url.origin + "/doctorOrders/api/deleteAll";
+    console.log("reset pims: " + resetUrl);
+    
+    fetch(resetUrl, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        console.log("Reset pims: ");
+        console.log(response);
+        consoleLog("Successfully reset pims database", types.info);
+    })
+    .catch(error => {
+        console.log("Reset pims error: ");
+        consoleLog("Server returned error when resetting pims: ", types.error);
+        consoleLog(error.message);
+        console.log(error);
+    });
+}
+
+const resetRemsAdmin = ({ cdsUrl } , consoleLog) => (_event) => {
+    let url = new URL(cdsUrl);
+    const resetUrl = url.origin + "/etasu/reset";
+
+    fetch(resetUrl, {
+        method: 'POST',
+    })
+    .then(response => {
+        console.log("Reset rems admin etasu: ");
+        console.log(response);
+        consoleLog("Successfully reset rems admin etasu", types.info);
+    })
+    .catch(error => {
+        console.log("Reset rems admin error: ");
+        consoleLog("Server returned error when resetting rems admin etasu: ", types.error);
+        consoleLog(error.message);
+        console.log(error);
+    });
+}
+
+
 const headerDefinitions = {
     alternativeTherapy: { 
         display: "Alternative Therapy Cards Allowed",
@@ -13,7 +87,8 @@ const headerDefinitions = {
     },
     clearQuestionnaireResponses: { 
         display: "Clear EHR QuestionnaireResponses",
-        type: "button"
+        type: "button",
+        reset: clearQuestionnaireResponses
     },
     defaultUser: { 
         display: "Default User",
@@ -45,11 +120,13 @@ const headerDefinitions = {
     },
     resetPims: { 
         display: "Reset PIMS Database",
-        type: "button"
+        type: "button",
+        reset: resetPims
     },
     resetRemsAdmin: { 
         display: "Reset REMS-Admin Database",
-        type: "button"
+        type: "button",
+        reset: resetRemsAdmin
     },
     responseExpirationDays: { 
         display: "In Progress Form Expiration Days",

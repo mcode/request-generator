@@ -7,16 +7,13 @@ import { headerDefinitions } from '../../util/data'
 export default class SettingsBox extends Component {
     constructor(props) {
         super(props);
-        this.updateCB = this.updateCB.bind(this);
     }
 
     componentDidMount() { }
 
-    updateCB(elementName, value) {
-        this.props.updateCB(elementName, value);
-    }
-
     render() {
+        const { state, consoleLog, updateCB } = this.props;
+
         const headers = Object.keys(headerDefinitions)
             .map(key => ({ ...headerDefinitions[key], key }))
             // Display the fields in descending order of type. If two fields are the same type, then sort by ascending order of display text.
@@ -24,16 +21,15 @@ export default class SettingsBox extends Component {
         
         return (
             <div>
-                {headers.map(({ key, type, display }) => {
-                    const value = this.props.state[key];
+                {headers.map(({ key, type, display, reset=undefined }) => {
                     switch(type) {
                         case "input":
                             return <div key={key}>
                                 <p className="setting-header">{display}</p>
                                 <InputBox 
                                     extraClass = "setting-input"
-                                    value = {value}
-                                    updateCB = {this.updateCB}
+                                    value = {state[key]}
+                                    updateCB = {updateCB}
                                     elementName = {key}/>
                             </div>
                         case "check":
@@ -42,21 +38,20 @@ export default class SettingsBox extends Component {
                                 <CheckBox
                                     extraClass = "setting-checkbox"
                                     extraInnerClass = "setting-inner-checkbox"
-                                    toggle = {value}
-                                    updateCB={this.updateCB}
+                                    toggle = {state[key]}
+                                    updateCB={updateCB}
                                     elementName = {key} />
                                     </p>
                                 <p>&nbsp;</p>
                             </div>
                         case "button":
                             return <div key={key}>
-                                <button className={"setting-btn btn btn-class"} onClick={value}>{display}</button>
+                                <button className={"setting-btn btn btn-class"} onClick={reset(state, consoleLog)}>{display}</button>
                             </div>
                         default:
                             return <div key={key}><p className="setting-header">{display}</p></div>
-         }
-                    
-     })}
+                    }
+                })}
             </div>
 
         )

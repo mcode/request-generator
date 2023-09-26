@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import FHIR from "fhirclient";
 import DisplayBox from '../components/DisplayBox/DisplayBox';
 import ConsoleBox from '../components/ConsoleBox/ConsoleBox';
 import '../index.css';
@@ -157,81 +156,6 @@ export default class RequestBuilder extends Component {
     exitSmart() {
         this.setState({ openPatient: false })
     }
-    
-    clearQuestionnaireResponses = (e) => {
-        console.log("Clear QuestionnaireResponses from the EHR: " + this.state.ehrUrl + " for author " + this.state.defaultUser);
-        const params = {serverUrl: this.state.ehrUrl};
-        if (this.state.access_token) {
-            params["tokenResponse"] = {access_token: this.state.access_token}
-        }
-        const client = FHIR.client(
-            params
-        );
-        client
-            .request("QuestionnaireResponse?author=" + this.state.defaultUser, { flat: true })
-            .then((result) => {
-                console.log(result);
-                result.forEach((resource) => {
-                    console.log(resource.id);
-                    client
-                        .delete("QuestionnaireResponse/" + resource.id)
-                        .then((result) => {
-                            this.consoleLog("Successfully deleted QuestionnaireResponse " + resource.id + " from EHR", types.info);
-                            console.log(result);
-                        })
-                        .catch((e) => {
-                            console.log("Failed to delete QuestionnaireResponse " + resource.id);
-                            console.log(e);
-                        });
-                });
-            })
-            .catch((e) => {
-                console.log("Failed to retrieve list of QuestionnaireResponses");
-                console.log(e);
-            });
-    };
-
-    resetPims = (e) => {
-        let url = new URL(this.state.pimsUrl);
-        const resetUrl = url.origin + "/doctorOrders/api/deleteAll";
-        console.log("reset pims: " + resetUrl);
-        
-        fetch(resetUrl, {
-            method: 'DELETE',
-        })
-        .then(response => {
-            console.log("Reset pims: ");
-            console.log(response);
-            this.consoleLog("Successfuly reset pims database", types.info);
-        })
-        .catch(error => {
-            console.log("Reset pims error: ");
-            this.consoleLog("Server returned error when resetting pims: ", types.error);
-            this.consoleLog(error.message);
-            console.log(error);
-        });
-    }
-
-    resetRemsAdmin = (e) => {
-        let url = new URL(this.state.cdsUrl);
-        const resetUrl = url.origin + "/etasu/reset";
-
-        fetch(resetUrl, {
-            method: 'POST',
-        })
-        .then(response => {
-            console.log("Reset rems admin etasu: ");
-            console.log(response);
-            this.consoleLog("Successfully reset rems admin etasu", types.info);
-        })
-        .catch(error => {
-            console.log("Reset rems admin error: ");
-            this.consoleLog("Server returned error when resetting rems admin etasu: ", types.error);
-            this.consoleLog(error.message);
-            console.log(error);
-        });
-    }
-
 
     render() {
         const settingsState = {
@@ -266,7 +190,8 @@ export default class RequestBuilder extends Component {
                     </div>
                     {this.state.showSettings &&
                         <SettingsBox
-                            state={settingsState}
+                            state={this.state}
+                            consoleLog={this.consoleLog}
                             updateCB={this.updateStateElement}
                         />}
                     <div>
