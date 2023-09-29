@@ -71,6 +71,16 @@ export default class RequestBox extends Component {
     return preppedResources;
   }
 
+  submitPatientView = () => {
+    this.props.submitInfo(
+      this.prepPrefetch(),
+      null,
+      this.state.patient,
+      "patient-view",
+      this.state.deidentifyRecords
+    );
+  };
+
   submit = () => {
     if (!_.isEmpty(this.state.request)) {
       this.props.submitInfo(
@@ -81,6 +91,12 @@ export default class RequestBox extends Component {
       );
     }
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.patient != this.state.patient) {
+      this.submitPatientView();
+    }
+  }
 
   updateStateElement = (elementName, text) => {
     this.setState({ [elementName]: text });

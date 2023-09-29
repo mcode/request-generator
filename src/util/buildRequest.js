@@ -1,5 +1,12 @@
 
-export default function buildRequest(request, patient, ehrUrl, token, prefetch, includePrefetch, hook, hookConfig) {
+export default function buildRequest(request, user, patient, ehrUrl, token, prefetch, includePrefetch, hook, hookConfig) {
+
+    // Use the provided user if there is no request for this hook
+    let userId = 'Practitioner/' + user;
+    if (request) {
+        userId = request.requester.reference;
+    }
+
     const r4json = {
         "hookInstance": "d1577c69-dfbe-44ad-ba6d-3e05e953b2ea",
         "fhirServer": ehrUrl,
@@ -12,7 +19,7 @@ export default function buildRequest(request, patient, ehrUrl, token, prefetch, 
             "subject": "cds-service4"
         },
         "context": {
-            "userId": request.requester.reference,
+            "userId": userId,
             "patientId": patient.id,
             "encounterId": "enc89284"
         }
@@ -49,6 +56,8 @@ export default function buildRequest(request, patient, ehrUrl, token, prefetch, 
                 }
             ]
         }
+    } else if (hook === "patient-view") {
+        includePrefetch = false;
     }
 
     if(includePrefetch){
