@@ -92,15 +92,14 @@ export default class RequestBox extends Component {
     }
   };
 
-  updateStateElement = (elementName, text) => {
-    if (elementName == "patient") {
-      // if the patient is updated, submit the patient-view CDS hook
-      this.setState({ [elementName]: text }, () => {
-        this.submitPatientView();
-      });
-    } else {
-      this.setState({ [elementName]: text });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.patient != this.state.patient) {
+      this.submitPatientView();
     }
+  }
+
+  updateStateElement = (elementName, text) => {
+    this.setState({ [elementName]: text });
   };
 
   updateStateList = (elementName, text) => {
