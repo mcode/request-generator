@@ -114,6 +114,10 @@ const headerDefinitions = {
         display: "Order Sign Rest End Point",
         type: "input"
     },
+    patientView: {
+        display: "Patient View Rest End Point",
+        type: "input",
+    },
     pimsUrl: { 
         display: "PIMS Server",
         type: "input"

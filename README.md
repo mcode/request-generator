@@ -37,6 +37,7 @@ Following are a list of modifiable paths:
 | REACT_APP_EHR_BASE     |  `http://localhost:8080/test-ehr/r4`             |
 | REACT_APP_ORDER_SIGN   |  `rems-order-sign`                               |
 | REACT_APP_ORDER_SELECT |  `rems-order-select`                             |
+| REACT_APP_PATIENT_VIEW |  `rems-patient-view`                             |
 | REACT_APP_USER         |  `alice`                                         |
 | REACT_APP_PASSWORD     |  `alice`                                         |
 | REACT_APP_ALT_DRUG     |  `true`                                          |

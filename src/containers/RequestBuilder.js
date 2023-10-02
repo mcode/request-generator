@@ -33,6 +33,7 @@ export default class RequestBuilder extends Component {
             launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
             orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
             orderSign: env.get('REACT_APP_ORDER_SIGN').asString(),
+            patientView: env.get('REACT_APP_PATIENT_VIEW').asString(),
             pimsUrl: env.get('REACT_APP_PIMS_SERVER').asString(),
             responseExpirationDays: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),
             sendPrefetch: true,
@@ -90,7 +91,7 @@ export default class RequestBuilder extends Component {
         return controller;
     }
 
-    submit_info(prefetch, request, patient, hook, deidentifyRecords) {
+    submit_info(prefetch, request, patient, hook) {
         this.setState({loading: true});
         this.consoleLog("Initiating form submission", types.info);
         this.setState({patient});
@@ -98,12 +99,15 @@ export default class RequestBuilder extends Component {
             "includeConfig": this.state.includeConfig,
             "alternativeTherapy": this.state.alternativeTherapy
         }
-        let json_request = buildRequest(request, patient, this.state.ehrUrl, this.state.token, prefetch, this.state.sendPrefetch, hook, hookConfig, deidentifyRecords);
+        let user = this.state.defaultUser;
+        let json_request = buildRequest(request, user, patient, this.state.ehrUrl, this.state.token, prefetch, this.state.sendPrefetch, hook, hookConfig);
         let cdsUrl = this.state.cdsUrl;
         if (hook === "order-sign") {
             cdsUrl = cdsUrl + "/" + this.state.orderSign;
         } else if (hook === "order-select") {
             cdsUrl = cdsUrl + "/" + this.state.orderSelect;
+        } else if (hook === "patient-view") {
+            cdsUrl = cdsUrl + "/" + this.state.patientView;
         } else {
             this.consoleLog("ERROR: unknown hook type: '", hook, "'");
             return;

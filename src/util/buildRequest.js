@@ -1,35 +1,10 @@
 
-import deidentifyPatient from "./deidentifyPatient";
-import deidentifyCoverage from "./deidentifyCoverage";
-import clone from 'clone'
+export default function buildRequest(request, user, patient, ehrUrl, token, prefetch, includePrefetch, hook, hookConfig) {
 
-
-export default function buildRequest(request, patient, ehrUrl, token, prefetch, includePrefetch, hook, hookConfig, deidentifyRecords) {
-    if (deidentifyRecords) {
-        // make a copy of the resources before modifying
-        let newPrefetch = clone(prefetch);
-
-        console.log("Deidentify Patient and Coverage Resources to remove PHI");
-        // loop through the prefetch looking for the patient and the coverage
-        newPrefetch.forEach((bundle) => {
-            bundle.forEach((resource) => {
-                let resourceType = resource.resource.resourceType;
-                if (resourceType === "Patient") {
-                    // deidentify the patient
-                    let patient = deidentifyPatient(resource.resource);
-                    // replace the patient resource with the deidentified version
-                    resource.resource = patient
-                } else if (resourceType === "Coverage") {
-                    // deidentify the coverage
-                    let coverage = deidentifyCoverage(resource.resource);
-                    // replace the coverage resource with the deidentified version
-                    resource.resource = coverage
-                }
-            })
-        });
-
-        // set the prefetch reference to the modified copy
-        prefetch = newPrefetch
+    // Use the provided user if there is no request for this hook
+    let userId = 'Practitioner/' + user;
+    if (request) {
+        userId = request.requester.reference;
     }
 
     const r4json = {
@@ -44,7 +19,7 @@ export default function buildRequest(request, patient, ehrUrl, token, prefetch, 
             "subject": "cds-service4"
         },
         "context": {
-            "userId": request.requester.reference,
+            "userId": userId,
             "patientId": patient.id,
             "encounterId": "enc89284"
         }
@@ -81,6 +56,8 @@ export default function buildRequest(request, patient, ehrUrl, token, prefetch, 
                 }
             ]
         }
+    } else if (hook === "patient-view") {
+        includePrefetch = false;
     }
 
     if(includePrefetch){

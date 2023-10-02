@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import FHIR from "fhirclient";
 import SMARTBox from "../SMARTBox/SMARTBox";
 import PatientBox from "../SMARTBox/PatientBox";
-import CheckBox from '../Inputs/CheckBox';
 import { types, defaultValues, shortNameMap } from "../../util/data";
 import { getAge } from "../../util/fhir";
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
@@ -28,8 +27,7 @@ export default class RequestBox extends Component {
       display: null,
       request: {},
       gatherCount: 0,
-      response: {},
-      deidentifyRecords: false
+      response: {}
     };
 
     this.renderRequestResources = this.renderRequestResources.bind(this);
@@ -39,7 +37,6 @@ export default class RequestBox extends Component {
     this.renderPrefetchedResources = this.renderPrefetchedResources.bind(this);
     this.renderError = this.renderError.bind(this);
     this.buildLaunchLink = this.buildLaunchLink.bind(this);
-    this.updateDeidentifyCheckbox = this.updateDeidentifyCheckbox.bind(this);
   }
 
   // TODO - see how to submit response for alternative therapy
@@ -48,7 +45,7 @@ export default class RequestBox extends Component {
     // Prepare the prefetch.
     const prefetch = this.prepPrefetch();
     // Submit the CRD request.
-    this.props.submitInfo(prefetch, request, this.state.patient, "order-sign", this.state.deidentifyRecords);
+    this.props.submitInfo(prefetch, request, this.state.patient, "order-sign");
   }
 
   componentDidMount() {}
@@ -74,17 +71,32 @@ export default class RequestBox extends Component {
     return preppedResources;
   }
 
+  submitPatientView = () => {
+    this.props.submitInfo(
+      this.prepPrefetch(),
+      null,
+      this.state.patient,
+      "patient-view",
+      this.state.deidentifyRecords
+    );
+  };
+
   submit = () => {
     if (!_.isEmpty(this.state.request)) {
       this.props.submitInfo(
         this.prepPrefetch(),
         this.state.request,
         this.state.patient,
-        "order-sign",
-        this.state.deidentifyRecords
+        "order-sign"
       );
     }
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.patient != this.state.patient) {
+      this.submitPatientView();
+    }
+  }
 
   updateStateElement = (elementName, text) => {
     this.setState({ [elementName]: text });
@@ -422,10 +434,6 @@ export default class RequestBox extends Component {
     return Object.keys(this.state.patient).length === 0;
   }
 
-  updateDeidentifyCheckbox(elementName, value) {
-    this.setState({ deidentifyRecords: value });
-  }
-
   render() {
     const params = {};
     params['serverUrl'] = this.props.ehrUrl;
@@ -481,18 +489,7 @@ export default class RequestBox extends Component {
             <div>
               {this.renderPatientInfo()}
               {this.renderPrefetchedResources()}
-            </div>
-
-            {this.state.patient.id ? 
-              <div>
-                <b>Deidentify Records</b>
-                <CheckBox
-                  toggle = {this.state.deidentifyRecords}
-                  updateCB={this.updateDeidentifyCheckbox}
-                  elementName = "deidentifyCheckbox" 
-                  />
-              </div> : <div/>
-            }
+            </div> 
           </div>
         </div>
         {this.state.patient.id ?
