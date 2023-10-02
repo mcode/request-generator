@@ -9,7 +9,6 @@ import _ from "lodash";
 import "./request.css";
 import { PrefetchTemplate } from "../../PrefetchTemplate";
 import { retrieveLaunchContext } from "../../util/util";
-import env from 'env-var';
 import PersonIcon from '@mui/icons-material/Person';
 import { Button, ButtonGroup } from '@mui/material';
 

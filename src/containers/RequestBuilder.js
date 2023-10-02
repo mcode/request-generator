@@ -18,7 +18,6 @@ export default class RequestBuilder extends Component {
             keypair: null,
             loading: false,
             logs: [],
-            openPatient: false,
             patient: {},
             response: null,
             showSettings: false,
@@ -41,10 +40,8 @@ export default class RequestBuilder extends Component {
         };
 
         this.updateStateElement = this.updateStateElement.bind(this);
-        this.startLoading = this.startLoading.bind(this);
         this.submit_info = this.submit_info.bind(this);
         this.consoleLog = this.consoleLog.bind(this);
-        this.exitSmart = this.exitSmart.bind(this);
         this.takeSuggestion = this.takeSuggestion.bind(this);
         this.requestBox = React.createRef();
     }
@@ -77,12 +74,6 @@ export default class RequestBuilder extends Component {
 
     updateStateElement = (elementName, text) => {
         this.setState({ [elementName]: text });
-    }
-
-    startLoading() {
-        this.setState({ loading: true }, () => {
-            this.submit_info();
-        });
     }
 
     timeout = (time) => {
@@ -155,10 +146,6 @@ export default class RequestBuilder extends Component {
     takeSuggestion(resource) {
         // when a suggestion is taken, call into the requestBox to resubmit the CRD request with the new request
         this.requestBox.current.replaceRequestAndSubmit(resource);
-    }
-
-    exitSmart() {
-        this.setState({ openPatient: false })
     }
 
     render() {
