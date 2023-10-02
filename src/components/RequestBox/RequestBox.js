@@ -76,7 +76,6 @@ export default class RequestBox extends Component {
       null,
       this.state.patient,
       "patient-view",
-      this.state.deidentifyRecords
     );
   };
 
