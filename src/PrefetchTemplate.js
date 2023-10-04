@@ -13,10 +13,14 @@ export class PrefetchTemplate {
       "MedicationRequest/{{context.medications.MedicationRequest.id}}");
     const PATIENT_PREFETCH = new PrefetchTemplate("{{context.patientId}}");
 
+    const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
+      "MedicationRequest?subject={{context.patientId}}");
+
     // prefetchMap.set("Coverage", COVERAGE_PREFETCH_QUERY);
     prefetchMap.set("request", REQUEST_PREFETCH);
     prefetchMap.set("practitioner", PRACTITIONER_PREFETCH);
     prefetchMap.set("patient", PATIENT_PREFETCH);
+    prefetchMap.set("medicationRequests", ALL_REQUESTS_PREFETCH);
     // prefetchMap.set("ServiceRequest", SERVICE_REQUEST_BUNDLE);
     // prefetchMap.set("Encounter", ENCOUNTER_BUNDLE);
 
@@ -44,7 +48,7 @@ export class PrefetchTemplate {
     return paramElementMap;
   }
 
-  static generateQueries(requestBundle, ...prefetchKeys) {
+  static generateQueries(requestBundle, patientReference, userReference, ...prefetchKeys) {
     var resolvedQueries = new Map();
     for (var i = 0; i < prefetchKeys.length; i++) {
       var prefetchKey = prefetchKeys[i];
@@ -54,7 +58,16 @@ export class PrefetchTemplate {
       var resolvedQuery = query.slice();
       for (var j = 0; j < parametersToFill.length; j++) {
         var unresolvedParameter = parametersToFill[j];
-        var resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
+        var resolvedParameter;
+        if (requestBundle) {
+          var resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
+        } else {
+          if (unresolvedParameter === 'context.patientId') {
+            resolvedParameter = patientReference;
+          } else if (unresolvedParameter === 'context.userId') {
+            resolvedParameter = userReference
+          }
+        }
         resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
       }
       resolvedQueries.set(prefetchKey, resolvedQuery);
