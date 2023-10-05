@@ -87,10 +87,13 @@ export default class SMARTBox extends Component {
     if (this.state.request !== "none") {
       const request = JSON.parse(this.state.request);
       if (request.resourceType === "DeviceRequest" || request.resourceType === "ServiceRequest" || request.resourceType === "MedicationRequest" || request.resourceType === "MedicationDispense") {
-        this.updatePrefetchRequest(request);
+        this.updatePrefetchRequest(request, patient, this.props.defaultUser);
       } else {
         this.props.clearCallback();
       }
+    }
+    else {
+      this.updatePrefetchRequest(null, patient, this.props.defaultUser);
     }
 
     if (this.state.response !== "none") {
@@ -103,25 +106,49 @@ export default class SMARTBox extends Component {
     this.props.callback("response", response);
   }
 
-  updatePrefetchRequest(request) {
-    this.props.callback(request.resourceType, request);
-    const queries = this.props.updatePrefetchCallback(request, "request", "patient", "practitioner");
+  fetchResources(queries) {
+    console.log(queries);
+    var requests = [];
+    this.props.callback("prefetchCompleted", false);
     queries.forEach((query, queryKey) => {
       const urlQuery = this.props.ehrUrl + '/' + query;
-      fetch(urlQuery, {
+      requests.push(fetch(urlQuery, {
         method: "GET",
       }).then((response) => {
         const responseJson = response.json()
         return responseJson;
       }).then((resource) => {
         this.props.callbackMap("prefetchedResources", queryKey, resource);
-      });
+      }));
     });
-    this.props.callback("request", request);
-    const coding = this.getCoding(request);
-    this.props.callback("code", coding.code);
-    this.props.callback("codeSystem", coding.system);
-    this.props.callback("display", coding.display);
+
+    Promise.all(requests)
+    .then((results) => {
+      console.log("fetchResourcesSync: finished")
+      this.props.callback("prefetchCompleted", true);
+    }).catch(function(err) {
+      console.log("fetchResourcesSync: failed to wait for all the prefetch to populate");
+      console.log(err);
+    }) 
+  }
+
+  updatePrefetchRequest(request, patient, user) {
+    const patientReference = "Patient/"+patient?.id;
+    const userReference = "Practitioner/"+user;
+    if (request) {
+      this.props.callback(request.resourceType, request);
+      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, "request", "patient", "practitioner");
+      this.fetchResources(queries);
+
+      this.props.callback("request", request);
+      const coding = this.getCoding(request);
+      this.props.callback("code", coding.code);
+      this.props.callback("codeSystem", coding.system);
+      this.props.callback("display", coding.display);
+    } else {
+      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, "patient", "practitioner", "medicationRequests");
+      this.fetchResources(queries);
+    }
   }
 
   getDeviceRequest(patientId, client) {

@@ -41,10 +41,8 @@ export default class RequestBox extends Component {
   // TODO - see how to submit response for alternative therapy
   replaceRequestAndSubmit(request) {
     this.setState({ request: request });
-    // Prepare the prefetch.
-    const prefetch = this.prepPrefetch();
-    // Submit the CRD request.
-    this.props.submitInfo(prefetch, request, this.state.patient, "order-sign");
+    // Submit the cds hook request.
+    this.submitOrderSign(request);
   }
 
   componentDidMount() {}
@@ -75,24 +73,49 @@ export default class RequestBox extends Component {
       this.prepPrefetch(),
       null,
       this.state.patient,
-      "patient-view",
+      "patient-view"
     );
   };
 
-  submit = () => {
+  submitOrderSelect = () => {
     if (!_.isEmpty(this.state.request)) {
       this.props.submitInfo(
         this.prepPrefetch(),
         this.state.request,
         this.state.patient,
-        "order-sign"
+        "order-select"
       );
     }
   };
 
+  submitOrderSign = (request) => {
+    this.props.submitInfo(
+      this.prepPrefetch(),
+      request,
+      this.state.patient,
+      "order-sign"
+    );
+  };
+
+  submit = () => {
+    if (!_.isEmpty(this.state.request)) {
+      this.submitOrderSign(this.state.request);
+    }
+  };
+
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.patient != this.state.patient) {
-      this.submitPatientView();
+    // if prefetch completed
+    if ((prevState.prefetchCompleted != this.state.prefetchCompleted) 
+      && (this.state.prefetchCompleted)) {
+      // if the prefetch contains a medicationRequests bundle
+      if (this.state.prefetchedResources.medicationRequests) {
+        this.submitPatientView();
+      }
+      // we could use this in the future to send order-select
+      //// if the prefetch contains a request
+      //if (this.state.prefetchedResources.request) {
+      //  this.submitOrderSelect();
+      //}
     }
   }
 
@@ -467,6 +490,7 @@ export default class RequestBox extends Component {
                             ehrUrl={this.props.ehrUrl}
                             options={this.state.codeValues}
                             responseExpirationDays={this.props.responseExpirationDays}
+                            defaultUser={this.props.defaultUser}
                           />
                         );
                       })}
