@@ -56,8 +56,7 @@ export default function buildRequest(request, user, patient, ehrUrl, token, pref
                 }
             ]
         }
-    } else if (hook === "patient-view") {
-        includePrefetch = false;
+    //} else if (hook === "patient-view") {
     }
 
     if(includePrefetch){
