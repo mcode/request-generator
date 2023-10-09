@@ -289,14 +289,13 @@ export default class PatientBox extends Component {
       });
   }
 
-  makeQROption(qr, options) {
+  makeQROption(qr) {
     const display = `${qr.questionnaire}: created at ${qr.authored}`;
-    let option = {
+    return {
       key: qr.id,
       text: display,
       value: JSON.stringify(qr)
     }
-    options.push(option);
   }
 
   render() {
@@ -339,7 +338,9 @@ export default class PatientBox extends Component {
     };
 
     if (this.state.questionnaireResponses.data) {
-      this.state.questionnaireResponses.data.forEach(qr => this.makeQROption(qr, responseOptions));
+      responseOptions = this.state.questionnaireResponses.data
+        .sort((first, second) => second.authored.localeCompare(first.authored))
+        .map(qr => this.makeQROption(qr));
       returned = true;
     }
 
