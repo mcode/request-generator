@@ -10,10 +10,12 @@ export default class CheckBox extends Component {
     this.onInputChange = this.onInputChange.bind(this);
 
     }
-    onInputChange(_event){
-            this.setState({toggle: !this.state.toggle})
 
+    onInputChange(_event){
+        this.setState({toggle: !this.state.toggle});
+        this.props.updateCB(this.props.elementName, !this.state.toggle);
     }
+
     render() {
         const toggleClass = (this.state.toggle?"checkBoxClicked":"checkBox");
         const indicatorClass = this.state.toggle?"onOffActive":"onOff";
