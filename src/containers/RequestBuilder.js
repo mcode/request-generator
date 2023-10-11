@@ -136,7 +136,7 @@ export default class RequestBuilder extends Component {
             });
         } catch (error) {
             this.setState({ loading: false });
-            this.consoleLog("Unexpected error occured", types.error)
+            this.consoleLog("Unexpected error occurred", types.error)
             if (error instanceof TypeError) {
                 this.consoleLog(error.name + ": " + error.message, types.error);
             }
