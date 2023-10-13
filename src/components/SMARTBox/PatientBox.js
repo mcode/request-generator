@@ -370,7 +370,7 @@ export default class SMARTBox extends Component {
               Request:
             </span>
             { !options.length && returned ?
-              <span className="emptyForm">No reqeusts</span>
+              <span className="emptyForm">No requests</span>
             : 
               this.makeDropdown(options, "Choose a patient", this.state.request, this.handleRequestChange)
             }
