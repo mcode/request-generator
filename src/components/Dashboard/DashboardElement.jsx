@@ -5,6 +5,8 @@ import { Paper } from '@mui/material';
 import useStyles from './styles';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import env from 'env-var';
+
 const DashboardElement = (props) => {
   const classes = useStyles();
   const resource = props.resource;
@@ -20,7 +22,7 @@ const DashboardElement = (props) => {
     const link = {
       appContext: encodeURIComponent(`response=QuestionnaireResponse/${resource.id}`),
       type: "smart",
-      url: headers.launchUrl.value
+      url: env.get('REACT_APP_LAUNCH_URL').asString()
     }
     retrieveLaunchContext(link, clientState.tokenResponse.accessToken, clientState.tokenResponse.patient, clientState.serverUrl, 'r4').then((e) => {
       window.open(e.url, "_blank");

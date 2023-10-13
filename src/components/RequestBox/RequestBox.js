@@ -9,7 +9,6 @@ import _ from "lodash";
 import "./request.css";
 import { PrefetchTemplate } from "../../PrefetchTemplate";
 import { retrieveLaunchContext } from "../../util/util";
-import env from 'env-var';
 import PersonIcon from '@mui/icons-material/Person';
 import { Button, ButtonGroup } from '@mui/material';
 
@@ -150,7 +149,7 @@ export default class RequestBox extends Component {
 
   getPatients = () => {
     this.setState({ openPatient: true });
-    const params = {serverUrl: env.get('REACT_APP_EHR_SERVER').asString()};
+    const params = {serverUrl: this.props.ehrUrl};
     if (this.props.access_token.access_token) {
         params["tokenResponse"] = {access_token: this.props.access_token.access_token}
     }
