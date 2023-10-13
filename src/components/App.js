@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route}
 import RequestBuilder from '../containers/RequestBuilder';
 import PatientPortal from '../containers/PatientPortal';
 import theme from '../containers/styles/theme';
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/styles';
 
 export default class App extends Component {
     render() {

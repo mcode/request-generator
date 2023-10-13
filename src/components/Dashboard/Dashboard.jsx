@@ -21,7 +21,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AlarmIcon from '@mui/icons-material/Alarm';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 
 const Dashboard = (props) => {
   const classes = useStyles();
