@@ -1,73 +1,67 @@
-import env from 'env-var';
+const headerDefinitions = {
+    alternativeTherapy: { 
+        display: "Alternative Therapy Cards Allowed",
+        type: "check"
+    }, 
+    baseUrl: { 
+        display: "Base Server",
+        type: "input"
+    },
+    cdsUrl: { 
+        display: "REMS Admin",
+        type: "input"
+    },
+    defaultUser: { 
+        display: "Default User",
+        type: "input"
+    },
+    ehrUrl: { 
+        display: "EHR Server",
+        type: "input"
+    },
+    includeConfig: { 
+        display: "Include Configuration in CRD Request",
+        type: "check"
+    },
+    launchUrl: { 
+        display: "DTR Launch URL (QuestionnaireForm)",
+        type: "input"
+    },
+    orderSelect: { 
+        display: "Order Select Rest End Point",
+        type: "input"
+    },
+    orderSign: { 
+        display: "Order Sign Rest End Point",
+        type: "input"
+    },
+    patientView: {
+        display: "Patient View Rest End Point",
+        type: "input",
+    },
+    pimsUrl: { 
+        display: "PIMS Server",
+        type: "input"
+    },
+    responseExpirationDays: { 
+        display: "In Progress Form Expiration Days",
+        type: "input"
+    },
+    sendPrefetch: { 
+        display: "Send Prefetch",
+        type: "check"
+    },
+    smartAppUrl: { 
+        display: "SMART App",
+        type: "input"
+    }
+}
 
 const types = {
     error: "errorClass",
     info: "infoClass",
     debug: "debugClass",
     warning: "warningClass"
-}
-
-const headers = {
-    "ehrUrl": {
-        "display": "EHR Server",
-        "value": (env.get('REACT_APP_EHR_SERVER').asString()),
-        "key": "ehrUrl"
-    },
-    "cdsUrl": {
-        "display": "CRD Server",
-        "value": (env.get('REACT_APP_CDS_SERVICE').asString()),
-        "key":"cdsUrl"
-    },
-    "orderSelect": {
-        "display": "Order Select Rest End Point",
-        "value": (env.get('REACT_APP_ORDER_SELECT').asString()),
-        "key":"orderSelect"
-    },
-    "orderSign": {
-        "display": "Order Sign Rest End Point",
-        "value": (env.get('REACT_APP_ORDER_SIGN').asString()),
-        "key":"orderSign"
-    },
-    "patientView": {
-        "display": "Patient View Rest End Point",
-        "value": (env.get('REACT_APP_PATIENT_VIEW').asString()),
-        "key":"patientView"
-    },
-    "authUrl": {
-        "display": "Auth Server",
-        "value": (env.get('REACT_APP_AUTH').asString()),
-        "key": "authUrl"
-    },
-    "alternativeTherapy": {
-        "display": "Alternative Therapy Cards Allowed",
-        "value": (env.get('REACT_APP_ALT_DRUG').asBool()),
-        "key": "alternativeTherapy"
-    }, 
-    "launchUrl" : {
-        "display": "DTR Launch URL",
-        "value": (env.get('REACT_APP_LAUNCH_URL').asString()),
-        "key": "launchUrl"
-    },
-    "responseExpirationDays" : {
-        "display": "In Progress Form Expiration Days",
-        "value": (env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt()),
-        "key": "responseExpirationDays"
-    },
-    "pimsUrl" : {
-        "display": "PIMS Server",
-        "value": (env.get('REACT_APP_PIMS_SERVER').asString()),
-        "key": "pimsUrl"
-    },
-    "smartAppUrl" : {
-        "display": "SMART App",
-        "value": (env.get('REACT_APP_SMART_LAUNCH_URL').asString()),
-        "key": "smartAppUrl"
-    },
-    "defaultUser" : {
-        "display": "Default User",
-        "value": (env.get('REACT_APP_DEFAULT_USER').asString()),
-        "key": "defaultUser"
-    }
 }
 
 const genderOptions = {
@@ -156,7 +150,7 @@ const shortNameMap = {
   export {
       defaultValues,
       genderOptions,
-      headers,
+      headerDefinitions,
       shortNameMap,
       stateOptions,
       types,

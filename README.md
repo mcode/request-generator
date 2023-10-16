@@ -29,7 +29,7 @@ Following are a list of modifiable paths:
 | REACT_APP_EHR_SERVER   | `http://localhost:8080/test-ehr/r4`              |
 | REACT_APP_CDS_SERVICE  | `http://localhost:8090/cds-services`             |
 | REACT_APP_PUBLIC_KEYS  | `http://localhost:3001/public_keys`              |
-| REACT_APP_LAUNCH_URL   | `http://localhost:3005/launch`                   |
+| REACT_APP_LAUNCH_URL   | `http://localhost:4040/launch`                   |
 | REACT_APP_PIMS_SERVER  | `http://localhost:5051/doctorOrders/api/addRx`   |
 | REACT_APP_REALM        |  `ClientFhirServer`                              |
 | REACT_APP_CLIENT       |  `app-login`                                     |
