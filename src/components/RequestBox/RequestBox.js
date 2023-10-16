@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import FHIR from "fhirclient";
-import SMARTBox from "../SMARTBox/SMARTBox";
 import PatientBox from "../SMARTBox/PatientBox";
 import { types, defaultValues, shortNameMap } from "../../util/data";
 import { getAge } from "../../util/fhir";
@@ -10,8 +9,22 @@ import "./request.css";
 import { PrefetchTemplate } from "../../PrefetchTemplate";
 import { retrieveLaunchContext } from "../../util/util";
 import PersonIcon from '@mui/icons-material/Person';
-import { Button, ButtonGroup } from '@mui/material';
-
+import { Button, ButtonGroup, Modal, Box } from '@mui/material';
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  flexDirection: 'column',
+  width: '80%',
+  transform: 'translate(-50%, -50%)',
+  display: 'flex',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  borderBottom: '2px solid black',
+  boxShadow: 24,
+  p: 4,
+  padding:'0px'
+};
 export default class RequestBox extends Component {
   constructor(props) {
     super(props);
@@ -468,39 +481,36 @@ export default class RequestBox extends Component {
     return (
       <div>
         <div className="request">
-          {this.state.openPatient ? (
-            <div>
-              <SMARTBox exitSmart={this.exitSmart}>
-                <div className="patient-box">
-                  {this.state.patientList instanceof Error
-                    ? this.renderError()
-                    : this.state.patientList.map((patient) => {
-                        return (
-                          <PatientBox
-                            key={patient.id}
-                            patient={patient}
-                            params = {params}
-                            callback={this.updateStateElement}
-                            callbackList={this.updateStateList}
-                            callbackMap={this.updateStateMap}
-                            updatePrefetchCallback={
-                              PrefetchTemplate.generateQueries
-                            }
-                            clearCallback={this.clearState}
-                            ehrUrl={this.props.ehrUrl}
-                            options={this.state.codeValues}
-                            responseExpirationDays={this.props.responseExpirationDays}
-                            defaultUser={this.props.defaultUser}
-                          />
-                        );
-                      })}
-                </div>
-              </SMARTBox>
-            </div>
-          ) : (
-            ""
-          )}
+          <Modal open={this.state.openPatient}
+            onClose={this.exitSmart}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description">
+              <Box sx={style}>
+                    {this.state.patientList instanceof Error
+                      ? this.renderError()
+                      : this.state.patientList.map((patient) => {
+                          return (
+                            <PatientBox
+                              key={patient.id}
+                              patient={patient}
+                              params = {params}
+                              callback={this.updateStateElement}
+                              callbackList={this.updateStateList}
+                              callbackMap={this.updateStateMap}
+                              updatePrefetchCallback={
+                                PrefetchTemplate.generateQueries
+                              }
+                              clearCallback={this.clearState}
+                              ehrUrl={this.props.ehrUrl}
+                              options={this.state.codeValues}
+                              responseExpirationDays={this.props.responseExpirationDays}
+                              defaultUser={this.props.defaultUser}
+                            />
+                          );
+                        })}
+              </Box>
 
+          </Modal>
           <div>
             <Button variant='contained' onClick={this.getPatients} startIcon={<PersonIcon />}>
                 Select a patient

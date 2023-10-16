@@ -10,7 +10,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default class SMARTBox extends Component {
+
+export default class PatientBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,6 +22,8 @@ export default class SMARTBox extends Component {
       medicationDispenses: {},
       response: "",
       questionnaireResponses: {},
+      openRequests: false,
+      openQuestionnaires: false
     };
 
     this.handleRequestChange = this.handleRequestChange.bind(this);
@@ -345,17 +348,14 @@ export default class SMARTBox extends Component {
     }
 
     return (
-      <div>
+      <div key = {patient.id} className="patient-box">
+        <div className="patient-header">
+          <span style={{fontWeight: 'bolder'}}>{name ? name : "N/A"}</span> {`(ID: ${patient.id})`}
+        </div>
         <div
           className="patient-selection-box"
-          key={patient.id}
         >
           <div className="patient-info">
-            <span style={{ fontWeight: "bold" }}>ID</span>: {patient.id}
-            <div>
-              <span style={{ fontWeight: "bold" }}>Name</span>:{" "}
-              {name ? name : "N/A"}
-            </div>
             <div>
               <span style={{ fontWeight: "bold" }}>Gender</span>:{" "}
               {patient.gender}
