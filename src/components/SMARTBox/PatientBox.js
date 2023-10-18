@@ -84,6 +84,7 @@ export default class PatientBox extends Component {
           labelId = {`${label}-label`}
           value= {stateVar}
           label={label}
+          data-testid="dropdown-box"
           onChange={stateChange}
         >
           {options.map((op) => {
