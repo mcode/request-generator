@@ -68,49 +68,25 @@ const Login = (props) => {
         <form noValidate autoComplete="off" className={classes.formFont}>
           <TextField
             classes={{
-              root: classes.loginInput
+              root: classes.resize
             }}
-            InputProps={{
-              classes: {
-                input: classes.resize
-              }
-            }}
-            InputLabelProps={{
-              classes: {
-                root: classes.resize
-              }
-            }}
+            variant="standard"
             value={username}
             onChange={setUsername}
             label="Username"
           />
           <TextField
             classes={{
-              root: `${classes.passwordField} ${classes.loginInput}`
+              root: classes.resize
             }}
-            InputProps={{
-              classes: {
-                input: classes.resize
-              }
-            }}
-            InputLabelProps={{
-              classes: {
-                root: classes.resize
-              }
-            }}
+            variant='standard'
             type="password"
             label="Password"
             value={password}
             onChange={setPassword}
           />
-          {/* <div className={`${classes.loginPersistance} ${classes.formFont}`}>
-            <input type="checkbox" className={classes.loginCheckbox} />
-            <span className={classes.loginCheckboxText}>Keep me logged in</span>
-          </div> */}
           <Button
             variant="contained"
-            color="secondary"
-            disableElevation
             classes={{ root: classes.loginButton, label: classes.formFont }}
             onClick={onSubmit}
           >
