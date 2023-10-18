@@ -366,7 +366,7 @@ export default class PatientBox extends Component {
             </div>
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px" }}>
+            <span style={{ fontWeight: "bold", marginRight: "5px", padding: "5px" }}>
               Request:
             </span>
             { !options.length && returned ?
@@ -376,7 +376,7 @@ export default class PatientBox extends Component {
             }
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px"}}>
+            <span style={{ fontWeight: "bold", marginRight: "5px", padding: "5px"}}>
               In Progress Form:
               <IconButton color="primary" style={{ padding: '0px 5px' }} onClick={this.getResponses}>
                 <RefreshIcon />

@@ -2,11 +2,15 @@ iframe{
     width:100%;
     height:100%;
 }
+html{
+    font-size: 14px;
+}
 
 .patient-selection-box{
     width:100%;
-    padding:10px;
+    padding:10px 10px 15px 10px;
     flex:1;
+    background-color: #ddd;
     display: grid;
     grid-template-columns: 15% 35% 35% 10%;
     column-gap: 5px;
@@ -14,9 +18,13 @@ iframe{
 
 .patient-box{
     border-bottom: 2px solid black;
-    padding: 15px;
 }
+.patient-header{
+    color:white;
+    background-color: #535353;
+    padding: 10px;
 
+}
 .smartExit{
 
     height:24px;
