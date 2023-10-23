@@ -5,7 +5,7 @@ import axios from 'axios';
 import useStyles from './styles';
 import env from 'env-var';
 
-const Login = (props) => {
+const Login = props => {
   const classes = useStyles();
   const [message, setMessage] = useState(null);
   const [username, _setUsername] = useState('');
@@ -21,11 +21,13 @@ const Login = (props) => {
       params.append('client_id', env.get('REACT_APP_CLIENT').asString());
       axios
         .post(
-          `${env.get('REACT_APP_AUTH').asString()}/realms/${env.get('REACT_APP_REALM').asString()}/protocol/openid-connect/token`,
+          `${env.get('REACT_APP_AUTH').asString()}/realms/${env
+            .get('REACT_APP_REALM')
+            .asString()}/protocol/openid-connect/token`,
           params,
           { withCredentials: true }
         )
-        .then((result) => {
+        .then(result => {
           props.tokenCallback(result.data.access_token);
         })
         .catch(err => {
@@ -48,15 +50,13 @@ const Login = (props) => {
     };
   }, [username, password, onSubmit]);
 
-  const setUsername = (event => {
+  const setUsername = event => {
     _setUsername(event.target.value);
-  });
+  };
 
-  const setPassword = (event => {
+  const setPassword = event => {
     _setPassword(event.target.value);
-  });
-
- 
+  };
 
   return (
     <div className={classes.background}>
@@ -79,7 +79,7 @@ const Login = (props) => {
             classes={{
               root: classes.resize
             }}
-            variant='standard'
+            variant="standard"
             type="password"
             label="Password"
             value={password}

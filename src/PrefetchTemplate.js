@@ -1,20 +1,19 @@
 // Prefetch Template Source:
 // https://build.fhir.org/ig/HL7/davinci-crd/hooks.html#prefetch
 export class PrefetchTemplate {
-
   static generatePrefetchMap() {
-
     const prefetchMap = new Map();
 
-    const PRACTITIONER_PREFETCH = new PrefetchTemplate(
-      '{{context.userId}}');
+    const PRACTITIONER_PREFETCH = new PrefetchTemplate('{{context.userId}}');
 
     const REQUEST_PREFETCH = new PrefetchTemplate(
-      'MedicationRequest/{{context.medications.MedicationRequest.id}}');
+      'MedicationRequest/{{context.medications.MedicationRequest.id}}'
+    );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
-      'MedicationRequest?subject={{context.patientId}}');
+      'MedicationRequest?subject={{context.patientId}}'
+    );
 
     // prefetchMap.set("Coverage", COVERAGE_PREFETCH_QUERY);
     prefetchMap.set('request', REQUEST_PREFETCH);
@@ -77,20 +76,18 @@ export class PrefetchTemplate {
 
   // Source: https://www.tutorialspoint.com/accessing-nested-javascript-objects-with-string-key
   static getProp(object, path) {
-    if (path.length === 1){
+    if (path.length === 1) {
       return object[path[0]];
-    }
-    else if (path.length === 0) {
+    } else if (path.length === 0) {
       throw new Error('Invalid property.');
+    } else {
+      if (object[path[0]]) return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
+      else {
+        object[path[0]] = {};
+        return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
+      }
     }
-    else {
-        if (object[path[0]]) return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
-        else {
-          object[path[0]] = {};
-          return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
-        }
-    }
-  };
+  }
 
   static resolveParameter(unresolvedParameter, requestBundle) {
     const paramField = paramElementMap.get(unresolvedParameter);
@@ -107,7 +104,6 @@ export class PrefetchTemplate {
   getQuery() {
     return this.query;
   }
-
 }
 
 const prefetchMap = PrefetchTemplate.generatePrefetchMap();
