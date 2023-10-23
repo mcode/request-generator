@@ -278,8 +278,14 @@ export default class PatientBox extends Component {
 
     let updateDate = new Date();
     updateDate.setDate(updateDate.getDate() - this.props.responseExpirationDays);
+    const searchParameters = [
+      `_lastUpdated=gt${updateDate.toISOString().split('T')[0]}`,
+      `status=in-progress`,
+      `subject=Patient/${patientId}`,
+      `_sort=-authored`
+    ];
     client
-      .request(`QuestionnaireResponse?_lastUpdated=gt${updateDate.toISOString().split('T')[0]}&status=in-progress&subject=Patient/${patientId}`, {
+      .request(`QuestionnaireResponse?${searchParameters.join("&")}`, {
         resolveReferences: ["subject"],
         graph: false,
         flat: true,
@@ -338,9 +344,7 @@ export default class PatientBox extends Component {
     };
 
     if (this.state.questionnaireResponses.data) {
-      responseOptions = this.state.questionnaireResponses.data
-        .sort((first, second) => second.authored.localeCompare(first.authored))
-        .map(qr => this.makeQROption(qr));
+      responseOptions = this.state.questionnaireResponses.data.map(qr => this.makeQROption(qr));
       returned = true;
     }
 
