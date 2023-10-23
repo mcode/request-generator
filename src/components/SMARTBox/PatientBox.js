@@ -163,7 +163,7 @@ export default class PatientBox extends Component {
     const userReference = 'Practitioner/'+user;
     if (request) {
       this.props.callback(request.resourceType, request);
-      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, 'request', 'patient', 'practitioner');
+      const queries = this.props.updatePrefetchCallback(request, patientReference, userReference, 'request', 'patient', 'practitioner');
       this.fetchResources(queries);
 
       this.props.callback('request', request);
@@ -172,7 +172,7 @@ export default class PatientBox extends Component {
       this.props.callback('codeSystem', coding.system);
       this.props.callback('display', coding.display);
     } else {
-      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, 'patient', 'practitioner', 'medicationRequests');
+      const queries = this.props.updatePrefetchCallback(request, patientReference, userReference, 'patient', 'practitioner', 'medicationRequests');
       this.fetchResources(queries);
     }
   }

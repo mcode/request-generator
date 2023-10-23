@@ -60,7 +60,7 @@ export class PrefetchTemplate {
         var unresolvedParameter = parametersToFill[j];
         var resolvedParameter;
         if (requestBundle) {
-          var resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
+          resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
         } else {
           if (unresolvedParameter === 'context.patientId') {
             resolvedParameter = patientReference;
