@@ -15,19 +15,19 @@ const DashboardElement = (props) => {
   const date = new Date(resource.meta.lastUpdated).toUTCString();
   const [questionnaireId] = resource.questionnaire.split('/').slice(-1);
   const splitCamelCaseWithAbbreviations = (s) =>{
-    return s.split(/([A-Z][a-z]+)/).filter(function(e){return e});
- }
+    return s.split(/([A-Z][a-z]+)/).filter(function(e){return e;});
+ };
   
   const relaunch = () => {
     const link = {
       appContext: encodeURIComponent(`response=QuestionnaireResponse/${resource.id}`),
-      type: "smart",
+      type: 'smart',
       url: env.get('REACT_APP_LAUNCH_URL').asString()
-    }
+    };
     retrieveLaunchContext(link, clientState.tokenResponse.accessToken, clientState.tokenResponse.patient, clientState.serverUrl, 'r4').then((e) => {
-      window.open(e.url, "_blank");
-    })
-  }
+      window.open(e.url, '_blank');
+    });
+  };
   const renderStatus = () => {
     let bColor = {};
     if(status === 'in-progress') {
@@ -37,8 +37,8 @@ const DashboardElement = (props) => {
     }
     return (
       <div style = {bColor} className = {classes.progressBubble} ></div>
-    )
-  }
+    );
+  };
   return (
     <div onClick={relaunch}>
       <Paper className = {classes.dashboardElement}>

@@ -14,12 +14,12 @@ function retrieveLaunchContext(link, accessToken, patientId, fhirBaseUrl, fhirVe
     return new Promise((resolve, reject) => {
         const headers = accessToken ?
         {
-        "Accept": 'application/json',
-        "Authorization": `Bearer ${accessToken.access_token}`
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken.access_token}`
         }
         :
         {        
-        "Accept": 'application/json'
+        'Accept': 'application/json'
         };
         const launchParameters = {
         patient: patientId,
@@ -62,4 +62,4 @@ function retrieveLaunchContext(link, accessToken, patientId, fhirBaseUrl, fhirVe
 
 export {
     retrieveLaunchContext
-}
+};

@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import FHIR from "fhirclient";
-import PatientBox from "../SMARTBox/PatientBox";
-import { types, defaultValues, shortNameMap } from "../../util/data";
-import { getAge } from "../../util/fhir";
+import React, { Component } from 'react';
+import FHIR from 'fhirclient';
+import PatientBox from '../SMARTBox/PatientBox';
+import { types, defaultValues, shortNameMap } from '../../util/data';
+import { getAge } from '../../util/fhir';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
-import _ from "lodash";
-import "./request.css";
-import { PrefetchTemplate } from "../../PrefetchTemplate";
-import { retrieveLaunchContext } from "../../util/util";
+import _ from 'lodash';
+import './request.css';
+import { PrefetchTemplate } from '../../PrefetchTemplate';
+import { retrieveLaunchContext } from '../../util/util';
 import PersonIcon from '@mui/icons-material/Person';
 import { Button, ButtonGroup, Modal, Box } from '@mui/material';
 const style = {
@@ -67,13 +67,13 @@ export default class RequestBox extends Component {
   prepPrefetch() {
     const preppedResources = new Map();
     Object.keys(this.state.prefetchedResources).forEach((resourceKey) => {
-      let resourceList = []
+      let resourceList = [];
       if(Array.isArray(this.state.prefetchedResources[resourceKey])){
         resourceList = this.state.prefetchedResources[resourceKey].map((resource) => {
           return resource;
-        })
+        });
       } else {
-        resourceList = this.state.prefetchedResources[resourceKey]
+        resourceList = this.state.prefetchedResources[resourceKey];
       }
 
       preppedResources.set(resourceKey, resourceList);
@@ -86,7 +86,7 @@ export default class RequestBox extends Component {
       this.prepPrefetch(),
       null,
       this.state.patient,
-      "patient-view"
+      'patient-view'
     );
   };
 
@@ -96,7 +96,7 @@ export default class RequestBox extends Component {
         this.prepPrefetch(),
         this.state.request,
         this.state.patient,
-        "order-select"
+        'order-select'
       );
     }
   };
@@ -106,7 +106,7 @@ export default class RequestBox extends Component {
       this.prepPrefetch(),
       request,
       this.state.patient,
-      "order-sign"
+      'order-sign'
     );
   };
 
@@ -138,7 +138,7 @@ export default class RequestBox extends Component {
 
   updateStateList = (elementName, text) => {
     this.setState((prevState) => {
-      return {[elementName]: [...prevState[elementName], text]}
+      return {[elementName]: [...prevState[elementName], text]};
     });
   };
 
@@ -164,14 +164,14 @@ export default class RequestBox extends Component {
     this.setState({ openPatient: true });
     const params = {serverUrl: this.props.ehrUrl};
     if (this.props.access_token.access_token) {
-        params["tokenResponse"] = {access_token: this.props.access_token.access_token}
+        params['tokenResponse'] = {access_token: this.props.access_token.access_token};
     }
     const client = FHIR.client(
       params
     );
 
     client
-      .request("Patient?_sort=identifier&_count=12", { flat: true })
+      .request('Patient?_sort=identifier&_count=12', { flat: true })
       .then((result) => {
         this.setState({
           patientList: result,
@@ -205,7 +205,7 @@ export default class RequestBox extends Component {
     return (
       <div className="demographics">
         <div className="lower-border">
-          <span style={{ fontWeight: "bold" }}>Demographics</span>
+          <span style={{ fontWeight: 'bold' }}>Demographics</span>
         </div>
         <div className="info lower-border">Name: {name}</div>
         <div className="info lower-border">
@@ -227,13 +227,13 @@ export default class RequestBox extends Component {
     return (
       <div className="other-info">
         <div className="lower-border">
-          <span style={{ fontWeight: "bold" }}>Coding</span>
+          <span style={{ fontWeight: 'bold' }}>Coding</span>
         </div>
         <div className="info lower-border">
           Code: {this.state.code ? this.state.code : this.emptyField}
         </div>
         <div className="info lower-border">
-          System:{" "}
+          System:{' '}
           {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : this.emptyField}
         </div>
         <div className="info lower-border">
@@ -250,7 +250,7 @@ export default class RequestBox extends Component {
         {qrResponse.questionnaire ? 
           <>
             <div className="lower-border">
-              <span style={{ fontWeight: "bold" }}>In Progress Form</span>
+              <span style={{ fontWeight: 'bold' }}>In Progress Form</span>
             </div>
             <div className="info lower-border">Form: { qrResponse.questionnaire ? qrResponse.questionnaire : this.emptyField}</div>
             <div className="info lower-border">
@@ -280,12 +280,12 @@ export default class RequestBox extends Component {
       const renderedList = [];
       if(Array.isArray(resourceList)){
         resourceList.forEach((resource) => {
-          console.log("Request resources:" + JSON.stringify(requestResources));
-          console.log("Request key:" + resourceKey);
-          renderedList.push(this.renderResource(resource))
+          console.log('Request resources:' + JSON.stringify(requestResources));
+          console.log('Request key:' + resourceKey);
+          renderedList.push(this.renderResource(resource));
         });
       } else {
-        renderedList.push(this.renderResource(resourceList))
+        renderedList.push(this.renderResource(resourceList));
       }
 
       renderedPrefetches.set(resourceKey, renderedList);
@@ -297,7 +297,7 @@ export default class RequestBox extends Component {
         <div className="prefetch-header">Prefetched</div>
         {Array.from(renderedPrefetches.keys()).map((resourceKey) => {
           const currentRenderedPrefetch = renderedPrefetches.get(resourceKey);
-          return (<div key = {resourceKey}><div className="prefetch-subheader">{resourceKey + " Resources"}</div>
+          return (<div key = {resourceKey}><div className="prefetch-subheader">{resourceKey + ' Resources'}</div>
             {currentRenderedPrefetch}</div>);
         })}
       </div>
@@ -314,15 +314,15 @@ export default class RequestBox extends Component {
       var resourceType = resource.resourceType;
       value = (
         <div key={resourceId}>
-          <span style={{ textTransform: "capitalize" }}>{resourceType}</span>:{" "}
-          {resourceType}/{resourceId}{" "}
+          <span style={{ textTransform: 'capitalize' }}>{resourceType}</span>:{' '}
+          {resourceType}/{resourceId}{' '}
           .....<span className="checkmark glyphicon glyphicon-ok"></span>
         </div>
       );
     } else {
       value = (
-        <div key={"UNKNOWN"}>
-          <span style={{ textTransform: "capitalize" }}>{"UNKNOWN"}</span>{" "}
+        <div key={'UNKNOWN'}>
+          <span style={{ textTransform: 'capitalize' }}>{'UNKNOWN'}</span>{' '}
           .....<span className="remove glyphicon glyphicon-remove"></span>
         </div>
       );
@@ -337,19 +337,19 @@ export default class RequestBox extends Component {
   }
 
   launchSmartOnFhirApp = () => {
-    console.log("Launch SMART on FHIR App");
+    console.log('Launch SMART on FHIR App');
 
     let userId = this.state.prefetchedResources?.practitioner?.id;
     if (!userId) {
-      console.log("Practitioner not populated from prefetch, using default from config: " + this.props.defaultUser);
+      console.log('Practitioner not populated from prefetch, using default from config: ' + this.props.defaultUser);
       userId = this.props.defaultUser;
     }
 
     let link = {
-      appContext: "user=" + userId + "&patient=" + this.state.patient.id,
-      type: "smart",
+      appContext: 'user=' + userId + '&patient=' + this.state.patient.id,
+      type: 'smart',
       url: this.props.smartAppUrl
-    }
+    };
 
     retrieveLaunchContext(
       link, this.props.fhirAccessToken,
@@ -369,13 +369,13 @@ export default class RequestBox extends Component {
     this.buildLaunchLink()
       .then(link => {
         //e.preventDefault();
-        window.open(link.url, "_blank");
+        window.open(link.url, '_blank');
       });
   }
 
   buildLaunchLink() {
     // build appContext and URL encode it
-    let appContext = "";
+    let appContext = '';
     let order = undefined, coverage = undefined, response = undefined;
 
     if (!this.isOrderNotSelected()) {
@@ -388,10 +388,10 @@ export default class RequestBox extends Component {
     }
 
     if(order) {
-      appContext += `order=${order}`
+      appContext += `order=${order}`;
 
       if(coverage) {
-        appContext += `&coverage=${coverage}`
+        appContext += `&coverage=${coverage}`;
       }
     }
     
@@ -400,16 +400,16 @@ export default class RequestBox extends Component {
     }
     
     if(order && response) {
-      appContext += `&response=${response}`
+      appContext += `&response=${response}`;
     } else if (!order && response) {
-      appContext += `response=${response}`
+      appContext += `response=${response}`;
     } 
 
     const link = {
       appContext: encodeURIComponent(appContext),
-      type: "smart",
+      type: 'smart',
       url: this.props.launchUrl
-    }
+    };
 
     let linkCopy = Object.assign({}, link);
    
@@ -426,7 +426,7 @@ export default class RequestBox extends Component {
    * Send the NewRxRequestMessage to the Pharmacy Information System (PIMS)
    */
   sendRx = (e) => {
-    console.log("sendRx: " + this.props.pimsUrl);
+    console.log('sendRx: ' + this.props.pimsUrl);
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(this.state.prefetchedResources.patient, 
@@ -436,7 +436,7 @@ export default class RequestBox extends Component {
     const serializer = new XMLSerializer();
     
     // send the message to the prescriber
-    this.props.consoleLog("Sending Rx to PIMS", types.info);
+    this.props.consoleLog('Sending Rx to PIMS', types.info);
     fetch(this.props.pimsUrl, {
       method: 'POST',
       //mode: 'no-cors',
@@ -447,13 +447,13 @@ export default class RequestBox extends Component {
       body: serializer.serializeToString(newRx)
     })
     .then(response => {
-      console.log("sendRx response: ");
+      console.log('sendRx response: ');
       console.log(response);
-      this.props.consoleLog("Successfully sent Rx to PIMS", types.info);
+      this.props.consoleLog('Successfully sent Rx to PIMS', types.info);
     })
     .catch(error => {
-      console.log("sendRx error: ");
-      this.props.consoleLog("Server returned error sending Rx to PIMS: ", types.error);
+      console.log('sendRx error: ');
+      this.props.consoleLog('Server returned error sending Rx to PIMS: ', types.error);
       this.props.consoleLog(error.message);
       console.log(error);
     });

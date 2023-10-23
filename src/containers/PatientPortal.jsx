@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import useStyles from './styles/styles';
-import FHIR from "fhirclient";
+import FHIR from 'fhirclient';
 import Login from '../components/Auth/Login';
 import Dashboard from '../components/Dashboard/Dashboard';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
@@ -17,7 +17,7 @@ const PatientPortal = () => {
 
     useEffect(() => {
         if(token) {
-            const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64'))
+            const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64'));
             const client = FHIR.client({
                 serverUrl: env.get('REACT_APP_EHR_BASE').asString(),
                 tokenResponse: {
@@ -32,7 +32,7 @@ const PatientPortal = () => {
             setClient(client);
         }
 
-      }, [token])
+      }, [token]);
 
     const getName = (patient) => {
         const name = [];
@@ -45,7 +45,7 @@ const PatientPortal = () => {
             }
         }
         return name.join(' ');
-    }
+    };
     return (
         <div className={classes.background}>
             <AppBar position="fixed" sx={{ zIndex: 1300, backgroundColor: '#bb3551', height:'95px'}}>

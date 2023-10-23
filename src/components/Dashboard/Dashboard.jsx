@@ -26,8 +26,8 @@ import { Paper } from '@mui/material';
 const Dashboard = (props) => {
   const classes = useStyles();
   const [resources, setResources] = useState([]);
-  const [message, setMessage] = useState("Loading...")
-  const [checked, setChecked] = useState(true)
+  const [message, setMessage] = useState('Loading...');
+  const [checked, setChecked] = useState(true);
   const drawerWidth = '340px';
   const handleChange = (event) => {
     setChecked(event.target.checked);
@@ -37,14 +37,14 @@ const Dashboard = (props) => {
     if (bundle.entry) {
       bundle.entry.forEach((e) => {
         const resource = e.resource;
-        setResources(resources => [...resources, resource])
-      })
+        setResources(resources => [...resources, resource]);
+      });
     }
-  }
+  };
   const createIcons = () => {
     const icons = [];
     const style = { fontSize: '40px' };
-    const itemStyle = { height: '80px' }
+    const itemStyle = { height: '80px' };
     const qStyle = { height: '80px', backgroundColor: '#f5f5fa' };
     icons.push(['Notifications', <NotificationsIcon sx={style} />, itemStyle]);
     icons.push(['Appointments', <AlarmIcon sx={style} />, itemStyle]);
@@ -56,30 +56,30 @@ const Dashboard = (props) => {
     icons.push(['Logout', <LogoutIcon sx={style} />, itemStyle]);
 
     return icons;
-  }
+  };
   useEffect(() => {
     if (props.client.patient.id) {
       props.client.patient.request('QuestionnaireResponse', { 'pageLimit': 0, 'onPage': addResources }).then(() => {
-        setMessage("No QuestionnaireResponses Found for user with patientId: " + props.client.patient.id);
+        setMessage('No QuestionnaireResponses Found for user with patientId: ' + props.client.patient.id);
       });
     } else {
-      setMessage("Invalid patient: No patientId provided")
+      setMessage('Invalid patient: No patientId provided');
     }
 
-  }, [props.client.patient])
+  }, [props.client.patient]);
 
   const renderElements = () => {
     let resourcesToRender = [];
     if (checked) {
       resourcesToRender = resources.filter((e) => {
         return e.status === 'in-progress';
-      })
+      });
     } else {
       resourcesToRender = resources;
     }
     resourcesToRender.reverse();
     return resourcesToRender;
-  }
+  };
   return (
     <div>
       <Box sx={{ display: 'flex' }}>
@@ -92,7 +92,7 @@ const Dashboard = (props) => {
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+            ['& .MuiDrawer-paper']: { width: drawerWidth, boxSizing: 'border-box' },
           }}
         >
           <Toolbar />
@@ -128,7 +128,7 @@ const Dashboard = (props) => {
               label="Only show in-progress forms" />
             {resources.length > 0 ?
               renderElements().map((e) => {
-                return <DashboardElement key={e.id} status={e.status} resource={e} client={props.client} />
+                return <DashboardElement key={e.id} status={e.status} resource={e} client={props.client} />;
               }) : <Paper className = {classes.dashboardElement}>{message}</Paper>}
           </div>
         </Box>

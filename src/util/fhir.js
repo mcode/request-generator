@@ -1,10 +1,10 @@
 function fhir(resource, ehrUrl, patient, auth) {
     const headers = {
-        "Content-Type": "application/json"
-    }
+        'Content-Type': 'application/json'
+    };
     if(patient) {
         fetch(`${ehrUrl}${resource}?subject=Patient/${patient}`, {
-            method: "GET",
+            method: 'GET',
             headers: headers,
         }).then(response => {
             return response.json();
@@ -29,4 +29,4 @@ function getAge(dateString) {
 export {
     fhir,
     getAge
-}
+};

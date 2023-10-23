@@ -1,79 +1,79 @@
 const headerDefinitions = {
     alternativeTherapy: { 
-        display: "Alternative Therapy Cards Allowed",
-        type: "check"
+        display: 'Alternative Therapy Cards Allowed',
+        type: 'check'
     }, 
     baseUrl: { 
-        display: "Base Server",
-        type: "input"
+        display: 'Base Server',
+        type: 'input'
     },
     cdsUrl: { 
-        display: "REMS Admin",
-        type: "input"
+        display: 'REMS Admin',
+        type: 'input'
     },
     defaultUser: { 
-        display: "Default User",
-        type: "input"
+        display: 'Default User',
+        type: 'input'
     },
     ehrUrl: { 
-        display: "EHR Server",
-        type: "input"
+        display: 'EHR Server',
+        type: 'input'
     },
     includeConfig: { 
-        display: "Include Configuration in CRD Request",
-        type: "check"
+        display: 'Include Configuration in CRD Request',
+        type: 'check'
     },
     launchUrl: { 
-        display: "DTR Launch URL (QuestionnaireForm)",
-        type: "input"
+        display: 'DTR Launch URL (QuestionnaireForm)',
+        type: 'input'
     },
     orderSelect: { 
-        display: "Order Select Rest End Point",
-        type: "input"
+        display: 'Order Select Rest End Point',
+        type: 'input'
     },
     orderSign: { 
-        display: "Order Sign Rest End Point",
-        type: "input"
+        display: 'Order Sign Rest End Point',
+        type: 'input'
     },
     patientView: {
-        display: "Patient View Rest End Point",
-        type: "input",
+        display: 'Patient View Rest End Point',
+        type: 'input',
     },
     pimsUrl: { 
-        display: "PIMS Server",
-        type: "input"
+        display: 'PIMS Server',
+        type: 'input'
     },
     responseExpirationDays: { 
-        display: "In Progress Form Expiration Days",
-        type: "input"
+        display: 'In Progress Form Expiration Days',
+        type: 'input'
     },
     sendPrefetch: { 
-        display: "Send Prefetch",
-        type: "check"
+        display: 'Send Prefetch',
+        type: 'check'
     },
     smartAppUrl: { 
-        display: "SMART App",
-        type: "input"
+        display: 'SMART App',
+        type: 'input'
     }
-}
+};
 
 const types = {
-    error: "errorClass",
-    info: "infoClass",
-    debug: "debugClass",
-    warning: "warningClass"
-}
+    error: 'errorClass',
+    info: 'infoClass',
+    debug: 'debugClass',
+    warning: 'warningClass'
+};
 
 const genderOptions = {
     option1: {
-        text: "Male",
-        value: "male"
+        text: 'Male',
+        value: 'male'
     },
     option2: {
-        text: "Female",
-        value: "female"
+        text: 'Female',
+        value: 'female'
     }
-}
+};
 
 const stateOptions = [
     { key: 'AL', value: 'AL', text: 'Alabama' },
@@ -127,7 +127,7 @@ const stateOptions = [
     { key: 'WV', value: 'WV', text: 'West Virginia' },
     { key: 'WI', value: 'WI', text: 'Wisconsin' },
     { key: 'WY', value: 'WY', text: 'Wyoming' },
-  ]
+  ];
 
   const defaultValues = [
     { key: 'CPAP', text: 'E0601', value: 'E0601', codeSystem: 'https://bluebutton.cms.gov/resources/codesystem/hcpcs' },
@@ -138,14 +138,14 @@ const stateOptions = [
     { key: 'Nebulizer', text: '94640', value:'94640', codeSystem: 'http://www.ama-assn.org/go/cpt' },
     { key: 'Glucose Test Strip', text:'82947', value:'82947', codeSystem: 'http://www.ama-assn.org/go/cpt'},
     { key: 'Oxygen Therapy', text: 'E0424', value:'E0424', codeSystem:'https://bluebutton.cms.gov/resources/codesystem/hcpcs' }
-]
+];
 
 const shortNameMap = {
-    "http://www.ama-assn.org/go/cpt":"CPT",
-    "https://bluebutton.cms.gov/resources/codesystem/hcpcs": "HCPCS",
-    "http://www.nlm.nih.gov/research/umls/rxnorm": "RxNorm",
-    "http://hl7.org/fhir/sid/ndc": "NDC"
-}
+    'http://www.ama-assn.org/go/cpt':'CPT',
+    'https://bluebutton.cms.gov/resources/codesystem/hcpcs': 'HCPCS',
+    'http://www.nlm.nih.gov/research/umls/rxnorm': 'RxNorm',
+    'http://hl7.org/fhir/sid/ndc': 'NDC'
+};
 
   export {
       defaultValues,
@@ -154,4 +154,4 @@ const shortNameMap = {
       shortNameMap,
       stateOptions,
       types,
-  }
+  };

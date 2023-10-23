@@ -15,12 +15,12 @@ export default class InputBox extends Component {
         return (
             <div>
             <input
-            className={"form-control input-text " + this.props.extraClass}
+            className={'form-control input-text ' + this.props.extraClass}
             name={this.props.elementName}
             value={this.props.value}
             onChange={this.onInputChange}
             />
             </div>
-        )
+        );
     }
 }

@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { getAge } from "../../util/fhir";
-import FHIR from "fhirclient";
-import "./smart.css";
+import React, { Component } from 'react';
+import { getAge } from '../../util/fhir';
+import FHIR from 'fhirclient';
+import './smart.css';
 import { Button, IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
@@ -15,12 +15,12 @@ export default class PatientBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      request: "",
+      request: '',
       deviceRequests: {},
       medicationRequests: {},
       serviceRequests: {},
       medicationDispenses: {},
-      response: "",
+      response: '',
       questionnaireResponses: {},
       openRequests: false,
       openQuestionnaires: false
@@ -42,34 +42,34 @@ export default class PatientBox extends Component {
 
   componentDidMount() {
     // get requests and responses on open of patients
-    this.getRequests()
+    this.getRequests();
     this.getResponses();
   }
 
   getCoding(request) {
     let code = null;
-    if (request.resourceType === "DeviceRequest") {
+    if (request.resourceType === 'DeviceRequest') {
       code = request.codeCodeableConcept.coding[0];
-    } else if (request.resourceType === "ServiceRequest") {
+    } else if (request.resourceType === 'ServiceRequest') {
       code = request.code.coding[0];
-    } else if (request.resourceType === "MedicationRequest"
-      || request.resourceType === "MedicationDispense") {
+    } else if (request.resourceType === 'MedicationRequest'
+      || request.resourceType === 'MedicationDispense') {
       code = request.medicationCodeableConcept.coding[0];
     }
     if (code) {
       if (!code.code) {
-        code.code = "Unknown";
+        code.code = 'Unknown';
       }
       if (!code.display) {
-        code.display = "Unknown";
+        code.display = 'Unknown';
       }
       if (!code.system) {
-        code.system = "Unknown";
+        code.system = 'Unknown';
       }
     } else {
-      code.code = "Unknown";
-      code.display = "Unknown";
-      code.system = "Unknown";
+      code.code = 'Unknown';
+      code.display = 'Unknown';
+      code.system = 'Unknown';
     }
     return code;
   }
@@ -88,31 +88,31 @@ export default class PatientBox extends Component {
           onChange={stateChange}
         >
           {options.map((op) => {
-            return <MenuItem key = {op.key} value = {op.value}>{op.text}</MenuItem>
+            return <MenuItem key = {op.key} value = {op.value}>{op.text}</MenuItem>;
           })}
         </Select>
       </FormControl>
     </Box>
-    )
+    );
   }
   makeOption(request, options) {
     let code = this.getCoding(request);
 
     let option = {
       key: request.id,
-      text: code.display + " (Medication request: " + code.code + ")",
+      text: code.display + ' (Medication request: ' + code.code + ')',
       value: JSON.stringify(request)
-    }
+    };
     options.push(option);
   }
 
   updateValues(patient) {
-    this.props.callback("patient", patient);
-    this.props.callback("openPatient", false);
+    this.props.callback('patient', patient);
+    this.props.callback('openPatient', false);
     this.props.clearCallback();
     if (this.state.request) {
       const request = JSON.parse(this.state.request);
-      if (request.resourceType === "DeviceRequest" || request.resourceType === "ServiceRequest" || request.resourceType === "MedicationRequest" || request.resourceType === "MedicationDispense") {
+      if (request.resourceType === 'DeviceRequest' || request.resourceType === 'ServiceRequest' || request.resourceType === 'MedicationRequest' || request.resourceType === 'MedicationDispense') {
         this.updatePrefetchRequest(request, patient, this.props.defaultUser);
       } else {
         this.props.clearCallback();
@@ -129,50 +129,50 @@ export default class PatientBox extends Component {
   }
 
   updateQRResponse(patient, response) {
-    this.props.callback("response", response);
+    this.props.callback('response', response);
   }
 
   fetchResources(queries) {
     console.log(queries);
     var requests = [];
-    this.props.callback("prefetchCompleted", false);
+    this.props.callback('prefetchCompleted', false);
     queries.forEach((query, queryKey) => {
       const urlQuery = this.props.ehrUrl + '/' + query;
       requests.push(fetch(urlQuery, {
-        method: "GET",
+        method: 'GET',
       }).then((response) => {
-        const responseJson = response.json()
+        const responseJson = response.json();
         return responseJson;
       }).then((resource) => {
-        this.props.callbackMap("prefetchedResources", queryKey, resource);
+        this.props.callbackMap('prefetchedResources', queryKey, resource);
       }));
     });
 
     Promise.all(requests)
     .then((results) => {
-      console.log("fetchResourcesSync: finished")
-      this.props.callback("prefetchCompleted", true);
+      console.log('fetchResourcesSync: finished');
+      this.props.callback('prefetchCompleted', true);
     }).catch(function(err) {
-      console.log("fetchResourcesSync: failed to wait for all the prefetch to populate");
+      console.log('fetchResourcesSync: failed to wait for all the prefetch to populate');
       console.log(err);
-    }) 
+    }); 
   }
 
   updatePrefetchRequest(request, patient, user) {
-    const patientReference = "Patient/"+patient?.id;
-    const userReference = "Practitioner/"+user;
+    const patientReference = 'Patient/'+patient?.id;
+    const userReference = 'Practitioner/'+user;
     if (request) {
       this.props.callback(request.resourceType, request);
-      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, "request", "patient", "practitioner");
+      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, 'request', 'patient', 'practitioner');
       this.fetchResources(queries);
 
-      this.props.callback("request", request);
+      this.props.callback('request', request);
       const coding = this.getCoding(request);
-      this.props.callback("code", coding.code);
-      this.props.callback("codeSystem", coding.system);
-      this.props.callback("display", coding.display);
+      this.props.callback('code', coding.code);
+      this.props.callback('codeSystem', coding.system);
+      this.props.callback('display', coding.display);
     } else {
-      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, "patient", "practitioner", "medicationRequests");
+      var queries = this.props.updatePrefetchCallback(request, patientReference, userReference, 'patient', 'practitioner', 'medicationRequests');
       this.fetchResources(queries);
     }
   }
@@ -180,7 +180,7 @@ export default class PatientBox extends Component {
   getDeviceRequest(patientId, client) {
     client
       .request(`DeviceRequest?subject=Patient/${patientId}`, {
-        resolveReferences: ["subject", "performer"],
+        resolveReferences: ['subject', 'performer'],
         graph: false,
         flat: true,
       })
@@ -192,7 +192,7 @@ export default class PatientBox extends Component {
   getServiceRequest(patientId, client) {
     client
       .request(`ServiceRequest?subject=Patient/${patientId}`, {
-        resolveReferences: ["subject", "performer"],
+        resolveReferences: ['subject', 'performer'],
         graph: false,
         flat: true,
       })
@@ -204,7 +204,7 @@ export default class PatientBox extends Component {
   getMedicationRequest(patientId, client) {
     client
       .request(`MedicationRequest?subject=Patient/${patientId}`, {
-        resolveReferences: ["subject", "performer"],
+        resolveReferences: ['subject', 'performer'],
         graph: false,
         flat: true,
       })
@@ -216,7 +216,7 @@ export default class PatientBox extends Component {
   getMedicationDispense(patientId, client) {
     client
       .request(`MedicationDispense?subject=Patient/${patientId}`, {
-        resolveReferences: ["subject", "performer"],
+        resolveReferences: ['subject', 'performer'],
         graph: false,
         flat: true,
       })
@@ -234,11 +234,11 @@ export default class PatientBox extends Component {
         code: coding.code,
         system: coding.system,
         display: coding.display,
-        response: ""
+        response: ''
       });
     } else {
       this.setState({
-        request: ""
+        request: ''
       });
     }
   }
@@ -251,7 +251,7 @@ export default class PatientBox extends Component {
       });
     } else {
       this.setState({
-        response: ""
+        response: ''
       });
     }
   }
@@ -280,13 +280,13 @@ export default class PatientBox extends Component {
     updateDate.setDate(updateDate.getDate() - this.props.responseExpirationDays);
     const searchParameters = [
       `_lastUpdated=gt${updateDate.toISOString().split('T')[0]}`,
-      `status=in-progress`,
+      'status=in-progress',
       `subject=Patient/${patientId}`,
-      `_sort=-authored`
+      '_sort=-authored'
     ];
     client
-      .request(`QuestionnaireResponse?${searchParameters.join("&")}`, {
-        resolveReferences: ["subject"],
+      .request(`QuestionnaireResponse?${searchParameters.join('&')}`, {
+        resolveReferences: ['subject'],
         graph: false,
         flat: true,
       })
@@ -301,12 +301,12 @@ export default class PatientBox extends Component {
       key: qr.id,
       text: display,
       value: JSON.stringify(qr)
-    }
+    };
   }
 
   render() {
     const patient = this.props.patient;
-    let name = "";
+    let name = '';
     if (patient.name) {
       name = (
         <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>
@@ -314,7 +314,7 @@ export default class PatientBox extends Component {
     }
 
     // add all of the requests to the list of options
-    let options = []
+    let options = [];
     let responseOptions = [];
     let returned = false;
     if (this.state.deviceRequests.data) {
@@ -340,7 +340,7 @@ export default class PatientBox extends Component {
       returned = true;
       this.state.medicationDispenses.data.forEach((e) => {
         this.makeOption(e, options);
-      })
+      });
     };
 
     if (this.state.questionnaireResponses.data) {
@@ -348,7 +348,7 @@ export default class PatientBox extends Component {
       returned = true;
     }
 
-    let noResults = 'No results found.'
+    let noResults = 'No results found.';
     if (!returned) {
       noResults = 'Loading...';
     }
@@ -356,33 +356,33 @@ export default class PatientBox extends Component {
     return (
       <div key = {patient.id} className="patient-box">
         <div className="patient-header">
-          <span style={{fontWeight: 'bolder'}}>{name ? name : "N/A"}</span> {`(ID: ${patient.id})`}
+          <span style={{fontWeight: 'bolder'}}>{name ? name : 'N/A'}</span> {`(ID: ${patient.id})`}
         </div>
         <div
           className="patient-selection-box"
         >
           <div className="patient-info">
             <div>
-              <span style={{ fontWeight: "bold" }}>Gender</span>:{" "}
+              <span style={{ fontWeight: 'bold' }}>Gender</span>:{' '}
               {patient.gender}
             </div>
             <div>
-              <span style={{ fontWeight: "bold" }}>Age</span>:{" "}
+              <span style={{ fontWeight: 'bold' }}>Age</span>:{' '}
               {getAge(patient.birthDate)}
             </div>
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px", padding: "5px" }}>
+            <span style={{ fontWeight: 'bold', marginRight: '5px', padding: '5px' }}>
               Request:
             </span>
             { !options.length && returned ?
               <span className="emptyForm">No requests</span>
             : 
-              this.makeDropdown(options, "Choose a patient", this.state.request, this.handleRequestChange)
+              this.makeDropdown(options, 'Choose a patient', this.state.request, this.handleRequestChange)
             }
           </div>
           <div className="request-info">
-            <span style={{ fontWeight: "bold", marginRight: "5px", padding: "5px"}}>
+            <span style={{ fontWeight: 'bold', marginRight: '5px', padding: '5px'}}>
               In Progress Form:
               <IconButton color="primary" style={{ padding: '0px 5px' }} onClick={this.getResponses}>
                 <RefreshIcon />
@@ -390,7 +390,7 @@ export default class PatientBox extends Component {
             </span>
             { !responseOptions.length && returned ?
               <span className="emptyForm">No in progress forms</span> :
-              this.makeDropdown(responseOptions, "Choose an in-progress form", this.state.response, this.handleResponseChange)
+              this.makeDropdown(responseOptions, 'Choose an in-progress form', this.state.response, this.handleResponseChange)
             }
           </div>
           <Button variant="outlined" size="small" className="select-btn" onClick={() => this.updateValues(patient)}>Select</Button>

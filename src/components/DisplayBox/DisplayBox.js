@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import FHIR from "fhirclient";
+import FHIR from 'fhirclient';
 import './card-list.css';
 import { Button, Card, CardActions, CardContent, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -50,15 +50,15 @@ export default class DisplayBox extends Component{
         this.modifySmartLaunchUrls = this.modifySmartLaunchUrls.bind(this);
         this.exitSmart = this.exitSmart.bind(this);
         this.state={
-            value: "",
-            smartLink: "",
+            value: '',
+            smartLink: '',
             response: {}
         };
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if(JSON.stringify(nextProps.response) !== JSON.stringify(prevState.response)) {
-            return {"response":nextProps.response}
+            return {'response':nextProps.response};
         }else{ 
             return null;
         }
@@ -74,10 +74,10 @@ export default class DisplayBox extends Component{
 
     supportedRequesType(resource) {
       let resourceType = resource.resourceType.toUpperCase();
-      if ( (resourceType === "DEVICEREQUEST") 
-        || (resourceType === "SERVICEREQUEST") 
-        || (resourceType === "MEDICATIONREQUEST")
-        || (resourceType === "MEDICATIONDISPENSE") ) {
+      if ( (resourceType === 'DEVICEREQUEST') 
+        || (resourceType === 'SERVICEREQUEST') 
+        || (resourceType === 'MEDICATIONREQUEST')
+        || (resourceType === 'MEDICATIONDISPENSE') ) {
           return true;
       }
     }
@@ -92,12 +92,12 @@ export default class DisplayBox extends Component{
       if (selectionBehavior === 'at-most-one') {
         // disable all suggestion buttons for this card
         for (var i = 0; i < suggestionCount; i++) {
-          let bId = "suggestion_button-"+cardNum+"-"+i;
-          document.getElementById(bId).setAttribute("disabled", "true");
+          let bId = 'suggestion_button-'+cardNum+'-'+i;
+          document.getElementById(bId).setAttribute('disabled', 'true');
         }
       } else {
         // disable this suggestion button if any are allowed
-        document.getElementById(buttonId).setAttribute("disabled", "true");
+        document.getElementById(buttonId).setAttribute('disabled', 'true');
       }
 
       if (suggestion.label) {
@@ -119,19 +119,19 @@ export default class DisplayBox extends Component{
         // handle each action from the suggestion
         var uri = '';
         suggestion.actions.forEach((action) => {
-          if (action.type.toUpperCase() === "DELETE") {
-            uri = action.resource.resourceType + "/" + action.resource.id;
-            console.log("completing suggested action DELETE: " + uri);
+          if (action.type.toUpperCase() === 'DELETE') {
+            uri = action.resource.resourceType + '/' + action.resource.id;
+            console.log('completing suggested action DELETE: ' + uri);
             client.delete(uri).then((result) => {
-              console.log("suggested action DELETE result:");
+              console.log('suggested action DELETE result:');
               console.log(result);
             });
 
-          } else if (action.type.toUpperCase() === "CREATE") {
+          } else if (action.type.toUpperCase() === 'CREATE') {
             uri = action.resource.resourceType;
-            console.log("completing suggested action CREATE: " + uri);
+            console.log('completing suggested action CREATE: ' + uri);
             client.create(action.resource).then((result) => {
-              console.log("suggested action CREATE result:");
+              console.log('suggested action CREATE result:');
               console.log(result);
 
               if (this.supportedRequesType(result)) {
@@ -140,16 +140,16 @@ export default class DisplayBox extends Component{
               }
             });
 
-          } else if (action.type.toUpperCase() === "UPDATE") {
-            uri = action.resource.resourceType + "/" + action.resource.id;
-            console.log("completing suggested action UPDATE: " + uri);
+          } else if (action.type.toUpperCase() === 'UPDATE') {
+            uri = action.resource.resourceType + '/' + action.resource.id;
+            console.log('completing suggested action UPDATE: ' + uri);
             client.update(action.resource).then((result) => {
-              console.log("suggested action UPDATE result:");
+              console.log('suggested action UPDATE result:');
               console.log(result);
             });
 
           } else {
-            console.log("WARNING: unknown action");
+            console.log('WARNING: unknown action');
           }
         });
 
@@ -169,7 +169,7 @@ export default class DisplayBox extends Component{
   }
 
   exitSmart(e) {
-    this.setState({"smartLink":""});
+    this.setState({'smartLink':''});
   }
   /**
    * Open the absolute or SMART link in a new tab and display an error if a SMART link does not have
@@ -292,7 +292,7 @@ export default class DisplayBox extends Component{
               let suggestionsSection = [];
               if (card.suggestions) {
                 card.suggestions.forEach((item, ind) => {
-                  var buttonId = "suggestion_button-"+cardInd+"-"+ind;
+                  var buttonId = 'suggestion_button-'+cardInd+'-'+ind;
                   this.buttonList.push(buttonId);
 
                   suggestionsSection.push(
@@ -320,7 +320,7 @@ export default class DisplayBox extends Component{
                       >
                         {link.label}
                       </Button>
-                    )
+                    );
                   }
                   const pdfIcon = <PictureAsPdfIcon />;
                   return (
@@ -328,7 +328,7 @@ export default class DisplayBox extends Component{
                       key={ind}
                       onClick={e => this.launchLink(e, link)}
                       endIcon={pdfIcon}
-                    >{link.label}</Button>)
+                    >{link.label}</Button>);
                   }
                 );
               }
@@ -385,7 +385,7 @@ export default class DisplayBox extends Component{
           // clear the suggestion buttons
           console.log(this.buttonList);
           this.buttonList.forEach((requestButton, id) => {
-            document.getElementById(requestButton).removeAttribute("disabled");
+            document.getElementById(requestButton).removeAttribute('disabled');
           });
         }
       }

@@ -31,6 +31,6 @@ export default class EHRLaunchBox extends Component {
                     <input type="password"></input>
                 </div>
             </div>
-        )
+        );
     }
 }
