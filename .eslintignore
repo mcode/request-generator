@@ -1,0 +1,6 @@
+# Production
+public
+build
+
+# Dependencies
+node_modules
