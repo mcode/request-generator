@@ -305,7 +305,8 @@ export default class PatientBox extends Component {
       `_lastUpdated=gt${updateDate.toISOString().split('T')[0]}`,
       'status=in-progress',
       `subject=Patient/${patientId}`,
-      '_sort=-authored'
+      '_sort=-authored',
+      '_include=QuestionnaireResponse:questionnaire'
     ];
     this.props.client
       .request(`QuestionnaireResponse?${searchParameters.join('&')}`, {
