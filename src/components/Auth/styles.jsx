@@ -18,7 +18,7 @@ export default makeStyles(
       fontSize: '30px !important',
       textTransform: 'none !important',
       fontFamily: 'inherit',
-      fontWeight: `200 !important`
+      fontWeight: '200 !important'
     },
     loginContent: {
       width: '600px',

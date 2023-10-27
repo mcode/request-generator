@@ -1,26 +1,25 @@
 // Prefetch Template Source:
 // https://build.fhir.org/ig/HL7/davinci-crd/hooks.html#prefetch
 export class PrefetchTemplate {
-
   static generatePrefetchMap() {
-
     const prefetchMap = new Map();
 
-    const PRACTITIONER_PREFETCH = new PrefetchTemplate(
-      "{{context.userId}}");
+    const PRACTITIONER_PREFETCH = new PrefetchTemplate('{{context.userId}}');
 
     const REQUEST_PREFETCH = new PrefetchTemplate(
-      "MedicationRequest/{{context.medications.MedicationRequest.id}}");
-    const PATIENT_PREFETCH = new PrefetchTemplate("{{context.patientId}}");
+      'MedicationRequest/{{context.medications.MedicationRequest.id}}'
+    );
+    const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
-      "MedicationRequest?subject={{context.patientId}}");
+      'MedicationRequest?subject={{context.patientId}}'
+    );
 
     // prefetchMap.set("Coverage", COVERAGE_PREFETCH_QUERY);
-    prefetchMap.set("request", REQUEST_PREFETCH);
-    prefetchMap.set("practitioner", PRACTITIONER_PREFETCH);
-    prefetchMap.set("patient", PATIENT_PREFETCH);
-    prefetchMap.set("medicationRequests", ALL_REQUESTS_PREFETCH);
+    prefetchMap.set('request', REQUEST_PREFETCH);
+    prefetchMap.set('practitioner', PRACTITIONER_PREFETCH);
+    prefetchMap.set('patient', PATIENT_PREFETCH);
+    prefetchMap.set('medicationRequests', ALL_REQUESTS_PREFETCH);
     // prefetchMap.set("ServiceRequest", SERVICE_REQUEST_BUNDLE);
     // prefetchMap.set("Encounter", ENCOUNTER_BUNDLE);
 
@@ -36,7 +35,7 @@ export class PrefetchTemplate {
     // Rather than do this, which searches the request resource for information,
     // the cds-hook should be constructed and then the context used to actually make
     // the appropriate requests.
-    paramElementMap.set('context.userId', ['requester', 'reference'])
+    paramElementMap.set('context.userId', ['requester', 'reference']);
     paramElementMap.set('context.draftOrders.DeviceRequest.id', ['id']);
     paramElementMap.set('context.medications.MedicationRequest.id', ['id']);
     paramElementMap.set('context.medications.MedicationDispense.id', ['id']);
@@ -60,12 +59,12 @@ export class PrefetchTemplate {
         var unresolvedParameter = parametersToFill[j];
         var resolvedParameter;
         if (requestBundle) {
-          var resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
+          resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
         } else {
           if (unresolvedParameter === 'context.patientId') {
             resolvedParameter = patientReference;
           } else if (unresolvedParameter === 'context.userId') {
-            resolvedParameter = userReference
+            resolvedParameter = userReference;
           }
         }
         resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
@@ -77,24 +76,22 @@ export class PrefetchTemplate {
 
   // Source: https://www.tutorialspoint.com/accessing-nested-javascript-objects-with-string-key
   static getProp(object, path) {
-    if (path.length === 1){
+    if (path.length === 1) {
       return object[path[0]];
+    } else if (path.length === 0) {
+      throw new Error('Invalid property.');
+    } else {
+      if (object[path[0]]) return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
+      else {
+        object[path[0]] = {};
+        return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
+      }
     }
-    else if (path.length === 0) {
-      throw new Error("Invalid property.");
-    }
-    else {
-        if (object[path[0]]) return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
-        else {
-          object[path[0]] = {};
-          return PrefetchTemplate.getProp(object[path[0]], path.slice(1));
-        }
-    }
-  };
+  }
 
   static resolveParameter(unresolvedParameter, requestBundle) {
     const paramField = paramElementMap.get(unresolvedParameter);
-    const resolvedParameter = PrefetchTemplate.getProp(requestBundle, paramField)
+    const resolvedParameter = PrefetchTemplate.getProp(requestBundle, paramField);
     return resolvedParameter;
   }
 
@@ -107,7 +104,6 @@ export class PrefetchTemplate {
   getQuery() {
     return this.query;
   }
-
 }
 
 const prefetchMap = PrefetchTemplate.generatePrefetchMap();

@@ -1,0 +1,8 @@
+# Production
+build
+
+# Dependencies
+node_modules
+
+# This gets modified via `npm install`
+package-lock.json

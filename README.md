@@ -14,7 +14,7 @@ This subproject provides a small web application that is capable of generating r
 This should open a browser window directed to the value set in `REACT_APP_URL`. The request-generator assumes the CRD server is running on the default value set for `REACT_APP_SERVER`. This can be changed in the properties file [.env](./.env). [The following section](./README.md#how-to-override-defaults) lists the default values for these environment variables.
 
 ## Versions
-This application requires node v20.0 or greater.
+This application requires node v14.
 
 
 ### How To Override Defaults

@@ -32,12 +32,22 @@
     "startx": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint \"**/*.{js,jsx}\"",
+    "lint:fix": "eslint \"**/*.{js,jsx}\" --quiet --fix",
+    "prettier": "prettier --check \"**/*.{js,jsx,json}\"",
+    "prettier:fix": "prettier --write \"**/*.{js,jsx,json}\""
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.22.15",
+    "@babel/preset-react": "^7.22.15",
     "concurrently": "^4.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
     "fs": "0.0.1-security",
-    "jju": "^1.4.0"
+    "jju": "^1.4.0",
+    "prettier": "^3.0.3"
   },
   "browserslist": {
     "production": [
