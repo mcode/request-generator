@@ -5,12 +5,12 @@ import PatientPortal from '../containers/PatientPortal';
 import theme from '../containers/styles/theme';
 import { ThemeProvider } from '@mui/styles';
 
-const Router = process.env.GH_PAGES ? HashRouter : BrowserRouter;
+const Router = (process.env.REACT_APP_GH_PAGES === 'true') ? HashRouter : BrowserRouter;
 
 export default class App extends Component {
   render() {
     return (
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router >
         <Routes>
           <Route path="/" exact element={<RequestBuilder />} />
 
