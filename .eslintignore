@@ -3,3 +3,4 @@ build
 
 # Dependencies
 node_modules
+build.js

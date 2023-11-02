@@ -1,6 +1,6 @@
 # Production
 build
-
+build.js
 # Dependencies
 node_modules
 
