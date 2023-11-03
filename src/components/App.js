@@ -14,7 +14,7 @@ const App = () => {
                     <Routes>
                         <Route path='/' exact element={<RequestBuilder />} />
                         <Route exact path='/launch' element={<Launch />} />
-                        <Route exact path='/index' element={<Index callback = {setClient}/>} />
+                        <Route exact path='/index' element={<Index />} />
                         <Route exact path='/patient-portal' element={
                         <ThemeProvider theme={theme}>
                             <PatientPortal />
