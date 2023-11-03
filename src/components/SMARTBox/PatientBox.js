@@ -47,15 +47,13 @@ export default class PatientBox extends Component {
 
   getCoding(request) {
     let code = null;
-    if (request.resourceType === 'DeviceRequest') {
-      code = request.codeCodeableConcept.coding[0];
-    } else if (request.resourceType === 'ServiceRequest') {
-      code = request.code.coding[0];
-    } else if (
-      request.resourceType === 'MedicationRequest' ||
-      request.resourceType === 'MedicationDispense'
-    ) {
-      code = request.medicationCodeableConcept.coding[0];
+    if (request.resourceType === "DeviceRequest") {
+      code = request?.codeCodeableConcept.coding[0];
+    } else if (request.resourceType === "ServiceRequest") {
+      code = request?.code?.coding[0];
+    } else if (request.resourceType === "MedicationRequest"
+      || request.resourceType === "MedicationDispense") {
+      code = request?.medicationCodeableConcept?.coding[0];
     }
     if (code) {
       if (!code.code) {
@@ -68,15 +66,16 @@ export default class PatientBox extends Component {
         code.system = 'Unknown';
       }
     } else {
-      code.code = 'Unknown';
-      code.display = 'Unknown';
-      code.system = 'Unknown';
+      code = {
+        code: "Unknown",
+        display: "Unknown",
+        system: "Unknown"
+      }
     }
     return code;
   }
 
   makeDropdown(options, label, stateVar, stateChange) {
-    console.log(options);
     return (
       <Box sx={{ minWidth: 120 }}>
         <FormControl fullWidth>
@@ -146,19 +145,13 @@ export default class PatientBox extends Component {
     var requests = [];
     this.props.callback('prefetchCompleted', false);
     queries.forEach((query, queryKey) => {
-      const urlQuery = this.props.ehrUrl + '/' + query;
-      requests.push(
-        fetch(urlQuery, {
-          method: 'GET'
-        })
-          .then(response => {
-            const responseJson = response.json();
-            return responseJson;
-          })
-          .then(resource => {
-            this.props.callbackMap('prefetchedResources', queryKey, resource);
-          })
-      );
+      const urlQuery = '/' + query;
+      requests.push(this.props.client.request(urlQuery).then((response) => {
+        console.log(response);
+        return response;
+      }).then((resource) => {
+        this.props.callbackMap("prefetchedResources", queryKey, resource);
+      }));
     });
 
     Promise.all(requests)
@@ -205,8 +198,8 @@ export default class PatientBox extends Component {
     }
   }
 
-  getDeviceRequest(patientId, client) {
-    client
+  getDeviceRequest(patientId) {
+    this.props.client
       .request(`DeviceRequest?subject=Patient/${patientId}`, {
         resolveReferences: ['subject', 'performer'],
         graph: false,
@@ -217,8 +210,8 @@ export default class PatientBox extends Component {
       });
   }
 
-  getServiceRequest(patientId, client) {
-    client
+  getServiceRequest(patientId) {
+    this.props.client
       .request(`ServiceRequest?subject=Patient/${patientId}`, {
         resolveReferences: ['subject', 'performer'],
         graph: false,
@@ -229,8 +222,8 @@ export default class PatientBox extends Component {
       });
   }
 
-  getMedicationRequest(patientId, client) {
-    client
+  getMedicationRequest(patientId) {
+    this.props.client
       .request(`MedicationRequest?subject=Patient/${patientId}`, {
         resolveReferences: ['subject', 'performer'],
         graph: false,
@@ -241,8 +234,8 @@ export default class PatientBox extends Component {
       });
   }
 
-  getMedicationDispense(patientId, client) {
-    client
+  getMedicationDispense(patientId) {
+    this.props.client
       .request(`MedicationDispense?subject=Patient/${patientId}`, {
         resolveReferences: ['subject', 'performer'],
         graph: false,
@@ -285,19 +278,18 @@ export default class PatientBox extends Component {
   }
 
   getRequests() {
-    const client = FHIR.client(this.props.params);
+    console.log(this.props.client);
     const patientId = this.props.patient.id;
-    this.getDeviceRequest(patientId, client);
-    this.getServiceRequest(patientId, client);
-    this.getMedicationRequest(patientId, client);
-    this.getMedicationDispense(patientId, client);
+    this.getDeviceRequest(patientId);
+    this.getServiceRequest(patientId);
+    this.getMedicationRequest(patientId);
+    this.getMedicationDispense(patientId);
   }
 
   /**
    * Retrieve QuestionnaireResponse
    */
   getResponses() {
-    const client = FHIR.client(this.props.params);
     const patientId = this.props.patient.id;
 
     let updateDate = new Date();
@@ -308,7 +300,7 @@ export default class PatientBox extends Component {
       `subject=Patient/${patientId}`,
       '_sort=-authored'
     ];
-    client
+    this.props.client
       .request(`QuestionnaireResponse?${searchParameters.join('&')}`, {
         resolveReferences: ['subject'],
         graph: false,

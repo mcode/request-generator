@@ -16,6 +16,8 @@ const style = {
   left: '50%',
   flexDirection: 'column',
   width: '80%',
+  height: '70%',
+  overflowY: 'scroll',
   transform: 'translate(-50%, -50%)',
   display: 'flex',
   bgcolor: 'background.paper',
@@ -154,15 +156,10 @@ export default class RequestBox extends Component {
 
   getPatients = () => {
     this.setState({ openPatient: true });
-    const params = { serverUrl: this.props.ehrUrl };
-    if (this.props.access_token.access_token) {
-      params['tokenResponse'] = { access_token: this.props.access_token.access_token };
-    }
-    const client = FHIR.client(params);
 
-    client
-      .request('Patient?_sort=identifier&_count=12', { flat: true })
-      .then(result => {
+    this.props.client
+      .request("Patient?_sort=identifier&_count=12", { flat: true })
+      .then((result) => {
         this.setState({
           patientList: result
         });
@@ -343,15 +340,12 @@ export default class RequestBox extends Component {
 
     retrieveLaunchContext(
       link,
-      this.props.fhirAccessToken,
-      this.state.patient.id,
-      this.props.fhirServerUrl,
-      this.props.fhirVersion
-    ).then(result => {
-      link = result;
-      console.log(link);
-      // launch the application in a new window
-      window.open(link.url, '_blank');
+        this.state.patient.id, this.props.client.state
+    ).then((result) => {
+        link = result;
+        console.log(link);
+        // launch the application in a new window
+        window.open(link.url, '_blank');
     });
   };
 
@@ -409,13 +403,10 @@ export default class RequestBox extends Component {
 
     return retrieveLaunchContext(
       linkCopy,
-      this.props.fhirAccessToken,
-      this.state.patient.id,
-      this.props.fhirServerUrl,
-      this.props.fhirVersion
-    ).then(result => {
-      linkCopy = result;
-      return linkCopy;
+        this.state.patient.id, this.props.client.state
+    ).then((result) => {
+        linkCopy = result;
+        return linkCopy;
     });
   }
 
@@ -467,12 +458,7 @@ export default class RequestBox extends Component {
   }
 
   render() {
-    const params = {};
-    params['serverUrl'] = this.props.ehrUrl;
-    if (this.props.access_token) {
-      params['tokenResponse'] = { access_token: this.props.access_token.access_token };
-    }
-    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
+    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading ;
     const disableLaunchDTR = !this.state.response.questionnaire;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
@@ -483,30 +469,32 @@ export default class RequestBox extends Component {
             open={this.state.openPatient}
             onClose={this.exitSmart}
             aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              {this.state.patientList instanceof Error
-                ? this.renderError()
-                : this.state.patientList.map(patient => {
-                    return (
-                      <PatientBox
-                        key={patient.id}
-                        patient={patient}
-                        params={params}
-                        callback={this.updateStateElement}
-                        callbackList={this.updateStateList}
-                        callbackMap={this.updateStateMap}
-                        updatePrefetchCallback={PrefetchTemplate.generateQueries}
-                        clearCallback={this.clearState}
-                        ehrUrl={this.props.ehrUrl}
-                        options={this.state.codeValues}
-                        responseExpirationDays={this.props.responseExpirationDays}
-                        defaultUser={this.props.defaultUser}
-                      />
-                    );
-                  })}
-            </Box>
+            aria-describedby="modal-modal-description">
+              <Box sx={style}>
+                    {this.state.patientList instanceof Error
+                      ? this.renderError()
+                      : this.state.patientList.map((patient) => {
+                          return (
+                            <PatientBox
+                              key={patient.id}
+                              patient={patient}
+                              client={this.props.client}
+                              callback={this.updateStateElement}
+                              callbackList={this.updateStateList}
+                              callbackMap={this.updateStateMap}
+                              updatePrefetchCallback={
+                                PrefetchTemplate.generateQueries
+                              }
+                              clearCallback={this.clearState}
+                              ehrUrl={this.props.ehrUrl}
+                              options={this.state.codeValues}
+                              responseExpirationDays={this.props.responseExpirationDays}
+                              defaultUser={this.props.defaultUser}
+                            />
+                          );
+                        })}
+              </Box>
+
           </Modal>
           <div>
             <Button variant="contained" onClick={this.getPatients} startIcon={<PersonIcon />}>
