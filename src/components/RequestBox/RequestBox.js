@@ -158,8 +158,8 @@ export default class RequestBox extends Component {
     this.setState({ openPatient: true });
 
     this.props.client
-      .request("Patient?_sort=identifier&_count=12", { flat: true })
-      .then((result) => {
+      .request('Patient?_sort=identifier&_count=12', { flat: true })
+      .then(result => {
         this.setState({
           patientList: result
         });
@@ -338,14 +338,11 @@ export default class RequestBox extends Component {
       url: this.props.smartAppUrl
     };
 
-    retrieveLaunchContext(
-      link,
-        this.state.patient.id, this.props.client.state
-    ).then((result) => {
-        link = result;
-        console.log(link);
-        // launch the application in a new window
-        window.open(link.url, '_blank');
+    retrieveLaunchContext(link, this.state.patient.id, this.props.client.state).then(result => {
+      link = result;
+      console.log(link);
+      // launch the application in a new window
+      window.open(link.url, '_blank');
     });
   };
 
@@ -401,13 +398,12 @@ export default class RequestBox extends Component {
 
     let linkCopy = Object.assign({}, link);
 
-    return retrieveLaunchContext(
-      linkCopy,
-        this.state.patient.id, this.props.client.state
-    ).then((result) => {
+    return retrieveLaunchContext(linkCopy, this.state.patient.id, this.props.client.state).then(
+      result => {
         linkCopy = result;
         return linkCopy;
-    });
+      }
+    );
   }
 
   /**
@@ -458,7 +454,7 @@ export default class RequestBox extends Component {
   }
 
   render() {
-    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading ;
+    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchDTR = !this.state.response.questionnaire;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
@@ -469,32 +465,30 @@ export default class RequestBox extends Component {
             open={this.state.openPatient}
             onClose={this.exitSmart}
             aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-              <Box sx={style}>
-                    {this.state.patientList instanceof Error
-                      ? this.renderError()
-                      : this.state.patientList.map((patient) => {
-                          return (
-                            <PatientBox
-                              key={patient.id}
-                              patient={patient}
-                              client={this.props.client}
-                              callback={this.updateStateElement}
-                              callbackList={this.updateStateList}
-                              callbackMap={this.updateStateMap}
-                              updatePrefetchCallback={
-                                PrefetchTemplate.generateQueries
-                              }
-                              clearCallback={this.clearState}
-                              ehrUrl={this.props.ehrUrl}
-                              options={this.state.codeValues}
-                              responseExpirationDays={this.props.responseExpirationDays}
-                              defaultUser={this.props.defaultUser}
-                            />
-                          );
-                        })}
-              </Box>
-
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              {this.state.patientList instanceof Error
+                ? this.renderError()
+                : this.state.patientList.map(patient => {
+                    return (
+                      <PatientBox
+                        key={patient.id}
+                        patient={patient}
+                        client={this.props.client}
+                        callback={this.updateStateElement}
+                        callbackList={this.updateStateList}
+                        callbackMap={this.updateStateMap}
+                        updatePrefetchCallback={PrefetchTemplate.generateQueries}
+                        clearCallback={this.clearState}
+                        ehrUrl={this.props.ehrUrl}
+                        options={this.state.codeValues}
+                        responseExpirationDays={this.props.responseExpirationDays}
+                        defaultUser={this.props.defaultUser}
+                      />
+                    );
+                  })}
+            </Box>
           </Modal>
           <div>
             <Button variant="contained" onClick={this.getPatients} startIcon={<PersonIcon />}>

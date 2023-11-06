@@ -47,12 +47,14 @@ export default class PatientBox extends Component {
 
   getCoding(request) {
     let code = null;
-    if (request.resourceType === "DeviceRequest") {
+    if (request.resourceType === 'DeviceRequest') {
       code = request?.codeCodeableConcept.coding[0];
-    } else if (request.resourceType === "ServiceRequest") {
+    } else if (request.resourceType === 'ServiceRequest') {
       code = request?.code?.coding[0];
-    } else if (request.resourceType === "MedicationRequest"
-      || request.resourceType === "MedicationDispense") {
+    } else if (
+      request.resourceType === 'MedicationRequest' ||
+      request.resourceType === 'MedicationDispense'
+    ) {
       code = request?.medicationCodeableConcept?.coding[0];
     }
     if (code) {
@@ -67,10 +69,10 @@ export default class PatientBox extends Component {
       }
     } else {
       code = {
-        code: "Unknown",
-        display: "Unknown",
-        system: "Unknown"
-      }
+        code: 'Unknown',
+        display: 'Unknown',
+        system: 'Unknown'
+      };
     }
     return code;
   }
@@ -146,12 +148,17 @@ export default class PatientBox extends Component {
     this.props.callback('prefetchCompleted', false);
     queries.forEach((query, queryKey) => {
       const urlQuery = '/' + query;
-      requests.push(this.props.client.request(urlQuery).then((response) => {
-        console.log(response);
-        return response;
-      }).then((resource) => {
-        this.props.callbackMap("prefetchedResources", queryKey, resource);
-      }));
+      requests.push(
+        this.props.client
+          .request(urlQuery)
+          .then(response => {
+            console.log(response);
+            return response;
+          })
+          .then(resource => {
+            this.props.callbackMap('prefetchedResources', queryKey, resource);
+          })
+      );
     });
 
     Promise.all(requests)

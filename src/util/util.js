@@ -11,42 +11,43 @@ import axios from 'axios';
  * @param {*} fhirBaseUrl - The base URL of the FHIR server in context
  */
 function retrieveLaunchContext(link, patientId, clientState) {
-    return new Promise((resolve, reject) => {
-        const headers = clientState.tokenResponse ?
-        {
-        "Accept": 'application/json',
-        "Authorization": `Bearer ${clientState.tokenResponse.access_token}`
+  return new Promise((resolve, reject) => {
+    const headers = clientState.tokenResponse
+      ? {
+          Accept: 'application/json',
+          Authorization: `Bearer ${clientState.tokenResponse.access_token}`
         }
       : {
           Accept: 'application/json'
         };
-        const launchParameters = {
-        patient: patientId,
-        };
-    
-        if (link.appContext) {
-        launchParameters.appContext = link.appContext;
-        }
-    
-        // May change when the launch context creation endpoint becomes a standard endpoint for all EHR providers
-        axios({
-        method: 'post',
-        url: `${clientState.serverUrl}/_services/smart/Launch`,
-        headers,
-        data: {
-            launchUrl: link.url,
-            parameters: launchParameters,
-        },
-        }).then((result) => {
+    const launchParameters = {
+      patient: patientId
+    };
+
+    if (link.appContext) {
+      launchParameters.appContext = link.appContext;
+    }
+
+    // May change when the launch context creation endpoint becomes a standard endpoint for all EHR providers
+    axios({
+      method: 'post',
+      url: `${clientState.serverUrl}/_services/smart/Launch`,
+      headers,
+      data: {
+        launchUrl: link.url,
+        parameters: launchParameters
+      }
+    })
+      .then(result => {
         if (result.data && Object.prototype.hasOwnProperty.call(result.data, 'launch_id')) {
           if (link.url.indexOf('?') < 0) {
             link.url += '?';
           } else {
             link.url += '&';
-            }
-            link.url += `launch=${result.data.launch_id}`;
-            link.url += `&iss=${clientState.serverUrl}`;
-            return resolve(link);
+          }
+          link.url += `launch=${result.data.launch_id}`;
+          link.url += `&iss=${clientState.serverUrl}`;
+          return resolve(link);
         }
         console.error(
           'FHIR server endpoint did not return a launch_id to launch the SMART app. See network calls to the Launch endpoint for more details'
