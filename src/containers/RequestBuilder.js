@@ -57,11 +57,13 @@ export default class RequestBuilder extends Component {
     setupKeys(callback);
     if (!this.state.client) {
       this.reconnectEhr();
+    } else {
+      this.setState({ baseUrl: this.state.client.state.serverUrl });
+      this.setState({ ehrUrl: this.state.client.state.serverUrl });
     }
   }
 
   reconnectEhr() {
-    console.log(this.state.baseUrl);
     FHIR.oauth2
       .authorize({
         clientId: env.get('REACT_APP_CLIENT').asString(),

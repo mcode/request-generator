@@ -36,7 +36,7 @@ export default class ConsoleBox extends Component {
   render() {
     try {
       var objDiv = document.getElementById('your_div');
-      if(objDiv) {
+      if (objDiv) {
         objDiv.scrollTop = objDiv.scrollHeight;
       }
     } catch (error) {
