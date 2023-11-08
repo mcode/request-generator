@@ -156,7 +156,6 @@ export default class RequestBox extends Component {
 
   getPatients = () => {
     this.setState({ openPatient: true });
-
     this.props.client
       .request('Patient?_sort=identifier&_count=12', { flat: true })
       .then(result => {
@@ -317,7 +316,7 @@ export default class RequestBox extends Component {
   }
 
   renderError() {
-    return <span className="patient-error">{this.state.patientList.message}</span>;
+    return <span className="patient-error">Encountered Error: Try Refreshing The Client <br /> {this.state.patientList.message} </span>;
   }
 
   launchSmartOnFhirApp = () => {
