@@ -22,7 +22,8 @@ export default class PatientBox extends Component {
       response: '',
       questionnaireResponses: {},
       openRequests: false,
-      openQuestionnaires: false
+      openQuestionnaires: false,
+      questionnaireTitles: {}
     };
 
     this.handleRequestChange = this.handleRequestChange.bind(this);
@@ -34,6 +35,7 @@ export default class PatientBox extends Component {
     this.getMedicationDispense = this.getMedicationDispense.bind(this);
     this.getRequests = this.getRequests.bind(this);
     this.getResponses = this.getResponses.bind(this);
+    this.getQuestionnaireTitles = this.getQuestionnaireTitles.bind(this);
     this.makeQROption = this.makeQROption.bind(this);
     this.handleResponseChange = this.handleResponseChange.bind(this);
     this.makeDropdown = this.makeDropdown.bind(this);
@@ -43,6 +45,7 @@ export default class PatientBox extends Component {
     // get requests and responses on open of patients
     this.getRequests();
     this.getResponses();
+    this.getQuestionnaireTitles();
   }
 
   getCoding(request) {
@@ -305,8 +308,7 @@ export default class PatientBox extends Component {
       `_lastUpdated=gt${updateDate.toISOString().split('T')[0]}`,
       'status=in-progress',
       `subject=Patient/${patientId}`,
-      '_sort=-authored',
-      '_include=QuestionnaireResponse:questionnaire'
+      '_sort=-authored'
     ];
     this.props.client
       .request(`QuestionnaireResponse?${searchParameters.join('&')}`, {
@@ -319,8 +321,29 @@ export default class PatientBox extends Component {
       });
   }
 
+  getQuestionnaireTitles() {
+    const client = FHIR.client(this.props.params);
+    const promises = [];
+    if (this.state.questionnaireResponses) {
+      for (const canonical of this.state.questionnaireResponses.data
+        .map(qr => qr.questionnaire)
+        .filter((questionnaire, index, array) => array.indexOf(questionnaire) === index)) {
+        promises.push(
+          client.request(canonical).then(result => {
+            return [canonical, result.title];
+          })
+        );
+      }
+      Promise.all(promises).then(pairs => {
+        this.setState({ questionnaireTitles: Object.fromEntries(pairs) });
+      });
+    }
+  }
+
   makeQROption(qr) {
-    const display = `${qr.questionnaire}: created at ${qr.authored}`;
+    console.log('questionnaireTitles', this.state.questionnaireTitles);
+    const questionnaireTitle = this.state.questionnaireTitles[qr.questionnaire];
+    const display = `${questionnaireTitle}: created at ${qr.authored}`;
     return {
       key: qr.id,
       text: display,
