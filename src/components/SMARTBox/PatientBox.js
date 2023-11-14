@@ -317,20 +317,17 @@ export default class PatientBox extends Component {
       })
       .then(result => {
         this.setState({ questionnaireResponses: result });
-        // right after this setState, call getQuestionnaireTitles(), remove it from top-level
       })
       .then(() => this.getQuestionnaireTitles());
   }
 
-  // embed the get questionnaires into each one of the get questionnaire responses
-  // because there are no async/await keywords these 2 functions are actually async
   getQuestionnaireTitles() {
     const client = FHIR.client(this.props.params);
     const promises = [];
     if (this.state.questionnaireResponses.data.length > 0) {
-      for (const canonical of this.state.questionnaireResponses.data
-        .map(questionnaireResponse => questionnaireResponse.questionnaire)
-        .filter((questionnaire, index, array) => array.indexOf(questionnaire) === index)) {
+      for (const canonical of this.state.questionnaireResponses.data.map(
+        questionnaireResponse => questionnaireResponse.questionnaire
+      )) {
         promises.push(
           client.request(canonical).then(questionnaire => [canonical, questionnaire.title])
         );
