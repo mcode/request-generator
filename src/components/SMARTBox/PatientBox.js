@@ -328,27 +328,11 @@ export default class PatientBox extends Component {
     const client = FHIR.client(this.props.params);
     const promises = [];
     if (this.state.questionnaireResponses.data.length > 0) {
-      // canonicals are not necessarily a FHIR reference nor could it be a valid URL. it should be but it might not be
-      // almost all the URLs in there are probably a little screwed up
-      // search questionnaire by its canonical ID
-
       for (const canonical of this.state.questionnaireResponses.data
         .map(questionnaireResponse => questionnaireResponse.questionnaire)
         .filter((questionnaire, index, array) => array.indexOf(questionnaire) === index)) {
-        console.log('this.props.ehrUrl', this.props.ehrUrl);
         promises.push(
-          client
-            .request(`${this.props.ehrUrl}/Questionnaire?url=${canonical}`)
-            .then(questionnaire => {
-              // the url QuestionnaireResponse.questionnaire is not a URL to the resource- it's an identifier.
-              // you can search on the Questionnaire.url = that identifier
-              // <base>/Questionnaire?url=<id>
-              // the base is in this case, test-ehr (the FHIR server we're working with) and the id is the QuestionnaireResponse.questionnaire/Questionnaire.url
-              console.log('this.state.questionnaireResponses', this.state.questionnaireResponses);
-              console.log('canonical', canonical);
-              console.log('questionnaire', questionnaire);
-              return [canonical, questionnaire.title];
-            })
+          client.request(canonical).then(questionnaire => [canonical, questionnaire.title])
         );
       }
       Promise.all(promises).then(pairs => {
@@ -358,7 +342,6 @@ export default class PatientBox extends Component {
   }
 
   makeQROption(qr) {
-    console.log('questionnaireTitles', this.state.questionnaireTitles);
     const questionnaireTitle = this.state.questionnaireTitles[qr.questionnaire];
     const display = `${questionnaireTitle}: created at ${qr.authored}`;
     return {
