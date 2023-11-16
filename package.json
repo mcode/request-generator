@@ -1,8 +1,8 @@
 {
   "name": "request-generator",
   "version": "0.1.0",
-  "private": true,
-  "homepage": "http://localhost:8080",
+  "private": false,
+  "homepage": "https://mcode.github.io/request-generator/",
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -22,7 +22,7 @@
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-markdown": "^8.0.7",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^6.17.0",
     "react-scripts": "^4.0.0",
     "sass": "^1.32.8"
   },
@@ -30,13 +30,15 @@
     "start": "concurrently --kill-others \"json-server --watch src/db.json -p 3001 --host 0.0.0.0\" \"react-scripts start\"",
     "production": "json-server --watch src/db.json -p 3000 --host 0.0.0.0 --static build",
     "startx": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint \"**/*.{js,jsx}\"",
-    "lint:fix": "eslint \"**/*.{js,jsx}\" --quiet --fix",
+    "lint:fix": "eslint \"**/*.{js,jsx}\"  --fix",
     "prettier": "prettier --check \"**/*.{js,jsx,json}\"",
-    "prettier:fix": "prettier --write \"**/*.{js,jsx,json}\""
+    "prettier:fix": "prettier --write \"**/*.{js,jsx,json}\"",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
@@ -47,7 +49,9 @@
     "eslint-plugin-import": "^2.29.0",
     "fs": "0.0.1-security",
     "jju": "^1.4.0",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "gh-pages": "6.0.0",
+    "rewire": "^7.0.0"
   },
   "browserslist": {
     "production": [
