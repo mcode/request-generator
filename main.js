@@ -235,15 +235,6 @@ function clsx() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _mui_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(139);
-
-/* harmony default export */ __webpack_exports__["a"] = (_mui_utils__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"]);
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ _slicedToArray; });
@@ -295,6 +286,15 @@ var nonIterableRest = __webpack_require__(99);
 function _slicedToArray(arr, i) {
   return Object(arrayWithHoles["a" /* default */])(arr) || _iterableToArrayLimit(arr, i) || Object(unsupportedIterableToArray["a" /* default */])(arr, i) || Object(nonIterableRest["a" /* default */])();
 }
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _mui_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(139);
+
+/* harmony default export */ __webpack_exports__["a"] = (_mui_utils__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"]);
 
 /***/ }),
 /* 11 */
@@ -373,13 +373,13 @@ __webpack_require__.d(__webpack_exports__, "e", function() { return /* binding *
 // UNUSED EXPORTS: marginKeys, paddingKeys, getStyleFromPropValue
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@mui/system/esm/breakpoints.js
 var breakpoints = __webpack_require__(23);
 
 // EXTERNAL MODULE: ./node_modules/@mui/system/esm/style.js
-var style = __webpack_require__(18);
+var style = __webpack_require__(16);
 
 // EXTERNAL MODULE: ./node_modules/@mui/system/esm/merge.js
 var merge = __webpack_require__(48);
@@ -546,40 +546,6 @@ module.exports = __webpack_require__(239);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _classCallCheck; });
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-/***/ }),
-/* 17 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _createClass; });
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-/***/ }),
-/* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return getPath; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return getStyleValue; });
 /* harmony import */ var _Users_bobd_projects_rems_crd_request_generator_node_modules_babel_runtime_helpers_esm_defineProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
@@ -665,6 +631,40 @@ function style(options) {
 /* harmony default export */ __webpack_exports__["a"] = (style);
 
 /***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _classCallCheck; });
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _createClass; });
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+/***/ }),
 /* 19 */,
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -717,7 +717,7 @@ var from = function from(container, extraAccessors, logger) {
     logger: __webpack_require__(347)(console.log, container.NODE_ENV)
   };
 };
-module.exports = from(Object({"NODE_ENV":"production","PUBLIC_URL":".","WDS_SOCKET_HOST":undefined,"WDS_SOCKET_PATH":undefined,"WDS_SOCKET_PORT":undefined,"FAST_REFRESH":true,"REACT_APP_REALM":"ClientFhirServer","REACT_APP_CLIENT":"app-login","REACT_APP_AUTH":"http://localhost:8180","REACT_APP_SERVER":"http://localhost:8090","REACT_APP_EHR_SERVER":"http://localhost:8080/test-ehr/r4","REACT_APP_EHR_BASE":"http://localhost:8080/test-ehr/r4","REACT_APP_CDS_SERVICE":"http://localhost:8090/cds-services","REACT_APP_ORDER_SIGN":"rems-order-sign","REACT_APP_ORDER_SELECT":"rems-order-select","REACT_APP_PATIENT_VIEW":"rems-patient-view","REACT_APP_USER":"alice","REACT_APP_PASSWORD":"alice","REACT_APP_PUBLIC_KEYS":"http://localhost:3001/public_keys","REACT_APP_ALT_DRUG":"true","REACT_APP_LAUNCH_URL":"http://localhost:4040/launch","REACT_APP_SMART_LAUNCH_URL":"http://localhost:4040/","REACT_APP_DEFAULT_USER":"pra1234","REACT_APP_RESPONSE_EXPIRATION_DAYS":"30","REACT_APP_PIMS_SERVER":"http://localhost:5051/doctorOrders/api/addRx","REACT_APP_HOMEPAGE":"http://localhost:8080","REACT_APP_URL":"http://localhost:3000","REACT_APP_URL_FILTER":"http://localhost:3000/*","REACT_APP_EHR_LINK":"http://localhost:8080/ehr-server/","REACT_APP_GH_PAGES":"true"}));
+module.exports = from(Object({"NODE_ENV":"production","PUBLIC_URL":".","WDS_SOCKET_HOST":undefined,"WDS_SOCKET_PATH":undefined,"WDS_SOCKET_PORT":undefined,"FAST_REFRESH":true,"REACT_APP_REALM":"ClientFhirServer","REACT_APP_CLIENT":"5193dd3d-153b-458d-8930-939ac808e87f","REACT_APP_CLIENT_SCOPES":"launch openid profile user/*.*","REACT_APP_AUTH":"http://localhost:8180","REACT_APP_SERVER":"http://localhost:8090","REACT_APP_EHR_SERVER":"http://localhost:8080/test-ehr/r4","REACT_APP_EHR_BASE":"http://localhost:8080/test-ehr/r4","REACT_APP_CDS_SERVICE":"http://localhost:8090/cds-services","REACT_APP_ORDER_SIGN":"rems-order-sign","REACT_APP_ORDER_SELECT":"rems-order-select","REACT_APP_PATIENT_VIEW":"rems-patient-view","REACT_APP_USER":"alice","REACT_APP_PASSWORD":"alice","REACT_APP_PUBLIC_KEYS":"http://localhost:3001/public_keys","REACT_APP_ALT_DRUG":"true","REACT_APP_LAUNCH_URL":"http://localhost:4040/launch","REACT_APP_SMART_LAUNCH_URL":"http://localhost:4040/","REACT_APP_DEFAULT_USER":"pra1234","REACT_APP_RESPONSE_EXPIRATION_DAYS":"30","REACT_APP_PIMS_SERVER":"http://localhost:5051/doctorOrders/api/addRx","REACT_APP_HOMEPAGE":"http://localhost:8080","REACT_APP_URL":"http://localhost:3000","REACT_APP_URL_FILTER":"http://localhost:3000/*","REACT_APP_EHR_LINK":"http://localhost:8080/ehr-server/","REACT_APP_GH_PAGES":"true"}));
 
 /***/ }),
 /* 21 */
@@ -1004,7 +1004,7 @@ var clsx = __webpack_require__(8);
 var composeClasses = __webpack_require__(412);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useThemeProps.js
 var useThemeProps = __webpack_require__(11);
@@ -1451,7 +1451,7 @@ __webpack_require__.d(__webpack_exports__, "b", function() { return /* binding *
 __webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ InputBaseComponent; });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(3);
@@ -1752,13 +1752,13 @@ var styled = __webpack_require__(4);
 var useThemeProps = __webpack_require__(11);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useForkRef.js
 var utils_useForkRef = __webpack_require__(21);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useEnhancedEffect.js
-var utils_useEnhancedEffect = __webpack_require__(40);
+var utils_useEnhancedEffect = __webpack_require__(41);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/GlobalStyles/GlobalStyles.js + 1 modules
 var GlobalStyles = __webpack_require__(435);
@@ -2376,6 +2376,52 @@ var _utils = __webpack_require__(182);
 
 /***/ }),
 /* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// In Browsers we create an adapter, get the SMART api from it and build the
+// global FHIR object
+var BrowserAdapter_1 = __webpack_require__(237);
+var adapter = new BrowserAdapter_1.default();
+var _adapter$getSmartApi = adapter.getSmartApi(),
+  ready = _adapter$getSmartApi.ready,
+  authorize = _adapter$getSmartApi.authorize,
+  init = _adapter$getSmartApi.init,
+  client = _adapter$getSmartApi.client,
+  options = _adapter$getSmartApi.options; // We have two kinds of browser builds - "pure" for new browsers and "legacy"
+// for old ones. In pure builds we assume that the browser supports everything
+// we need. In legacy mode, the library also acts as a polyfill. Babel will
+// automatically polyfill everything except "fetch", which we have to handle
+// manually.
+// @ts-ignore
+
+if (typeof FHIRCLIENT_PURE == "undefined") {
+  var fetch = __webpack_require__(116);
+  __webpack_require__(290);
+  if (!window.fetch) {
+    window.fetch = fetch.default;
+    window.Headers = fetch.Headers;
+    window.Request = fetch.Request;
+    window.Response = fetch.Response;
+  }
+} // $lab:coverage:off$
+
+var FHIR = {
+  AbortController: window.AbortController,
+  client: client,
+  oauth2: {
+    settings: options,
+    ready: ready,
+    authorize: authorize,
+    init: init
+  }
+};
+module.exports = FHIR; // $lab:coverage:on$
+
+/***/ }),
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2398,7 +2444,7 @@ function useTheme() {
 }
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2702,7 +2748,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2713,7 +2759,7 @@ module.exports = {
 /* harmony default export */ __webpack_exports__["a"] = (_mui_utils__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"]);
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2736,7 +2782,7 @@ function getTransitionProps(props, options) {
 }
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports) {
 
 var FunctionPrototype = Function.prototype;
@@ -2752,7 +2798,7 @@ module.exports = bind ? function (fn) {
 };
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports) {
 
 // `IsCallable` abstract operation
@@ -2760,52 +2806,6 @@ module.exports = bind ? function (fn) {
 module.exports = function (argument) {
   return typeof argument == 'function';
 };
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// In Browsers we create an adapter, get the SMART api from it and build the
-// global FHIR object
-var BrowserAdapter_1 = __webpack_require__(237);
-var adapter = new BrowserAdapter_1.default();
-var _adapter$getSmartApi = adapter.getSmartApi(),
-  ready = _adapter$getSmartApi.ready,
-  authorize = _adapter$getSmartApi.authorize,
-  init = _adapter$getSmartApi.init,
-  client = _adapter$getSmartApi.client,
-  options = _adapter$getSmartApi.options; // We have two kinds of browser builds - "pure" for new browsers and "legacy"
-// for old ones. In pure builds we assume that the browser supports everything
-// we need. In legacy mode, the library also acts as a polyfill. Babel will
-// automatically polyfill everything except "fetch", which we have to handle
-// manually.
-// @ts-ignore
-
-if (typeof FHIRCLIENT_PURE == "undefined") {
-  var fetch = __webpack_require__(116);
-  __webpack_require__(290);
-  if (!window.fetch) {
-    window.fetch = fetch.default;
-    window.Headers = fetch.Headers;
-    window.Request = fetch.Request;
-    window.Response = fetch.Response;
-  }
-} // $lab:coverage:off$
-
-var FHIR = {
-  AbortController: window.AbortController,
-  client: client,
-  oauth2: {
-    settings: options,
-    ready: ready,
-    authorize: authorize,
-    init: init
-  }
-};
-module.exports = FHIR; // $lab:coverage:on$
 
 /***/ }),
 /* 45 */
@@ -20472,7 +20472,7 @@ function isAdornedStart(obj) {
 /* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var toObject = __webpack_require__(167);
 var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
@@ -21102,7 +21102,7 @@ var internal_processStyles = function internal_processStyles(tag, processor) {
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(0);
@@ -21158,8 +21158,8 @@ function useControlled(_ref) {
  * @param {*} accessToken - The access token provided to the CDS Hooks Sandbox by the FHIR server
  * @param {*} patientId - The identifier of the patient in context
  * @param {*} fhirBaseUrl - The base URL of the FHIR server in context
- */function retrieveLaunchContext(link,accessToken,patientId,fhirBaseUrl,fhirVersion){return new Promise(function(resolve,reject){var headers=accessToken?{Accept:'application/json',Authorization:"Bearer ".concat(accessToken.access_token)}:{Accept:'application/json'};var launchParameters={patient:patientId};if(link.appContext){launchParameters.appContext=link.appContext;}// May change when the launch context creation endpoint becomes a standard endpoint for all EHR providers
-axios__WEBPACK_IMPORTED_MODULE_0___default()({method:'post',url:"".concat(fhirBaseUrl,"/_services/smart/Launch"),headers:headers,data:{launchUrl:link.url,parameters:launchParameters}}).then(function(result){if(result.data&&Object.prototype.hasOwnProperty.call(result.data,'launch_id')){if(link.url.indexOf('?')<0){link.url+='?';}else{link.url+='&';}link.url+="launch=".concat(result.data.launch_id);link.url+="&iss=".concat(fhirBaseUrl);return resolve(link);}console.error('FHIR server endpoint did not return a launch_id to launch the SMART app. See network calls to the Launch endpoint for more details');link.error=true;return reject(link);}).catch(function(err){console.error('Cannot grab launch context from the FHIR server endpoint to launch the SMART app. See network calls to the Launch endpoint for more details',err);link.error=true;return reject(link);});});}
+ */function retrieveLaunchContext(link,patientId,clientState){return new Promise(function(resolve,reject){var headers=clientState.tokenResponse?{Accept:'application/json',Authorization:"Bearer ".concat(clientState.tokenResponse.access_token)}:{Accept:'application/json'};var launchParameters={patient:patientId};if(link.appContext){launchParameters.appContext=link.appContext;}// May change when the launch context creation endpoint becomes a standard endpoint for all EHR providers
+axios__WEBPACK_IMPORTED_MODULE_0___default()({method:'post',url:"".concat(clientState.serverUrl,"/_services/smart/Launch"),headers:headers,data:{launchUrl:link.url,parameters:launchParameters}}).then(function(result){if(result.data&&Object.prototype.hasOwnProperty.call(result.data,'launch_id')){if(link.url.indexOf('?')<0){link.url+='?';}else{link.url+='&';}link.url+="launch=".concat(result.data.launch_id);link.url+="&iss=".concat(clientState.serverUrl);return resolve(link);}console.error('FHIR server endpoint did not return a launch_id to launch the SMART app. See network calls to the Launch endpoint for more details');link.error=true;return reject(link);}).catch(function(err){console.error('Cannot grab launch context from the FHIR server endpoint to launch the SMART app. See network calls to the Launch endpoint for more details',err);link.error=true;return reject(link);});});}
 
 /***/ }),
 /* 63 */
@@ -21247,7 +21247,7 @@ module.exports = function (exec) {
 /* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 module.exports = function (it) {
   return typeof it == 'object' ? it !== null : isCallable(it);
 };
@@ -21292,7 +21292,7 @@ if (false) {}
 var spacing = __webpack_require__(13);
 
 // EXTERNAL MODULE: ./node_modules/@mui/system/esm/style.js
-var style = __webpack_require__(18);
+var style = __webpack_require__(16);
 
 // EXTERNAL MODULE: ./node_modules/@mui/system/esm/merge.js
 var merge = __webpack_require__(48);
@@ -21969,7 +21969,7 @@ module.exports["default"] = module.exports, module.exports.__esModule = true;
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(24);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var aFunction = function aFunction(argument) {
   return isCallable(argument) ? argument : undefined;
 };
@@ -22148,7 +22148,7 @@ __webpack_require__.d(__webpack_exports__, "a", function() { return /* binding *
 // UNUSED EXPORTS: systemDefaultTheme
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
 var toConsumableArray = __webpack_require__(12);
@@ -24808,7 +24808,7 @@ module.exports = call.bind ? call.bind(call) : function () {
 /* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var toString = uncurryThis({}.toString);
 var stringSlice = uncurryThis(''.slice);
 module.exports = function (it) {
@@ -24864,8 +24864,8 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 /* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
-var isCallable = __webpack_require__(43);
+var uncurryThis = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var store = __webpack_require__(119);
 var functionToString = uncurryThis(Function.toString);
 
@@ -24924,7 +24924,7 @@ module.exports = ['constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsE
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 var normalizeHeaderName = __webpack_require__(294);
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -45977,7 +45977,7 @@ module.exports = function (argument) {
 
 var global = __webpack_require__(24);
 var getBuiltIn = __webpack_require__(78);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var isPrototypeOf = __webpack_require__(256);
 var USE_SYMBOL_AS_UID = __webpack_require__(163);
 var Object = global.Object;
@@ -46019,7 +46019,7 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(24);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var tryToString = __webpack_require__(260);
 var TypeError = global.TypeError;
 
@@ -46061,7 +46061,7 @@ module.exports = function (argument) {
 /* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var id = 0;
 var postfix = Math.random();
 var toString = uncurryThis(1.0.toString);
@@ -46115,7 +46115,7 @@ module.exports = function (key) {
 /* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var hasOwn = __webpack_require__(58);
 var toIndexedObject = __webpack_require__(93);
 var indexOf = __webpack_require__(270).indexOf;
@@ -46171,7 +46171,7 @@ module.exports = function bind(fn, thisArg) {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 var settle = __webpack_require__(295);
 var buildURL = __webpack_require__(297);
 var parseHeaders = __webpack_require__(298);
@@ -46469,7 +46469,7 @@ __webpack_require__.d(__webpack_exports__, "unstable_ClassNameGenerator", functi
 var ClassNameGenerator = __webpack_require__(349);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/createChainedFunction.js
 var createChainedFunction = __webpack_require__(415);
@@ -46556,7 +46556,7 @@ var setRef = __webpack_require__(186);
 
 /* harmony default export */ var utils_setRef = (setRef["a" /* default */]);
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useEnhancedEffect.js
-var useEnhancedEffect = __webpack_require__(40);
+var useEnhancedEffect = __webpack_require__(41);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/useId/useId.js
 var useId = __webpack_require__(416);
@@ -46685,7 +46685,7 @@ module.exports.default = StyleToObject; // ESM support
 /* harmony import */ var _Users_bobd_projects_rems_crd_request_generator_node_modules_babel_runtime_helpers_esm_defineProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _mui_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(139);
 /* harmony import */ var _merge__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(48);
-/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(18);
+/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
 /* harmony import */ var _breakpoints__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
 /* harmony import */ var _defaultSxConfig__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(71);
 
@@ -46953,11 +46953,11 @@ exports.default = _default;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/* harmony import */ var _Users_bobd_projects_rems_crd_request_generator_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* harmony import */ var _Users_bobd_projects_rems_crd_request_generator_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _styles_styles__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(194);
-/* harmony import */ var fhirclient__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(44);
+/* harmony import */ var fhirclient__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
 /* harmony import */ var fhirclient__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(fhirclient__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _components_Auth_Login__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(206);
 /* harmony import */ var _components_Dashboard_Dashboard__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(205);
@@ -47188,7 +47188,7 @@ var defineProperty = __webpack_require__(3);
 var toConsumableArray = __webpack_require__(12);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(0);
@@ -47224,7 +47224,7 @@ var env_var_default = /*#__PURE__*/__webpack_require__.n(env_var);
 var jsx_runtime = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./src/components/Dashboard/DashboardElement.jsx
-var DashboardElement_DashboardElement=function DashboardElement(props){var classes=Dashboard_styles();var resource=props.resource;var clientState=props.client.state;var status=props.status;var date=new Date(resource.meta.lastUpdated).toUTCString();var _resource$questionnai=resource.questionnaire.split('/').slice(-1),_resource$questionnai2=Object(slicedToArray["a" /* default */])(_resource$questionnai,1),questionnaireId=_resource$questionnai2[0];var splitCamelCaseWithAbbreviations=function splitCamelCaseWithAbbreviations(s){return s.split(/([A-Z][a-z]+)/).filter(function(e){return e;});};var relaunch=function relaunch(){var link={appContext:encodeURIComponent("response=QuestionnaireResponse/".concat(resource.id)),type:'smart',url:env_var_default.a.get('REACT_APP_LAUNCH_URL').asString()};Object(util["a" /* retrieveLaunchContext */])(link,clientState.tokenResponse.accessToken,clientState.tokenResponse.patient,clientState.serverUrl,'r4').then(function(e){window.open(e.url,'_blank');});};var renderStatus=function renderStatus(){var bColor={};if(status==='in-progress'){bColor={backgroundColor:'#fdbe14'};}else if(status==='completed'){bColor={backgroundColor:'#20c997'};}return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{style:bColor,className:classes.progressBubble});};return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{onClick:relaunch,children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(Paper["a" /* default */],{className:classes.dashboardElement,children:[renderStatus(),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(CalendarToday_default.a,{className:classes.elementIcon})," ",/*#__PURE__*/Object(jsx_runtime["jsx"])("strong",{children:"Last Updated"}),":",' ',/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:[" ",date]})]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Assignment_default.a,{className:classes.elementIcon})," ",/*#__PURE__*/Object(jsx_runtime["jsx"])("strong",{children:" Questionnaire"}),":",' ',splitCamelCaseWithAbbreviations(questionnaireId).join(' ')]})]})});};/* harmony default export */ var Dashboard_DashboardElement = (/*#__PURE__*/Object(react["memo"])(DashboardElement_DashboardElement));
+var DashboardElement_DashboardElement=function DashboardElement(props){var classes=Dashboard_styles();var resource=props.resource;var clientState=props.client.state;var status=props.status;var date=new Date(resource.meta.lastUpdated).toUTCString();var _resource$questionnai=resource.questionnaire.split('/').slice(-1),_resource$questionnai2=Object(slicedToArray["a" /* default */])(_resource$questionnai,1),questionnaireId=_resource$questionnai2[0];var splitCamelCaseWithAbbreviations=function splitCamelCaseWithAbbreviations(s){return s.split(/([A-Z][a-z]+)/).filter(function(e){return e;});};var relaunch=function relaunch(){var link={appContext:encodeURIComponent("response=QuestionnaireResponse/".concat(resource.id)),type:'smart',url:env_var_default.a.get('REACT_APP_LAUNCH_URL').asString()};Object(util["a" /* retrieveLaunchContext */])(link,clientState.tokenResponse.patient,clientState).then(function(e){window.open(e.url,'_blank');});};var renderStatus=function renderStatus(){var bColor={};if(status==='in-progress'){bColor={backgroundColor:'#fdbe14'};}else if(status==='completed'){bColor={backgroundColor:'#20c997'};}return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{style:bColor,className:classes.progressBubble});};return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{onClick:relaunch,children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(Paper["a" /* default */],{className:classes.dashboardElement,children:[renderStatus(),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(CalendarToday_default.a,{className:classes.elementIcon})," ",/*#__PURE__*/Object(jsx_runtime["jsx"])("strong",{children:"Last Updated"}),":",' ',/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:[" ",date]})]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Assignment_default.a,{className:classes.elementIcon})," ",/*#__PURE__*/Object(jsx_runtime["jsx"])("strong",{children:" Questionnaire"}),":",' ',splitCamelCaseWithAbbreviations(questionnaireId).join(' ')]})]})});};/* harmony default export */ var Dashboard_DashboardElement = (/*#__PURE__*/Object(react["memo"])(DashboardElement_DashboardElement));
 // EXTERNAL MODULE: ./node_modules/@mui/material/node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
 var objectWithoutPropertiesLoose = __webpack_require__(6);
 
@@ -47481,7 +47481,7 @@ var Stack_Stack = createStack({
 var Typography = __webpack_require__(356);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js
 var generateUtilityClasses = __webpack_require__(109);
@@ -48029,10 +48029,10 @@ var debounce = __webpack_require__(68);
 var useForkRef = __webpack_require__(21);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(38);
+var useTheme = __webpack_require__(39);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/transitions/utils.js
-var utils = __webpack_require__(41);
+var utils = __webpack_require__(42);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/ownerWindow.js
 var ownerWindow = __webpack_require__(84);
@@ -48834,7 +48834,7 @@ var isHostComponent = __webpack_require__(188);
 var isMuiElement = __webpack_require__(55);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useEnhancedEffect.js
-var useEnhancedEffect = __webpack_require__(40);
+var useEnhancedEffect = __webpack_require__(41);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/List/ListContext.js
 var ListContext = __webpack_require__(29);
@@ -49569,7 +49569,7 @@ var Dashboard_Dashboard=function Dashboard(props){var classes=Dashboard_styles()
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(0);
@@ -49620,7 +49620,7 @@ var formControlState = __webpack_require__(34);
 var useFormControl = __webpack_require__(33);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js
 var generateUtilityClasses = __webpack_require__(109);
@@ -50281,7 +50281,7 @@ function useSnackbar() {
   };
 }
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(38);
+var useTheme = __webpack_require__(39);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/Grow/Grow.js
 var Grow = __webpack_require__(420);
@@ -60608,7 +60608,7 @@ function load() {
 
   // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
   if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = Object({"NODE_ENV":"production","PUBLIC_URL":".","WDS_SOCKET_HOST":undefined,"WDS_SOCKET_PATH":undefined,"WDS_SOCKET_PORT":undefined,"FAST_REFRESH":true,"REACT_APP_REALM":"ClientFhirServer","REACT_APP_CLIENT":"app-login","REACT_APP_AUTH":"http://localhost:8180","REACT_APP_SERVER":"http://localhost:8090","REACT_APP_EHR_SERVER":"http://localhost:8080/test-ehr/r4","REACT_APP_EHR_BASE":"http://localhost:8080/test-ehr/r4","REACT_APP_CDS_SERVICE":"http://localhost:8090/cds-services","REACT_APP_ORDER_SIGN":"rems-order-sign","REACT_APP_ORDER_SELECT":"rems-order-select","REACT_APP_PATIENT_VIEW":"rems-patient-view","REACT_APP_USER":"alice","REACT_APP_PASSWORD":"alice","REACT_APP_PUBLIC_KEYS":"http://localhost:3001/public_keys","REACT_APP_ALT_DRUG":"true","REACT_APP_LAUNCH_URL":"http://localhost:4040/launch","REACT_APP_SMART_LAUNCH_URL":"http://localhost:4040/","REACT_APP_DEFAULT_USER":"pra1234","REACT_APP_RESPONSE_EXPIRATION_DAYS":"30","REACT_APP_PIMS_SERVER":"http://localhost:5051/doctorOrders/api/addRx","REACT_APP_HOMEPAGE":"http://localhost:8080","REACT_APP_URL":"http://localhost:3000","REACT_APP_URL_FILTER":"http://localhost:3000/*","REACT_APP_EHR_LINK":"http://localhost:8080/ehr-server/","REACT_APP_GH_PAGES":"true"}).DEBUG;
+    r = Object({"NODE_ENV":"production","PUBLIC_URL":".","WDS_SOCKET_HOST":undefined,"WDS_SOCKET_PATH":undefined,"WDS_SOCKET_PORT":undefined,"FAST_REFRESH":true,"REACT_APP_REALM":"ClientFhirServer","REACT_APP_CLIENT":"5193dd3d-153b-458d-8930-939ac808e87f","REACT_APP_CLIENT_SCOPES":"launch openid profile user/*.*","REACT_APP_AUTH":"http://localhost:8180","REACT_APP_SERVER":"http://localhost:8090","REACT_APP_EHR_SERVER":"http://localhost:8080/test-ehr/r4","REACT_APP_EHR_BASE":"http://localhost:8080/test-ehr/r4","REACT_APP_CDS_SERVICE":"http://localhost:8090/cds-services","REACT_APP_ORDER_SIGN":"rems-order-sign","REACT_APP_ORDER_SELECT":"rems-order-select","REACT_APP_PATIENT_VIEW":"rems-patient-view","REACT_APP_USER":"alice","REACT_APP_PASSWORD":"alice","REACT_APP_PUBLIC_KEYS":"http://localhost:3001/public_keys","REACT_APP_ALT_DRUG":"true","REACT_APP_LAUNCH_URL":"http://localhost:4040/launch","REACT_APP_SMART_LAUNCH_URL":"http://localhost:4040/","REACT_APP_DEFAULT_USER":"pra1234","REACT_APP_RESPONSE_EXPIRATION_DAYS":"30","REACT_APP_PIMS_SERVER":"http://localhost:5051/doctorOrders/api/addRx","REACT_APP_HOMEPAGE":"http://localhost:8080","REACT_APP_URL":"http://localhost:3000","REACT_APP_URL_FILTER":"http://localhost:3000/*","REACT_APP_EHR_LINK":"http://localhost:8080/ehr-server/","REACT_APP_GH_PAGES":"true"}).DEBUG;
   }
   return r;
 }
@@ -61241,7 +61241,7 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(24);
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var fails = __webpack_require__(66);
 var classof = __webpack_require__(118);
 var Object = global.Object;
@@ -61290,7 +61290,7 @@ module.exports = function (input, pref) {
 /* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 module.exports = uncurryThis({}.isPrototypeOf);
 
 /***/ }),
@@ -61362,7 +61362,7 @@ module.exports = function (argument) {
 
 var global = __webpack_require__(24);
 var call = __webpack_require__(117);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var isObject = __webpack_require__(67);
 var TypeError = global.TypeError;
 
@@ -61387,7 +61387,7 @@ module.exports = false;
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(24);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var hasOwn = __webpack_require__(58);
 var createNonEnumerableProperty = __webpack_require__(121);
 var setGlobal = __webpack_require__(120);
@@ -61435,7 +61435,7 @@ var TEMPLATE = String(String).split('String');
 
 var NATIVE_WEAK_MAP = __webpack_require__(265);
 var global = __webpack_require__(24);
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var isObject = __webpack_require__(67);
 var createNonEnumerableProperty = __webpack_require__(121);
 var hasOwn = __webpack_require__(58);
@@ -61504,7 +61504,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(24);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var inspectSource = __webpack_require__(122);
 var WeakMap = global.WeakMap;
 module.exports = isCallable(WeakMap) && /native code/.test(inspectSource(WeakMap));
@@ -61551,7 +61551,7 @@ module.exports = function (target, source) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var getBuiltIn = __webpack_require__(78);
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var getOwnPropertyNamesModule = __webpack_require__(269);
 var getOwnPropertySymbolsModule = __webpack_require__(273);
 var anObject = __webpack_require__(95);
@@ -61657,7 +61657,7 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ (function(module, exports, __webpack_require__) {
 
 var fails = __webpack_require__(66);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var replacement = /#|\.prototype\./;
 var isForced = function isForced(feature, detection) {
   var value = data[normalize(feature)];
@@ -61713,7 +61713,7 @@ module.exports = flattenIntoArray;
 /* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var aCallable = __webpack_require__(165);
 var bind = uncurryThis(uncurryThis.bind);
 
@@ -61769,9 +61769,9 @@ module.exports = function (originalArray) {
 /* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(42);
+var uncurryThis = __webpack_require__(43);
 var fails = __webpack_require__(66);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var classof = __webpack_require__(280);
 var getBuiltIn = __webpack_require__(78);
 var inspectSource = __webpack_require__(122);
@@ -61817,7 +61817,7 @@ module.exports = !construct || fails(function () {
 
 var global = __webpack_require__(24);
 var TO_STRING_TAG_SUPPORT = __webpack_require__(281);
-var isCallable = __webpack_require__(43);
+var isCallable = __webpack_require__(44);
 var classofRaw = __webpack_require__(118);
 var wellKnownSymbol = __webpack_require__(79);
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
@@ -62468,7 +62468,7 @@ exports.default = Storage;
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 var bind = __webpack_require__(174);
 var Axios = __webpack_require__(293);
 var defaults = __webpack_require__(127);
@@ -62525,7 +62525,7 @@ module.exports.default = axios;
 
 
 var defaults = __webpack_require__(127);
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 var InterceptorManager = __webpack_require__(301);
 var dispatchRequest = __webpack_require__(302);
 
@@ -62604,7 +62604,7 @@ module.exports = Axios;
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
     if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
@@ -62674,7 +62674,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 function encode(val) {
   return encodeURIComponent(val).replace(/%40/gi, '@').replace(/%3A/gi, ':').replace(/%24/g, '$').replace(/%2C/gi, ',').replace(/%20/g, '+').replace(/%5B/gi, '[').replace(/%5D/gi, ']');
 }
@@ -62731,7 +62731,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 
 // Headers whose duplicates are ignored by node
 // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -62783,7 +62783,7 @@ module.exports = function parseHeaders(headers) {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 module.exports = utils.isStandardBrowserEnv() ?
 // Standard browser envs have full support of the APIs needed to test
 // whether the request URL is of the same origin as current location.
@@ -62846,7 +62846,7 @@ function nonStandardBrowserEnv() {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 module.exports = utils.isStandardBrowserEnv() ?
 // Standard browser envs support document.cookie
 function standardBrowserEnv() {
@@ -62895,7 +62895,7 @@ function nonStandardBrowserEnv() {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 function InterceptorManager() {
   this.handlers = [];
 }
@@ -62951,7 +62951,7 @@ module.exports = InterceptorManager;
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 var transformData = __webpack_require__(303);
 var isCancel = __webpack_require__(177);
 var defaults = __webpack_require__(127);
@@ -63019,7 +63019,7 @@ module.exports = function dispatchRequest(config) {
 "use strict";
 
 
-var utils = __webpack_require__(39);
+var utils = __webpack_require__(40);
 
 /**
  * Transform the data for a request or a response
@@ -64816,11 +64816,57 @@ var react_dom_default = /*#__PURE__*/__webpack_require__.n(react_dom);
 // EXTERNAL MODULE: ./src/index.css
 var src = __webpack_require__(146);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(16);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
+var toConsumableArray = __webpack_require__(12);
 
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(17);
+var createClass = __webpack_require__(18);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
+var classCallCheck = __webpack_require__(17);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
+var slicedToArray = __webpack_require__(9);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
+var regenerator = __webpack_require__(14);
+var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
@@ -64911,52 +64957,6 @@ function _createSuper(Derived) {
     return _possibleConstructorReturn(this, result);
   };
 }
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
-var toConsumableArray = __webpack_require__(12);
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(14);
-var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
-
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(3);
 
@@ -72730,7 +72730,7 @@ function useViewTransitionState(to, opts) {
 
 
 // EXTERNAL MODULE: ./node_modules/fhirclient/lib/entry/browser.js
-var browser = __webpack_require__(44);
+var browser = __webpack_require__(38);
 var browser_default = /*#__PURE__*/__webpack_require__.n(browser);
 
 // EXTERNAL MODULE: ./src/components/DisplayBox/card-list.css
@@ -91988,9 +91988,9 @@ var propTypes={/**
    * @param {*} url - CDS service endpoint URL
    */},{key:"takeSuggestion",value:function takeSuggestion(suggestion,url,buttonId,suggestionCount,cardNum,selectionBehavior){var _this2=this;if(!this.props.isDemoCard){if(selectionBehavior==='at-most-one'){// disable all suggestion buttons for this card
 for(var i=0;i<suggestionCount;i++){var bId='suggestion_button-'+cardNum+'-'+i;document.getElementById(bId).setAttribute('disabled','true');}}else{// disable this suggestion button if any are allowed
-document.getElementById(buttonId).setAttribute('disabled','true');}if(suggestion.label){if(suggestion.uuid){axios_default()({method:'POST',url:"".concat(url,"/analytics/").concat(suggestion.uuid),data:{}});}var client=browser_default.a.client({serverUrl:this.props.ehrUrl,tokenResponse:{access_token:this.props.access_token.access_token}});// handle each action from the suggestion
-var uri='';suggestion.actions.forEach(function(action){if(action.type.toUpperCase()==='DELETE'){uri=action.resource.resourceType+'/'+action.resource.id;console.log('completing suggested action DELETE: '+uri);client.delete(uri).then(function(result){console.log('suggested action DELETE result:');console.log(result);});}else if(action.type.toUpperCase()==='CREATE'){uri=action.resource.resourceType;console.log('completing suggested action CREATE: '+uri);client.create(action.resource).then(function(result){console.log('suggested action CREATE result:');console.log(result);if(_this2.supportedRequesType(result)){// call into the request builder to resubmit the CRD request with the suggested request
-_this2.props.takeSuggestion(result);}});}else if(action.type.toUpperCase()==='UPDATE'){uri=action.resource.resourceType+'/'+action.resource.id;console.log('completing suggested action UPDATE: '+uri);client.update(action.resource).then(function(result){console.log('suggested action UPDATE result:');console.log(result);});}else{console.log('WARNING: unknown action');}});}else{console.error('There was no label on this suggestion',suggestion);}}}/**
+document.getElementById(buttonId).setAttribute('disabled','true');}if(suggestion.label){if(suggestion.uuid){axios_default()({method:'POST',url:"".concat(url,"/analytics/").concat(suggestion.uuid),data:{}});}// handle each action from the suggestion
+var uri='';suggestion.actions.forEach(function(action){if(action.type.toUpperCase()==='DELETE'){uri=action.resource.resourceType+'/'+action.resource.id;console.log('completing suggested action DELETE: '+uri);_this2.props.client.delete(uri).then(function(result){console.log('suggested action DELETE result:');console.log(result);});}else if(action.type.toUpperCase()==='CREATE'){uri=action.resource.resourceType;console.log('completing suggested action CREATE: '+uri);_this2.props.client.create(action.resource).then(function(result){console.log('suggested action CREATE result:');console.log(result);if(_this2.supportedRequesType(result)){// call into the request builder to resubmit the CRD request with the suggested request
+_this2.props.takeSuggestion(result);}});}else if(action.type.toUpperCase()==='UPDATE'){uri=action.resource.resourceType+'/'+action.resource.id;console.log('completing suggested action UPDATE: '+uri);_this2.props.client.update(action.resource).then(function(result){console.log('suggested action UPDATE result:');console.log(result);});}else{console.log('WARNING: unknown action');}});}else{console.error('There was no label on this suggestion',suggestion);}}}/**
    * Prevent the source link from opening in the same tab
    * @param {*} e - Event emitted when source link is clicked
    */},{key:"launchSource",value:function launchSource(e,link){e.preventDefault();window.open(link.url,'_blank');}},{key:"exitSmart",value:function exitSmart(e){this.setState({smartLink:''});}/**
@@ -92004,7 +92004,7 @@ return;}window.open(link.url,'_blank');}}/**
    * 1 - Secured: Retrieve a launch context for the link and append a launch and iss parameter for use against secured endpoints
    * 2 - Open: Append a fhirServiceUrl and patientId parameter to the link for use against open endpoints
    * @param {*} card - Card object to process the links for
-   */},{key:"modifySmartLaunchUrls",value:function modifySmartLaunchUrls(card){var _this3=this;if(!this.props.isDemoCard){return card.links.map(function(link){var linkCopy=Object.assign({},link);if(link.type==='smart'&&(_this3.props.fhirAccessToken||_this3.props.ehrLaunch)&&!_this3.state.smartLink){Object(util["a" /* retrieveLaunchContext */])(linkCopy,_this3.props.fhirAccessToken,_this3.props.patientId,_this3.props.fhirServerUrl,_this3.props.fhirVersion).then(function(result){linkCopy=result;return linkCopy;});}else if(link.type==='smart'){if(link.url.indexOf('?')<0){linkCopy.url+='?';}else{linkCopy.url+='&';}//linkCopy.url += `fhirServiceUrl=${this.props.fhirServerUrl}`;
+   */},{key:"modifySmartLaunchUrls",value:function modifySmartLaunchUrls(card){var _this3=this;if(!this.props.isDemoCard){return card.links.map(function(link){var linkCopy=Object.assign({},link);if(link.type==='smart'&&(_this3.props.fhirAccessToken||_this3.props.ehrLaunch)&&!_this3.state.smartLink){Object(util["a" /* retrieveLaunchContext */])(linkCopy,_this3.props.patientId,_this3.props.client.state).then(function(result){linkCopy=result;return linkCopy;});}else if(link.type==='smart'){if(link.url.indexOf('?')<0){linkCopy.url+='?';}else{linkCopy.url+='&';}//linkCopy.url += `fhirServiceUrl=${this.props.fhirServerUrl}`;
 //linkCopy.url += `&patientId=${this.props.patientId}`;
 }return linkCopy;});}return undefined;}/**
    * Helper function to build out the UI for the source of the Card
@@ -92063,7 +92063,7 @@ var ListContext = __webpack_require__(29);
 var ButtonBase = __webpack_require__(423);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useEnhancedEffect.js
-var useEnhancedEffect = __webpack_require__(40);
+var useEnhancedEffect = __webpack_require__(41);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useForkRef.js
 var useForkRef = __webpack_require__(21);
@@ -92271,9 +92271,9 @@ var Select = __webpack_require__(422);
 
 // CONCATENATED MODULE: ./src/components/SMARTBox/PatientBox.js
 var PatientBox_PatientBox=/*#__PURE__*/function(_Component){_inherits(PatientBox,_Component);var _super=_createSuper(PatientBox);function PatientBox(props){var _this;Object(classCallCheck["a" /* default */])(this,PatientBox);_this=_super.call(this,props);_this.state={request:'',deviceRequests:{},medicationRequests:{},serviceRequests:{},medicationDispenses:{},response:'',questionnaireResponses:{},openRequests:false,openQuestionnaires:false};_this.handleRequestChange=_this.handleRequestChange.bind(_assertThisInitialized(_this));_this.updatePrefetchRequest=_this.updatePrefetchRequest.bind(_assertThisInitialized(_this));_this.getDeviceRequest=_this.getDeviceRequest.bind(_assertThisInitialized(_this));_this.getServiceRequest=_this.getServiceRequest.bind(_assertThisInitialized(_this));_this.getMedicationRequest=_this.getMedicationRequest.bind(_assertThisInitialized(_this));_this.getMedicationDispense=_this.getMedicationDispense.bind(_assertThisInitialized(_this));_this.getRequests=_this.getRequests.bind(_assertThisInitialized(_this));_this.getResponses=_this.getResponses.bind(_assertThisInitialized(_this));_this.makeQROption=_this.makeQROption.bind(_assertThisInitialized(_this));_this.handleResponseChange=_this.handleResponseChange.bind(_assertThisInitialized(_this));_this.makeDropdown=_this.makeDropdown.bind(_assertThisInitialized(_this));return _this;}Object(createClass["a" /* default */])(PatientBox,[{key:"componentDidMount",value:function componentDidMount(){// get requests and responses on open of patients
-this.getRequests();this.getResponses();}},{key:"getCoding",value:function getCoding(request){var code=null;if(request.resourceType==='DeviceRequest'){code=request.codeCodeableConcept.coding[0];}else if(request.resourceType==='ServiceRequest'){code=request.code.coding[0];}else if(request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){code=request.medicationCodeableConcept.coding[0];}if(code){if(!code.code){code.code='Unknown';}if(!code.display){code.display='Unknown';}if(!code.system){code.system='Unknown';}}else{code.code='Unknown';code.display='Unknown';code.system='Unknown';}return code;}},{key:"makeDropdown",value:function makeDropdown(options,label,stateVar,stateChange){console.log(options);return/*#__PURE__*/Object(jsx_runtime["jsx"])(Box["a" /* default */],{sx:{minWidth:120},children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(FormControl["a" /* default */],{fullWidth:true,children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(InputLabel["a" /* default */],{children:label}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Select["a" /* default */],{labelId:"".concat(label,"-label"),value:stateVar,label:label,"data-testid":"dropdown-box",onChange:stateChange,children:options.map(function(op){return/*#__PURE__*/Object(jsx_runtime["jsx"])(material_MenuItem_MenuItem,{value:op.value,children:op.text},op.key);})})]})});}},{key:"makeOption",value:function makeOption(request,options){var code=this.getCoding(request);var option={key:request.id,text:code.display+' (Medication request: '+code.code+')',value:JSON.stringify(request)};options.push(option);}},{key:"updateValues",value:function updateValues(patient){this.props.callback('patient',patient);this.props.callback('openPatient',false);this.props.clearCallback();if(this.state.request){var request=JSON.parse(this.state.request);if(request.resourceType==='DeviceRequest'||request.resourceType==='ServiceRequest'||request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){this.updatePrefetchRequest(request,patient,this.props.defaultUser);}else{this.props.clearCallback();}}else{this.updatePrefetchRequest(null,patient,this.props.defaultUser);}if(this.state.response){var response=JSON.parse(this.state.response);this.updateQRResponse(patient,response);}}},{key:"updateQRResponse",value:function updateQRResponse(patient,response){this.props.callback('response',response);}},{key:"fetchResources",value:function fetchResources(queries){var _this2=this;console.log(queries);var requests=[];this.props.callback('prefetchCompleted',false);queries.forEach(function(query,queryKey){var urlQuery=_this2.props.ehrUrl+'/'+query;requests.push(fetch(urlQuery,{method:'GET'}).then(function(response){var responseJson=response.json();return responseJson;}).then(function(resource){_this2.props.callbackMap('prefetchedResources',queryKey,resource);}));});Promise.all(requests).then(function(results){console.log('fetchResourcesSync: finished');_this2.props.callback('prefetchCompleted',true);}).catch(function(err){console.log('fetchResourcesSync: failed to wait for all the prefetch to populate');console.log(err);});}},{key:"updatePrefetchRequest",value:function updatePrefetchRequest(request,patient,user){var patientReference='Patient/'+(patient===null||patient===void 0?void 0:patient.id);var userReference='Practitioner/'+user;if(request){this.props.callback(request.resourceType,request);var queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'request','patient','practitioner');this.fetchResources(queries);this.props.callback('request',request);var coding=this.getCoding(request);this.props.callback('code',coding.code);this.props.callback('codeSystem',coding.system);this.props.callback('display',coding.display);}else{var _queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'patient','practitioner','medicationRequests');this.fetchResources(_queries);}}},{key:"getDeviceRequest",value:function getDeviceRequest(patientId,client){var _this3=this;client.request("DeviceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this3.setState({deviceRequests:result});});}},{key:"getServiceRequest",value:function getServiceRequest(patientId,client){var _this4=this;client.request("ServiceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this4.setState({serviceRequests:result});});}},{key:"getMedicationRequest",value:function getMedicationRequest(patientId,client){var _this5=this;client.request("MedicationRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this5.setState({medicationRequests:result});});}},{key:"getMedicationDispense",value:function getMedicationDispense(patientId,client){var _this6=this;client.request("MedicationDispense?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this6.setState({medicationDispenses:result});});}},{key:"handleRequestChange",value:function handleRequestChange(e){var data=e.target.value;if(data){var coding=this.getCoding(JSON.parse(data));this.setState({request:data,code:coding.code,system:coding.system,display:coding.display,response:''});}else{this.setState({request:''});}}},{key:"handleResponseChange",value:function handleResponseChange(e){var data=e.target.value;if(data){this.setState({response:data});}else{this.setState({response:''});}}},{key:"getRequests",value:function getRequests(){var client=browser_default.a.client(this.props.params);var patientId=this.props.patient.id;this.getDeviceRequest(patientId,client);this.getServiceRequest(patientId,client);this.getMedicationRequest(patientId,client);this.getMedicationDispense(patientId,client);}/**
+this.getRequests();this.getResponses();}},{key:"getCoding",value:function getCoding(request){var code=null;if(request.resourceType==='DeviceRequest'){code=request===null||request===void 0?void 0:request.codeCodeableConcept.coding[0];}else if(request.resourceType==='ServiceRequest'){var _request$code;code=request===null||request===void 0?void 0:(_request$code=request.code)===null||_request$code===void 0?void 0:_request$code.coding[0];}else if(request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){var _request$medicationCo;code=request===null||request===void 0?void 0:(_request$medicationCo=request.medicationCodeableConcept)===null||_request$medicationCo===void 0?void 0:_request$medicationCo.coding[0];}if(code){if(!code.code){code.code='Unknown';}if(!code.display){code.display='Unknown';}if(!code.system){code.system='Unknown';}}else{code={code:'Unknown',display:'Unknown',system:'Unknown'};}return code;}},{key:"makeDropdown",value:function makeDropdown(options,label,stateVar,stateChange){return/*#__PURE__*/Object(jsx_runtime["jsx"])(Box["a" /* default */],{sx:{minWidth:120},children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(FormControl["a" /* default */],{fullWidth:true,children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(InputLabel["a" /* default */],{children:label}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Select["a" /* default */],{labelId:"".concat(label,"-label"),value:stateVar,label:label,"data-testid":"dropdown-box",onChange:stateChange,children:options.map(function(op){return/*#__PURE__*/Object(jsx_runtime["jsx"])(material_MenuItem_MenuItem,{value:op.value,children:op.text},op.key);})})]})});}},{key:"makeOption",value:function makeOption(request,options){var code=this.getCoding(request);var option={key:request.id,text:code.display+' (Medication request: '+code.code+')',value:JSON.stringify(request)};options.push(option);}},{key:"updateValues",value:function updateValues(patient){this.props.callback('patient',patient);this.props.callback('openPatient',false);this.props.clearCallback();if(this.state.request){var request=JSON.parse(this.state.request);if(request.resourceType==='DeviceRequest'||request.resourceType==='ServiceRequest'||request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){this.updatePrefetchRequest(request,patient,this.props.defaultUser);}else{this.props.clearCallback();}}else{this.updatePrefetchRequest(null,patient,this.props.defaultUser);}if(this.state.response){var response=JSON.parse(this.state.response);this.updateQRResponse(patient,response);}}},{key:"updateQRResponse",value:function updateQRResponse(patient,response){this.props.callback('response',response);}},{key:"fetchResources",value:function fetchResources(queries){var _this2=this;console.log(queries);var requests=[];this.props.callback('prefetchCompleted',false);queries.forEach(function(query,queryKey){var urlQuery='/'+query;requests.push(_this2.props.client.request(urlQuery).then(function(response){console.log(response);return response;}).then(function(resource){_this2.props.callbackMap('prefetchedResources',queryKey,resource);}));});Promise.all(requests).then(function(results){console.log('fetchResourcesSync: finished');_this2.props.callback('prefetchCompleted',true);}).catch(function(err){console.log('fetchResourcesSync: failed to wait for all the prefetch to populate');console.log(err);});}},{key:"updatePrefetchRequest",value:function updatePrefetchRequest(request,patient,user){var patientReference='Patient/'+(patient===null||patient===void 0?void 0:patient.id);var userReference='Practitioner/'+user;if(request){this.props.callback(request.resourceType,request);var queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'request','patient','practitioner');this.fetchResources(queries);this.props.callback('request',request);var coding=this.getCoding(request);this.props.callback('code',coding.code);this.props.callback('codeSystem',coding.system);this.props.callback('display',coding.display);}else{var _queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'patient','practitioner','medicationRequests');this.fetchResources(_queries);}}},{key:"getDeviceRequest",value:function getDeviceRequest(patientId){var _this3=this;this.props.client.request("DeviceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this3.setState({deviceRequests:result});});}},{key:"getServiceRequest",value:function getServiceRequest(patientId){var _this4=this;this.props.client.request("ServiceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this4.setState({serviceRequests:result});});}},{key:"getMedicationRequest",value:function getMedicationRequest(patientId){var _this5=this;this.props.client.request("MedicationRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){console.log(result);_this5.setState({medicationRequests:result});});}},{key:"getMedicationDispense",value:function getMedicationDispense(patientId){var _this6=this;this.props.client.request("MedicationDispense?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this6.setState({medicationDispenses:result});});}},{key:"handleRequestChange",value:function handleRequestChange(e){var data=e.target.value;if(data){var coding=this.getCoding(JSON.parse(data));this.setState({request:data,code:coding.code,system:coding.system,display:coding.display,response:''});}else{this.setState({request:''});}}},{key:"handleResponseChange",value:function handleResponseChange(e){var data=e.target.value;if(data){this.setState({response:data});}else{this.setState({response:''});}}},{key:"getRequests",value:function getRequests(){console.log(this.props.client);var patientId=this.props.patient.id;this.getDeviceRequest(patientId);this.getServiceRequest(patientId);this.getMedicationRequest(patientId);this.getMedicationDispense(patientId);}/**
    * Retrieve QuestionnaireResponse
-   */},{key:"getResponses",value:function getResponses(){var _this7=this;var client=browser_default.a.client(this.props.params);var patientId=this.props.patient.id;var updateDate=new Date();updateDate.setDate(updateDate.getDate()-this.props.responseExpirationDays);var searchParameters=["_lastUpdated=gt".concat(updateDate.toISOString().split('T')[0]),'status=in-progress',"subject=Patient/".concat(patientId),'_sort=-authored'];client.request("QuestionnaireResponse?".concat(searchParameters.join('&')),{resolveReferences:['subject'],graph:false,flat:true}).then(function(result){_this7.setState({questionnaireResponses:result});});}},{key:"makeQROption",value:function makeQROption(qr){var display="".concat(qr.questionnaire,": created at ").concat(qr.authored);return{key:qr.id,text:display,value:JSON.stringify(qr)};}},{key:"render",value:function render(){var _this8=this;var patient=this.props.patient;var name='';if(patient.name){name=/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:[" ","".concat(patient.name[0].given[0]," ").concat(patient.name[0].family)," "]});}// add all of the requests to the list of options
+   */},{key:"getResponses",value:function getResponses(){var _this7=this;var patientId=this.props.patient.id;var updateDate=new Date();updateDate.setDate(updateDate.getDate()-this.props.responseExpirationDays);this.props.client.request("QuestionnaireResponse?_lastUpdated=gt".concat(updateDate.toISOString().split('T')[0],"&status=in-progress&subject=Patient/").concat(patientId),{resolveReferences:['subject'],graph:false,flat:true}).then(function(result){_this7.setState({questionnaireResponses:result});});}},{key:"makeQROption",value:function makeQROption(qr){var display="".concat(qr.questionnaire,": created at ").concat(qr.authored);return{key:qr.id,text:display,value:JSON.stringify(qr)};}},{key:"render",value:function render(){var _this8=this;var patient=this.props.patient;var name='';if(patient.name){name=/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:[" ","".concat(patient.name[0].given[0]," ").concat(patient.name[0].family)," "]});}// add all of the requests to the list of options
 var options=[];var responseOptions=[];var returned=false;if(this.state.deviceRequests.data){returned=true;this.state.deviceRequests.data.forEach(function(e){_this8.makeOption(e,options);});}if(this.state.serviceRequests.data){returned=true;this.state.serviceRequests.data.forEach(function(e){_this8.makeOption(e,options);});}if(this.state.medicationRequests.data){returned=true;this.state.medicationRequests.data.forEach(function(e){_this8.makeOption(e,options);});}if(this.state.medicationDispenses.data){returned=true;this.state.medicationDispenses.data.forEach(function(e){_this8.makeOption(e,options);});}if(this.state.questionnaireResponses.data){responseOptions=this.state.questionnaireResponses.data.map(function(qr){return _this8.makeQROption(qr);});returned=true;}var noResults='No results found.';if(!returned){noResults='Loading...';}return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-box",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-header",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bolder'},children:name?name:'N/A'}),' ',"(ID: ".concat(patient.id,")")]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-selection-box",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-info",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"Gender"}),": ",patient.gender]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"Age"}),": ",getAge(patient.birthDate)]})]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"request-info",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold',marginRight:'5px',padding:'5px'},children:"Request:"}),!options.length&&returned?/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"emptyForm",children:"No requests"}):this.makeDropdown(options,'Choose a patient',this.state.request,this.handleRequestChange)]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"request-info",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{style:{fontWeight:'bold',marginRight:'5px',padding:'5px'},children:["In Progress Form:",/*#__PURE__*/Object(jsx_runtime["jsx"])(IconButton["a" /* default */],{color:"primary",style:{padding:'0px 5px'},onClick:this.getResponses,children:/*#__PURE__*/Object(jsx_runtime["jsx"])(Refresh_default.a,{})})]}),!responseOptions.length&&returned?/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"emptyForm",children:"No in progress forms"}):this.makeDropdown(responseOptions,'Choose an in-progress form',this.state.response,this.handleResponseChange)]}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{variant:"outlined",size:"small",className:"select-btn",onClick:function onClick(){return _this8.updateValues(patient);},children:"Select"})]})]},patient.id);}}]);return PatientBox;}(react["Component"]);
 // CONCATENATED MODULE: ./src/util/buildScript.2017071.js
 /* 2017071 NCPDP SCRIPT Support */function xmlAddTextNode(xmlDoc,parent,sectionName,value){var section=xmlDoc.createElement(sectionName);var textNode=xmlDoc.createTextNode(value);section.appendChild(textNode);parent.appendChild(section);}function buildNewRxName(doc,nameResource){var name=doc.createElement('Name');xmlAddTextNode(doc,name,'LastName',nameResource.family);xmlAddTextNode(doc,name,'FirstName',nameResource.given[0]);return name;}function buildNewRxAddress(doc,addressResource){var address=doc.createElement('Address');xmlAddTextNode(doc,address,'AddressLine1',addressResource.line[0]);xmlAddTextNode(doc,address,'City',addressResource.city);xmlAddTextNode(doc,address,'StateProvince',addressResource.state);xmlAddTextNode(doc,address,'PostalCode',addressResource.postalCode);xmlAddTextNode(doc,address,'Country','US');// assume US for now
@@ -92448,7 +92448,7 @@ function getValidReactChildren(children) {
   });
 }
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // CONCATENATED MODULE: ./node_modules/@mui/material/ButtonGroup/buttonGroupClasses.js
 
@@ -92670,7 +92670,7 @@ var ButtonGroup_ButtonGroup = /*#__PURE__*/react["forwardRef"](function ButtonGr
  false ? undefined : void 0;
 /* harmony default export */ var material_ButtonGroup_ButtonGroup = (ButtonGroup_ButtonGroup);
 // CONCATENATED MODULE: ./src/components/RequestBox/RequestBox.js
-var RequestBox_style={position:'absolute',top:'50%',left:'50%',flexDirection:'column',width:'80%',transform:'translate(-50%, -50%)',display:'flex',bgcolor:'background.paper',border:'2px solid #000',borderBottom:'2px solid black',boxShadow:24,p:4,padding:'0px'};var RequestBox_RequestBox=/*#__PURE__*/function(_Component){_inherits(RequestBox,_Component);var _super=_createSuper(RequestBox);function RequestBox(props){var _this;Object(classCallCheck["a" /* default */])(this,RequestBox);_this=_super.call(this,props);_this.exitSmart=function(){_this.setState({openPatient:false});};_this.submitPatientView=function(){_this.props.submitInfo(_this.prepPrefetch(),null,_this.state.patient,'patient-view');};_this.submitOrderSelect=function(){if(!lodash_default.a.isEmpty(_this.state.request)){_this.props.submitInfo(_this.prepPrefetch(),_this.state.request,_this.state.patient,'order-select');}};_this.submitOrderSign=function(request){_this.props.submitInfo(_this.prepPrefetch(),request,_this.state.patient,'order-sign');};_this.submit=function(){if(!lodash_default.a.isEmpty(_this.state.request)){_this.submitOrderSign(_this.state.request);}};_this.updateStateElement=function(elementName,text){_this.setState(Object(defineProperty["a" /* default */])({},elementName,text));};_this.updateStateList=function(elementName,text){_this.setState(function(prevState){return Object(defineProperty["a" /* default */])({},elementName,[].concat(Object(toConsumableArray["a" /* default */])(prevState[elementName]),[text]));});};_this.updateStateMap=function(elementName,key,text){_this.setState(function(prevState){if(!prevState[elementName][key]){prevState[elementName][key]=[];}return Object(defineProperty["a" /* default */])({},elementName,_objectSpread2(_objectSpread2({},prevState[elementName]),{},Object(defineProperty["a" /* default */])({},key,text)));});};_this.clearState=function(){_this.setState({prefetchedResources:new Map(),practitioner:{},coverage:{},response:{}});};_this.getPatients=function(){_this.setState({openPatient:true});var params={serverUrl:_this.props.ehrUrl};if(_this.props.access_token.access_token){params['tokenResponse']={access_token:_this.props.access_token.access_token};}var client=browser_default.a.client(params);client.request('Patient?_sort=identifier&_count=12',{flat:true}).then(function(result){_this.setState({patientList:result});}).catch(function(e){_this.setState({patientList:e});});};_this.emptyField=/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"empty-field",children:"empty"});_this.launchSmartOnFhirApp=function(){var _this$state$prefetche,_this$state$prefetche2;console.log('Launch SMART on FHIR App');var userId=(_this$state$prefetche=_this.state.prefetchedResources)===null||_this$state$prefetche===void 0?void 0:(_this$state$prefetche2=_this$state$prefetche.practitioner)===null||_this$state$prefetche2===void 0?void 0:_this$state$prefetche2.id;if(!userId){console.log('Practitioner not populated from prefetch, using default from config: '+_this.props.defaultUser);userId=_this.props.defaultUser;}var link={appContext:'user='+userId+'&patient='+_this.state.patient.id,type:'smart',url:_this.props.smartAppUrl};Object(util["a" /* retrieveLaunchContext */])(link,_this.props.fhirAccessToken,_this.state.patient.id,_this.props.fhirServerUrl,_this.props.fhirVersion).then(function(result){link=result;console.log(link);// launch the application in a new window
+var RequestBox_style={position:'absolute',top:'50%',left:'50%',flexDirection:'column',width:'80%',height:'70%',overflowY:'scroll',transform:'translate(-50%, -50%)',display:'flex',bgcolor:'background.paper',border:'2px solid #000',borderBottom:'2px solid black',boxShadow:24,p:4,padding:'0px'};var RequestBox_RequestBox=/*#__PURE__*/function(_Component){_inherits(RequestBox,_Component);var _super=_createSuper(RequestBox);function RequestBox(props){var _this;Object(classCallCheck["a" /* default */])(this,RequestBox);_this=_super.call(this,props);_this.exitSmart=function(){_this.setState({openPatient:false});};_this.submitPatientView=function(){_this.props.submitInfo(_this.prepPrefetch(),null,_this.state.patient,'patient-view');};_this.submitOrderSelect=function(){if(!lodash_default.a.isEmpty(_this.state.request)){_this.props.submitInfo(_this.prepPrefetch(),_this.state.request,_this.state.patient,'order-select');}};_this.submitOrderSign=function(request){_this.props.submitInfo(_this.prepPrefetch(),request,_this.state.patient,'order-sign');};_this.submit=function(){if(!lodash_default.a.isEmpty(_this.state.request)){_this.submitOrderSign(_this.state.request);}};_this.updateStateElement=function(elementName,text){_this.setState(Object(defineProperty["a" /* default */])({},elementName,text));};_this.updateStateList=function(elementName,text){_this.setState(function(prevState){return Object(defineProperty["a" /* default */])({},elementName,[].concat(Object(toConsumableArray["a" /* default */])(prevState[elementName]),[text]));});};_this.updateStateMap=function(elementName,key,text){_this.setState(function(prevState){if(!prevState[elementName][key]){prevState[elementName][key]=[];}return Object(defineProperty["a" /* default */])({},elementName,_objectSpread2(_objectSpread2({},prevState[elementName]),{},Object(defineProperty["a" /* default */])({},key,text)));});};_this.clearState=function(){_this.setState({prefetchedResources:new Map(),practitioner:{},coverage:{},response:{}});};_this.getPatients=function(){_this.setState({openPatient:true});_this.props.client.request('Patient?_sort=identifier&_count=12',{flat:true}).then(function(result){_this.setState({patientList:result});}).catch(function(e){_this.setState({patientList:e});});};_this.emptyField=/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"empty-field",children:"empty"});_this.launchSmartOnFhirApp=function(){var _this$state$prefetche,_this$state$prefetche2;console.log('Launch SMART on FHIR App');var userId=(_this$state$prefetche=_this.state.prefetchedResources)===null||_this$state$prefetche===void 0?void 0:(_this$state$prefetche2=_this$state$prefetche.practitioner)===null||_this$state$prefetche2===void 0?void 0:_this$state$prefetche2.id;if(!userId){console.log('Practitioner not populated from prefetch, using default from config: '+_this.props.defaultUser);userId=_this.props.defaultUser;}var link={appContext:'user='+userId+'&patient='+_this.state.patient.id,type:'smart',url:_this.props.smartAppUrl};Object(util["a" /* retrieveLaunchContext */])(link,_this.state.patient.id,_this.props.client.state).then(function(result){link=result;console.log(link);// launch the application in a new window
 window.open(link.url,'_blank');});};/**
    * Relaunch DTR using the available context
    */_this.relaunch=function(e){_this.buildLaunchLink().then(function(link){//e.preventDefault();
@@ -92689,7 +92689,7 @@ if(this.state.prefetchedResources.medicationRequests){this.submitPatientView();}
 //  this.submitOrderSelect();
 //}
 }}},{key:"renderPatientInfo",value:function renderPatientInfo(){var patient=this.state.patient;if(Object.keys(patient).length===0){return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"demographics"});}var name;if(patient.name){name=/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:[" ","".concat(patient.name[0].given[0]," ").concat(patient.name[0].family)," "]});}else{name=this.emptyField;}return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"demographics",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"lower-border",children:/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"Demographics"})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Name: ",name]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Age: ",patient.birthDate?getAge(patient.birthDate):this.emptyField]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Gender: ",patient.gender?patient.gender:this.emptyField]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["State: ",this.state.patientState?this.state.patientState:this.emptyField]}),this.renderOtherInfo(),this.renderQRInfo()]});}},{key:"renderOtherInfo",value:function renderOtherInfo(){return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"other-info",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"lower-border",children:/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"Coding"})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Code: ",this.state.code?this.state.code:this.emptyField]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["System: ",this.state.codeSystem?util_data["c" /* shortNameMap */][this.state.codeSystem]:this.emptyField]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Display: ",this.state.display?this.state.display:this.emptyField]})]});}},{key:"renderQRInfo",value:function renderQRInfo(){var qrResponse=this.state.response;return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"questionnaire-response",children:qrResponse.questionnaire?/*#__PURE__*/Object(jsx_runtime["jsxs"])(jsx_runtime["Fragment"],{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"lower-border",children:/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"In Progress Form"})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Form: ",qrResponse.questionnaire?qrResponse.questionnaire:this.emptyField]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Author: ",qrResponse.author?qrResponse.author.reference:this.emptyField]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"info lower-border",children:["Date: ",qrResponse.authored?qrResponse.authored:this.emptyField]})]}):/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{})});}},{key:"renderPrefetchedResources",value:function renderPrefetchedResources(){var prefetchMap=new Map(Object.entries(this.state.prefetchedResources));if(prefetchMap.size>0){return this.renderRequestResources(prefetchMap);}}},{key:"renderRequestResources",value:function renderRequestResources(requestResources){var _this3=this;var renderedPrefetches=new Map();requestResources.forEach(function(resourceList,resourceKey){var renderedList=[];if(Array.isArray(resourceList)){resourceList.forEach(function(resource){console.log('Request resources:'+JSON.stringify(requestResources));console.log('Request key:'+resourceKey);renderedList.push(_this3.renderResource(resource));});}else{renderedList.push(_this3.renderResource(resourceList));}renderedPrefetches.set(resourceKey,renderedList);});console.log(renderedPrefetches);console.log(Object.entries(renderedPrefetches));return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"prefetched",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"prefetch-header",children:"Prefetched"}),Array.from(renderedPrefetches.keys()).map(function(resourceKey){var currentRenderedPrefetch=renderedPrefetches.get(resourceKey);return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"prefetch-subheader",children:resourceKey+' Resources'}),currentRenderedPrefetch]},resourceKey);})]});}},{key:"renderResource",value:function renderResource(resource){var value=/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:"N/A"});if(!resource.id){resource=resource.resource;}if(resource.id){var resourceId=resource.id;var resourceType=resource.resourceType;value=/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{textTransform:'capitalize'},children:resourceType}),": ",resourceType,"/",resourceId," .....",/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"checkmark glyphicon glyphicon-ok"})]},resourceId);}else{value=/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{textTransform:'capitalize'},children:'UNKNOWN'})," .....",/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"remove glyphicon glyphicon-remove"})]},'UNKNOWN');}return value;}},{key:"renderError",value:function renderError(){return/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"patient-error",children:this.state.patientList.message});}},{key:"buildLaunchLink",value:function buildLaunchLink(){// build appContext and URL encode it
-var appContext='';var order=undefined,coverage=undefined,response=undefined;if(!this.isOrderNotSelected()){if(Object.keys(this.state.request).length>0){order="".concat(this.state.request.resourceType,"/").concat(this.state.request.id);if(this.state.request.insurance&&this.state.request.insurance.length>0){coverage="".concat(this.state.request.insurance[0].reference);}}}if(order){appContext+="order=".concat(order);if(coverage){appContext+="&coverage=".concat(coverage);}}if(Object.keys(this.state.response).length>0){response="QuestionnaireResponse/".concat(this.state.response.id);}if(order&&response){appContext+="&response=".concat(response);}else if(!order&&response){appContext+="response=".concat(response);}var link={appContext:encodeURIComponent(appContext),type:'smart',url:this.props.launchUrl};var linkCopy=Object.assign({},link);return Object(util["a" /* retrieveLaunchContext */])(linkCopy,this.props.fhirAccessToken,this.state.patient.id,this.props.fhirServerUrl,this.props.fhirVersion).then(function(result){linkCopy=result;return linkCopy;});}},{key:"isOrderNotSelected",value:function isOrderNotSelected(){return Object.keys(this.state.request).length===0;}},{key:"isPatientNotSelected",value:function isPatientNotSelected(){return Object.keys(this.state.patient).length===0;}},{key:"render",value:function render(){var _this4=this;var params={};params['serverUrl']=this.props.ehrUrl;if(this.props.access_token){params['tokenResponse']={access_token:this.props.access_token.access_token};}var disableSendToCRD=this.isOrderNotSelected()||this.props.loading;var disableLaunchDTR=!this.state.response.questionnaire;var disableSendRx=this.isOrderNotSelected()||this.props.loading;var disableLaunchSmartOnFhir=this.isPatientNotSelected();return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"request",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Modal["a" /* default */],{open:this.state.openPatient,onClose:this.exitSmart,"aria-labelledby":"modal-modal-title","aria-describedby":"modal-modal-description",children:/*#__PURE__*/Object(jsx_runtime["jsx"])(Box["a" /* default */],{sx:RequestBox_style,children:this.state.patientList instanceof Error?this.renderError():this.state.patientList.map(function(patient){return/*#__PURE__*/Object(jsx_runtime["jsx"])(PatientBox_PatientBox,{patient:patient,params:params,callback:_this4.updateStateElement,callbackList:_this4.updateStateList,callbackMap:_this4.updateStateMap,updatePrefetchCallback:PrefetchTemplate_PrefetchTemplate.generateQueries,clearCallback:_this4.clearState,ehrUrl:_this4.props.ehrUrl,options:_this4.state.codeValues,responseExpirationDays:_this4.props.responseExpirationDays,defaultUser:_this4.props.defaultUser},patient.id);})})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{variant:"contained",onClick:this.getPatients,startIcon:/*#__PURE__*/Object(jsx_runtime["jsx"])(Person_default.a,{}),children:"Select a patient"}),/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"request-header",children:this.state.patient.id?/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:["Patient ID: ",this.state.patient.id]}):/*#__PURE__*/Object(jsx_runtime["jsx"])("em",{children:"No patient selected"})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[this.renderPatientInfo(),this.renderPrefetchedResources()]})]})]}),this.state.patient.id?/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"action-btns",children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(material_ButtonGroup_ButtonGroup,{variant:"outlined","aria-label":"outlined button group",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.relaunch,disabled:disableLaunchDTR,children:"Open In-Progress Form"}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.launchSmartOnFhirApp,disabled:disableLaunchSmartOnFhir,children:"Launch SMART on FHIR App"}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.sendRx,disabled:disableSendRx,children:"Send Rx to Pharmacy"}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.submit,disabled:disableSendToCRD,children:"Sign Order"})]})}):/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{})]});}}]);return RequestBox;}(react["Component"]);
+var appContext='';var order=undefined,coverage=undefined,response=undefined;if(!this.isOrderNotSelected()){if(Object.keys(this.state.request).length>0){order="".concat(this.state.request.resourceType,"/").concat(this.state.request.id);if(this.state.request.insurance&&this.state.request.insurance.length>0){coverage="".concat(this.state.request.insurance[0].reference);}}}if(order){appContext+="order=".concat(order);if(coverage){appContext+="&coverage=".concat(coverage);}}if(Object.keys(this.state.response).length>0){response="QuestionnaireResponse/".concat(this.state.response.id);}if(order&&response){appContext+="&response=".concat(response);}else if(!order&&response){appContext+="response=".concat(response);}var link={appContext:encodeURIComponent(appContext),type:'smart',url:this.props.launchUrl};var linkCopy=Object.assign({},link);return Object(util["a" /* retrieveLaunchContext */])(linkCopy,this.state.patient.id,this.props.client.state).then(function(result){linkCopy=result;return linkCopy;});}},{key:"isOrderNotSelected",value:function isOrderNotSelected(){return Object.keys(this.state.request).length===0;}},{key:"isPatientNotSelected",value:function isPatientNotSelected(){return Object.keys(this.state.patient).length===0;}},{key:"render",value:function render(){var _this4=this;var disableSendToCRD=this.isOrderNotSelected()||this.props.loading;var disableLaunchDTR=!this.state.response.questionnaire;var disableSendRx=this.isOrderNotSelected()||this.props.loading;var disableLaunchSmartOnFhir=this.isPatientNotSelected();return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"request",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Modal["a" /* default */],{open:this.state.openPatient,onClose:this.exitSmart,"aria-labelledby":"modal-modal-title","aria-describedby":"modal-modal-description",children:/*#__PURE__*/Object(jsx_runtime["jsx"])(Box["a" /* default */],{sx:RequestBox_style,children:this.state.patientList instanceof Error?this.renderError():this.state.patientList.map(function(patient){return/*#__PURE__*/Object(jsx_runtime["jsx"])(PatientBox_PatientBox,{patient:patient,client:_this4.props.client,callback:_this4.updateStateElement,callbackList:_this4.updateStateList,callbackMap:_this4.updateStateMap,updatePrefetchCallback:PrefetchTemplate_PrefetchTemplate.generateQueries,clearCallback:_this4.clearState,ehrUrl:_this4.props.ehrUrl,options:_this4.state.codeValues,responseExpirationDays:_this4.props.responseExpirationDays,defaultUser:_this4.props.defaultUser},patient.id);})})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{variant:"contained",onClick:this.getPatients,startIcon:/*#__PURE__*/Object(jsx_runtime["jsx"])(Person_default.a,{}),children:"Select a patient"}),/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"request-header",children:this.state.patient.id?/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:["Patient ID: ",this.state.patient.id]}):/*#__PURE__*/Object(jsx_runtime["jsx"])("em",{children:"No patient selected"})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[this.renderPatientInfo(),this.renderPrefetchedResources()]})]})]}),this.state.patient.id?/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"action-btns",children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(material_ButtonGroup_ButtonGroup,{variant:"outlined","aria-label":"outlined button group",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.relaunch,disabled:disableLaunchDTR,children:"Open In-Progress Form"}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.launchSmartOnFhirApp,disabled:disableLaunchSmartOnFhir,children:"Launch SMART on FHIR App"}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.sendRx,disabled:disableSendRx,children:"Send Rx to Pharmacy"}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{onClick:this.submit,disabled:disableSendToCRD,children:"Sign Order"})]})}):/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{})]});}}]);return RequestBox;}(react["Component"]);
 // CONCATENATED MODULE: ./src/util/buildRequest.js
 function buildRequest(request,user,patient,ehrUrl,token,prefetch,includePrefetch,hook,hookConfig){// Use the provided user if there is no request for this hook
 var userId='Practitioner/'+user;if(request){userId=request.requester.reference;}var r4json={hookInstance:'d1577c69-dfbe-44ad-ba6d-3e05e953b2ea',fhirServer:ehrUrl,hook:hook,fhirAuthorization:{access_token:token.access_token,token_type:'Bearer',expires_in:300,scope:'patient/Patient.read patient/Observation.read',subject:'cds-service4'},context:{userId:userId,patientId:patient.id,encounterId:'enc89284'}};// add the extension containing the hook configuration
@@ -92709,11 +92709,10 @@ function makeid(){var text=[];var possible='---ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg
 var searchParams=Object.keys(params).map(function(key){return encodeURIComponent(key)+'='+encodeURIComponent(params[key]);}).join('&');// We get the token from the url
 return fetch(tokenUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:searchParams});}function createJwt(keypair,baseUrl,cdsUrl){console.log('creating jwt');var currentTime=jsrsasign_default.a.jws.IntDate.get('now');var endTime=jsrsasign_default.a.jws.IntDate.get('now + 1day');var kid=jsrsasign_default.a.jws.JWS.getJWKthumbprint(keypair.public);var header={alg:'RS256',typ:'JWT',kid:kid,jku:env_var_default.a.get('REACT_APP_PUBLIC_KEYS').asString()};var body={iss:baseUrl,aud:cdsUrl,iat:currentTime,exp:endTime,jti:makeid()};var sJWT=jsrsasign_default.a.jws.JWS.sign('RS256',JSON.stringify(header),JSON.stringify(body),keypair.private);return sJWT;}function setupKeys(callback){var _KEYUTIL$generateKeyp=jsrsasign["KEYUTIL"].generateKeypair('RSA',2048),prvKeyObj=_KEYUTIL$generateKeyp.prvKeyObj,pubKeyObj=_KEYUTIL$generateKeyp.pubKeyObj;var jwkPrv2=jsrsasign["KEYUTIL"].getJWKFromKey(prvKeyObj);var jwkPub2=jsrsasign["KEYUTIL"].getJWKFromKey(pubKeyObj);var kid=jsrsasign_default.a.jws.JWS.getJWKthumbprint(jwkPub2);var keypair={private:jwkPrv2,public:jwkPub2,kid:kid};var pubPem={pem:jwkPub2,id:kid};fetch("".concat(env_var_default.a.get('REACT_APP_PUBLIC_KEYS').asString(),"/"),{body:JSON.stringify(pubPem),headers:{'Content-Type':'application/json'},method:'POST'}).then(function(response){callback(keypair);}).catch(function(error){console.log(error);});}
 // CONCATENATED MODULE: ./src/containers/RequestBuilder.js
-var RequestBuilder_RequestBuilder=/*#__PURE__*/function(_Component){_inherits(RequestBuilder,_Component);var _super=_createSuper(RequestBuilder);function RequestBuilder(props){var _this;Object(classCallCheck["a" /* default */])(this,RequestBuilder);_this=_super.call(this,props);_this.updateStateElement=function(elementName,text){_this.setState(Object(defineProperty["a" /* default */])({},elementName,text));};_this.timeout=function(time){var controller=new AbortController();setTimeout(function(){return controller.abort();},time*1000);return controller;};_this.state={keypair:null,loading:false,logs:[],patient:{},response:null,showSettings:false,token:null,// Configurable values
-alternativeTherapy:env_var_default.a.get('REACT_APP_ALT_DRUG').asBool(),baseUrl:env_var_default.a.get('REACT_APP_EHR_BASE').asString(),cdsUrl:env_var_default.a.get('REACT_APP_CDS_SERVICE').asString(),defaultUser:env_var_default.a.get('REACT_APP_DEFAULT_USER').asString(),ehrUrl:env_var_default.a.get('REACT_APP_EHR_SERVER').asString(),includeConfig:true,launchUrl:env_var_default.a.get('REACT_APP_LAUNCH_URL').asString(),orderSelect:env_var_default.a.get('REACT_APP_ORDER_SELECT').asString(),orderSign:env_var_default.a.get('REACT_APP_ORDER_SIGN').asString(),patientView:env_var_default.a.get('REACT_APP_PATIENT_VIEW').asString(),pimsUrl:env_var_default.a.get('REACT_APP_PIMS_SERVER').asString(),responseExpirationDays:env_var_default.a.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),sendPrefetch:true,smartAppUrl:env_var_default.a.get('REACT_APP_SMART_LAUNCH_URL').asString()};_this.updateStateElement=_this.updateStateElement.bind(_assertThisInitialized(_this));_this.submit_info=_this.submit_info.bind(_assertThisInitialized(_this));_this.consoleLog=_this.consoleLog.bind(_assertThisInitialized(_this));_this.takeSuggestion=_this.takeSuggestion.bind(_assertThisInitialized(_this));_this.requestBox=/*#__PURE__*/react_default.a.createRef();return _this;}Object(createClass["a" /* default */])(RequestBuilder,[{key:"componentDidMount",value:function componentDidMount(){var _this2=this;var callback=function callback(keypair){_this2.setState({keypair:keypair});};setupKeys(callback);login().then(function(response){return response.json();}).then(function(token){_this2.setState({token:token});}).catch(function(error){// fails when keycloak isn't running, add dummy token
-_this2.setState({token:{access_token:''}});});}},{key:"consoleLog",value:function consoleLog(content,type){console.log(content);var jsonContent={content:content,type:type};this.setState(function(prevState){return{logs:[].concat(Object(toConsumableArray["a" /* default */])(prevState.logs),[jsonContent])};});}},{key:"submit_info",value:function submit_info(prefetch,request,patient,hook){var _this3=this;this.setState({loading:true});this.consoleLog('Initiating form submission',util_data["d" /* types */].info);this.setState({patient:patient});var hookConfig={includeConfig:this.state.includeConfig,alternativeTherapy:this.state.alternativeTherapy};var user=this.state.defaultUser;var json_request=buildRequest(request,user,patient,this.state.ehrUrl,this.state.token,prefetch,this.state.sendPrefetch,hook,hookConfig);var cdsUrl=this.state.cdsUrl;if(hook==='order-sign'){cdsUrl=cdsUrl+'/'+this.state.orderSign;}else if(hook==='order-select'){cdsUrl=cdsUrl+'/'+this.state.orderSelect;}else if(hook==='patient-view'){cdsUrl=cdsUrl+'/'+this.state.patientView;}else{this.consoleLog("ERROR: unknown hook type: '",hook,"'");return;}var baseUrl=this.state.baseUrl;var jwt='Bearer '+createJwt(this.state.keypair,baseUrl,cdsUrl);var headers=new Headers({'Content-Type':'application/json',authorization:jwt});try{fetch(cdsUrl,{method:'POST',headers:headers,body:JSON.stringify(json_request),signal:this.timeout(10).signal//Timeout set to 10 seconds
-}).then(function(response){clearTimeout(_this3.timeout);response.json().then(function(fhirResponse){console.log(fhirResponse);if(fhirResponse!==null&&fhirResponse!==void 0&&fhirResponse.status){_this3.consoleLog('Server returned status '+fhirResponse.status+': '+fhirResponse.error,util_data["d" /* types */].error);_this3.consoleLog(fhirResponse.message,util_data["d" /* types */].error);}else{_this3.setState({response:fhirResponse});}_this3.setState({loading:false});});}).catch(function(){_this3.consoleLog('No response received from the server',util_data["d" /* types */].error);_this3.setState({response:null});_this3.setState({loading:false});});}catch(error){this.setState({loading:false});this.consoleLog('Unexpected error occurred',util_data["d" /* types */].error);if(error instanceof TypeError){this.consoleLog(error.name+': '+error.message,util_data["d" /* types */].error);}}}},{key:"takeSuggestion",value:function takeSuggestion(resource){// when a suggestion is taken, call into the requestBox to resubmit the CRD request with the new request
-this.requestBox.current.replaceRequestAndSubmit(resource);}},{key:"render",value:function render(){var _this4=this;return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"nav-header",children:/*#__PURE__*/Object(jsx_runtime["jsx"])("button",{className:'btn btn-class settings '+(this.state.showSettings?'active':'not-active'),onClick:function onClick(){return _this4.updateStateElement('showSettings',!_this4.state.showSettings);},children:/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"glyphicon glyphicon-cog settings-icon"})})}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"form-group container left-form",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{id:"settings-header"}),this.state.showSettings&&/*#__PURE__*/Object(jsx_runtime["jsx"])(SettingsBox_SettingsBox_SettingsBox,{state:this.state,consoleLog:this.consoleLog,updateCB:this.updateStateElement}),/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:/*#__PURE__*/Object(jsx_runtime["jsx"])(RequestBox_RequestBox,{ehrUrl:this.state.ehrUrl,submitInfo:this.submit_info,access_token:this.state.token,fhirServerUrl:this.state.baseUrl,fhirVersion:'r4',patientId:this.state.patient.id,launchUrl:this.state.launchUrl,responseExpirationDays:this.state.responseExpirationDays,pimsUrl:this.state.pimsUrl,smartAppUrl:this.state.smartAppUrl,defaultUser:this.state.defaultUser,ref:this.requestBox,loading:this.state.loading,consoleLog:this.consoleLog})}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])(ConsoleBox_ConsoleBox,{logs:this.state.logs})]}),/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"right-form",children:/*#__PURE__*/Object(jsx_runtime["jsx"])(DisplayBox_DisplayBox,{response:this.state.response,patientId:this.state.patient.id,ehrLaunch:true,fhirServerUrl:this.state.baseUrl,fhirVersion:'r4',ehrUrl:this.state.ehrUrl,access_token:this.state.token,takeSuggestion:this.takeSuggestion})})]});}}]);return RequestBuilder;}(react["Component"]);
+var RequestBuilder_RequestBuilder=/*#__PURE__*/function(_Component){_inherits(RequestBuilder,_Component);var _super=_createSuper(RequestBuilder);function RequestBuilder(props){var _this;Object(classCallCheck["a" /* default */])(this,RequestBuilder);_this=_super.call(this,props);_this.updateStateElement=function(elementName,text){_this.setState(Object(defineProperty["a" /* default */])({},elementName,text));};_this.timeout=function(time){var controller=new AbortController();setTimeout(function(){return controller.abort();},time*1000);return controller;};_this.state={keypair:null,loading:false,logs:[],patient:{},response:null,showSettings:false,token:null,client:_this.props.client,// Configurable values
+alternativeTherapy:env_var_default.a.get('REACT_APP_ALT_DRUG').asBool(),baseUrl:env_var_default.a.get('REACT_APP_EHR_BASE').asString(),cdsUrl:env_var_default.a.get('REACT_APP_CDS_SERVICE').asString(),defaultUser:env_var_default.a.get('REACT_APP_DEFAULT_USER').asString(),ehrUrl:env_var_default.a.get('REACT_APP_EHR_SERVER').asString(),includeConfig:true,launchUrl:env_var_default.a.get('REACT_APP_LAUNCH_URL').asString(),orderSelect:env_var_default.a.get('REACT_APP_ORDER_SELECT').asString(),orderSign:env_var_default.a.get('REACT_APP_ORDER_SIGN').asString(),patientView:env_var_default.a.get('REACT_APP_PATIENT_VIEW').asString(),pimsUrl:env_var_default.a.get('REACT_APP_PIMS_SERVER').asString(),responseExpirationDays:env_var_default.a.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),sendPrefetch:true,smartAppUrl:env_var_default.a.get('REACT_APP_SMART_LAUNCH_URL').asString()};_this.updateStateElement=_this.updateStateElement.bind(_assertThisInitialized(_this));_this.submit_info=_this.submit_info.bind(_assertThisInitialized(_this));_this.consoleLog=_this.consoleLog.bind(_assertThisInitialized(_this));_this.takeSuggestion=_this.takeSuggestion.bind(_assertThisInitialized(_this));_this.reconnectEhr=_this.reconnectEhr.bind(_assertThisInitialized(_this));_this.requestBox=/*#__PURE__*/react_default.a.createRef();return _this;}Object(createClass["a" /* default */])(RequestBuilder,[{key:"componentDidMount",value:function componentDidMount(){var _this2=this;var callback=function callback(keypair){_this2.setState({keypair:keypair});};setupKeys(callback);if(!this.state.client){this.reconnectEhr();}}},{key:"reconnectEhr",value:function reconnectEhr(){var _this3=this;console.log(this.state.baseUrl);browser_default.a.oauth2.authorize({clientId:env_var_default.a.get('REACT_APP_CLIENT').asString(),iss:this.state.baseUrl,redirectUri:'/index',scope:env_var_default.a.get('REACT_APP_CLIENT_SCOPES').asString()}).then(function(client){_this3.setState({client:client});});}},{key:"consoleLog",value:function consoleLog(content,type){console.log(content);var jsonContent={content:content,type:type};this.setState(function(prevState){return{logs:[].concat(Object(toConsumableArray["a" /* default */])(prevState.logs),[jsonContent])};});}},{key:"submit_info",value:function submit_info(prefetch,request,patient,hook){var _this4=this;this.setState({loading:true});this.consoleLog('Initiating form submission',util_data["d" /* types */].info);this.setState({patient:patient});var hookConfig={includeConfig:this.state.includeConfig,alternativeTherapy:this.state.alternativeTherapy};var user=this.state.defaultUser;var json_request=buildRequest(request,user,patient,this.state.ehrUrl,this.state.client.state.tokenResponse,prefetch,this.state.sendPrefetch,hook,hookConfig);var cdsUrl=this.state.cdsUrl;if(hook==='order-sign'){cdsUrl=cdsUrl+'/'+this.state.orderSign;}else if(hook==='order-select'){cdsUrl=cdsUrl+'/'+this.state.orderSelect;}else if(hook==='patient-view'){cdsUrl=cdsUrl+'/'+this.state.patientView;}else{this.consoleLog("ERROR: unknown hook type: '",hook,"'");return;}var baseUrl=this.state.baseUrl;var jwt='Bearer '+createJwt(this.state.keypair,baseUrl,cdsUrl);var headers=new Headers({'Content-Type':'application/json',authorization:jwt});try{fetch(cdsUrl,{method:'POST',headers:headers,body:JSON.stringify(json_request),signal:this.timeout(10).signal//Timeout set to 10 seconds
+}).then(function(response){clearTimeout(_this4.timeout);response.json().then(function(fhirResponse){console.log(fhirResponse);if(fhirResponse!==null&&fhirResponse!==void 0&&fhirResponse.status){_this4.consoleLog('Server returned status '+fhirResponse.status+': '+fhirResponse.error,util_data["d" /* types */].error);_this4.consoleLog(fhirResponse.message,util_data["d" /* types */].error);}else{_this4.setState({response:fhirResponse});}_this4.setState({loading:false});});}).catch(function(){_this4.consoleLog('No response received from the server',util_data["d" /* types */].error);_this4.setState({response:null});_this4.setState({loading:false});});}catch(error){this.setState({loading:false});this.consoleLog('Unexpected error occurred',util_data["d" /* types */].error);if(error instanceof TypeError){this.consoleLog(error.name+': '+error.message,util_data["d" /* types */].error);}}}},{key:"takeSuggestion",value:function takeSuggestion(resource){// when a suggestion is taken, call into the requestBox to resubmit the CRD request with the new request
+this.requestBox.current.replaceRequestAndSubmit(resource);}},{key:"render",value:function render(){var _this5=this;return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"nav-header",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("button",{className:'btn btn-class settings '+(this.state.showSettings?'active':'not-active'),onClick:function onClick(){return _this5.updateStateElement('showSettings',!_this5.state.showSettings);},children:/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"glyphicon glyphicon-cog settings-icon"})}),/*#__PURE__*/Object(jsx_runtime["jsx"])("button",{className:"btn btn-class",onClick:function onClick(){_this5.reconnectEhr();},children:"Reconnect EHR"})]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"form-group container left-form",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{id:"settings-header"}),this.state.showSettings&&/*#__PURE__*/Object(jsx_runtime["jsx"])(SettingsBox_SettingsBox_SettingsBox,{state:this.state,consoleLog:this.consoleLog,updateCB:this.updateStateElement}),/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:/*#__PURE__*/Object(jsx_runtime["jsx"])(RequestBox_RequestBox,{ehrUrl:this.state.ehrUrl,submitInfo:this.submit_info,access_token:this.state.token,client:this.state.client,fhirServerUrl:this.state.baseUrl,fhirVersion:'r4',patientId:this.state.patient.id,launchUrl:this.state.launchUrl,responseExpirationDays:this.state.responseExpirationDays,pimsUrl:this.state.pimsUrl,smartAppUrl:this.state.smartAppUrl,defaultUser:this.state.defaultUser,ref:this.requestBox,loading:this.state.loading,consoleLog:this.consoleLog})}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])("br",{}),/*#__PURE__*/Object(jsx_runtime["jsx"])(ConsoleBox_ConsoleBox,{logs:this.state.logs})]}),/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{className:"right-form",children:/*#__PURE__*/Object(jsx_runtime["jsx"])(DisplayBox_DisplayBox,{response:this.state.response,client:this.state.client,patientId:this.state.patient.id,ehrLaunch:true,takeSuggestion:this.takeSuggestion})})]});}}]);return RequestBuilder;}(react["Component"]);
 // EXTERNAL MODULE: ./src/containers/PatientPortal.jsx
 var PatientPortal = __webpack_require__(193);
 
@@ -92791,10 +92790,14 @@ function ThemeProvider(props) {
  false ? undefined : void 0;
 if (false) {}
 /* harmony default export */ var ThemeProvider_ThemeProvider = (ThemeProvider);
+// CONCATENATED MODULE: ./src/containers/Launch.jsx
+var Launch_Launch=function Launch(){Object(react["useEffect"])(function(){browser_default.a.oauth2.authorize({clientId:env_var_default.a.get('REACT_APP_CLIENT').asString(),scope:env_var_default.a.get('REACT_APP_CLIENT_SCOPES').asString(),redirectUri:'/index'});},[]);return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:"Launching"});};/* harmony default export */ var containers_Launch = (/*#__PURE__*/Object(react["memo"])(Launch_Launch));
+// CONCATENATED MODULE: ./src/containers/Index.jsx
+var Index_Index=function Index(props){var _useState=Object(react["useState"])(null),_useState2=Object(slicedToArray["a" /* default */])(_useState,2),client=_useState2[0],setClient=_useState2[1];Object(react["useEffect"])(function(){browser_default.a.oauth2.ready().then(function(client){setClient(client);});},[]);return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:client?/*#__PURE__*/Object(jsx_runtime["jsx"])(RequestBuilder_RequestBuilder,{client:client}):'Getting Client'});};/* harmony default export */ var containers_Index = (Index_Index);
 // CONCATENATED MODULE: ./src/components/App.js
-var App_Router= true?HashRouter:undefined;var App_App=/*#__PURE__*/function(_Component){_inherits(App,_Component);var _super=_createSuper(App);function App(){Object(classCallCheck["a" /* default */])(this,App);return _super.apply(this,arguments);}Object(createClass["a" /* default */])(App,[{key:"render",value:function render(){return/*#__PURE__*/Object(jsx_runtime["jsx"])(App_Router,{children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(Routes,{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Route,{path:"/",exact:true,element:/*#__PURE__*/Object(jsx_runtime["jsx"])(RequestBuilder_RequestBuilder,{})}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Route,{exact:true,path:"/patient-portal",element:/*#__PURE__*/Object(jsx_runtime["jsx"])(ThemeProvider_ThemeProvider,{theme:styles_theme,children:/*#__PURE__*/Object(jsx_runtime["jsx"])(PatientPortal["a" /* default */],{})})})]})});}}]);return App;}(react["Component"]);
+var App_Router= true?HashRouter:undefined;var App_App=function App(){return/*#__PURE__*/Object(jsx_runtime["jsx"])(App_Router,{children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(Routes,{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(Route,{path:"/",exact:true,element:/*#__PURE__*/Object(jsx_runtime["jsx"])(RequestBuilder_RequestBuilder,{})}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Route,{exact:true,path:"/launch",element:/*#__PURE__*/Object(jsx_runtime["jsx"])(containers_Launch,{})}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Route,{exact:true,path:"/index",element:/*#__PURE__*/Object(jsx_runtime["jsx"])(containers_Index,{})}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Route,{exact:true,path:"/patient-portal",element:/*#__PURE__*/Object(jsx_runtime["jsx"])(ThemeProvider_ThemeProvider,{theme:styles_theme,children:/*#__PURE__*/Object(jsx_runtime["jsx"])(PatientPortal["a" /* default */],{})})})]})});};/* harmony default export */ var components_App = (App_App);
 // CONCATENATED MODULE: ./src/index.js
-react_dom_default.a.render(/*#__PURE__*/Object(jsx_runtime["jsx"])(App_App,{}),document.getElementById('root'));
+react_dom_default.a.render(/*#__PURE__*/Object(jsx_runtime["jsx"])(components_App,{}),document.getElementById('root'));
 
 /***/ }),
 /* 349 */
@@ -97189,7 +97192,7 @@ var styled = __webpack_require__(4);
 var useThemeProps = __webpack_require__(11);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js
 var generateUtilityClasses = __webpack_require__(109);
@@ -97491,7 +97494,7 @@ var styled = __webpack_require__(4);
 var useThemeProps = __webpack_require__(11);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/Paper/Paper.js + 2 modules
 var Paper = __webpack_require__(428);
@@ -98212,7 +98215,7 @@ function createChainedFunction() {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return useId; });
-/* harmony import */ var _Users_bobd_projects_rems_crd_request_generator_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony import */ var _Users_bobd_projects_rems_crd_request_generator_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 'use client';
@@ -98371,8 +98374,8 @@ function getScrollbarSize(doc) {
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react_transition_group__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(355);
-/* harmony import */ var _styles_useTheme__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(38);
-/* harmony import */ var _transitions_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
+/* harmony import */ var _styles_useTheme__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/* harmony import */ var _transitions_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
 /* harmony import */ var _utils_useForkRef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(21);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
@@ -98602,7 +98605,7 @@ var clsx = __webpack_require__(8);
 var deepmerge = __webpack_require__(140);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(3);
@@ -98623,7 +98626,7 @@ var useId = __webpack_require__(416);
 var ownerDocument = __webpack_require__(47);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/base/utils/useSlotProps.js + 4 modules
 var useSlotProps = __webpack_require__(425);
@@ -98641,7 +98644,7 @@ var getScrollbarSize = __webpack_require__(419);
 var useForkRef = __webpack_require__(21);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useEnhancedEffect.js
-var useEnhancedEffect = __webpack_require__(40);
+var useEnhancedEffect = __webpack_require__(41);
 
 // EXTERNAL MODULE: ./node_modules/react/jsx-runtime.js
 var jsx_runtime = __webpack_require__(1);
@@ -99283,7 +99286,7 @@ var Popover_Popover = /*#__PURE__*/react["forwardRef"](function Popover(inProps,
  false ? undefined : void 0;
 /* harmony default export */ var material_Popover_Popover = (Popover_Popover);
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(38);
+var useTheme = __webpack_require__(39);
 
 // CONCATENATED MODULE: ./node_modules/@mui/material/Menu/menuClasses.js
 
@@ -100378,7 +100381,7 @@ Select_Select.muiName = 'Select';
 // UNUSED EXPORTS: ButtonBaseRoot
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(3);
@@ -101392,7 +101395,7 @@ var clsx = __webpack_require__(8);
 var useSlotProps = __webpack_require__(425);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@mui/base/node_modules/@babel/runtime/helpers/esm/extends.js
 var helpers_esm_extends = __webpack_require__(25);
@@ -101413,10 +101416,10 @@ var createChainedFunction = __webpack_require__(415);
 var extractEventHandlers = __webpack_require__(86);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(16);
+var classCallCheck = __webpack_require__(17);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(17);
+var createClass = __webpack_require__(18);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 2 modules
 var toConsumableArray = __webpack_require__(12);
@@ -102254,10 +102257,10 @@ var useThemeProps = __webpack_require__(11);
 var Transition = __webpack_require__(355);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(38);
+var useTheme = __webpack_require__(39);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/transitions/utils.js
-var utils = __webpack_require__(41);
+var utils = __webpack_require__(42);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/useForkRef.js
 var utils_useForkRef = __webpack_require__(21);
@@ -103147,7 +103150,7 @@ var formControlState = __webpack_require__(34);
 var useFormControl = __webpack_require__(33);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useThemeProps.js
 var useThemeProps = __webpack_require__(11);
@@ -104213,7 +104216,7 @@ var useThemeProps = __webpack_require__(11);
 var ButtonBase = __webpack_require__(423);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js
 var generateUtilityClasses = __webpack_require__(109);
@@ -104535,7 +104538,7 @@ var Button_Button = /*#__PURE__*/react["forwardRef"](function Button(inProps, re
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
-var slicedToArray = __webpack_require__(10);
+var slicedToArray = __webpack_require__(9);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
 var objectWithoutPropertiesLoose = __webpack_require__(6);
@@ -104562,7 +104565,7 @@ var styled = __webpack_require__(4);
 var utils = __webpack_require__(57);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/isMuiElement.js + 1 modules
 var isMuiElement = __webpack_require__(55);
@@ -105412,7 +105415,7 @@ var useThemeProps = __webpack_require__(11);
 var ButtonBase = __webpack_require__(423);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/utils/capitalize.js
-var capitalize = __webpack_require__(9);
+var capitalize = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js
 var generateUtilityClasses = __webpack_require__(109);
