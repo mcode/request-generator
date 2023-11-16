@@ -329,7 +329,9 @@ export default class PatientBox extends Component {
         questionnaireResponse => questionnaireResponse.questionnaire
       )) {
         promises.push(
-          client.request(canonical).then(questionnaire => [canonical, questionnaire.title])
+          client
+            .request(canonical)
+            .then(questionnaire => [canonical, questionnaire.title || canonical])
         );
       }
       Promise.all(promises).then(pairs => {
