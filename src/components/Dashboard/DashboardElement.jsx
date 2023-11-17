@@ -26,13 +26,7 @@ const DashboardElement = props => {
       type: 'smart',
       url: env.get('REACT_APP_LAUNCH_URL').asString()
     };
-    retrieveLaunchContext(
-      link,
-      clientState.tokenResponse.accessToken,
-      clientState.tokenResponse.patient,
-      clientState.serverUrl,
-      'r4'
-    ).then(e => {
+    retrieveLaunchContext(link, clientState.tokenResponse.patient, clientState).then(e => {
       window.open(e.url, '_blank');
     });
   };

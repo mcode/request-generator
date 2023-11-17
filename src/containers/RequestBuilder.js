@@ -10,6 +10,7 @@ import buildRequest from '../util/buildRequest.js';
 import { types } from '../util/data.js';
 import { createJwt, login, setupKeys } from '../util/auth';
 import env from 'env-var';
+import FHIR from 'fhirclient';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class RequestBuilder extends Component {
       response: null,
       showSettings: false,
       token: null,
+      client: this.props.client,
       // Configurable values
       alternativeTherapy: env.get('REACT_APP_ALT_DRUG').asBool(),
       baseUrl: env.get('REACT_APP_EHR_BASE').asString(),
@@ -43,6 +45,7 @@ export default class RequestBuilder extends Component {
     this.submit_info = this.submit_info.bind(this);
     this.consoleLog = this.consoleLog.bind(this);
     this.takeSuggestion = this.takeSuggestion.bind(this);
+    this.reconnectEhr = this.reconnectEhr.bind(this);
     this.requestBox = React.createRef();
   }
 
@@ -52,17 +55,21 @@ export default class RequestBuilder extends Component {
     };
 
     setupKeys(callback);
+    if (!this.state.client) {
+      this.reconnectEhr();
+    } else {
+      this.setState({ baseUrl: this.state.client.state.serverUrl });
+      this.setState({ ehrUrl: this.state.client.state.serverUrl });
+    }
+  }
 
-    login()
-      .then(response => {
-        return response.json();
-      })
-      .then(token => {
-        this.setState({ token });
-      })
-      .catch(error => {
-        // fails when keycloak isn't running, add dummy token
-        this.setState({ token: { access_token: '' } });
+  reconnectEhr() {
+    FHIR.oauth2
+      .authorize({
+        clientId: env.get('REACT_APP_CLIENT').asString(),
+        iss: this.state.baseUrl,
+        redirectUri: this.props.redirect,
+        scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
       });
   }
 
@@ -101,7 +108,7 @@ export default class RequestBuilder extends Component {
       user,
       patient,
       this.state.ehrUrl,
-      this.state.token,
+      this.state.client.state.tokenResponse,
       prefetch,
       this.state.sendPrefetch,
       hook,
@@ -158,6 +165,7 @@ export default class RequestBuilder extends Component {
       if (error instanceof TypeError) {
         this.consoleLog(error.name + ': ' + error.message, types.error);
       }
+      this.setState({ loading: false });
     }
   }
 
@@ -178,6 +186,14 @@ export default class RequestBuilder extends Component {
           >
             <span className="glyphicon glyphicon-cog settings-icon" />
           </button>
+          <button
+            className="btn btn-class"
+            onClick={() => {
+              this.reconnectEhr();
+            }}
+          >
+            Reconnect EHR
+          </button>
         </div>
         <div className="form-group container left-form">
           <div id="settings-header"></div>
@@ -194,6 +210,7 @@ export default class RequestBuilder extends Component {
               ehrUrl={this.state.ehrUrl}
               submitInfo={this.submit_info}
               access_token={this.state.token}
+              client={this.state.client}
               fhirServerUrl={this.state.baseUrl}
               fhirVersion={'r4'}
               patientId={this.state.patient.id}
@@ -218,12 +235,9 @@ export default class RequestBuilder extends Component {
         <div className="right-form">
           <DisplayBox
             response={this.state.response}
+            client={this.state.client}
             patientId={this.state.patient.id}
             ehrLaunch={true}
-            fhirServerUrl={this.state.baseUrl}
-            fhirVersion={'r4'}
-            ehrUrl={this.state.ehrUrl}
-            access_token={this.state.token}
             takeSuggestion={this.takeSuggestion}
           />
         </div>
