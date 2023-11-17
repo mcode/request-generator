@@ -68,11 +68,8 @@ export default class RequestBuilder extends Component {
       .authorize({
         clientId: env.get('REACT_APP_CLIENT').asString(),
         iss: this.state.baseUrl,
-        redirectUri: '/index',
+        redirectUri: this.props.redirect,
         scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
-      })
-      .then(client => {
-        this.setState({ client: client });
       });
   }
 
