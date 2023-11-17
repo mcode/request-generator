@@ -397,7 +397,7 @@ export default class PatientBox extends Component {
             ) : (
               this.makeDropdown(
                 options,
-                'Choose a patient',
+                'Select a medication request',
                 this.state.request,
                 this.handleRequestChange
               )
