@@ -16,6 +16,8 @@ const style = {
   left: '50%',
   flexDirection: 'column',
   width: '80%',
+  height: '70%',
+  overflowY: 'scroll',
   transform: 'translate(-50%, -50%)',
   display: 'flex',
   bgcolor: 'background.paper',
@@ -154,13 +156,7 @@ export default class RequestBox extends Component {
 
   getPatients = () => {
     this.setState({ openPatient: true });
-    const params = { serverUrl: this.props.ehrUrl };
-    if (this.props.access_token.access_token) {
-      params['tokenResponse'] = { access_token: this.props.access_token.access_token };
-    }
-    const client = FHIR.client(params);
-
-    client
+    this.props.client
       .request('Patient?_sort=identifier&_count=12', { flat: true })
       .then(result => {
         this.setState({
@@ -320,7 +316,7 @@ export default class RequestBox extends Component {
   }
 
   renderError() {
-    return <span className="patient-error">{this.state.patientList.message}</span>;
+    return <span className="patient-error">Encountered Error: Try Refreshing The Client <br /> {this.state.patientList.message} </span>;
   }
 
   launchSmartOnFhirApp = () => {
@@ -341,13 +337,7 @@ export default class RequestBox extends Component {
       url: this.props.smartAppUrl
     };
 
-    retrieveLaunchContext(
-      link,
-      this.props.fhirAccessToken,
-      this.state.patient.id,
-      this.props.fhirServerUrl,
-      this.props.fhirVersion
-    ).then(result => {
+    retrieveLaunchContext(link, this.state.patient.id, this.props.client.state).then(result => {
       link = result;
       console.log(link);
       // launch the application in a new window
@@ -407,16 +397,12 @@ export default class RequestBox extends Component {
 
     let linkCopy = Object.assign({}, link);
 
-    return retrieveLaunchContext(
-      linkCopy,
-      this.props.fhirAccessToken,
-      this.state.patient.id,
-      this.props.fhirServerUrl,
-      this.props.fhirVersion
-    ).then(result => {
-      linkCopy = result;
-      return linkCopy;
-    });
+    return retrieveLaunchContext(linkCopy, this.state.patient.id, this.props.client.state).then(
+      result => {
+        linkCopy = result;
+        return linkCopy;
+      }
+    );
   }
 
   /**
@@ -467,11 +453,6 @@ export default class RequestBox extends Component {
   }
 
   render() {
-    const params = {};
-    params['serverUrl'] = this.props.ehrUrl;
-    if (this.props.access_token) {
-      params['tokenResponse'] = { access_token: this.props.access_token.access_token };
-    }
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchDTR = !this.state.response.questionnaire;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
@@ -493,7 +474,7 @@ export default class RequestBox extends Component {
                       <PatientBox
                         key={patient.id}
                         patient={patient}
-                        params={params}
+                        client={this.props.client}
                         callback={this.updateStateElement}
                         callbackList={this.updateStateList}
                         callbackMap={this.updateStateMap}

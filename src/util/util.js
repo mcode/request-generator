@@ -10,12 +10,12 @@ import axios from 'axios';
  * @param {*} patientId - The identifier of the patient in context
  * @param {*} fhirBaseUrl - The base URL of the FHIR server in context
  */
-function retrieveLaunchContext(link, accessToken, patientId, fhirBaseUrl, fhirVersion) {
+function retrieveLaunchContext(link, patientId, clientState) {
   return new Promise((resolve, reject) => {
-    const headers = accessToken
+    const headers = clientState.tokenResponse
       ? {
           Accept: 'application/json',
-          Authorization: `Bearer ${accessToken.access_token}`
+          Authorization: `Bearer ${clientState.tokenResponse.access_token}`
         }
       : {
           Accept: 'application/json'
@@ -31,7 +31,7 @@ function retrieveLaunchContext(link, accessToken, patientId, fhirBaseUrl, fhirVe
     // May change when the launch context creation endpoint becomes a standard endpoint for all EHR providers
     axios({
       method: 'post',
-      url: `${fhirBaseUrl}/_services/smart/Launch`,
+      url: `${clientState.serverUrl}/_services/smart/Launch`,
       headers,
       data: {
         launchUrl: link.url,
@@ -46,7 +46,7 @@ function retrieveLaunchContext(link, accessToken, patientId, fhirBaseUrl, fhirVe
             link.url += '&';
           }
           link.url += `launch=${result.data.launch_id}`;
-          link.url += `&iss=${fhirBaseUrl}`;
+          link.url += `&iss=${clientState.serverUrl}`;
           return resolve(link);
         }
         console.error(

@@ -114,27 +114,20 @@ export default class DisplayBox extends Component {
           });
         }
 
-        const client = FHIR.client({
-          serverUrl: this.props.ehrUrl,
-          tokenResponse: {
-            access_token: this.props.access_token.access_token
-          }
-        });
-
         // handle each action from the suggestion
         var uri = '';
         suggestion.actions.forEach(action => {
           if (action.type.toUpperCase() === 'DELETE') {
             uri = action.resource.resourceType + '/' + action.resource.id;
             console.log('completing suggested action DELETE: ' + uri);
-            client.delete(uri).then(result => {
+            this.props.client.delete(uri).then(result => {
               console.log('suggested action DELETE result:');
               console.log(result);
             });
           } else if (action.type.toUpperCase() === 'CREATE') {
             uri = action.resource.resourceType;
             console.log('completing suggested action CREATE: ' + uri);
-            client.create(action.resource).then(result => {
+            this.props.client.create(action.resource).then(result => {
               console.log('suggested action CREATE result:');
               console.log(result);
 
@@ -146,7 +139,7 @@ export default class DisplayBox extends Component {
           } else if (action.type.toUpperCase() === 'UPDATE') {
             uri = action.resource.resourceType + '/' + action.resource.id;
             console.log('completing suggested action UPDATE: ' + uri);
-            client.update(action.resource).then(result => {
+            this.props.client.update(action.resource).then(result => {
               console.log('suggested action UPDATE result:');
               console.log(result);
             });
@@ -205,16 +198,12 @@ export default class DisplayBox extends Component {
           (this.props.fhirAccessToken || this.props.ehrLaunch) &&
           !this.state.smartLink
         ) {
-          retrieveLaunchContext(
-            linkCopy,
-            this.props.fhirAccessToken,
-            this.props.patientId,
-            this.props.fhirServerUrl,
-            this.props.fhirVersion
-          ).then(result => {
-            linkCopy = result;
-            return linkCopy;
-          });
+          retrieveLaunchContext(linkCopy, this.props.patientId, this.props.client.state).then(
+            result => {
+              linkCopy = result;
+              return linkCopy;
+            }
+          );
         } else if (link.type === 'smart') {
           if (link.url.indexOf('?') < 0) {
             linkCopy.url += '?';
