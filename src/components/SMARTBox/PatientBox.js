@@ -322,14 +322,13 @@ export default class PatientBox extends Component {
   }
 
   getQuestionnaireTitles() {
-    const client = FHIR.client(this.props.params);
     const promises = [];
     if (this.state.questionnaireResponses.data.length > 0) {
       for (const canonical of this.state.questionnaireResponses.data.map(
         questionnaireResponse => questionnaireResponse.questionnaire
       )) {
         promises.push(
-          client
+          this.props.client
             .request(canonical)
             .then(questionnaire => [canonical, questionnaire.title || canonical])
         );
