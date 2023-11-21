@@ -22,7 +22,8 @@ export default class PatientBox extends Component {
       response: '',
       questionnaireResponses: {},
       openRequests: false,
-      openQuestionnaires: false
+      openQuestionnaires: false,
+      questionnaireTitles: {}
     };
 
     this.handleRequestChange = this.handleRequestChange.bind(this);
@@ -34,6 +35,7 @@ export default class PatientBox extends Component {
     this.getMedicationDispense = this.getMedicationDispense.bind(this);
     this.getRequests = this.getRequests.bind(this);
     this.getResponses = this.getResponses.bind(this);
+    this.getQuestionnaireTitles = this.getQuestionnaireTitles.bind(this);
     this.makeQROption = this.makeQROption.bind(this);
     this.handleResponseChange = this.handleResponseChange.bind(this);
     this.makeDropdown = this.makeDropdown.bind(this);
@@ -315,11 +317,31 @@ export default class PatientBox extends Component {
       })
       .then(result => {
         this.setState({ questionnaireResponses: result });
+      })
+      .then(() => this.getQuestionnaireTitles());
+  }
+
+  getQuestionnaireTitles() {
+    const promises = [];
+    if (this.state.questionnaireResponses.data.length > 0) {
+      for (const canonical of this.state.questionnaireResponses.data.map(
+        questionnaireResponse => questionnaireResponse.questionnaire
+      )) {
+        promises.push(
+          this.props.client
+            .request(canonical)
+            .then(questionnaire => [canonical, questionnaire.title || canonical])
+        );
+      }
+      Promise.all(promises).then(pairs => {
+        this.setState({ questionnaireTitles: Object.fromEntries(pairs) });
       });
+    }
   }
 
   makeQROption(qr) {
-    const display = `${qr.questionnaire}: created at ${qr.authored}`;
+    const questionnaireTitle = this.state.questionnaireTitles[qr.questionnaire];
+    const display = `${questionnaireTitle}: created at ${qr.authored}`;
     return {
       key: qr.id,
       text: display,
