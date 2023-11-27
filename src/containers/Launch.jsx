@@ -17,7 +17,7 @@ const Launch = (props) => {
     FHIR.oauth2.authorize({
       clientId: env.get('REACT_APP_CLIENT').asString(),
       scope: env.get('REACT_APP_CLIENT_SCOPES').asString(),
-      redirectUri: props.redirect
+      redirectUri: props.redirect,
       iss: iss,
       launch: launch
     });
