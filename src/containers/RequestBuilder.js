@@ -64,13 +64,12 @@ export default class RequestBuilder extends Component {
   }
 
   reconnectEhr() {
-    FHIR.oauth2
-      .authorize({
-        clientId: env.get('REACT_APP_CLIENT').asString(),
-        iss: this.state.baseUrl,
-        redirectUri: this.props.redirect,
-        scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
-      });
+    FHIR.oauth2.authorize({
+      clientId: env.get('REACT_APP_CLIENT').asString(),
+      iss: this.state.baseUrl,
+      redirectUri: this.props.redirect,
+      scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
+    });
   }
 
   consoleLog(content, type) {
