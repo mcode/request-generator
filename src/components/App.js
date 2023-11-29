@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter , HashRouter , Routes, Route } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route } from 'react-router-dom';
 import RequestBuilder from '../containers/RequestBuilder';
 import PatientPortal from '../containers/PatientPortal';
 import theme from '../containers/styles/theme';
@@ -14,18 +14,17 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/launch' element={<Launch redirect={redirect} />} />
-        <Route path='/index' element={<Index />} />
+        <Route path="/launch" element={<Launch redirect={redirect} />} />
+        <Route path="/index" element={<Index />} />
         <Route
-          path='/patient-portal'
+          path="/patient-portal"
           element={
             <ThemeProvider theme={theme}>
               <PatientPortal />
             </ThemeProvider>
           }
         />
-        <Route path="/" exact element={<RequestBuilder redirect = {redirect} />} />
-
+        <Route path="/" exact element={<RequestBuilder redirect={redirect} />} />
       </Routes>
     </Router>
   );
