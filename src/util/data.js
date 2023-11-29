@@ -19,6 +19,10 @@ const headerDefinitions = {
     display: 'EHR Server',
     type: 'input'
   },
+  ehrUrlSentToRemsAdminForPreFetch: {
+    display: 'EHR Server Sent to REMS Admin for Prefetch',
+    type: 'input'
+  },
   includeConfig: {
     display: 'Include Configuration in CRD Request',
     type: 'check'

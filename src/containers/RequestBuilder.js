@@ -30,6 +30,9 @@ export default class RequestBuilder extends Component {
       cdsUrl: env.get('REACT_APP_CDS_SERVICE').asString(),
       defaultUser: env.get('REACT_APP_DEFAULT_USER').asString(),
       ehrUrl: env.get('REACT_APP_EHR_SERVER').asString(),
+      ehrUrlSentToRemsAdminForPreFetch: env
+        .get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH')
+        .asString(),
       includeConfig: true,
       launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
       orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
@@ -64,13 +67,12 @@ export default class RequestBuilder extends Component {
   }
 
   reconnectEhr() {
-    FHIR.oauth2
-      .authorize({
-        clientId: env.get('REACT_APP_CLIENT').asString(),
-        iss: this.state.baseUrl,
-        redirectUri: this.props.redirect,
-        scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
-      });
+    FHIR.oauth2.authorize({
+      clientId: env.get('REACT_APP_CLIENT').asString(),
+      iss: this.state.baseUrl,
+      redirectUri: this.props.redirect,
+      scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
+    });
   }
 
   consoleLog(content, type) {
@@ -107,7 +109,7 @@ export default class RequestBuilder extends Component {
       request,
       user,
       patient,
-      this.state.ehrUrl,
+      this.state.ehrUrlSentToRemsAdminForPreFetch,
       this.state.client.state.tokenResponse,
       prefetch,
       this.state.sendPrefetch,
