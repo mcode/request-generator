@@ -128,17 +128,20 @@ export default class RequestBuilder extends Component {
       this.consoleLog("ERROR: unknown hook type: '", hook, "'");
       return;
     }
-    const jwt = this.state.generateJsonToken
-      ? 'Bearer ' + createJwt(this.state.keypair, this.state.baseUrl, cdsUrl)
-      : undefined;
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      ...(jwt ? { authorization: jwt } : {})
-    });
+
+    const createHeaders = () => {
+      const init = { 'Content-Type': 'application/json' };
+      if (this.state.generateJsonToken) {
+        const jwt = 'Bearer ' + createJwt(this.state.keypair, this.state.baseUrl, cdsUrl);
+        init.authorization = jwt;
+      }
+      return new Headers(init);
+    };
+
     try {
       fetch(cdsUrl, {
         method: 'POST',
-        headers: headers,
+        headers: createHeaders(),
         body: JSON.stringify(json_request),
         signal: this.timeout(10).signal //Timeout set to 10 seconds
       })
