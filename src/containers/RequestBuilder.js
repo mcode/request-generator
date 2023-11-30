@@ -8,7 +8,7 @@ import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
 import { types } from '../util/data.js';
-import { createJwt, login, setupKeys } from '../util/auth';
+import { createJwt, setupKeys } from '../util/auth';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
@@ -33,6 +33,7 @@ export default class RequestBuilder extends Component {
       ehrUrlSentToRemsAdminForPreFetch: env
         .get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH')
         .asString(),
+      generateJsonToken: env.get('REACT_APP_GENERATE_JWT').asBool(),
       includeConfig: true,
       launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
       orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
@@ -127,16 +128,20 @@ export default class RequestBuilder extends Component {
       this.consoleLog("ERROR: unknown hook type: '", hook, "'");
       return;
     }
-    let baseUrl = this.state.baseUrl;
-    const jwt = 'Bearer ' + createJwt(this.state.keypair, baseUrl, cdsUrl);
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      authorization: jwt
-    });
+
+    const createHeaders = () => {
+      const init = { 'Content-Type': 'application/json' };
+      if (this.state.generateJsonToken) {
+        const jwt = 'Bearer ' + createJwt(this.state.keypair, this.state.baseUrl, cdsUrl);
+        init.authorization = jwt;
+      }
+      return new Headers(init);
+    };
+
     try {
       fetch(cdsUrl, {
         method: 'POST',
-        headers: headers,
+        headers: createHeaders(),
         body: JSON.stringify(json_request),
         signal: this.timeout(10).signal //Timeout set to 10 seconds
       })

@@ -23,6 +23,10 @@ const headerDefinitions = {
     display: 'EHR Server Sent to REMS Admin for Prefetch',
     type: 'input'
   },
+  generateJsonToken: {
+    display: 'Generate JSON Web Token',
+    type: 'check'
+  },
   includeConfig: {
     display: 'Include Configuration in CRD Request',
     type: 'check'
