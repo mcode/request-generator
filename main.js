@@ -2376,52 +2376,6 @@ var _utils = __webpack_require__(182);
 
 /***/ }),
 /* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// In Browsers we create an adapter, get the SMART api from it and build the
-// global FHIR object
-var BrowserAdapter_1 = __webpack_require__(238);
-var adapter = new BrowserAdapter_1.default();
-var _adapter$getSmartApi = adapter.getSmartApi(),
-  ready = _adapter$getSmartApi.ready,
-  authorize = _adapter$getSmartApi.authorize,
-  init = _adapter$getSmartApi.init,
-  client = _adapter$getSmartApi.client,
-  options = _adapter$getSmartApi.options; // We have two kinds of browser builds - "pure" for new browsers and "legacy"
-// for old ones. In pure builds we assume that the browser supports everything
-// we need. In legacy mode, the library also acts as a polyfill. Babel will
-// automatically polyfill everything except "fetch", which we have to handle
-// manually.
-// @ts-ignore
-
-if (typeof FHIRCLIENT_PURE == "undefined") {
-  var fetch = __webpack_require__(116);
-  __webpack_require__(291);
-  if (!window.fetch) {
-    window.fetch = fetch.default;
-    window.Headers = fetch.Headers;
-    window.Request = fetch.Request;
-    window.Response = fetch.Response;
-  }
-} // $lab:coverage:off$
-
-var FHIR = {
-  AbortController: window.AbortController,
-  client: client,
-  oauth2: {
-    settings: options,
-    ready: ready,
-    authorize: authorize,
-    init: init
-  }
-};
-module.exports = FHIR; // $lab:coverage:on$
-
-/***/ }),
-/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2444,7 +2398,7 @@ function useTheme() {
 }
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2746,6 +2700,52 @@ module.exports = {
   extend: extend,
   trim: trim
 };
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// In Browsers we create an adapter, get the SMART api from it and build the
+// global FHIR object
+var BrowserAdapter_1 = __webpack_require__(238);
+var adapter = new BrowserAdapter_1.default();
+var _adapter$getSmartApi = adapter.getSmartApi(),
+  ready = _adapter$getSmartApi.ready,
+  authorize = _adapter$getSmartApi.authorize,
+  init = _adapter$getSmartApi.init,
+  client = _adapter$getSmartApi.client,
+  options = _adapter$getSmartApi.options; // We have two kinds of browser builds - "pure" for new browsers and "legacy"
+// for old ones. In pure builds we assume that the browser supports everything
+// we need. In legacy mode, the library also acts as a polyfill. Babel will
+// automatically polyfill everything except "fetch", which we have to handle
+// manually.
+// @ts-ignore
+
+if (typeof FHIRCLIENT_PURE == "undefined") {
+  var fetch = __webpack_require__(116);
+  __webpack_require__(291);
+  if (!window.fetch) {
+    window.fetch = fetch.default;
+    window.Headers = fetch.Headers;
+    window.Request = fetch.Request;
+    window.Response = fetch.Response;
+  }
+} // $lab:coverage:off$
+
+var FHIR = {
+  AbortController: window.AbortController,
+  client: client,
+  oauth2: {
+    settings: options,
+    ready: ready,
+    authorize: authorize,
+    init: init
+  }
+};
+module.exports = FHIR; // $lab:coverage:on$
 
 /***/ }),
 /* 41 */
@@ -24924,7 +24924,7 @@ module.exports = ['constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsE
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 var normalizeHeaderName = __webpack_require__(295);
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -46171,7 +46171,7 @@ module.exports = function bind(fn, thisArg) {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 var settle = __webpack_require__(296);
 var buildURL = __webpack_require__(298);
 var parseHeaders = __webpack_require__(299);
@@ -46957,7 +46957,7 @@ exports.default = _default;
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _styles_styles__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(194);
-/* harmony import */ var fhirclient__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
+/* harmony import */ var fhirclient__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
 /* harmony import */ var fhirclient__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(fhirclient__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _components_Auth_Login__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(207);
 /* harmony import */ var _components_Dashboard_Dashboard__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(206);
@@ -48039,7 +48039,7 @@ var debounce = __webpack_require__(68);
 var useForkRef = __webpack_require__(21);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(39);
+var useTheme = __webpack_require__(38);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/transitions/utils.js
 var utils = __webpack_require__(42);
@@ -50291,7 +50291,7 @@ function useSnackbar() {
   };
 }
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(39);
+var useTheme = __webpack_require__(38);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/Grow/Grow.js
 var Grow = __webpack_require__(423);
@@ -62478,7 +62478,7 @@ exports.default = Storage;
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 var bind = __webpack_require__(174);
 var Axios = __webpack_require__(294);
 var defaults = __webpack_require__(127);
@@ -62535,7 +62535,7 @@ module.exports.default = axios;
 
 
 var defaults = __webpack_require__(127);
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 var InterceptorManager = __webpack_require__(302);
 var dispatchRequest = __webpack_require__(303);
 
@@ -62614,7 +62614,7 @@ module.exports = Axios;
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
     if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
@@ -62684,7 +62684,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 function encode(val) {
   return encodeURIComponent(val).replace(/%40/gi, '@').replace(/%3A/gi, ':').replace(/%24/g, '$').replace(/%2C/gi, ',').replace(/%20/g, '+').replace(/%5B/gi, '[').replace(/%5D/gi, ']');
 }
@@ -62741,7 +62741,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 
 // Headers whose duplicates are ignored by node
 // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -62793,7 +62793,7 @@ module.exports = function parseHeaders(headers) {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 module.exports = utils.isStandardBrowserEnv() ?
 // Standard browser envs have full support of the APIs needed to test
 // whether the request URL is of the same origin as current location.
@@ -62856,7 +62856,7 @@ function nonStandardBrowserEnv() {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 module.exports = utils.isStandardBrowserEnv() ?
 // Standard browser envs support document.cookie
 function standardBrowserEnv() {
@@ -62905,7 +62905,7 @@ function nonStandardBrowserEnv() {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 function InterceptorManager() {
   this.handlers = [];
 }
@@ -62961,7 +62961,7 @@ module.exports = InterceptorManager;
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 var transformData = __webpack_require__(304);
 var isCancel = __webpack_require__(177);
 var defaults = __webpack_require__(127);
@@ -63029,7 +63029,7 @@ module.exports = function dispatchRequest(config) {
 "use strict";
 
 
-var utils = __webpack_require__(40);
+var utils = __webpack_require__(39);
 
 /**
  * Transform the data for a request or a response
@@ -72902,7 +72902,7 @@ function useViewTransitionState(to, opts) {
 
 
 // EXTERNAL MODULE: ./node_modules/fhirclient/lib/entry/browser.js
-var browser = __webpack_require__(38);
+var browser = __webpack_require__(40);
 var browser_default = /*#__PURE__*/__webpack_require__.n(browser);
 
 // EXTERNAL MODULE: ./src/components/DisplayBox/card-list.css
@@ -92208,7 +92208,13 @@ var util_data = __webpack_require__(26);
 var SettingsBox_clearQuestionnaireResponses=function clearQuestionnaireResponses(_ref,consoleLog){var ehrUrl=_ref.ehrUrl,defaultUser=_ref.defaultUser,access_token=_ref.access_token;return function(_event){console.log('Clear QuestionnaireResponses from the EHR: '+ehrUrl+' for author '+defaultUser);var client=browser_default.a.client(_objectSpread2({serverUrl:ehrUrl},access_token?{tokenResponse:access_token}:{}));client.request('QuestionnaireResponse?author='+defaultUser,{flat:true}).then(function(result){console.log(result);result.forEach(function(resource){console.log(resource.id);client.delete('QuestionnaireResponse/'+resource.id).then(function(result){consoleLog('Successfully deleted QuestionnaireResponse '+resource.id+' from EHR',util_data["d" /* types */].info);console.log(result);}).catch(function(e){console.log('Failed to delete QuestionnaireResponse '+resource.id);console.log(e);});});}).catch(function(e){console.log('Failed to retrieve list of QuestionnaireResponses');console.log(e);});};};var SettingsBox_resetPims=function resetPims(_ref2,consoleLog){var pimsUrl=_ref2.pimsUrl;return function(_event){var url=new URL(pimsUrl);var resetUrl=url.origin+'/doctorOrders/api/deleteAll';console.log('reset pims: '+resetUrl);fetch(resetUrl,{method:'DELETE'}).then(function(response){console.log('Reset pims: ');console.log(response);consoleLog('Successfully reset pims database',util_data["d" /* types */].info);}).catch(function(error){console.log('Reset pims error: ');consoleLog('Server returned error when resetting pims: ',util_data["d" /* types */].error);consoleLog(error.message);console.log(error);});};};var SettingsBox_resetRemsAdmin=function resetRemsAdmin(_ref3,consoleLog){var cdsUrl=_ref3.cdsUrl;return function(_event){var url=new URL(cdsUrl);var resetUrl=url.origin+'/etasu/reset';fetch(resetUrl,{method:'POST'}).then(function(response){console.log('Reset rems admin etasu: ');console.log(response);consoleLog('Successfully reset rems admin etasu',util_data["d" /* types */].info);}).catch(function(error){console.log('Reset rems admin error: ');consoleLog('Server returned error when resetting rems admin etasu: ',util_data["d" /* types */].error);consoleLog(error.message);console.log(error);});};};var resetHeaderDefinitions=[{display:'Clear EHR QuestionnaireResponses',key:'clearQuestionnaireResponses',reset:SettingsBox_clearQuestionnaireResponses},{display:'Reset PIMS Database',key:'resetPims',reset:SettingsBox_resetPims},{display:'Reset REMS-Admin Database',key:'resetRemsAdmin',reset:SettingsBox_resetRemsAdmin}];var SettingsBox_SettingsBox_SettingsBox=/*#__PURE__*/function(_Component){_inherits(SettingsBox,_Component);var _super=_createSuper(SettingsBox);function SettingsBox(props){Object(classCallCheck["a" /* default */])(this,SettingsBox);return _super.call(this,props);}Object(createClass["a" /* default */])(SettingsBox,[{key:"componentDidMount",value:function componentDidMount(){}},{key:"render",value:function render(){var _this$props=this.props,state=_this$props.state,consoleLog=_this$props.consoleLog,updateCB=_this$props.updateCB;var headers=Object.keys(util_data["b" /* headerDefinitions */]).map(function(key){return _objectSpread2(_objectSpread2({},util_data["b" /* headerDefinitions */][key]),{},{key:key});})// Display the fields in descending order of type. If two fields are the same type, then sort by ascending order of display text.
 .sort(function(self,other){return-self.type.localeCompare(other.type)||self.display.localeCompare(other.display);});return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[headers.map(function(_ref4){var key=_ref4.key,type=_ref4.type,display=_ref4.display;switch(type){case'input':return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("p",{className:"setting-header",children:display}),/*#__PURE__*/Object(jsx_runtime["jsx"])(InputBox_InputBox,{extraClass:"setting-input",value:state[key],updateCB:updateCB,elementName:key})]},key);case'check':return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("p",{className:"setting-header",children:[display,/*#__PURE__*/Object(jsx_runtime["jsx"])(CheckBox_CheckBox,{extraClass:"setting-checkbox",extraInnerClass:"setting-inner-checkbox",toggle:state[key],updateCB:updateCB,elementName:key})]}),/*#__PURE__*/Object(jsx_runtime["jsx"])("p",{children:"\xA0"})]},key);default:return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:/*#__PURE__*/Object(jsx_runtime["jsx"])("p",{className:"setting-header",children:display})},key);}}),resetHeaderDefinitions.map(function(_ref5){var key=_ref5.key,display=_ref5.display,reset=_ref5.reset;return/*#__PURE__*/Object(jsx_runtime["jsx"])("div",{children:/*#__PURE__*/Object(jsx_runtime["jsx"])("button",{className:'setting-btn btn btn-class',onClick:reset(state,consoleLog),children:display})},key);})]});}}]);return SettingsBox;}(react["Component"]);
 // CONCATENATED MODULE: ./src/util/fhir.js
-function fhir(resource,ehrUrl,patient,auth){var headers={'Content-Type':'application/json'};if(patient){fetch("".concat(ehrUrl).concat(resource,"?subject=Patient/").concat(patient),{method:'GET',headers:headers}).then(function(response){return response.json();}).then(function(json){console.log(json);});}}function getAge(dateString){var today=new Date();var birthDate=new Date(dateString);var age=today.getFullYear()-birthDate.getFullYear();var m=today.getMonth()-birthDate.getMonth();if(m<0||m===0&&today.getDate()<birthDate.getDate()){age--;}return age;}
+function fhir(resource,ehrUrl,patient,auth){var headers={'Content-Type':'application/json'};if(patient){fetch("".concat(ehrUrl).concat(resource,"?subject=Patient/").concat(patient),{method:'GET',headers:headers}).then(function(response){return response.json();}).then(function(json){console.log(json);});}}function getAge(dateString){var today=new Date();var birthDate=new Date(dateString);var age=today.getFullYear()-birthDate.getFullYear();var m=today.getMonth()-birthDate.getMonth();if(m<0||m===0&&today.getDate()<birthDate.getDate()){age--;}return age;}/*
+* Retrieve the CodeableConcept for the medication from the medicationCodeableConcept if available.
+* Read CodeableConcept from contained Medication matching the medicationReference otherwise.
+*/function getDrugCodeableConceptFromMedicationRequest(medicationRequest){if(medicationRequest){if(medicationRequest!==null&&medicationRequest!==void 0&&medicationRequest.medicationCodeableConcept){console.log('Get Medication code from CodeableConcept');return medicationRequest===null||medicationRequest===void 0?void 0:medicationRequest.medicationCodeableConcept;}else if(medicationRequest!==null&&medicationRequest!==void 0&&medicationRequest.medicationReference){var _medicationRequest$co;var reference=medicationRequest===null||medicationRequest===void 0?void 0:medicationRequest.medicationReference;var coding=undefined;medicationRequest===null||medicationRequest===void 0?void 0:(_medicationRequest$co=medicationRequest.contained)===null||_medicationRequest$co===void 0?void 0:_medicationRequest$co.every(function(e){if(e.resourceType+'/'+e.id===reference.reference){if(e.resourceType==='Medication'){console.log('Get Medication code from contained resource');coding=e.code;}}});return coding;}}return undefined;}/*
+ * Retrieve the coding for the medication from the medicationCodeableConcept if available.
+ * Read coding from contained Medication matching the medicationReference otherwise.
+ */function getDrugCodeFromMedicationRequest(medicationRequest){var _codeableConcept$codi;var codeableConcept=getDrugCodeableConceptFromMedicationRequest(medicationRequest);return codeableConcept===null||codeableConcept===void 0?void 0:(_codeableConcept$codi=codeableConcept.coding)===null||_codeableConcept$codi===void 0?void 0:_codeableConcept$codi[0];}
 // EXTERNAL MODULE: ./src/components/SMARTBox/smart.css
 var smart = __webpack_require__(321);
 
@@ -92443,7 +92449,11 @@ var Select = __webpack_require__(425);
 
 // CONCATENATED MODULE: ./src/components/SMARTBox/PatientBox.js
 var PatientBox_PatientBox=/*#__PURE__*/function(_Component){_inherits(PatientBox,_Component);var _super=_createSuper(PatientBox);function PatientBox(props){var _this;Object(classCallCheck["a" /* default */])(this,PatientBox);_this=_super.call(this,props);_this.state={request:'',deviceRequests:{},medicationRequests:{},serviceRequests:{},medicationDispenses:{},response:'',questionnaireResponses:{},openRequests:false,openQuestionnaires:false,questionnaireTitles:{}};_this.handleRequestChange=_this.handleRequestChange.bind(_assertThisInitialized(_this));_this.updatePrefetchRequest=_this.updatePrefetchRequest.bind(_assertThisInitialized(_this));_this.getDeviceRequest=_this.getDeviceRequest.bind(_assertThisInitialized(_this));_this.getServiceRequest=_this.getServiceRequest.bind(_assertThisInitialized(_this));_this.getMedicationRequest=_this.getMedicationRequest.bind(_assertThisInitialized(_this));_this.getMedicationDispense=_this.getMedicationDispense.bind(_assertThisInitialized(_this));_this.getRequests=_this.getRequests.bind(_assertThisInitialized(_this));_this.getResponses=_this.getResponses.bind(_assertThisInitialized(_this));_this.getQuestionnaireTitles=_this.getQuestionnaireTitles.bind(_assertThisInitialized(_this));_this.makeQROption=_this.makeQROption.bind(_assertThisInitialized(_this));_this.handleResponseChange=_this.handleResponseChange.bind(_assertThisInitialized(_this));_this.makeDropdown=_this.makeDropdown.bind(_assertThisInitialized(_this));return _this;}Object(createClass["a" /* default */])(PatientBox,[{key:"componentDidMount",value:function componentDidMount(){// get requests and responses on open of patients
-this.getRequests();this.getResponses();}},{key:"getCoding",value:function getCoding(request){var code=null;if(request.resourceType==='DeviceRequest'){code=request===null||request===void 0?void 0:request.codeCodeableConcept.coding[0];}else if(request.resourceType==='ServiceRequest'){var _request$code;code=request===null||request===void 0?void 0:(_request$code=request.code)===null||_request$code===void 0?void 0:_request$code.coding[0];}else if(request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){var _request$medicationCo;code=request===null||request===void 0?void 0:(_request$medicationCo=request.medicationCodeableConcept)===null||_request$medicationCo===void 0?void 0:_request$medicationCo.coding[0];}if(code){if(!code.code){code.code='Unknown';}if(!code.display){code.display='Unknown';}if(!code.system){code.system='Unknown';}}else{code={code:'Unknown',display:'Unknown',system:'Unknown'};}return code;}},{key:"makeDropdown",value:function makeDropdown(options,label,stateVar,stateChange){return/*#__PURE__*/Object(jsx_runtime["jsx"])(Box["a" /* default */],{sx:{minWidth:120},children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(FormControl["a" /* default */],{fullWidth:true,children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(InputLabel["a" /* default */],{children:label}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Select["a" /* default */],{labelId:"".concat(label,"-label"),value:stateVar,label:label,"data-testid":"dropdown-box",onChange:stateChange,children:options.map(function(op){return/*#__PURE__*/Object(jsx_runtime["jsx"])(material_MenuItem_MenuItem,{value:op.value,children:op.text},op.key);})})]})});}},{key:"makeOption",value:function makeOption(request,options){var code=this.getCoding(request);var option={key:request.id,text:code.display+' (Medication request: '+code.code+')',value:JSON.stringify(request)};options.push(option);}},{key:"updateValues",value:function updateValues(patient){this.props.callback('patient',patient);this.props.callback('openPatient',false);this.props.clearCallback();if(this.state.request){var request=JSON.parse(this.state.request);if(request.resourceType==='DeviceRequest'||request.resourceType==='ServiceRequest'||request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){this.updatePrefetchRequest(request,patient,this.props.defaultUser);}else{this.props.clearCallback();}}else{this.updatePrefetchRequest(null,patient,this.props.defaultUser);}if(this.state.response){var response=JSON.parse(this.state.response);this.updateQRResponse(patient,response);}}},{key:"updateQRResponse",value:function updateQRResponse(patient,response){this.props.callback('response',response);}},{key:"fetchResources",value:function fetchResources(queries){var _this2=this;console.log(queries);var requests=[];this.props.callback('prefetchCompleted',false);queries.forEach(function(query,queryKey){var urlQuery='/'+query;requests.push(_this2.props.client.request(urlQuery).then(function(response){console.log(response);return response;}).then(function(resource){_this2.props.callbackMap('prefetchedResources',queryKey,resource);}));});Promise.all(requests).then(function(results){console.log('fetchResourcesSync: finished');_this2.props.callback('prefetchCompleted',true);}).catch(function(err){console.log('fetchResourcesSync: failed to wait for all the prefetch to populate');console.log(err);});}},{key:"updatePrefetchRequest",value:function updatePrefetchRequest(request,patient,user){var patientReference='Patient/'+(patient===null||patient===void 0?void 0:patient.id);var userReference='Practitioner/'+user;if(request){this.props.callback(request.resourceType,request);var queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'request','patient','practitioner');this.fetchResources(queries);this.props.callback('request',request);var coding=this.getCoding(request);this.props.callback('code',coding.code);this.props.callback('codeSystem',coding.system);this.props.callback('display',coding.display);}else{var _queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'patient','practitioner','medicationRequests');this.fetchResources(_queries);}}},{key:"getDeviceRequest",value:function getDeviceRequest(patientId){var _this3=this;this.props.client.request("DeviceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this3.setState({deviceRequests:result});});}},{key:"getServiceRequest",value:function getServiceRequest(patientId){var _this4=this;this.props.client.request("ServiceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this4.setState({serviceRequests:result});});}},{key:"getMedicationRequest",value:function getMedicationRequest(patientId){var _this5=this;this.props.client.request("MedicationRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this5.setState({medicationRequests:result});});}},{key:"getMedicationDispense",value:function getMedicationDispense(patientId){var _this6=this;this.props.client.request("MedicationDispense?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this6.setState({medicationDispenses:result});});}},{key:"handleRequestChange",value:function handleRequestChange(e){var data=e.target.value;if(data){var coding=this.getCoding(JSON.parse(data));this.setState({request:data,code:coding.code,system:coding.system,display:coding.display,response:''});}else{this.setState({request:''});}}},{key:"handleResponseChange",value:function handleResponseChange(e){var data=e.target.value;if(data){this.setState({response:data});}else{this.setState({response:''});}}},{key:"getRequests",value:function getRequests(){console.log(this.props.client);var patientId=this.props.patient.id;this.getDeviceRequest(patientId);this.getServiceRequest(patientId);this.getMedicationRequest(patientId);this.getMedicationDispense(patientId);}/**
+this.getRequests();this.getResponses();}},{key:"getCoding",value:function getCoding(resource){var code=null;if(resource.resourceType==='DeviceRequest'){code=resource===null||resource===void 0?void 0:resource.codeCodeableConcept.coding[0];}else if(resource.resourceType==='ServiceRequest'||resource.resourceType==='Medication'){var _resource$code;code=resource===null||resource===void 0?void 0:(_resource$code=resource.code)===null||_resource$code===void 0?void 0:_resource$code.coding[0];}else if(resource.resourceType==='MedicationRequest'){code=getDrugCodeFromMedicationRequest(resource);}else if(resource.resourceType==='MedicationDispense'){var _resource$medicationC;code=resource===null||resource===void 0?void 0:(_resource$medicationC=resource.medicationCodeableConcept)===null||_resource$medicationC===void 0?void 0:_resource$medicationC.coding[0];}if(code){if(!code.code){code.code='Unknown';}if(!code.display){code.display='Unknown';}if(!code.system){code.system='Unknown';}}else{code={code:'Unknown',display:'Unknown',system:'Unknown'};}return code;}},{key:"makeDropdown",value:function makeDropdown(options,label,stateVar,stateChange){return/*#__PURE__*/Object(jsx_runtime["jsx"])(Box["a" /* default */],{sx:{minWidth:120},children:/*#__PURE__*/Object(jsx_runtime["jsxs"])(FormControl["a" /* default */],{fullWidth:true,children:[/*#__PURE__*/Object(jsx_runtime["jsx"])(InputLabel["a" /* default */],{children:label}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Select["a" /* default */],{labelId:"".concat(label,"-label"),value:stateVar,label:label,"data-testid":"dropdown-box",onChange:stateChange,children:options.map(function(op){return/*#__PURE__*/Object(jsx_runtime["jsx"])(material_MenuItem_MenuItem,{value:op.value,children:op.text},op.key);})})]})});}},{key:"makeOption",value:function makeOption(request,options){var code=this.getCoding(request);var option={key:request.id,text:code.display+' (Medication request: '+code.code+')',value:JSON.stringify(request)};options.push(option);}},{key:"updateValues",value:function updateValues(patient){this.props.callback('patient',patient);this.props.callback('openPatient',false);this.props.clearCallback();if(this.state.request){var request=JSON.parse(this.state.request);if(request.resourceType==='DeviceRequest'||request.resourceType==='ServiceRequest'||request.resourceType==='MedicationRequest'||request.resourceType==='MedicationDispense'){this.updatePrefetchRequest(request,patient,this.props.defaultUser);}else{this.props.clearCallback();}}else{this.updatePrefetchRequest(null,patient,this.props.defaultUser);}if(this.state.response){var response=JSON.parse(this.state.response);this.updateQRResponse(patient,response);}}},{key:"updateQRResponse",value:function updateQRResponse(patient,response){this.props.callback('response',response);}},{key:"fetchResources",value:function fetchResources(queries){var _this2=this;console.log(queries);var requests=[];this.props.callback('prefetchCompleted',false);queries.forEach(function(query,queryKey){var urlQuery='/'+query;requests.push(_this2.props.client.request(urlQuery).then(function(response){console.log(response);return response;}).then(function(resource){_this2.props.callbackMap('prefetchedResources',queryKey,resource);}));});Promise.all(requests).then(function(){console.log('fetchResourcesSync: finished');_this2.props.callback('prefetchCompleted',true);}).catch(function(err){console.log('fetchResourcesSync: failed to wait for all the prefetch to populate');console.log(err);});}},{key:"updatePrefetchRequest",value:function updatePrefetchRequest(request,patient,user){var patientReference='Patient/'+(patient===null||patient===void 0?void 0:patient.id);var userReference='Practitioner/'+user;if(request){this.props.callback(request.resourceType,request);var queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'request','patient','practitioner');this.fetchResources(queries);this.props.callback('request',request);var coding=this.getCoding(request);this.props.callback('code',coding.code);this.props.callback('codeSystem',coding.system);this.props.callback('display',coding.display);}else{var _queries=this.props.updatePrefetchCallback(request,patientReference,userReference,'patient','practitioner','medicationRequests');this.fetchResources(_queries);}}},{key:"getDeviceRequest",value:function getDeviceRequest(patientId){var _this3=this;this.props.client.request("DeviceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this3.setState({deviceRequests:result});});}},{key:"getServiceRequest",value:function getServiceRequest(patientId){var _this4=this;this.props.client.request("ServiceRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this4.setState({serviceRequests:result});});}},{key:"getMedicationRequest",value:function getMedicationRequest(patientId){var _this5=this;this.props.client.request("MedicationRequest?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer','medicationReference'],graph:false,flat:true}).then(function(result){// add the medicationReference as a contained resource
+result===null||result===void 0?void 0:result.data.forEach(function(e){if(e!==null&&e!==void 0&&e.medicationReference){var _result$references;var medicationReference=e===null||e===void 0?void 0:e.medicationReference.reference;// find the matching medication in the references
+var medication=result===null||result===void 0?void 0:(_result$references=result.references)===null||_result$references===void 0?void 0:_result$references[medicationReference];if(medication){var _medication$code,_medication$code$codi;var code=medication===null||medication===void 0?void 0:(_medication$code=medication.code)===null||_medication$code===void 0?void 0:(_medication$code$codi=_medication$code.coding)===null||_medication$code$codi===void 0?void 0:_medication$code$codi[0];if(code){// add the reference as a contained resource to the request
+if(!(e!==null&&e!==void 0&&e.contained)){e.contained=[];e.contained.push(medication);}else{// only add to contained if not already in there
+var found=false;e===null||e===void 0?void 0:e.contained.forEach(function(c){if(medication.id===medication.id){found=true;}});if(!found){e===null||e===void 0?void 0:e.contained.push(medication);}}}}}});_this5.setState({medicationRequests:result});});}},{key:"getMedicationDispense",value:function getMedicationDispense(patientId){var _this6=this;this.props.client.request("MedicationDispense?subject=Patient/".concat(patientId),{resolveReferences:['subject','performer'],graph:false,flat:true}).then(function(result){_this6.setState({medicationDispenses:result});});}},{key:"handleRequestChange",value:function handleRequestChange(e){var data=e.target.value;if(data){var coding=this.getCoding(JSON.parse(data));this.setState({request:data,code:coding.code,system:coding.system,display:coding.display,response:''});}else{this.setState({request:''});}}},{key:"handleResponseChange",value:function handleResponseChange(e){var data=e.target.value;if(data){this.setState({response:data});}else{this.setState({response:''});}}},{key:"getRequests",value:function getRequests(){console.log(this.props.client);var patientId=this.props.patient.id;this.getDeviceRequest(patientId);this.getServiceRequest(patientId);this.getMedicationRequest(patientId);this.getMedicationDispense(patientId);}/**
    * Retrieve QuestionnaireResponse
    */},{key:"getResponses",value:function getResponses(){var _this7=this;var patientId=this.props.patient.id;var updateDate=new Date();updateDate.setDate(updateDate.getDate()-this.props.responseExpirationDays);var searchParameters=["_lastUpdated=gt".concat(updateDate.toISOString().split('T')[0]),'status=in-progress',"subject=Patient/".concat(patientId),'_sort=-authored'];this.props.client.request("QuestionnaireResponse?".concat(searchParameters.join('&')),{resolveReferences:['subject'],graph:false,flat:true}).then(function(result){_this7.setState({questionnaireResponses:result});}).then(function(){return _this7.getQuestionnaireTitles();});}},{key:"getQuestionnaireTitles",value:function getQuestionnaireTitles(){var _this8=this;var promises=[];if(this.state.questionnaireResponses.data.length>0){var _iterator=_createForOfIteratorHelper(this.state.questionnaireResponses.data.map(function(questionnaireResponse){return questionnaireResponse.questionnaire;})),_step;try{var _loop=function _loop(){var canonical=_step.value;promises.push(_this8.props.client.request(canonical).then(function(questionnaire){return[canonical,questionnaire.title||canonical];}));};for(_iterator.s();!(_step=_iterator.n()).done;){_loop();}}catch(err){_iterator.e(err);}finally{_iterator.f();}Promise.all(promises).then(function(pairs){_this8.setState({questionnaireTitles:Object.fromEntries(pairs)});});}}},{key:"makeQROption",value:function makeQROption(qr){var questionnaireTitle=this.state.questionnaireTitles[qr.questionnaire];var display="".concat(questionnaireTitle,": created at ").concat(qr.authored);return{key:qr.id,text:display,value:JSON.stringify(qr)};}},{key:"render",value:function render(){var _this9=this;var patient=this.props.patient;var name='';if(patient.name){name=/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{children:[" ","".concat(patient.name[0].given[0]," ").concat(patient.name[0].family)," "]});}// add all of the requests to the list of options
 var options=[];var responseOptions=[];var returned=false;if(this.state.deviceRequests.data){returned=true;this.state.deviceRequests.data.forEach(function(e){_this9.makeOption(e,options);});}if(this.state.serviceRequests.data){returned=true;this.state.serviceRequests.data.forEach(function(e){_this9.makeOption(e,options);});}if(this.state.medicationRequests.data){returned=true;this.state.medicationRequests.data.forEach(function(e){_this9.makeOption(e,options);});}if(this.state.medicationDispenses.data){returned=true;this.state.medicationDispenses.data.forEach(function(e){_this9.makeOption(e,options);});}if(this.state.questionnaireResponses.data){responseOptions=this.state.questionnaireResponses.data.map(function(qr){return _this9.makeQROption(qr);});returned=true;}var noResults='No results found.';if(!returned){noResults='Loading...';}return/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-box",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-header",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bolder'},children:name?name:'N/A'}),' ',"(ID: ".concat(patient.id,")")]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-selection-box",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"patient-info",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"Gender"}),": ",patient.gender]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold'},children:"Age"}),": ",getAge(patient.birthDate)]})]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"request-info",children:[/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{style:{fontWeight:'bold',marginRight:'5px',padding:'5px'},children:"Request:"}),!options.length&&returned?/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"emptyForm",children:"No requests"}):this.makeDropdown(options,'Select a medication request',this.state.request,this.handleRequestChange)]}),/*#__PURE__*/Object(jsx_runtime["jsxs"])("div",{className:"request-info",children:[/*#__PURE__*/Object(jsx_runtime["jsxs"])("span",{style:{fontWeight:'bold',marginRight:'5px',padding:'5px'},children:["In Progress Form:",/*#__PURE__*/Object(jsx_runtime["jsx"])(IconButton["a" /* default */],{color:"primary",style:{padding:'0px 5px'},onClick:this.getResponses,children:/*#__PURE__*/Object(jsx_runtime["jsx"])(Refresh_default.a,{})})]}),!responseOptions.length&&returned?/*#__PURE__*/Object(jsx_runtime["jsx"])("span",{className:"emptyForm",children:"No in progress forms"}):this.makeDropdown(responseOptions,'Choose an in-progress form',this.state.response,this.handleResponseChange)]}),/*#__PURE__*/Object(jsx_runtime["jsx"])(Button["a" /* default */],{variant:"outlined",size:"small",className:"select-btn",onClick:function onClick(){return _this9.updateValues(patient);},children:"Select"})]})]},patient.id);}}]);return PatientBox;}(react["Component"]);
@@ -92553,9 +92563,9 @@ case'WAFER':// Wafer
 return'C48552';// Wafer
 default:return'C38046';// Unspecified
 }}return'C38046';// unspecified
-}function buildNewRxMedication(doc,medicationRequestResource){var medicationPrescribed=doc.createElement('MedicationPrescribed');//     Medication Product
+}function buildNewRxMedication(doc,medicationRequestResource){var _getDrugCodeableConce;var medicationPrescribed=doc.createElement('MedicationPrescribed');//     Medication Product
 var drugCoded=doc.createElement('DrugCoded');// loop through the coding values and find the ndc code and the rxnorm code
-var medicationCodingList=medicationRequestResource.medicationCodeableConcept.coding;for(var i=0;i<medicationCodingList.length;i++){var coding=medicationCodingList[i];var system=coding.system.toLowerCase();if(system.endsWith('rxnorm')){//     Medication Drug Description
+var medicationCodingList=(_getDrugCodeableConce=getDrugCodeableConceptFromMedicationRequest(medicationRequestResource))===null||_getDrugCodeableConce===void 0?void 0:_getDrugCodeableConce.coding;for(var i=0;i<medicationCodingList.length;i++){var coding=medicationCodingList[i];var system=coding.system.toLowerCase();if(system.endsWith('rxnorm')){//     Medication Drug Description
 xmlAddTextNode(doc,medicationPrescribed,'DrugDescription',coding.display);}else if(system.endsWith('ndc')){//     Medication Drug Code
 var productCode=doc.createElement('ProductCode');xmlAddTextNode(doc,productCode,'Code',coding.code);xmlAddTextNode(doc,productCode,'Qualifier','ND');// National Drug Code (NDC)
 drugCoded.appendChild(productCode);}}medicationPrescribed.appendChild(drugCoded);//     Medication Quantity
@@ -98554,7 +98564,7 @@ function getScrollbarSize(doc) {
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react_transition_group__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(358);
-/* harmony import */ var _styles_useTheme__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/* harmony import */ var _styles_useTheme__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(38);
 /* harmony import */ var _transitions_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
 /* harmony import */ var _utils_useForkRef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(21);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1);
@@ -99466,7 +99476,7 @@ var Popover_Popover = /*#__PURE__*/react["forwardRef"](function Popover(inProps,
  false ? undefined : void 0;
 /* harmony default export */ var material_Popover_Popover = (Popover_Popover);
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(39);
+var useTheme = __webpack_require__(38);
 
 // CONCATENATED MODULE: ./node_modules/@mui/material/Menu/menuClasses.js
 
@@ -102437,7 +102447,7 @@ var useThemeProps = __webpack_require__(11);
 var Transition = __webpack_require__(358);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/styles/useTheme.js
-var useTheme = __webpack_require__(39);
+var useTheme = __webpack_require__(38);
 
 // EXTERNAL MODULE: ./node_modules/@mui/material/transitions/utils.js
 var utils = __webpack_require__(42);
