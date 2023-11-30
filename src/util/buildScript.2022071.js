@@ -1,5 +1,7 @@
 /* 2022071 NCPDP SCRIPT Support */
 
+import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
+
 function xmlAddTextNode(xmlDoc, parent, sectionName, value) {
   var section = xmlDoc.createElement(sectionName);
   var textNode = xmlDoc.createTextNode(value);
@@ -215,7 +217,7 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   var drugCoded = doc.createElement('DrugCoded');
 
   // loop through the coding values and find the ndc code and the rxnorm code
-  const medicationCodingList = medicationRequestResource.medicationCodeableConcept.coding;
+  let medicationCodingList = getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
