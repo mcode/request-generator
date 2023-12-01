@@ -23,7 +23,7 @@ const Launch = props => {
     });
   }, []);
 
-  return <div>Launching</div>;
+  return <div className='loading'><h1>Launching...</h1></div>;
 };
 
 export default memo(Launch);
