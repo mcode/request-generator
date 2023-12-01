@@ -44,6 +44,12 @@ export default function PatientSearchBar(props) {
         return '';
     }
 
+    // function findPatientByID(id){
+    //     return props.searchablePatients.filter(
+    //         function(data){ return props.searchablePatients.id == id}
+    //     );
+    // }
+
     function patientSearchBar() {
         return (
             <Box className='App'
@@ -76,7 +82,7 @@ export default function PatientSearchBar(props) {
         );
     }
 
-
+    
 
     function displayFilteredPatientList(searchstring, listOfPatients) {
         const filteredListOfPatients = listOfPatients.filter((element) => {
@@ -101,6 +107,8 @@ export default function PatientSearchBar(props) {
                         <div key={patient.id}>
                             <h1>{patient.name}</h1>
                             <h3>{patient.id} </h3>
+                            {/* <h4>{props.searchablePatients[0]}</h4> */}
+                            {/* <h4>{patient}</h4> */}
                             {/* <h4>{JSON.stringify(patient)}</h4>
                             <h5>{JSON.stringify(listOfPatients[0].id)}</h5> */}
                         </div>
@@ -108,12 +116,12 @@ export default function PatientSearchBar(props) {
                 })}
 
 
-                {props.searchablePatients.map(patient => {
+                {filteredListOfPatients.map(patient => {
                     return (
                         <div key={patient.id}>
                             <PatientBox
                                 key={patient.id}
-                                patient={patient}
+                                patient={props.searchablePatients.find(item => item.id === patient.id)}
                                 client={props.client}
                                 callback={props.callback}
                                 callbackList={props.callbackList}
