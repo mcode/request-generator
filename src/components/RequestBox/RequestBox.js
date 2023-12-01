@@ -155,8 +155,7 @@ export default class RequestBox extends Component {
   };
 
   getPatients = () => {
-    //passes and sets patients when the "select patient is clicked"
-    this.setState({ openPatient: true });
+
 
     this.props.client
       .request(this.props.patientFhirQuery, { flat: true })
