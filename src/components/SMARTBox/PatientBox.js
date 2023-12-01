@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { getAge } from '../../util/fhir';
-import FHIR from 'fhirclient';
+import { getAge, getDrugCodeFromMedicationRequest } from '../../util/fhir';
 import './smart.css';
 import { Button, IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -8,7 +7,7 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 
 export default class PatientBox extends Component {
   constructor(props) {
@@ -47,17 +46,19 @@ export default class PatientBox extends Component {
     this.getResponses();
   }
 
-  getCoding(request) {
+  getCoding(resource) {
     let code = null;
-    if (request.resourceType === 'DeviceRequest') {
-      code = request?.codeCodeableConcept.coding[0];
-    } else if (request.resourceType === 'ServiceRequest') {
-      code = request?.code?.coding[0];
+    if (resource.resourceType === 'DeviceRequest') {
+      code = resource?.codeCodeableConcept.coding[0];
     } else if (
-      request.resourceType === 'MedicationRequest' ||
-      request.resourceType === 'MedicationDispense'
+      resource.resourceType === 'ServiceRequest' ||
+      resource.resourceType === 'Medication'
     ) {
-      code = request?.medicationCodeableConcept?.coding[0];
+      code = resource?.code?.coding[0];
+    } else if (resource.resourceType === 'MedicationRequest') {
+      code = getDrugCodeFromMedicationRequest(resource);
+    } else if (resource.resourceType === 'MedicationDispense') {
+      code = resource?.medicationCodeableConcept?.coding[0];
     }
     if (code) {
       if (!code.code) {
@@ -103,8 +104,9 @@ export default class PatientBox extends Component {
       </Box>
     );
   }
+
   makeOption(request, options) {
-    let code = this.getCoding(request);
+    const code = this.getCoding(request);
 
     let option = {
       key: request.id,
@@ -164,7 +166,7 @@ export default class PatientBox extends Component {
     });
 
     Promise.all(requests)
-      .then(results => {
+      .then(() => {
         console.log('fetchResourcesSync: finished');
         this.props.callback('prefetchCompleted', true);
       })
@@ -234,11 +236,45 @@ export default class PatientBox extends Component {
   getMedicationRequest(patientId) {
     this.props.client
       .request(`MedicationRequest?subject=Patient/${patientId}`, {
-        resolveReferences: ['subject', 'performer'],
+        resolveReferences: ['subject', 'performer', 'medicationReference'],
         graph: false,
         flat: true
       })
       .then(result => {
+
+        // add the medicationReference as a contained resource
+        result?.data.forEach(e => {
+          if (e?.medicationReference) {
+            let medicationReference = e?.medicationReference.reference;
+
+            // find the matching medication in the references
+            const medication = result?.references?.[medicationReference];
+            if (medication) {
+                const code = medication?.code?.coding?.[0];
+
+                if (code) {
+                  // add the reference as a contained resource to the request
+                  if (!e?.contained) {
+                    e.contained = [];
+                    e.contained.push(medication);
+                  } else {
+                    // only add to contained if not already in there
+                    let found = false;
+                    e?.contained.forEach(c => {
+                      if (c.id === medication.id) {
+                        found = true;
+                      }
+                    });
+                    if (!found) {
+                      e?.contained.push(medication);
+                    }
+                  }
+                }
+            }
+          }
+        });
+
+
         this.setState({ medicationRequests: result });
       });
   }
