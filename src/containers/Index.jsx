@@ -12,7 +12,13 @@ const Index = props => {
     });
   }, []);
 
-  return <div>{client ? <RequestBuilder client={client} /> : 'Getting Client'}</div>;
+  return <div>
+    { client ? <RequestBuilder client={client} /> : 
+      <div className='loading'>
+        <h1>Getting Client...</h1>
+      </div>
+    }
+    </div>;
 };
 
 export default Index;
