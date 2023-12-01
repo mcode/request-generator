@@ -43,7 +43,7 @@ export default class PatientBox extends Component {
   componentDidMount() {
     // get requests and responses on open of patients
     this.getRequests();
-    this.getResponses();
+    this.getResponses(); // TODO: PatientBox should not be rendering itself, needs to recieve its state from parent 
   }
 
   getCoding(resource) {
