@@ -155,12 +155,12 @@ export default class RequestBox extends Component {
   };
 
   getPatients = () => {
-    this.setState({ openPatient: true });
     this.props.client
       .request(this.props.patientFhirQuery, { flat: true })
       .then(result => {
         this.setState({
-          patientList: result
+          patientList: result,
+          openPatient: true
         });
       })
       .catch(e => {
