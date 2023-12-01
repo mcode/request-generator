@@ -52,3 +52,4 @@ Following are a list of modifiable paths:
 | HTTPS                  |  `false`                                                                  |
 | HTTPS_KEY_PATH         |  `server.key`                                                             |
 | HTTPS_CERT_PATH        |  `server.cert`                                                            |
+| REACT_APP_PATIENT_FHIR_QUERY       |  `Patient?_sort=identifier&_count=12`                         |

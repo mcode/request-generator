@@ -43,6 +43,10 @@ const headerDefinitions = {
     display: 'Order Sign Rest End Point',
     type: 'input'
   },
+  patientFhirQuery: {
+    display: 'Patient FHIR Query',
+    type: 'input'
+  },
   patientView: {
     display: 'Patient View Rest End Point',
     type: 'input'
