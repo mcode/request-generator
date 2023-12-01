@@ -12,7 +12,7 @@ export class PrefetchTemplate {
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
-      'MedicationRequest?subject={{context.patientId}}'
+      'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
     );
 
     // prefetchMap.set("Coverage", COVERAGE_PREFETCH_QUERY);
@@ -41,7 +41,7 @@ export class PrefetchTemplate {
     paramElementMap.set('context.medications.MedicationDispense.id', ['id']);
     paramElementMap.set('context.draftOrders.NutritionOrder.id', ['id']);
     paramElementMap.set('context.draftOrders.ServiceRequest.id', ['id']);
-    paramElementMap.set('context.draftOrders.ontext.appointments.Appointment.id', ['id']);
+    paramElementMap.set('context.draftOrders.context.appointments.Appointment.id', ['id']);
     paramElementMap.set('context.draftOrders.context.encounterId', ['id']);
     paramElementMap.set('context.patientId', ['subject', 'reference']);
     return paramElementMap;
