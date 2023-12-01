@@ -18,10 +18,8 @@ export default function PatientSearchBar(props) {
         const newList = props.searchablePatients.map((patient) => ({
             id: patient.id,
             name: getName(patient),
-            // name: patient.name
         }));
         setListOfPatients([newList]);
-
     }, [props.searchablePatients]);
 
     function getName(patient) {
@@ -34,17 +32,14 @@ export default function PatientSearchBar(props) {
     function patientSearchBar() {
         return (
             <Box className='search-box-containe'>
-                <Autocomplete className = 'search-box'
+                <Autocomplete className='search-box'
                     disablePortal
                     id='search-box'
                     options={listOfPatients[0].map(item => item.name)}
-
                     renderInput={(params) => <TextField {...params}
                         label='Search for a patient'
-                        onSelect={handleInput} 
-                        />}
-                />
-
+                        onSelect={handleInput}
+                    />} />
                 {displayFilteredPatientList(input, listOfPatients[0])}
             </Box>
         );
