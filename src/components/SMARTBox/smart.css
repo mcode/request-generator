@@ -17,7 +17,7 @@ html{
 }
 
 .patient-box{
-    border-bottom: 2px solid black;
+    padding-bottom:10px;
 }
 .patient-header{
     color:white;

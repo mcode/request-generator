@@ -61,3 +61,6 @@ typings/
 build/
 package-lock.json
 src/db.json
+
+# Environment variable files
+.env.local

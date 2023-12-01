@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import FHIR from 'fhirclient';
-import PatientBox from '../SMARTBox/PatientBox';
-import { types, defaultValues, shortNameMap } from '../../util/data';
-import { getAge } from '../../util/fhir';
-import buildNewRxRequest from '../../util/buildScript.2017071.js';
-import _ from 'lodash';
-import './request.css';
-import { PrefetchTemplate } from '../../PrefetchTemplate';
-import { retrieveLaunchContext } from '../../util/util';
 import PersonIcon from '@mui/icons-material/Person';
-import { Button, ButtonGroup, Modal, Box } from '@mui/material';
+import { Box, Button, ButtonGroup, Modal } from '@mui/material';
+import _ from 'lodash';
+import React, { Component } from 'react';
+import buildNewRxRequest from '../../util/buildScript.2017071.js';
+import { defaultValues, shortNameMap, types } from '../../util/data';
+import { getAge } from '../../util/fhir';
+import { retrieveLaunchContext } from '../../util/util';
+import './request.css';
+
+import PatientSearchBar from './PatientSearchBar/PatientSearchBar.js';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -25,7 +25,7 @@ const style = {
   borderBottom: '2px solid black',
   boxShadow: 24,
   p: 4,
-  padding: '0px'
+  padding: '50px'
 };
 export default class RequestBox extends Component {
   constructor(props) {
@@ -60,7 +60,7 @@ export default class RequestBox extends Component {
     this.submitOrderSign(request);
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   exitSmart = () => {
     this.setState({ openPatient: false });
@@ -155,6 +155,9 @@ export default class RequestBox extends Component {
   };
 
   getPatients = () => {
+    //passes and sets patients when the "select patient is clicked"
+    this.setState({ openPatient: true });
+
     this.props.client
       .request(this.props.patientFhirQuery, { flat: true })
       .then(result => {
@@ -330,7 +333,7 @@ export default class RequestBox extends Component {
     if (!userId) {
       console.log(
         'Practitioner not populated from prefetch, using default from config: ' +
-          this.props.defaultUser
+        this.props.defaultUser
       );
       userId = this.props.defaultUser;
     }
@@ -424,7 +427,7 @@ export default class RequestBox extends Component {
     console.log(newRx);
     const serializer = new XMLSerializer();
 
-    // send the message to the prescriber
+    // send the message to the Pharmacy
     this.props.consoleLog('Sending Rx to PIMS', types.info);
     fetch(this.props.pimsUrl, {
       method: 'POST',
@@ -464,33 +467,31 @@ export default class RequestBox extends Component {
     return (
       <div>
         <div className="request">
+
           <Modal
             open={this.state.openPatient}
             onClose={this.exitSmart}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
+            {/* Patient selection pop up and search */}
             <Box sx={style}>
               {this.state.patientList instanceof Error
                 ? this.renderError()
-                : this.state.patientList.map(patient => {
-                    return (
-                      <PatientBox
-                        key={patient.id}
-                        patient={patient}
-                        client={this.props.client}
-                        callback={this.updateStateElement}
-                        callbackList={this.updateStateList}
-                        callbackMap={this.updateStateMap}
-                        updatePrefetchCallback={PrefetchTemplate.generateQueries}
-                        clearCallback={this.clearState}
-                        ehrUrl={this.props.ehrUrl}
-                        options={this.state.codeValues}
-                        responseExpirationDays={this.props.responseExpirationDays}
-                        defaultUser={this.props.defaultUser}
-                      />
-                    );
-                  })}
+                : <PatientSearchBar
+                  getPatients = {this.getPatients}
+                  searchablePatients={this.state.patientList}
+                  client={this.props.client}
+                  callback={this.updateStateElement}
+                  callbackList={this.updateStateList}
+                  callbackMap={this.updateStateMap}
+                  // updatePrefetchCallback={PrefetchTemplate.generateQueries}
+                  clearCallback={this.clearState}
+                  ehrUrl={this.props.ehrUrl} // is this used?
+                  options={this.state.codeValues}
+                  responseExpirationDays={this.props.responseExpirationDays}
+                  defaultUser={this.props.defaultUser}
+                />}
             </Box>
           </Modal>
           <div>
