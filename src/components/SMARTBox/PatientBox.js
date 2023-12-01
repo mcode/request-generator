@@ -250,26 +250,26 @@ export default class PatientBox extends Component {
             // find the matching medication in the references
             const medication = result?.references?.[medicationReference];
             if (medication) {
-                const code = medication?.code?.coding?.[0];
+              const code = medication?.code?.coding?.[0];
 
-                if (code) {
-                  // add the reference as a contained resource to the request
-                  if (!e?.contained) {
-                    e.contained = [];
-                    e.contained.push(medication);
-                  } else {
-                    // only add to contained if not already in there
-                    let found = false;
-                    e?.contained.forEach(c => {
-                      if (c.id === medication.id) {
-                        found = true;
-                      }
-                    });
-                    if (!found) {
-                      e?.contained.push(medication);
+              if (code) {
+                // add the reference as a contained resource to the request
+                if (!e?.contained) {
+                  e.contained = [];
+                  e.contained.push(medication);
+                } else {
+                  // only add to contained if not already in there
+                  let found = false;
+                  e?.contained.forEach(c => {
+                    if (c.id === medication.id) {
+                      found = true;
                     }
+                  });
+                  if (!found) {
+                    e?.contained.push(medication);
                   }
                 }
+              }
             }
           }
         });
@@ -359,19 +359,21 @@ export default class PatientBox extends Component {
 
   getQuestionnaireTitles() {
     const promises = [];
-    if (this.state.questionnaireResponses.data.length > 0) {
-      for (const canonical of this.state.questionnaireResponses.data.map(
-        questionnaireResponse => questionnaireResponse.questionnaire
-      )) {
-        promises.push(
-          this.props.client
-            .request(canonical)
-            .then(questionnaire => [canonical, questionnaire.title || canonical])
-        );
+    if (this.state.questionnaireResponses.data) {
+      if (this.state.questionnaireResponses.data.length > 0) {
+        for (const canonical of this.state.questionnaireResponses.data.map(
+          questionnaireResponse => questionnaireResponse.questionnaire
+        )) {
+          promises.push(
+            this.props.client
+              .request(canonical)
+              .then(questionnaire => [canonical, questionnaire.title || canonical])
+          );
+        }
+        Promise.all(promises).then(pairs => {
+          this.setState({ questionnaireTitles: Object.fromEntries(pairs) });
+        });
       }
-      Promise.all(promises).then(pairs => {
-        this.setState({ questionnaireTitles: Object.fromEntries(pairs) });
-      });
     }
   }
 
