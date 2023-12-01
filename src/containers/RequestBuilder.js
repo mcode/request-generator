@@ -38,6 +38,7 @@ export default class RequestBuilder extends Component {
       launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
       orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
       orderSign: env.get('REACT_APP_ORDER_SIGN').asString(),
+      patientFhirQuery: env.get('REACT_APP_PATIENT_FHIR_QUERY').asString(),
       patientView: env.get('REACT_APP_PATIENT_VIEW').asString(),
       pimsUrl: env.get('REACT_APP_PIMS_SERVER').asString(),
       responseExpirationDays: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),
@@ -229,6 +230,7 @@ export default class RequestBuilder extends Component {
               ref={this.requestBox}
               loading={this.state.loading}
               consoleLog={this.consoleLog}
+              patientFhirQuery ={this.state.patientFhirQuery}
             />
           </div>
           <br />
