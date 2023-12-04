@@ -21,30 +21,30 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AlarmIcon from '@mui/icons-material/Alarm';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 
-const Dashboard = (props) => {
+const Dashboard = props => {
   const classes = useStyles();
   const [resources, setResources] = useState([]);
-  const [message, setMessage] = useState("Loading...")
-  const [checked, setChecked] = useState(true)
+  const [message, setMessage] = useState('Loading...');
+  const [checked, setChecked] = useState(true);
   const drawerWidth = '340px';
-  const handleChange = (event) => {
+  const handleChange = event => {
     setChecked(event.target.checked);
   };
 
-  const addResources = (bundle) => {
+  const addResources = bundle => {
     if (bundle.entry) {
-      bundle.entry.forEach((e) => {
+      bundle.entry.forEach(e => {
         const resource = e.resource;
-        setResources(resources => [...resources, resource])
-      })
+        setResources(resources => [...resources, resource]);
+      });
     }
-  }
+  };
   const createIcons = () => {
     const icons = [];
     const style = { fontSize: '40px' };
-    const itemStyle = { height: '80px' }
+    const itemStyle = { height: '80px' };
     const qStyle = { height: '80px', backgroundColor: '#f5f5fa' };
     icons.push(['Notifications', <NotificationsIcon sx={style} />, itemStyle]);
     icons.push(['Appointments', <AlarmIcon sx={style} />, itemStyle]);
@@ -56,61 +56,63 @@ const Dashboard = (props) => {
     icons.push(['Logout', <LogoutIcon sx={style} />, itemStyle]);
 
     return icons;
-  }
+  };
   useEffect(() => {
     if (props.client.patient.id) {
-      props.client.patient.request('QuestionnaireResponse', { 'pageLimit': 0, 'onPage': addResources }).then(() => {
-        setMessage("No QuestionnaireResponses Found for user with patientId: " + props.client.patient.id);
-      });
+      props.client.patient
+        .request('QuestionnaireResponse', { pageLimit: 0, onPage: addResources })
+        .then(() => {
+          setMessage(
+            'No QuestionnaireResponses Found for user with patientId: ' + props.client.patient.id
+          );
+        });
     } else {
-      setMessage("Invalid patient: No patientId provided")
+      setMessage('Invalid patient: No patientId provided');
     }
-
-  }, [props.client.patient])
+  }, [props.client.patient]);
 
   const renderElements = () => {
     let resourcesToRender = [];
     if (checked) {
-      resourcesToRender = resources.filter((e) => {
+      resourcesToRender = resources.filter(e => {
         return e.status === 'in-progress';
-      })
+      });
     } else {
       resourcesToRender = resources;
     }
     resourcesToRender.reverse();
     return resourcesToRender;
-  }
+  };
   return (
     <div>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <div className={classes.spacer}>
-        </div>
+        <div className={classes.spacer}></div>
 
         <Drawer
           variant="permanent"
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+            ['& .MuiDrawer-paper']: { width: drawerWidth, boxSizing: 'border-box' }
           }}
         >
           <Toolbar />
           <Box sx={{ overflow: 'auto', marginTop: '31px' }}>
             <List>
-              {createIcons().map((option) => (
+              {createIcons().map(option => (
                 <div>
                   <ListItem key={option[0]} style={option[2]} disablePadding>
                     <ListItemButton>
-                      <ListItemIcon>
-                        {option[1]}
-                      </ListItemIcon>
-                      <ListItemText primaryTypographyProps={{ fontSize: '18px' }} primary={option[0]} />
+                      <ListItemIcon>{option[1]}</ListItemIcon>
+                      <ListItemText
+                        primaryTypographyProps={{ fontSize: '18px' }}
+                        primary={option[0]}
+                      />
                     </ListItemButton>
                   </ListItem>
                   <Divider />
                 </div>
-
               ))}
             </List>
           </Box>
@@ -118,25 +120,30 @@ const Dashboard = (props) => {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           <div className={classes.dashboardArea}>
-            <h2 className={classes.elementHeader}>
-              Available Forms
-            </h2>
-            <FormControlLabel style={{ float: 'right' }} control={
-              <Checkbox
-                checked={checked}
-                onChange={handleChange} />}
-              label="Only show in-progress forms" />
-            {resources.length > 0 ?
-              renderElements().map((e) => {
-                return <DashboardElement key={e.id} status={e.status} resource={e} client={props.client} />
-              }) : <Paper className = {classes.dashboardElement}>{message}</Paper>}
+            <h2 className={classes.elementHeader}>Available Forms</h2>
+            <FormControlLabel
+              style={{ float: 'right' }}
+              control={<Checkbox checked={checked} onChange={handleChange} />}
+              label="Only show in-progress forms"
+            />
+            {resources.length > 0 ? (
+              renderElements().map(e => {
+                return (
+                  <DashboardElement
+                    key={e.id}
+                    status={e.status}
+                    resource={e}
+                    client={props.client}
+                  />
+                );
+              })
+            ) : (
+              <Paper className={classes.dashboardElement}>{message}</Paper>
+            )}
           </div>
         </Box>
       </Box>
-
-
     </div>
-
   );
 };
 

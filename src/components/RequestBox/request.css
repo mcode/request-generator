@@ -100,11 +100,6 @@
     background-color: #333232;
     color: #858282;
 }
-
-.patient-box {
-    overflow-y:scroll;
-    height:800px;
-} 
   
 .patient-error {
     white-space:pre-wrap;

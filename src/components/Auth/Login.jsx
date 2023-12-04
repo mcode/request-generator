@@ -1,11 +1,11 @@
 import React, { memo, useCallback, useState, useEffect } from 'react';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button } from '@mui/material';
 import Alert from './Alert';
 import axios from 'axios';
 import useStyles from './styles';
 import env from 'env-var';
 
-const Login = (props) => {
+const Login = props => {
   const classes = useStyles();
   const [message, setMessage] = useState(null);
   const [username, _setUsername] = useState('');
@@ -21,11 +21,13 @@ const Login = (props) => {
       params.append('client_id', env.get('REACT_APP_CLIENT').asString());
       axios
         .post(
-          `${env.get('REACT_APP_AUTH').asString()}/realms/${env.get('REACT_APP_REALM').asString()}/protocol/openid-connect/token`,
+          `${env.get('REACT_APP_AUTH').asString()}/realms/${env
+            .get('REACT_APP_REALM')
+            .asString()}/protocol/openid-connect/token`,
           params,
           { withCredentials: true }
         )
-        .then((result) => {
+        .then(result => {
           props.tokenCallback(result.data.access_token);
         })
         .catch(err => {
@@ -48,15 +50,13 @@ const Login = (props) => {
     };
   }, [username, password, onSubmit]);
 
-  const setUsername = (event => {
+  const setUsername = event => {
     _setUsername(event.target.value);
-  });
+  };
 
-  const setPassword = (event => {
+  const setPassword = event => {
     _setPassword(event.target.value);
-  });
-
- 
+  };
 
   return (
     <div className={classes.background}>
@@ -68,49 +68,25 @@ const Login = (props) => {
         <form noValidate autoComplete="off" className={classes.formFont}>
           <TextField
             classes={{
-              root: classes.loginInput
+              root: classes.resize
             }}
-            InputProps={{
-              classes: {
-                input: classes.resize
-              }
-            }}
-            InputLabelProps={{
-              classes: {
-                root: classes.resize
-              }
-            }}
+            variant="standard"
             value={username}
             onChange={setUsername}
             label="Username"
           />
           <TextField
             classes={{
-              root: `${classes.passwordField} ${classes.loginInput}`
+              root: classes.resize
             }}
-            InputProps={{
-              classes: {
-                input: classes.resize
-              }
-            }}
-            InputLabelProps={{
-              classes: {
-                root: classes.resize
-              }
-            }}
+            variant="standard"
             type="password"
             label="Password"
             value={password}
             onChange={setPassword}
           />
-          {/* <div className={`${classes.loginPersistance} ${classes.formFont}`}>
-            <input type="checkbox" className={classes.loginCheckbox} />
-            <span className={classes.loginCheckboxText}>Keep me logged in</span>
-          </div> */}
           <Button
             variant="contained"
-            color="secondary"
-            disableElevation
             classes={{ root: classes.loginButton, label: classes.formFont }}
             onClick={onSubmit}
           >

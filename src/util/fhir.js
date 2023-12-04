@@ -1,71 +1,65 @@
-import env from 'env-var';
 function fhir(resource, ehrUrl, patient, auth) {
-    const headers = {
-        "Content-Type": "application/json"
-    }
-    if(patient) {
-        fetch(`${ehrUrl}${resource}?subject=Patient/${patient}`, {
-            method: "GET",
-            headers: headers,
-        }).then(response => {
-            return response.json();
-        }).then(json =>{
-            console.log(json);
-        });
-    }
-
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (patient) {
+    fetch(`${ehrUrl}${resource}?subject=Patient/${patient}`, {
+      method: 'GET',
+      headers: headers
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        console.log(json);
+      });
+  }
 }
 
 function getAge(dateString) {
-    var today = new Date();
-    var birthDate = new Date(dateString);
-    var age = today.getFullYear() - birthDate.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
+  var today = new Date();
+  var birthDate = new Date(dateString);
+  var age = today.getFullYear() - birthDate.getFullYear();
+  var m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+/*
+* Retrieve the CodeableConcept for the medication from the medicationCodeableConcept if available.
+* Read CodeableConcept from contained Medication matching the medicationReference otherwise.
+*/
+function getDrugCodeableConceptFromMedicationRequest(medicationRequest) {
+  if (medicationRequest) {
+    if (medicationRequest?.medicationCodeableConcept) {
+      console.log('Get Medication code from CodeableConcept');
+      return medicationRequest?.medicationCodeableConcept;
+    } else if (medicationRequest?.medicationReference) {
+      const reference = medicationRequest?.medicationReference;
+      let coding = undefined;
+      medicationRequest?.contained?.every(e => {
+        if (e.resourceType + '/' + e.id === reference.reference) {
+          if (e.resourceType === 'Medication') {
+            console.log('Get Medication code from contained resource');
+            coding = e.code;
+          }
+        }
+      });
+      return coding; 
     }
-    return age;
-}
+  }
+  return undefined;
+ }
+ 
+ /*
+ * Retrieve the coding for the medication from the medicationCodeableConcept if available.
+ * Read coding from contained Medication matching the medicationReference otherwise.
+ */
+function getDrugCodeFromMedicationRequest(medicationRequest) {
+  const codeableConcept = getDrugCodeableConceptFromMedicationRequest(medicationRequest);
+  return codeableConcept?.coding?.[0];
+ }
 
-function login() {
-
-    const tokenUrl = (env.get('REACT_APP_AUTH').asString()) + "/realms/" + (env.get('REACT_APP_REALM').asString()) + "/protocol/openid-connect/token"
-    let params = {
-        grant_type: "password",
-        username: (env.get('REACT_APP_USER').asString()),
-        password: (env.get('REACT_APP_PASSWORD').asString()),
-        client_id: (env.get('REACT_APP_CLIENT').asString())
-    }
-
-    // Encodes the params to be compliant with
-    // x-www-form-urlencoded content type.
-    const searchParams = Object.keys(params).map((key) => {
-        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-    }).join('&');
-    // We get the token from the url
-    const tokenResponse = fetch(tokenUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: searchParams
-    }).then((response) => {
-        return response.json();
-    }).then(response => {
-        console.log(response);
-        const token = response ? response.access_token : null;
-        console.log(token);
-        return token;
-
-    }).catch(reason => {
-        console.log("wow");
-    });
-
-    return tokenResponse;
-}
-
-
-export {
-    fhir,
-    getAge
-}
+export { fhir, getAge, getDrugCodeableConceptFromMedicationRequest, getDrugCodeFromMedicationRequest };

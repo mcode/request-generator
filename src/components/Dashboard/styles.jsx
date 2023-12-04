@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 export default makeStyles(
   theme => ({
     adminBar: {
@@ -17,7 +17,7 @@ export default makeStyles(
       padding: '20px',
       overflowY: 'auto',
       overflowX: 'hidden',
-      height: '75vh',
+      height: '75vh'
     },
     dashboardElement: {
       height: '100px',
@@ -25,20 +25,21 @@ export default makeStyles(
       padding: '10px',
       margin: '5px',
       fontSize: '18px',
-      cursor:'pointer',
+      cursor: 'pointer',
       '&:hover': {
-        boxShadow: '0px 2px 1px 1px rgb(0 0 0 / 40%), 0px 1px 1px 0px rgb(0 0 0 / 28%), 0px 1px 3px 0px rgb(0 0 0 / 24%)'
+        boxShadow:
+          '0px 2px 1px 1px rgb(0 0 0 / 40%), 0px 1px 1px 0px rgb(0 0 0 / 28%), 0px 1px 3px 0px rgb(0 0 0 / 24%)'
       }
     },
     elementHeader: {
       marginLeft: '5px',
-      display: 'inline-block',
+      display: 'inline-block'
     },
     elementIcon: {
       verticalAlign: 'middle'
     },
-    listItemText:{
-      fontSize:'4.2em',//Insert your required size
+    listItemText: {
+      fontSize: '4.2em' //Insert your required size
     },
     progressBubble: {
       height: '12px',
@@ -46,9 +47,7 @@ export default makeStyles(
       borderRadius: '12px',
       float: 'right'
     },
-    spacer: {
-
-    }
+    spacer: {}
   }),
 
   { name: 'Dashboard', index: 1 }

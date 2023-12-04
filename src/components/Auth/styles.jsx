@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 export default makeStyles(
   theme => ({
     background: {
@@ -11,13 +11,14 @@ export default makeStyles(
     },
     loginButton: {
       width: '460px',
-      marginTop: '20px',
+      marginTop: '20px !important',
       height: '90px',
       color: theme.palette.common.white,
-      fontSize: '32px',
-      textTransform: 'none',
+      backgroundColor: `${theme.palette.common.red} !important`,
+      fontSize: '30px !important',
+      textTransform: 'none !important',
       fontFamily: 'inherit',
-      fontWeight: 200
+      fontWeight: '200 !important'
     },
     loginContent: {
       width: '600px',
@@ -65,7 +66,7 @@ export default makeStyles(
       fontFamily: 'inherit'
     },
     passwordField: {
-      marginTop: '30px'
+      marginBottom: '30px'
     },
     passwordForget: {
       float: 'right',
@@ -77,8 +78,8 @@ export default makeStyles(
     },
     resize: {
       display: 'block',
-      marginTop: '30px',
-      marginBottom: '5px',
+      marginTop: '30px !important',
+      marginBottom: '5px !important',
       fontSize: '20px',
       fontWeight: 100,
       color: theme.palette.common.black,
