@@ -1,0 +1,10 @@
+.inprogress-container {
+    background-color:#F3F6F9;
+    border: 1px solid #E5EAF2;
+    border-radius: 10px;
+    padding:25px;
+    margin:20px 0 20px 0;
+
+    /* This should be inherited, need to change */
+    width:48vw;
+}
