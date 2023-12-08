@@ -7,7 +7,7 @@ import { defaultValues, shortNameMap, types } from '../../util/data';
 import { getAge } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
 import './request.css';
-import InProgressFormButton from './InProgressFormButton/InProgressFormButton.js';
+import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
 
 import PatientSearchBar from './PatientSearchBar/PatientSearchBar.js';
 
@@ -485,7 +485,7 @@ export default class RequestBox extends Component {
         </div>
         {this.state.patient.id ? (
           <div className="action-btns">
-            <InProgressFormButton
+            <InProgressFormBox
               qrResponse={this.state.response}
               relaunch={this.relaunch}
             />

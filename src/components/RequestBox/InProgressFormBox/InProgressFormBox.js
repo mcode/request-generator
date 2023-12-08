@@ -1,8 +1,8 @@
 import { Box, Button, Paper, Typography, ButtonGroup } from '@mui/material';
 import React from 'react';
-import './InProgressFormButtonStyle.css';
+import './InProgressFormBoxStyle.css';
 
-export default function InProgressFormButton(props) {
+export default function InProgressFormBox(props) {
     return (
         props.qrResponse.questionnaire ? (
                 <Box className={'inprogress-container'}>
