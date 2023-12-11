@@ -7,6 +7,7 @@ import { defaultValues, shortNameMap, types } from '../../util/data';
 import { getAge } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
 import './request.css';
+import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
 
 import PatientSearchBar from './PatientSearchBar/PatientSearchBar.js';
 
@@ -201,7 +202,6 @@ export default class RequestBox extends Component {
           State: {this.state.patientState ? this.state.patientState : this.emptyField}
         </div>
         {this.renderOtherInfo()}
-        {this.renderQRInfo()}
       </div>
     );
   }
@@ -221,32 +221,6 @@ export default class RequestBox extends Component {
         <div className="info lower-border">
           Display: {this.state.display ? this.state.display : this.emptyField}
         </div>
-      </div>
-    );
-  }
-
-  renderQRInfo() {
-    const qrResponse = this.state.response;
-    return (
-      <div className="questionnaire-response">
-        {qrResponse.questionnaire ? (
-          <>
-            <div className="lower-border">
-              <span style={{ fontWeight: 'bold' }}>In Progress Form</span>
-            </div>
-            <div className="info lower-border">
-              Form: {qrResponse.questionnaire ? qrResponse.questionnaire : this.emptyField}
-            </div>
-            <div className="info lower-border">
-              Author: {qrResponse.author ? qrResponse.author.reference : this.emptyField}
-            </div>
-            <div className="info lower-border">
-              Date: {qrResponse.authored ? qrResponse.authored : this.emptyField}
-            </div>
-          </>
-        ) : (
-          <div />
-        )}
       </div>
     );
   }
@@ -460,7 +434,6 @@ export default class RequestBox extends Component {
 
   render() {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
-    const disableLaunchDTR = !this.state.response.questionnaire;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
     return (
@@ -512,10 +485,11 @@ export default class RequestBox extends Component {
         </div>
         {this.state.patient.id ? (
           <div className="action-btns">
+            <InProgressFormBox
+              qrResponse={this.state.response}
+              relaunch={this.relaunch}
+            />
             <ButtonGroup variant="outlined" aria-label="outlined button group">
-              <Button onClick={this.relaunch} disabled={disableLaunchDTR}>
-                Open In-Progress Form
-              </Button>
               <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
                 Launch SMART on FHIR App
               </Button>
