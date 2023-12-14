@@ -35,33 +35,36 @@ The .env file contains the default URI paths, these can be overwritten from the 
 
 Following are a list of modifiable paths:
 
-| URI Name                                                   | Default                                                         |
-| ---------------------------------------------------------- | --------------------------------------------------------------- |
-| HTTPS                                                      | `false`                                                         |
-| HTTPS_CERT_PATH                                            | `server.cert`                                                   |
-| HTTPS_KEY_PATH                                             | `server.key`                                                    |
-| REACT_APP_ALT_DRUG                                         | `true`                                                          |
-| REACT_APP_AUTH                                             | `http://localhost:8180`                                         |
-| REACT_APP_CDS_SERVICE                                      | `http://localhost:8090/cds-services`                            |
-| REACT_APP_CLIENT                                           | `app-login`                                                     |
-| REACT_APP_DEFAULT_USER                                     | `pra1234`                                                       |
-| REACT_APP_EHR_BASE                                         | `http://localhost:8080/test-ehr/r4`                             |
-| REACT_APP_EHR_LINK                                         | `http://localhost:8080/ehr-server/`                             |
-| REACT_APP_EHR_SERVER                                       | `http://localhost:8080/test-ehr/r4`                             |
-| REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH | `http://localhost:8080/test-ehr/r4`                             |
-| REACT_APP_HOMEPAGE                                         | `http://localhost:8080`                                         |
-| REACT_APP_LAUNCH_URL                                       | `http://localhost:4040/launch`                                  |
-| REACT_APP_ORDER_SELECT                                     | `rems-order-select`                                             |
-| REACT_APP_ORDER_SIGN                                       | `rems-order-sign`                                               |
-| REACT_APP_PASSWORD                                         | `alice`                                                         |
-| REACT_APP_PATIENT_FHIR_QUERY                               | `Patient?_sort=identifier&_count=12`                            |
-| REACT_APP_PATIENT_VIEW                                     | `rems-patient-view`                                             |
-| REACT_APP_PIMS_SERVER                                      | `http://localhost:5051/doctorOrders/api/addRx`                  |
-| REACT_APP_PUBLIC_KEYS                                      | `http://localhost:3000/request-generator/.well-known/jwks.json` |
-| REACT_APP_REALM                                            | `ClientFhirServer`                                              |
-| REACT_APP_RESPONSE_EXPIRATION_DAYS                         | `30`                                                            |
-| REACT_APP_SERVER                                           | `http://localhost:8090`                                         |
-| REACT_APP_SMART_LAUNCH_URL                                 | `http://localhost:4040/`                                        |
-| REACT_APP_URL                                              | `http://localhost:3000`                                         |
-| REACT_APP_URL_FILTER                                       | `http://localhost:3000/*`                                       |
-| REACT_APP_USER                                             | `alice`                                                         |
+| URI Name                                                   | Default                                                                                              |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| HTTPS                                                      | `false`                                                                                              |
+| HTTPS_CERT_PATH                                            | `server.cert`                                                                                        |
+| HTTPS_KEY_PATH                                             | `server.key`                                                                                         |
+| REACT_APP_ALT_DRUG                                         | `true`                                                                                               |
+| REACT_APP_AUTH                                             | `http://localhost:8180`                                                                              |
+| REACT_APP_CDS_SERVICE                                      | `http://localhost:8090/cds-services`                                                                 |
+| REACT_APP_CLIENT                                           | `app-login`                                                                                          |
+| REACT_APP_CLIENT_SCOPES                                    | `launch offline_access openid profile user/Patient.read patient/Patient.read user/Practitioner.read` |
+| REACT_APP_DEFAULT_USER                                     | `pra1234`                                                                                            |
+| REACT_APP_EHR_BASE                                         | `http://localhost:8080/test-ehr/r4`                                                                  |
+| REACT_APP_EHR_LINK                                         | `http://localhost:8080/ehr-server/`                                                                  |
+| REACT_APP_EHR_SERVER                                       | `http://localhost:8080/test-ehr/r4`                                                                  |
+| REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH | `http://localhost:8080/test-ehr/r4`                                                                  |
+| REACT_APP_GENERATE_JWT                                     | `true`                                                                                               |
+| REACT_APP_GH_PAGES                                         | `false`                                                                                              |
+| REACT_APP_HOMEPAGE                                         | `http://localhost:8080`                                                                              |
+| REACT_APP_LAUNCH_URL                                       | `http://localhost:4040/launch`                                                                       |
+| REACT_APP_ORDER_SELECT                                     | `rems-order-select`                                                                                  |
+| REACT_APP_ORDER_SIGN                                       | `rems-order-sign`                                                                                    |
+| REACT_APP_PASSWORD                                         | `alice`                                                                                              |
+| REACT_APP_PATIENT_FHIR_QUERY                               | `Patient?_sort=identifier&_count=12`                                                                 |
+| REACT_APP_PATIENT_VIEW                                     | `rems-patient-view`                                                                                  |
+| REACT_APP_PIMS_SERVER                                      | `http://localhost:5051/doctorOrders/api/addRx`                                                       |
+| REACT_APP_PUBLIC_KEYS                                      | `http://localhost:3000/request-generator/.well-known/jwks.json`                                      |
+| REACT_APP_REALM                                            | `ClientFhirServer`                                                                                   |
+| REACT_APP_RESPONSE_EXPIRATION_DAYS                         | `30`                                                                                                 |
+| REACT_APP_SERVER                                           | `http://localhost:8090`                                                                              |
+| REACT_APP_SMART_LAUNCH_URL                                 | `http://localhost:4040/`                                                                             |
+| REACT_APP_URL                                              | `http://localhost:3000`                                                                              |
+| REACT_APP_URL_FILTER                                       | `http://localhost:3000/*`                                                                            |
+| REACT_APP_USER                                             | `alice`                                                                                              |
