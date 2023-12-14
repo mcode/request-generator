@@ -1,10 +1,10 @@
-# How to launch external SMART on FHIR apps via Meld Environment from mcode/request-generator
+# How to launch external SMART on FHIR apps from mcode/request-generator
 
 ## Setup
 
 ### In mcode/rems-admin
 
-Overwrite `SMART_ENDPOINT` in the `.env`. Overwriting environment variables in a `.env.local` does not work (this is a bug).
+Overwrite `SMART_ENDPOINT` in the `.env`. Overwriting environment variables in a `.env.local` does not work (this is a bug). For example, if you are using a registered app in a Meld Sandbox, your `SMART_ENDPOINT` may look like this:
 
 ```.env
 SMART_ENDPOINT = https://smartlauncher.interop.community/sample-app/launch?client_id=sampleapp&platform=meld
@@ -22,7 +22,7 @@ REACT_APP_EHR_SERVER = https://gw.interop.community/REMS/data
 REACT_APP_SMART_LAUNCH_URL = https://smartlauncher.interop.community/sample-app/launch?client_id=sampleapp&platform=meld
 ```
 
-#### Where to grab the environment variable values
+### Where to grab the environment variable values if using a Meld Sandbox
 
 1. `REACT_APP_CLIENT`: This is taken from Apps > Request Generator > Settings > Registered App Details > Client Id. Request Generator refers to the registered mcode/request-generator app in your Meld sandbox.
 2. `REACT_APP_EHR_BASE`, `REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH`, `REACT_APP_EHR_SERVER`: These are taken from your Meld sandbox's sidebar, under Settings > Sandbox > Secured FHIR Server URL.
@@ -40,26 +40,6 @@ REACT_APP_SMART_LAUNCH_URL = https://smartlauncher.interop.community/sample-app/
 8. Go back to request-generator and issue an order-sign hook, and click on the "Patient Enrollment Form" button.
 9. You should see the expected SMART on FHIR app launch.
 
-## Running other Meld-sandbox-registered SMART on FHIR Apps
+## Running other Registered SMART on FHIR Apps from Meld
 
 Log in to Meld at https://meld.interop.community/. Go to My Sandboxes > REMS > Apps to try out the other Registered Apps. The example above manually tests (1). You can try the remaining options after (2) just by changing the `REACT_APP_SMART_LAUNCH_URL` and `SMART_ENDPOINT` environment variables.
-
-1. Sample App - launches for (7) without needing to modify any of the supported CDS Hooks. You will get the following error at (9) unless you replace the `appContext` returned by the `src/hooks/rems.ordersign.ts` hook's `createSmartLink` function with a short string, e.g. `"hello"`.
-
-```
-HttpError: 500 Server Error
-URL: https://iol2auth.interop.community/token
-server_error: Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.5.1.v20130918-f2b9fc5): org.eclipse.persistence.exceptions.DatabaseException
-Internal Exception: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Data too long for column &#39;value&#39; at row 1
-Error Code: 1406
-Call: INSERT INTO launch_context (name, value) VALUES (?, ?)
-```
-
-This is just a bug with using Meld and not something we can fix; it is because the `appContext` string is too long.
-
-2. Bilirubin Risk Chart - launches for (7) and (9) without needing to modify any of the supported CDS Hooks. However, for (9) above, there will be a 500 error in the DevTools console, unless you modify the `appContext` as mentioned above.
-3. CDS Hooks Sandbox - launches for (7) and (9) without needing to modify any of the supported CDS Hooks. However, you will run into 500 and 404 errors for (9) above if you do not modify the `appContext` above. Note that the order-select hook won't return any cards, but the patient-view hook does.
-4. Cuestionario - launches without needing to modify any of the supported CDS Hooks. However, you probably won't be able to search for a "Task Number" without knowing one beforehand. Seems to work for both (7) and (9) above.
-5. My Web App - Not launchable for (7) and (9). The ISS supplied for `REACT_APP_EHR_BASE` from the Meld sandbox seems to be incorrect.
-6. Recetario - It launches for both (7) and (9), but you will be stuck on the "Logging in..." page.
-7. REMS Smart App - It is launchable for (7). You will be redirected to the register page. The ISS will be filled in and you will need to populate the Client Id field with the value from Apps > RENS Smart on FHIR > Settings > Registered App Details > Client Id. Click Authorize. You should be able to send CDS hooks as normal. For (9), you will run into a few 500 errors- one is related to a token and the other is related to the launch context. Modifying the `appContext` as mentioned above will let you launch, but the CDS hooks' requests and responses will not appear in the Network tab.
