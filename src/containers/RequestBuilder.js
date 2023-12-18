@@ -8,7 +8,7 @@ import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
 import { types } from '../util/data.js';
-import { createJwt, setupKeys } from '../util/auth';
+import { createJwt } from '../util/auth';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
@@ -16,7 +16,6 @@ export default class RequestBuilder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      keypair: null,
       loading: false,
       logs: [],
       patient: {},
@@ -55,11 +54,6 @@ export default class RequestBuilder extends Component {
   }
 
   componentDidMount() {
-    const callback = keypair => {
-      this.setState({ keypair });
-    };
-
-    setupKeys(callback);
     if (!this.state.client) {
       this.reconnectEhr();
     } else {
@@ -129,16 +123,12 @@ export default class RequestBuilder extends Component {
       this.consoleLog("ERROR: unknown hook type: '", hook, "'");
       return;
     }
-
-    const createHeaders = () => {
-      const init = { 'Content-Type': 'application/json' };
-      if (this.state.generateJsonToken) {
-        const jwt = 'Bearer ' + createJwt(this.state.keypair, this.state.baseUrl, cdsUrl);
-        init.authorization = jwt;
-      }
-      return new Headers(init);
-    };
-
+    let baseUrl = this.state.baseUrl;
+    const jwt = 'Bearer ' + createJwt( baseUrl, cdsUrl);
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      authorization: jwt
+    });
     try {
       fetch(cdsUrl, {
         method: 'POST',
