@@ -127,8 +127,7 @@ export default class RequestBuilder extends Component {
     let baseUrl = this.state.baseUrl;
 
     const headers = {
-      'Content-Type': 'application/json',
-      authorization: jwt
+      'Content-Type': 'application/json'
     };
     if (this.state.generateJsonToken) {
       const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
