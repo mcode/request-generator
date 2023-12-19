@@ -3,7 +3,6 @@ import KJUR, { KEYUTIL } from 'jsrsasign';
 import { v4 as uuidv4 } from 'uuid';
 import env from 'env-var';
 
-
 function login() {
   const tokenUrl =
     env.get('REACT_APP_AUTH').asString() +
@@ -34,7 +33,6 @@ function login() {
   });
 }
 
-
 /**
  * Generates a JWT for a CDS service call, given the audience (the URL endpoint). The JWT is signed using a private key stored on the repository.
  *
@@ -42,14 +40,13 @@ function login() {
  * as it is an open source client-side project and tool.
  * @param {*} audience - URL endpoint acting as the audience
  */
- function createJwt(baseUrl, audience) {
-
+function createJwt(baseUrl, audience) {
   const jwtPayload = JSON.stringify({
     iss: baseUrl,
     aud: audience,
-    exp: Math.round((Date.now() / 1000) + 300),
-    iat: Math.round((Date.now() / 1000)),
-    jti: uuidv4(),
+    exp: Math.round(Date.now() / 1000 + 300),
+    iat: Math.round(Date.now() / 1000),
+    jti: uuidv4()
   });
 
   const jwtHeader = JSON.stringify({
