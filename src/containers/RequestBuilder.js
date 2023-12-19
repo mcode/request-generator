@@ -123,16 +123,22 @@ export default class RequestBuilder extends Component {
       this.consoleLog("ERROR: unknown hook type: '", hook, "'");
       return;
     }
+
     let baseUrl = this.state.baseUrl;
-    const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
-    const headers = new Headers({
+
+    const headers = {
       'Content-Type': 'application/json',
       authorization: jwt
-    });
+    };
+    if (this.state.generateJsonToken) {
+      const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
+      headers.authorization = jwt;
+    }
+
     try {
       fetch(cdsUrl, {
         method: 'POST',
-        headers: createHeaders(),
+        headers: new Headers(headers),
         body: JSON.stringify(json_request),
         signal: this.timeout(10).signal //Timeout set to 10 seconds
       })
@@ -220,7 +226,7 @@ export default class RequestBuilder extends Component {
               ref={this.requestBox}
               loading={this.state.loading}
               consoleLog={this.consoleLog}
-              patientFhirQuery ={this.state.patientFhirQuery}
+              patientFhirQuery={this.state.patientFhirQuery}
             />
           </div>
           <br />
