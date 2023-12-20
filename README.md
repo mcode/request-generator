@@ -1,10 +1,14 @@
 # Request Generator
 
-This subproject provides a small web application that is capable of generating requests and displaying the CDS Hooks cards that are provided as a response. This project is written in JavaScript and runs in [node.js](https://nodejs.org/en/).
+This project provides a small web application that is capable of generating requests and displaying the CDS Hooks cards that are provided as a response. This project is written in JavaScript and runs in [node.js](https://nodejs.org/en/).
 
 ## Running the request generator standalone
 
-1. Install node.js
+1. Install node.js v14 (using [`nvm`](https://github.com/nvm-sh/nvm) is optional, but easier)
+
+- `nvm install 14`
+- `nvm use 14`
+
 2. Clone the repository
 
 - `git clone https://github.com/mcode/request-generator.git`
@@ -18,11 +22,7 @@ This subproject provides a small web application that is capable of generating r
 
 - `npm start`
 
-This should open a browser window directed to the value set in `REACT_APP_URL`. The request-generator assumes the CRD server is running on the default value set for `REACT_APP_SERVER`. This can be changed in the properties file [.env](./.env). [The following section](./README.md#how-to-override-defaults) lists the default values for these environment variables.
-
-## Versions
-
-This application requires node v14.
+This should open a browser window directed to the value set in `REACT_APP_URL` followed by the string `/request-generator`. The request-generator assumes the REMS Admin is running on the default value set for `REACT_APP_SERVER`. This can be changed in the properties file [.env](./.env). [The following section](./README.md#how-to-override-defaults) lists the default values for these environment variables.
 
 ## Keys
 
@@ -68,3 +68,38 @@ Following are a list of modifiable paths:
 | REACT_APP_URL                                              | `http://localhost:3000`                                                                              |
 | REACT_APP_URL_FILTER                                       | `http://localhost:3000/*`                                                                            |
 | REACT_APP_USER                                             | `alice`                                                                                              |
+
+## How to launch as a SMART on FHIR app
+
+### Using a SMART App Launcher
+
+1. Go to a SMART app launcher, such as `http://moonshot-dev.mitre.org:4001/index.html` (MITRE) or `https://launch.smarthealthit.org/` (open to public).
+2. For the App Launch URL, provide `http://localhost:3000/launch`.
+
+### Using Meld or a real EHR
+
+1. If you'd like to launch from Meld, [log in to Meld](https://meld.interop.community/) and follow steps 2-3.
+2. The log in page will bring you to the My Sandboxes page. Go to your sandbox.
+3. You will land on the Registered Apps page. Click on the circular plus button in the top-right corner and register the request-generator app manually with these settings:
+
+   - Client Type: `Public Client`
+   - App Launch URI: `http://localhost:3000/launch`
+   - App Redirect URIs: `http://localhost:3000/#/index, http://localhost:4040/register,http://localhost:3000/index, http://localhost:4040/index`
+   - Scopes: `launch openid user/*.* offline_access profile`
+
+4. After registering request-generator, hover over it and click Launch.
+
+<!-- TODO: update step 4 once Zach does client registration ticket. This is the error when launching:
+
+```
+Error invalid_client
+There was an error processing your request.
+
+Client with id app-login was not found
+```
+
+-->
+
+## How to launch a SMART on FHIR app from request-generator
+
+See the [following guide](./How-To-Launch-SMART-on-FHIR-Apps.md) for more information.
