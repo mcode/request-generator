@@ -140,6 +140,7 @@ export default class PatientBox extends Component {
       const response = JSON.parse(this.state.response);
       this.updateQRResponse(patient, response);
     }
+    this.props.callback('expanded', false);
   }
 
   updateQRResponse(patient, response) {
@@ -389,6 +390,7 @@ export default class PatientBox extends Component {
 
   render() {
     const patient = this.props.patient;
+    console.log('patient --- > ', patient);
     let name = '';
     if (patient.name) {
       name = <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>;

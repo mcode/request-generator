@@ -57,7 +57,7 @@ export default function PatientSearchBar(props) {
             <Box>
                 {filteredListOfPatients.map(patient => {
                     return (
-                        <div key={patient.id}>
+                        <span key={patient.id}>
                             <PatientBox
                                 key={patient.id}
                                 patient={props.searchablePatients.find(item => item.id === patient.id)}
@@ -72,7 +72,7 @@ export default function PatientSearchBar(props) {
                                 responseExpirationDays={props.responseExpirationDays}
                                 defaultUser={props.defaultUser}
                             />
-                        </div>
+                        </span>
                     );
                 })}
             </Box>
@@ -80,8 +80,8 @@ export default function PatientSearchBar(props) {
     }
 
     return (
-        <div>
+        <span>
             {listOfPatients[0] ? patientSearchBar() : 'loading...'}
-        </div>
+        </span>
     );
 }

@@ -12,7 +12,7 @@
 
 .request {
     border: 1px solid black;
-    height:375px;
+    height: auto;
     padding: 10px;
     border-radius: 5px;
     background-color: rgb(248, 248, 248)
@@ -123,4 +123,8 @@
 .empty-field {
     color: dimgrey;
     font-style: italic;
+}
+
+.patient-info {
+    margin: 5px;
 }

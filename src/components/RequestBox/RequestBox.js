@@ -8,31 +8,36 @@ import { getAge } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
 import './request.css';
 import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import PatientSearchBar from './PatientSearchBar/PatientSearchBar.js';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  flexDirection: 'column',
-  width: '80%',
-  height: '70%',
-  overflowY: 'scroll',
-  transform: 'translate(-50%, -50%)',
-  display: 'flex',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  borderBottom: '2px solid black',
-  boxShadow: 24,
-  p: 4,
-  padding: '50px'
-};
+// const style = {
+//   position: 'absolute',
+//   top: '50%',
+//   left: '50%',
+//   flexDirection: 'column',
+//   width: '80%',
+//   height: '70%',
+//   overflowY: 'scroll',
+//   transform: 'translate(-50%, -50%)',
+//   display: 'flex',
+//   bgcolor: 'background.paper',
+//   border: '2px solid #000',
+//   borderBottom: '2px solid black',
+//   boxShadow: 24,
+//   p: 4,
+//   padding: '50px'
+// };
 export default class RequestBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
       openPatient: false,
+      expanded: false,
       patientList: [],
       patient: {},
       prefetchedResources: new Map(),
@@ -157,13 +162,16 @@ export default class RequestBox extends Component {
 
   getPatients = () => {
 
+    console.log('getting patients -- > ', this.props.patientFhirQuery);
 
     this.props.client
       .request(this.props.patientFhirQuery, { flat: true })
       .then(result => {
+        console.log('result is -- > ', result);
         this.setState({
           patientList: result,
-          openPatient: true
+          // openPatient: true,
+          expanded: true
         });
       })
       .catch(e => {
@@ -432,6 +440,13 @@ export default class RequestBox extends Component {
     return Object.keys(this.state.patient).length === 0;
   }
 
+  handleChange = (panel) => (event, isExpanded) => {
+    if (isExpanded) {
+      this.getPatients();
+    }
+    this.setState({ expanded: isExpanded ? true: false});
+  };
+
   render() {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
@@ -439,15 +454,19 @@ export default class RequestBox extends Component {
     return (
       <div>
         <div className="request">
-
-          <Modal
-            open={this.state.openPatient}
-            onClose={this.exitSmart}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+          <Accordion expanded={this.state.expanded} onChange={this.handleChange('patientSelect')}>
+            <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-            {/* Patient selection pop up and search */}
-            <Box sx={style}>
+            <Button variant="contained" onClick={this.getPatients} startIcon={<PersonIcon />}>
+              Select a patient
+            </Button>
+          </AccordionSummary>
+          <AccordionDetails>
+            <div>
+              <Box>
               {this.state.patientList instanceof Error
                 ? this.renderError()
                 : <PatientSearchBar
@@ -465,11 +484,10 @@ export default class RequestBox extends Component {
                   defaultUser={this.props.defaultUser}
                 />}
             </Box>
-          </Modal>
-          <div>
-            <Button variant="contained" onClick={this.getPatients} startIcon={<PersonIcon />}>
-              Select a patient
-            </Button>
+            </div>
+          </AccordionDetails>
+          </Accordion>
+          <div style={{paddingTop: '15px'}}>
             <div className="request-header">
               {this.state.patient.id ? (
                 <span>Patient ID: {this.state.patient.id}</span>
@@ -477,13 +495,12 @@ export default class RequestBox extends Component {
                 <em>No patient selected</em>
               )}
             </div>
-            <div>
+            <div className='patient-info'>
               {this.renderPatientInfo()}
               {this.renderPrefetchedResources()}
             </div>
           </div>
-        </div>
-        {this.state.patient.id ? (
+          {this.state.patient.id ? (
           <div className="action-btns">
             <InProgressFormBox
               qrResponse={this.state.response}
@@ -504,6 +521,8 @@ export default class RequestBox extends Component {
         ) : (
           <span />
         )}
+        </div>
+        
       </div>
     );
   }
