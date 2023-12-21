@@ -4,7 +4,4 @@
     border-radius: 5px;
     padding:20px;
     margin:20px 0 20px 0;
-
-    /* This should be inherited, need to change */
-    width:48.5vw;
 }

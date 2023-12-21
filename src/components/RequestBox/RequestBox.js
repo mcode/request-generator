@@ -36,7 +36,6 @@ export default class RequestBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openPatient: false,
       expanded: false,
       patientList: [],
       patient: {},
@@ -67,10 +66,6 @@ export default class RequestBox extends Component {
   }
 
   componentDidMount() { }
-
-  exitSmart = () => {
-    this.setState({ openPatient: false });
-  };
 
   prepPrefetch() {
     const preppedResources = new Map();
@@ -161,16 +156,11 @@ export default class RequestBox extends Component {
   };
 
   getPatients = () => {
-
-    console.log('getting patients -- > ', this.props.patientFhirQuery);
-
     this.props.client
       .request(this.props.patientFhirQuery, { flat: true })
       .then(result => {
-        console.log('result is -- > ', result);
         this.setState({
           patientList: result,
-          // openPatient: true,
           expanded: true
         });
       })
@@ -440,9 +430,14 @@ export default class RequestBox extends Component {
     return Object.keys(this.state.patient).length === 0;
   }
 
-  handleChange = (panel) => (event, isExpanded) => {
+  handleChange = () => (event, isExpanded) => {
     if (isExpanded) {
       this.getPatients();
+    } else {
+      this.setState({
+        patientList: [],
+        expanded: false
+      });
     }
     this.setState({ expanded: isExpanded ? true: false});
   };
@@ -454,7 +449,7 @@ export default class RequestBox extends Component {
     return (
       <div>
         <div className="request">
-          <Accordion expanded={this.state.expanded} onChange={this.handleChange('patientSelect')}>
+          <Accordion expanded={this.state.expanded} onChange={this.handleChange()}>
             <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -483,7 +478,7 @@ export default class RequestBox extends Component {
                   responseExpirationDays={this.props.responseExpirationDays}
                   defaultUser={this.props.defaultUser}
                 />}
-            </Box>
+              </Box>
             </div>
           </AccordionDetails>
           </Accordion>
