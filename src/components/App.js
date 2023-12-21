@@ -6,7 +6,7 @@ import theme from '../containers/styles/theme';
 import { ThemeProvider } from '@mui/styles';
 import Launch from '../containers/Launch';
 import Index from '../containers/Index';
-
+import Gateway from '../containers/Gateway/Gateway';
 const isGhPages = process.env.REACT_APP_GH_PAGES === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
 const redirect = isGhPages ? '/#/index' : '/index';
@@ -24,7 +24,7 @@ const App = () => {
             </ThemeProvider>
           }
         />
-        <Route path="/" exact element={<RequestBuilder redirect={redirect} />} />
+        <Route path="/" exact element={<Gateway redirect={redirect} />} />
       </Routes>
     </Router>
   );
