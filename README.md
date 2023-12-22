@@ -16,6 +16,8 @@ This should open a browser window directed to the value set in `REACT_APP_URL`. 
 ## Versions
 This application requires node v14.
 
+## Keys 
+Embedded in the application are the public and provate keys used to generate and verify JSON Web Tokens (JWT) that are used to authenticate/authorize calls to a CDS-Hooks service.  The public key is contained in the public/.well-known/jwks.json document.  The private key is contained in src/keys/crdPrivateKey.js file.  The keys were generated from https://mkjwk.org/.  To update these keys you can generate a new key pair from this site, ensure that you request the Show X.509 option is set to yes. Once generated you can replace the public and private keys.  You will also need to update the src/utils/auth.js file with the corrisponding key information.  
 
 ### How To Override Defaults
 The .env file contains the default URI paths, these can be overwritten from the start command as follows:
