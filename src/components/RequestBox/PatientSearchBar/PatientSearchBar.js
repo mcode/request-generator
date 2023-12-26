@@ -24,20 +24,37 @@ export default function PatientSearchBar(props) {
         }
         return '';
     }
+    
+    function getFilteredLength(searchstring, listOfPatients) {
+        const filteredListOfPatients = listOfPatients[0].filter((element) => {
+            if (searchstring === '') {
+                return element;
+            }
+            else {
+                return element.name.toLowerCase().includes(searchstring);
+            }
+        });
+
+        return filteredListOfPatients.length;
+    }
 
     function patientSearchBar() {
         return (
             <Box className='search-box-container'>
-                <Autocomplete className='search-box'
-                    disablePortal
-                    id='search-box'
-                    onInputChange={(event, newInputValue) => {
-                        setInput(newInputValue.toLowerCase());
-                    }}
-                    options={listOfPatients[0].map(item => item.name)}
-                    renderInput={(params) => <TextField {...params}
-                        label='Search for a patient'
-                    />} />
+                <span className='search-header'>
+                    <p>Filter patient list</p>
+                    <Autocomplete className='search-box'
+                        disablePortal
+                        id='search-box'
+                        onInputChange={(event, newInputValue) => {
+                            setInput(newInputValue.toLowerCase());
+                        }}
+                        options={listOfPatients[0].map(item => item.name)}
+                        renderInput={(params) => <TextField {...params}
+                            label='Search'
+                        />} />
+                    <p>Showing {getFilteredLength(input, listOfPatients)} of {props.searchablePatients.length} records</p>
+                </span>
                 {displayFilteredPatientList(input, listOfPatients[0])}
             </Box>
         );
@@ -52,7 +69,6 @@ export default function PatientSearchBar(props) {
                 return element.name.toLowerCase().includes(searchstring);
             }
         });
-
         return (
             <Box>
                 {filteredListOfPatients.map(patient => {

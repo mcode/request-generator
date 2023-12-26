@@ -134,6 +134,10 @@ export default class PatientBox extends Component {
       }
     } else {
       this.updatePrefetchRequest(null, patient, this.props.defaultUser);
+      this.props.callback('request', {});
+      this.props.callback('code', null);
+      this.props.callback('codeSystem', null);
+      this.props.callback('display', null);
     }
 
     if (this.state.response) {
@@ -388,7 +392,6 @@ export default class PatientBox extends Component {
 
   render() {
     const patient = this.props.patient;
-    console.log('patient --- > ', patient);
     let name = '';
     if (patient.name) {
       name = <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>;

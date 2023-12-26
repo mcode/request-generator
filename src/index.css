@@ -15,8 +15,6 @@ body {
   box-shadow: none;
 }
 
-
-
 .floating-label {
   position: absolute;
   pointer-events: none;
@@ -307,11 +305,12 @@ input:not(:focus):not([value=""]):valid ~ .floating-label{
 }
 
 .nav-header{
-    margin-bottom: 10px;
-    height: 55px;
-    padding:10px;
-    border-bottom: 1px solid black;
-    background-color: #005B94;
+  margin-bottom: 10px;
+  display: flow;
+  height: 55px;
+  padding:10px;
+  border-bottom: 1px solid black;
+  background-color: #005B94;
 }
 
 .loading{

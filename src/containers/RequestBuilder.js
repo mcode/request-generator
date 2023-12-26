@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
-
+import { Button, Box, IconButton } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import DisplayBox from '../components/DisplayBox/DisplayBox';
-import ConsoleBox from '../components/ConsoleBox/ConsoleBox';
 import '../index.css';
 import '../components/ConsoleBox/consoleBox.css';
 import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
-import { types } from '../util/data.js';
+import { types, defaultValues } from '../util/data.js';
 import { createJwt, setupKeys } from '../util/auth';
 import env from 'env-var';
 import FHIR from 'fhirclient';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -19,11 +26,19 @@ export default class RequestBuilder extends Component {
       keypair: null,
       loading: false,
       logs: [],
-      patient: {},
+      patient: {}, 
+      expanded: false,
+      patientList: [],
       response: null,
+      code: null,
+      codeSystem: null,
+      display: null,
+      prefetchedResources: new Map(),
+      request: {},
       showSettings: false,
       token: null,
       client: this.props.client,
+      codeValues: defaultValues,
       // Configurable values
       alternativeTherapy: env.get('REACT_APP_ALT_DRUG').asBool(),
       baseUrl: env.get('REACT_APP_EHR_BASE').asString(),
@@ -63,6 +78,8 @@ export default class RequestBuilder extends Component {
     if (!this.state.client) {
       this.reconnectEhr();
     } else {
+      // Call patients on load of page
+      this.getPatients();
       this.setState({ baseUrl: this.state.client.state.serverUrl });
       this.setState({ ehrUrl: this.state.client.state.serverUrl });
     }
@@ -90,7 +107,14 @@ export default class RequestBuilder extends Component {
 
   updateStateElement = (elementName, text) => {
     this.setState({ [elementName]: text });
+    // if the patientFhirQuery is updated, make a call to get the patients
+    if (elementName === 'patientFhirQuery') {
+      setTimeout(() => {
+        this.getPatients();
+      }, 1000);
+    }
   };
+
 
   timeout = time => {
     let controller = new AbortController();
@@ -182,6 +206,48 @@ export default class RequestBuilder extends Component {
     this.requestBox.current.replaceRequestAndSubmit(resource);
   }
 
+  getPatients = () => {
+    this.props.client
+      .request(this.state.patientFhirQuery, { flat: true })
+      .then(result => {
+        this.setState({
+          patientList: result,
+        });
+      })
+      .catch(e => {
+        this.setState({
+          patientList: e
+        });
+      });
+  };
+
+  updateStateList = (elementName, text) => {
+    this.setState(prevState => {
+      return { [elementName]: [...prevState[elementName], text] };
+    });
+  };
+
+  updateStateMap = (elementName, key, text) => {
+    this.setState(prevState => {
+      if (!prevState[elementName][key]) {
+        prevState[elementName][key] = [];
+      }
+      return { [elementName]: { ...prevState[elementName], [key]: text } };
+    });
+  };
+
+  clearState = () => {
+    this.setState({
+      prefetchedResources: new Map(),
+      practitioner: {},
+      coverage: {},
+      response: {}
+    });
+  };
+  handleChange = () => (event, isExpanded) => {
+    this.setState({ expanded: isExpanded ? true: false});
+  };
+
   render() {
     return (
       <div>
@@ -203,6 +269,53 @@ export default class RequestBuilder extends Component {
             Reconnect EHR
           </button>
         </div>
+          <div style={{display: 'flex'}}>
+            <Accordion style={{width: '95%'}} expanded={this.state.expanded} onChange={this.handleChange()}>
+              <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+              style={{marginLeft: '45%'}}
+            >
+              <Button variant="contained" startIcon={<PersonIcon />}>
+                Select a patient
+              </Button>
+            </AccordionSummary>
+            <AccordionDetails>
+              {this.state.patientList.length > 0 && this.state.expanded ?
+                <div>
+                  <Box>
+                  {this.state.patientList instanceof Error
+                    ? this.renderError()
+                    : <PatientSearchBar
+                      getPatients = {this.getPatients}
+                      searchablePatients={this.state.patientList}
+                      client={this.props.client}
+                      callback={this.updateStateElement}
+                      callbackList={this.updateStateList}
+                      callbackMap={this.updateStateMap}
+                      // updatePrefetchCallback={PrefetchTemplate.generateQueries}
+                      clearCallback={this.clearState}
+                      ehrUrl={this.state.ehrUrl} // is this used?
+                      options={this.state.codeValues}
+                      responseExpirationDays={this.state.responseExpirationDays}
+                      defaultUser={this.state.defaultUser}
+                    />}
+                  </Box>
+                </div>
+                : <span></span>
+              }
+              
+            </AccordionDetails>
+            </Accordion>
+            <IconButton
+              color="primary"
+              onClick={() => this.getPatients()}
+              size="large"
+            >
+              <RefreshIcon fontSize="large" />
+            </IconButton>
+          </div>
         <div className="form-group container left-form">
           <div id="settings-header"></div>
           {this.state.showSettings && (
@@ -222,6 +335,13 @@ export default class RequestBuilder extends Component {
               fhirServerUrl={this.state.baseUrl}
               fhirVersion={'r4'}
               patientId={this.state.patient.id}
+              patient={this.state.patient}
+              request={this.state.request}
+              response={this.state.response}
+              code={this.state.code}
+              codeSystem={this.state.codeSystem}
+              display={this.state.display}
+              prefetchedResources={this.state.prefetchedResources}
               launchUrl={this.state.launchUrl}
               responseExpirationDays={this.state.responseExpirationDays}
               pimsUrl={this.state.pimsUrl}
@@ -233,12 +353,6 @@ export default class RequestBuilder extends Component {
               patientFhirQuery ={this.state.patientFhirQuery}
             />
           </div>
-          <br />
-
-          <br />
-          <br />
-          <br />
-          <ConsoleBox logs={this.state.logs} />
         </div>
 
         <div className="right-form">

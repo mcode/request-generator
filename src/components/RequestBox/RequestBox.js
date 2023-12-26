@@ -1,52 +1,18 @@
-import PersonIcon from '@mui/icons-material/Person';
-import { Box, Button, ButtonGroup, Modal } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
-import { defaultValues, shortNameMap, types } from '../../util/data';
+import { shortNameMap, types } from '../../util/data';
 import { getAge } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
 import './request.css';
 import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import PatientSearchBar from './PatientSearchBar/PatientSearchBar.js';
-
-// const style = {
-//   position: 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   flexDirection: 'column',
-//   width: '80%',
-//   height: '70%',
-//   overflowY: 'scroll',
-//   transform: 'translate(-50%, -50%)',
-//   display: 'flex',
-//   bgcolor: 'background.paper',
-//   border: '2px solid #000',
-//   borderBottom: '2px solid black',
-//   boxShadow: 24,
-//   p: 4,
-//   padding: '50px'
-// };
 export default class RequestBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false,
-      patientList: [],
-      patient: {},
-      prefetchedResources: new Map(),
-      codeValues: defaultValues,
-      code: null,
-      codeSystem: null,
-      display: null,
-      request: {},
       gatherCount: 0,
-      response: {}
     };
 
     this.renderRequestResources = this.renderRequestResources.bind(this);
@@ -60,8 +26,7 @@ export default class RequestBox extends Component {
 
   // TODO - see how to submit response for alternative therapy
   replaceRequestAndSubmit(request) {
-    this.setState({ request: request });
-    // Submit the cds hook request.
+    this.props.callback(request,request);    // Submit the cds hook request.
     this.submitOrderSign(request);
   }
 
@@ -69,14 +34,14 @@ export default class RequestBox extends Component {
 
   prepPrefetch() {
     const preppedResources = new Map();
-    Object.keys(this.state.prefetchedResources).forEach(resourceKey => {
+    Object.keys(this.props.prefetchedResources).forEach(resourceKey => {
       let resourceList = [];
-      if (Array.isArray(this.state.prefetchedResources[resourceKey])) {
-        resourceList = this.state.prefetchedResources[resourceKey].map(resource => {
+      if (Array.isArray(this.props.prefetchedResources[resourceKey])) {
+        resourceList = this.props.prefetchedResources[resourceKey].map(resource => {
           return resource;
         });
       } else {
-        resourceList = this.state.prefetchedResources[resourceKey];
+        resourceList = this.props.prefetchedResources[resourceKey];
       }
 
       preppedResources.set(resourceKey, resourceList);
@@ -85,27 +50,27 @@ export default class RequestBox extends Component {
   }
 
   submitPatientView = () => {
-    this.props.submitInfo(this.prepPrefetch(), null, this.state.patient, 'patient-view');
+    this.props.submitInfo(this.prepPrefetch(), null, this.props.patient, 'patient-view');
   };
 
   submitOrderSelect = () => {
-    if (!_.isEmpty(this.state.request)) {
+    if (!_.isEmpty(this.props.request)) {
       this.props.submitInfo(
         this.prepPrefetch(),
-        this.state.request,
-        this.state.patient,
+        this.props.request,
+        this.props.patient,
         'order-select'
       );
     }
   };
 
   submitOrderSign = request => {
-    this.props.submitInfo(this.prepPrefetch(), request, this.state.patient, 'order-sign');
+    this.props.submitInfo(this.prepPrefetch(), request, this.props.patient, 'order-sign');
   };
 
   submit = () => {
-    if (!_.isEmpty(this.state.request)) {
-      this.submitOrderSign(this.state.request);
+    if (!_.isEmpty(this.props.request)) {
+      this.submitOrderSign(this.props.request);
     }
   };
 
@@ -116,12 +81,12 @@ export default class RequestBox extends Component {
       this.state.prefetchCompleted
     ) {
       // if the prefetch contains a medicationRequests bundle
-      if (this.state.prefetchedResources.medicationRequests) {
+      if (this.props.prefetchedResources.medicationRequests) {
         this.submitPatientView();
       }
       // we could use this in the future to send order-select
       //// if the prefetch contains a request
-      //if (this.state.prefetchedResources.request) {
+      //if (this.props.prefetchedResources.request) {
       //  this.submitOrderSelect();
       //}
     }
@@ -131,50 +96,10 @@ export default class RequestBox extends Component {
     this.setState({ [elementName]: text });
   };
 
-  updateStateList = (elementName, text) => {
-    this.setState(prevState => {
-      return { [elementName]: [...prevState[elementName], text] };
-    });
-  };
-
-  updateStateMap = (elementName, key, text) => {
-    this.setState(prevState => {
-      if (!prevState[elementName][key]) {
-        prevState[elementName][key] = [];
-      }
-      return { [elementName]: { ...prevState[elementName], [key]: text } };
-    });
-  };
-
-  clearState = () => {
-    this.setState({
-      prefetchedResources: new Map(),
-      practitioner: {},
-      coverage: {},
-      response: {}
-    });
-  };
-
-  getPatients = () => {
-    this.props.client
-      .request(this.props.patientFhirQuery, { flat: true })
-      .then(result => {
-        this.setState({
-          patientList: result,
-          expanded: true
-        });
-      })
-      .catch(e => {
-        this.setState({
-          patientList: e
-        });
-      });
-  };
-
   emptyField = (<span className="empty-field">empty</span>);
 
   renderPatientInfo() {
-    const patient = this.state.patient;
+    const patient = this.props.patient;
     if (Object.keys(patient).length === 0) {
       return <div className="demographics"></div>;
     }
@@ -211,20 +136,20 @@ export default class RequestBox extends Component {
           <span style={{ fontWeight: 'bold' }}>Coding</span>
         </div>
         <div className="info lower-border">
-          Code: {this.state.code ? this.state.code : this.emptyField}
+          Code: {this.props.code ? this.props.code : this.emptyField}
         </div>
         <div className="info lower-border">
-          System: {this.state.codeSystem ? shortNameMap[this.state.codeSystem] : this.emptyField}
+          System: {this.props.codeSystem ? shortNameMap[this.props.codeSystem] : this.emptyField}
         </div>
         <div className="info lower-border">
-          Display: {this.state.display ? this.state.display : this.emptyField}
+          Display: {this.props.display ? this.props.display : this.emptyField}
         </div>
       </div>
     );
   }
 
   renderPrefetchedResources() {
-    const prefetchMap = new Map(Object.entries(this.state.prefetchedResources));
+    const prefetchMap = new Map(Object.entries(this.props.prefetchedResources));
     if (prefetchMap.size > 0) {
       return this.renderRequestResources(prefetchMap);
     }
@@ -300,7 +225,7 @@ export default class RequestBox extends Component {
   launchSmartOnFhirApp = () => {
     console.log('Launch SMART on FHIR App');
 
-    let userId = this.state.prefetchedResources?.practitioner?.id;
+    let userId = this.props.prefetchedResources?.practitioner?.id;
     if (!userId) {
       console.log(
         'Practitioner not populated from prefetch, using default from config: ' +
@@ -310,12 +235,12 @@ export default class RequestBox extends Component {
     }
 
     let link = {
-      appContext: 'user=' + userId + '&patient=' + this.state.patient.id,
+      appContext: 'user=' + userId + '&patient=' + this.props.patient.id,
       type: 'smart',
       url: this.props.smartAppUrl
     };
 
-    retrieveLaunchContext(link, this.state.patient.id, this.props.client.state).then(result => {
+    retrieveLaunchContext(link, this.props.patient.id, this.props.client.state).then(result => {
       link = result;
       console.log(link);
       // launch the application in a new window
@@ -341,10 +266,10 @@ export default class RequestBox extends Component {
       response = undefined;
 
     if (!this.isOrderNotSelected()) {
-      if (Object.keys(this.state.request).length > 0) {
-        order = `${this.state.request.resourceType}/${this.state.request.id}`;
-        if (this.state.request.insurance && this.state.request.insurance.length > 0) {
-          coverage = `${this.state.request.insurance[0].reference}`;
+      if (Object.keys(this.props.request).length > 0) {
+        order = `${this.props.request.resourceType}/${this.props.request.id}`;
+        if (this.props.request.insurance && this.props.request.insurance.length > 0) {
+          coverage = `${this.props.request.insurance[0].reference}`;
         }
       }
     }
@@ -357,8 +282,8 @@ export default class RequestBox extends Component {
       }
     }
 
-    if (Object.keys(this.state.response).length > 0) {
-      response = `QuestionnaireResponse/${this.state.response.id}`;
+    if (Object.keys(this.props.response).length > 0) {
+      response = `QuestionnaireResponse/${this.props.response.id}`;
     }
 
     if (order && response) {
@@ -375,7 +300,7 @@ export default class RequestBox extends Component {
 
     let linkCopy = Object.assign({}, link);
 
-    return retrieveLaunchContext(linkCopy, this.state.patient.id, this.props.client.state).then(
+    return retrieveLaunchContext(linkCopy, this.props.patient.id, this.props.client.state).then(
       result => {
         linkCopy = result;
         return linkCopy;
@@ -391,9 +316,9 @@ export default class RequestBox extends Component {
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
-      this.state.prefetchedResources.patient,
-      this.state.prefetchedResources.practitioner,
-      this.state.request
+      this.props.prefetchedResources.patient,
+      this.props.prefetchedResources.practitioner,
+      this.props.request
     );
     console.log(newRx);
     const serializer = new XMLSerializer();
@@ -423,24 +348,12 @@ export default class RequestBox extends Component {
   };
 
   isOrderNotSelected() {
-    return Object.keys(this.state.request).length === 0;
+    return Object.keys(this.props.request).length === 0;
   }
 
   isPatientNotSelected() {
-    return Object.keys(this.state.patient).length === 0;
+    return Object.keys(this.props.patient).length === 0;
   }
-
-  handleChange = () => (event, isExpanded) => {
-    if (isExpanded) {
-      this.getPatients();
-    } else {
-      this.setState({
-        patientList: [],
-        expanded: false
-      });
-    }
-    this.setState({ expanded: isExpanded ? true: false});
-  };
 
   render() {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
@@ -448,76 +361,38 @@ export default class RequestBox extends Component {
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
     return (
       <div>
-        <div className="request">
-          <Accordion expanded={this.state.expanded} onChange={this.handleChange()}>
-            <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Button variant="contained" onClick={this.getPatients} startIcon={<PersonIcon />}>
-              Select a patient
-            </Button>
-          </AccordionSummary>
-          <AccordionDetails>
-            <div>
-              <Box>
-              {this.state.patientList instanceof Error
-                ? this.renderError()
-                : <PatientSearchBar
-                  getPatients = {this.getPatients}
-                  searchablePatients={this.state.patientList}
-                  client={this.props.client}
-                  callback={this.updateStateElement}
-                  callbackList={this.updateStateList}
-                  callbackMap={this.updateStateMap}
-                  // updatePrefetchCallback={PrefetchTemplate.generateQueries}
-                  clearCallback={this.clearState}
-                  ehrUrl={this.props.ehrUrl} // is this used?
-                  options={this.state.codeValues}
-                  responseExpirationDays={this.props.responseExpirationDays}
-                  defaultUser={this.props.defaultUser}
-                />}
-              </Box>
-            </div>
-          </AccordionDetails>
-          </Accordion>
-          <div style={{paddingTop: '15px'}}>
-            <div className="request-header">
-              {this.state.patient.id ? (
-                <span>Patient ID: {this.state.patient.id}</span>
-              ) : (
-                <em>No patient selected</em>
-              )}
-            </div>
-            <div className='patient-info'>
-              {this.renderPatientInfo()}
-              {this.renderPrefetchedResources()}
-            </div>
-          </div>
-          {this.state.patient.id ? (
-          <div className="action-btns">
-            <InProgressFormBox
-              qrResponse={this.state.response}
-              relaunch={this.relaunch}
-            />
-            <ButtonGroup variant="outlined" aria-label="outlined button group">
-              <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-                Launch SMART on FHIR App
-              </Button>
-              <Button onClick={this.sendRx} disabled={disableSendRx}>
-                Send Rx to Pharmacy
-              </Button>
-              <Button onClick={this.submit} disabled={disableSendToCRD}>
-                Sign Order
-              </Button>
-            </ButtonGroup>
+        { this.props.patient.id ? (
+            <div className="request">
+              <div style={{paddingTop: '15px'}}>
+                <div className="request-header">
+                  <span>Patient ID: {this.props.patient.id}</span>
+                </div>
+                <div className='patient-info'>
+                  {this.renderPatientInfo()}
+                  {this.renderPrefetchedResources()}
+                </div>
+              </div>
+              <div className="action-btns">
+                <InProgressFormBox
+                  qrResponse={this.props.response}
+                  relaunch={this.relaunch}
+                />
+                <ButtonGroup variant="outlined" aria-label="outlined button group">
+                  <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
+                    Launch SMART on FHIR App
+                  </Button>
+                  <Button onClick={this.sendRx} disabled={disableSendRx}>
+                    Send Rx to Pharmacy
+                  </Button>
+                  <Button onClick={this.submit} disabled={disableSendToCRD}>
+                    Sign Order
+                  </Button>
+                </ButtonGroup>
+              </div>
           </div>
         ) : (
-          <span />
+          <span/>
         )}
-        </div>
-        
       </div>
     );
   }
