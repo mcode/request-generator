@@ -4,7 +4,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DisplayBox from '../components/DisplayBox/DisplayBox';
 import '../index.css';
-import '../components/ConsoleBox/consoleBox.css';
 import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';

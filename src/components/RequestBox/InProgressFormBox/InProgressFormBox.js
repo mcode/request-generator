@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography, ButtonGroup } from '@mui/material';
+import { Box, Button, Typography, ButtonGroup } from '@mui/material';
 import React from 'react';
 import './InProgressFormBoxStyle.css';
 
