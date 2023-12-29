@@ -30,8 +30,8 @@ Embedded in the application are the public and private keys used to generate and
 
 ### How To Override Defaults
 
-The .env file contains the default URI paths, these can be overwritten from the start command as follows:
-`REACT_APP_LAUNCH_URL=http://example.com PORT=6000 npm start` or by specifying the environment variables and desired values in a `.env.local`.
+The .env file contains the default URI paths, which can be overwritten from the start command as follows:
+a) `REACT_APP_LAUNCH_URL=http://example.com PORT=6000 npm start` or b) by specifying the environment variables and desired values in a `.env.local`.
 
 Following are a list of modifiable paths:
 
