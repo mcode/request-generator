@@ -35,7 +35,7 @@ const Gateway = props => {
     event.preventDefault();
     FHIR.oauth2.authorize({
       clientId: clientId,
-      scope: scope,
+      scope: scope.join(' '),
       redirectUri: props.redirect,
       iss: fhirUrl
     });
