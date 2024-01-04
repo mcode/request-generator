@@ -268,6 +268,18 @@ export default class RequestBuilder extends Component {
             Reconnect EHR
           </button>
         </div>
+        <div>
+          {/* <div id="settings-header"></div> */}
+          {this.state.showSettings && (
+            <div className='settings-box'>
+              <SettingsBox
+                state={this.state}
+                consoleLog={this.consoleLog}
+                updateCB={this.updateStateElement}
+              />
+            </div>
+            )}
+        </div>
           <div style={{display: 'flex'}}>
             <Accordion style={{width: '95%'}} expanded={this.state.expanded} onChange={this.handleChange()}>
               <AccordionSummary
@@ -316,14 +328,6 @@ export default class RequestBuilder extends Component {
             </IconButton>
           </div>
         <div className="form-group container left-form">
-          <div id="settings-header"></div>
-          {this.state.showSettings && (
-            <SettingsBox
-              state={this.state}
-              consoleLog={this.consoleLog}
-              updateCB={this.updateStateElement}
-            />
-          )}
           <div>
             {/*for the ehr launch */}
             <RequestBox

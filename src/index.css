@@ -325,3 +325,8 @@ input:not(:focus):not([value=""]):valid ~ .floating-label{
 .title {
   margin-bottom: 65px;
 }
+
+.settings-box {
+  width: 50%;
+  margin-left: 20px;
+}
