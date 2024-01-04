@@ -9,6 +9,7 @@ import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
 import { types, defaultValues } from '../util/data.js';
 import { createJwt, setupKeys } from '../util/auth';
+
 import env from 'env-var';
 import FHIR from 'fhirclient';
 import Accordion from '@mui/material/Accordion';
@@ -22,7 +23,6 @@ export default class RequestBuilder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      keypair: null,
       loading: false,
       logs: [],
       patient: {}, 
@@ -69,11 +69,6 @@ export default class RequestBuilder extends Component {
   }
 
   componentDidMount() {
-    const callback = keypair => {
-      this.setState({ keypair });
-    };
-
-    setupKeys(callback);
     if (!this.state.client) {
       this.reconnectEhr();
     } else {
@@ -153,19 +148,20 @@ export default class RequestBuilder extends Component {
       return;
     }
 
-    const createHeaders = () => {
-      const init = { 'Content-Type': 'application/json' };
-      if (this.state.generateJsonToken) {
-        const jwt = 'Bearer ' + createJwt(this.state.keypair, this.state.baseUrl, cdsUrl);
-        init.authorization = jwt;
-      }
-      return new Headers(init);
+    let baseUrl = this.state.baseUrl;
+
+    const headers = {
+      'Content-Type': 'application/json'
     };
+    if (this.state.generateJsonToken) {
+      const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
+      headers.authorization = jwt;
+    }
 
     try {
       fetch(cdsUrl, {
         method: 'POST',
-        headers: createHeaders(),
+        headers: new Headers(headers),
         body: JSON.stringify(json_request),
         signal: this.timeout(10).signal //Timeout set to 10 seconds
       })
@@ -353,7 +349,7 @@ export default class RequestBuilder extends Component {
               ref={this.requestBox}
               loading={this.state.loading}
               consoleLog={this.consoleLog}
-              patientFhirQuery ={this.state.patientFhirQuery}
+              patientFhirQuery={this.state.patientFhirQuery}
             />
           </div>
         </div>
