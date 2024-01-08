@@ -386,10 +386,10 @@ export default class RequestBox extends Component {
   }
 
   /**
-   * Send the NewRxRequestMessage to the Pharmacy Information System (PIMS)
+   * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
   sendRx = e => {
-    console.log('sendRx: ' + this.props.pimsUrl);
+    console.log('Sending NewRx to: ' + this.props.pimsUrl);
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
@@ -397,11 +397,13 @@ export default class RequestBox extends Component {
       this.state.prefetchedResources.practitioner,
       this.state.request
     );
+
+    console.log('Prepared NewRx:');
     console.log(newRx);
+
     const serializer = new XMLSerializer();
 
-    // send the message to the Pharmacy
-    this.props.consoleLog('Sending Rx to PIMS', types.info);
+    // Sending NewRx to the Pharmacy
     fetch(this.props.pimsUrl, {
       method: 'POST',
       //mode: 'no-cors',
@@ -412,14 +414,11 @@ export default class RequestBox extends Component {
       body: serializer.serializeToString(newRx)
     })
       .then(response => {
-        console.log('sendRx response: ');
+        console.log('Successfully sent NewRx to PIMS');
         console.log(response);
-        this.props.consoleLog('Successfully sent Rx to PIMS', types.info);
       })
       .catch(error => {
-        console.log('sendRx error: ');
-        this.props.consoleLog('Server returned error sending Rx to PIMS: ', types.error);
-        this.props.consoleLog(error.message);
+        console.log('sendRx Error - unable to send NewRx to PIMS: ');
         console.log(error);
       });
   };
@@ -451,7 +450,7 @@ export default class RequestBox extends Component {
               {this.state.patientList instanceof Error
                 ? this.renderError()
                 : <PatientSearchBar
-                  getPatients = {this.getPatients}
+                  getPatients={this.getPatients}
                   searchablePatients={this.state.patientList}
                   client={this.props.client}
                   callback={this.updateStateElement}
