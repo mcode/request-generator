@@ -7,6 +7,7 @@ import { ThemeProvider } from '@mui/styles';
 import Launch from '../containers/Launch';
 import Index from '../containers/Index';
 import Gateway from '../containers/Gateway/Gateway';
+import RegisterPage from './views/RegisterPage';
 const isGhPages = process.env.REACT_APP_GH_PAGES === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
 const redirect = isGhPages ? '/#/index' : '/index';
@@ -16,6 +17,7 @@ const App = () => {
       <Routes>
         <Route path="/launch" element={<Launch redirect={redirect} />} />
         <Route path="/index" element={<Index />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/patient-portal"
           element={
