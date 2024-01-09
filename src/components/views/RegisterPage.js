@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Box className={'container'}>
+      <Box className={'registerContainer'}>
         <Card sx={{ minWidth: 275 }}>
           <CardContent>
             <h1>Client ID Registration</h1>
