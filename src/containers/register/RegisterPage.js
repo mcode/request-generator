@@ -1,5 +1,15 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Button, Card, CardContent, FormControl, FormHelperText, IconButton, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  TextField,
+  Typography
+} from '@mui/material';
 import React, { useState } from 'react';
 import './RegisterPageStyle.css';
 
@@ -13,7 +23,7 @@ export default function RegisterPage(props) {
 
   function deleteClient(client) {
     const newClients = currentClients.filter(
-      (c) => !(c.name === client.name && c.client === client.client)
+      c => !(c.name === client.name && c.client === client.client)
     );
     localStorage.setItem('clients', JSON.stringify(newClients));
     setCurrentClients(newClients);
@@ -38,54 +48,59 @@ export default function RegisterPage(props) {
           <CardContent>
             <h1>Client ID Registration</h1>
             {props.callback ? <h6>Client ID not found. Please register the client ID.</h6> : ''}
-            <Typography variant='h5' component='div' color='text.secondary'>
+            <Typography variant="h5" component="div" color="text.secondary">
               Request Generator
             </Typography>
-            <br></br><br></br>
-            <form onSubmit={submit} autoComplete='off'>
-              <FormControl fullWidth={true} required={true} margin='normal'>
+            <br></br>
+            <br></br>
+            <form onSubmit={submit} autoComplete="off">
+              <FormControl fullWidth={true} required={true} margin="normal">
                 <TextField
-                  id='clientId'
-                  label='Client ID'
-                  aria-describedby='clientIdHelp'
+                  id="clientId"
+                  label="Client ID"
+                  aria-describedby="clientIdHelp"
                   value={clientId}
                   onChange={e => {
                     setClientId(e.target.value);
                   }}
                 />
-                <FormHelperText id='clientIdHelp'>
+                <FormHelperText id="clientIdHelp">
                   Clients must be registered with the FHIR server out of band.
                 </FormHelperText>
               </FormControl>
-              <FormControl fullWidth={true} required={true} margin='normal'>
+              <FormControl fullWidth={true} required={true} margin="normal">
                 <TextField
-                  id='fhirIss'
-                  label='ISS'
-                  aria-describedby='fhirIssHelp'
+                  id="fhirIss"
+                  label="ISS"
+                  aria-describedby="fhirIssHelp"
                   value={fhirUrl}
                   onChange={e => {
                     setFhirUrl(e.target.value);
                   }}
                 />
-                <FormHelperText id='fhirIssHelp'>
+                <FormHelperText id="fhirIssHelp">
                   The ISS is the base url of the FHIR server.
                 </FormHelperText>
               </FormControl>
-              <Button type='submit' variant='contained' disabled={clientId === '' || fhirUrl === ''}>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={clientId === '' || fhirUrl === ''}
+              >
                 {props.callback ? 'Submit and Retry' : 'Submit'}
               </Button>
             </form>
           </CardContent>
         </Card>
         <br></br>
-        <Box className='clientIds'>
-          <Typography variant='h5' component='div' color='text.secondary'>
+        <Box className="clientIds">
+          <Typography variant="h5" component="div" color="text.secondary">
             Existing Client Ids:
           </Typography>
 
           {currentClients.map((client, index) => {
             return (
-              <div key={index} className='clientIdList'>
+              <div key={index} className="clientIdList">
                 <span style={{ marginRight: '35px' }}>
                   <b>{client.name}</b>: {client.client}
                 </span>
