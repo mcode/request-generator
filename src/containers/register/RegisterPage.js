@@ -26,7 +26,7 @@ export default function RegisterPage(props) {
     localStorage.setItem('clients', JSON.stringify(newClients));
     if (props.callback) {
       event.preventDefault();
-       props.callback(); // try launching again
+      props.callback(); // try launching again
     }
     return false;
   }
@@ -37,6 +37,7 @@ export default function RegisterPage(props) {
         <Card sx={{ minWidth: 275 }}>
           <CardContent>
             <h1>Client ID Registration</h1>
+            {props.callback ? <h6>Client ID not found. Please register the client ID.</h6> : ''}
             <Typography variant='h5' component='div' color='text.secondary'>
               Request Generator
             </Typography>
@@ -71,7 +72,7 @@ export default function RegisterPage(props) {
                 </FormHelperText>
               </FormControl>
               <Button type='submit' variant='contained' disabled={clientId === '' || fhirUrl === ''}>
-                Submit
+                {props.callback ? 'Submit and Retry' : 'Submit'}
               </Button>
             </form>
           </CardContent>

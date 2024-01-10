@@ -7,7 +7,7 @@ import { ThemeProvider } from '@mui/styles';
 import Launch from '../containers/Launch';
 import Index from '../containers/Index';
 import Gateway from '../containers/Gateway/Gateway';
-import RegisterPage from '../containers/register/registerPage';
+import RegisterPage from '../containers/register/RegisterPage';
 const isGhPages = process.env.REACT_APP_GH_PAGES === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
 const redirect = isGhPages ? '/#/index' : '/index';
