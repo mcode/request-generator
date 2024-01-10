@@ -5,6 +5,12 @@ import queryString from 'querystring';
 import RegisterPage from './register/RegisterPage';
 
 const Launch = props => {
+  const [content, setContent] = useState(
+    <div className="loading">
+      <h1>Launching...</h1>
+    </div>
+  );
+  /*
   useEffect(() => {
     // this is a workaround for the fhir client not being able to pull values out of the
     // hash. Regex will look for different permutations of a hashrouter url /#/launch /#launch #launch /#launch
@@ -22,11 +28,7 @@ const Launch = props => {
       iss: iss,
       launch: launch
     });
-  }, []);
-
-  <div className="loading">
-    <h1>Launching...</h1>
-  </div>
+  }, []); */
 
   useEffect(() => {
     smartLaunch();
