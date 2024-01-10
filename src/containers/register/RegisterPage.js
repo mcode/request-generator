@@ -3,9 +3,9 @@ import { Box, Button, Card, CardContent, FormControl, FormHelperText, IconButton
 import React, { useState } from 'react';
 import './RegisterPageStyle.css';
 
-export default function RegisterPage() {
+export default function RegisterPage(props) {
   const [clientId, setClientId] = useState('');
-  const [fhirUrl, setFhirUrl] = useState('');
+  const [fhirUrl, setFhirUrl] = useState(props.fhirUrl || '');
 
   const [currentClients, setCurrentClients] = useState(
     JSON.parse(localStorage.getItem('clients') || '[]')
@@ -24,10 +24,10 @@ export default function RegisterPage() {
     const newClients = [...currentClients, { name: fhirUrl, client: clientId }];
     setCurrentClients(newClients);
     localStorage.setItem('clients', JSON.stringify(newClients));
-    /*if (props.callback) {
+    if (props.callback) {
       event.preventDefault();
        props.callback(); // try launching again
-    }*/
+    }
     return false;
   }
 
