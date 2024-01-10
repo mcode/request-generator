@@ -1,13 +1,15 @@
 import PersonIcon from '@mui/icons-material/Person';
 import { Box, Button, ButtonGroup, Modal } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
-import { defaultValues, shortNameMap, types } from '../../util/data';
+import { defaultValues, shortNameMap } from '../../util/data';
 import { getAge } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
-import './request.css';
 import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
+import './request.css';
 
 import PatientSearchBar from './PatientSearchBar/PatientSearchBar.js';
 
@@ -42,7 +44,8 @@ export default class RequestBox extends Component {
       display: null,
       request: {},
       gatherCount: 0,
-      response: {}
+      response: {},
+      open: false
     };
 
     this.renderRequestResources = this.renderRequestResources.bind(this);
@@ -386,10 +389,10 @@ export default class RequestBox extends Component {
   }
 
   /**
-   * Send the NewRxRequestMessage to the Pharmacy Information System (PIMS)
+   * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
   sendRx = e => {
-    console.log('sendRx: ' + this.props.pimsUrl);
+    console.log('Sending NewRx to: ' + this.props.pimsUrl);
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
@@ -397,11 +400,13 @@ export default class RequestBox extends Component {
       this.state.prefetchedResources.practitioner,
       this.state.request
     );
+
+    console.log('Prepared NewRx:');
     console.log(newRx);
+
     const serializer = new XMLSerializer();
 
-    // send the message to the Pharmacy
-    this.props.consoleLog('Sending Rx to PIMS', types.info);
+    // Sending NewRx to the Pharmacy
     fetch(this.props.pimsUrl, {
       method: 'POST',
       //mode: 'no-cors',
@@ -412,14 +417,12 @@ export default class RequestBox extends Component {
       body: serializer.serializeToString(newRx)
     })
       .then(response => {
-        console.log('sendRx response: ');
+        console.log('Successfully sent NewRx to PIMS');
         console.log(response);
-        this.props.consoleLog('Successfully sent Rx to PIMS', types.info);
+        this.handleRxResponse();
       })
       .catch(error => {
-        console.log('sendRx error: ');
-        this.props.consoleLog('Server returned error sending Rx to PIMS: ', types.error);
-        this.props.consoleLog(error.message);
+        console.log('sendRx Error - unable to send NewRx to PIMS: ');
         console.log(error);
       });
   };
@@ -432,10 +435,17 @@ export default class RequestBox extends Component {
     return Object.keys(this.state.patient).length === 0;
   }
 
+  // SnackBar 
+  handleRxResponse = () => this.setState({ open: true });
+
+  handleClose = () => this.setState({ open: false });
+
+
   render() {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
+    const { open } = this.state;
     return (
       <div>
         <div className="request">
@@ -451,7 +461,7 @@ export default class RequestBox extends Component {
               {this.state.patientList instanceof Error
                 ? this.renderError()
                 : <PatientSearchBar
-                  getPatients = {this.getPatients}
+                  getPatients={this.getPatients}
                   searchablePatients={this.state.patientList}
                   client={this.props.client}
                   callback={this.updateStateElement}
@@ -500,6 +510,24 @@ export default class RequestBox extends Component {
                 Sign Order
               </Button>
             </ButtonGroup>
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+              open={open}
+              onClose={this.handleClose}
+              autoHideDuration={6000}
+            >
+              <MuiAlert
+                onClose={this.handleClose}
+                severity="success"
+                elevation={6}
+                variant="filled"
+              >
+                Success! NewRx Recieved By Pharmacy
+              </MuiAlert>
+            </Snackbar>
           </div>
         ) : (
           <span />
