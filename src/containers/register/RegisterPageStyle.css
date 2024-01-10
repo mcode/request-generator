@@ -1,0 +1,19 @@
+body {
+    background-color: #F5F5F7;
+}
+
+.registerContainer {
+    max-width:800px;
+    margin: 0;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+}
+
+.clientIds {
+    text-align: center;
+}
+.clientIdList {
+    text-align: center;
+}
