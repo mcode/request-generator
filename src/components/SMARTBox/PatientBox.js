@@ -118,7 +118,7 @@ export default class PatientBox extends Component {
 
   updateValues(patient) {
     this.props.callback('patient', patient);
-    this.props.callback('openPatient', false);
+    this.props.callback('expanded', false);
     this.props.clearCallback();
     if (this.state.request) {
       const request = JSON.parse(this.state.request);
@@ -134,6 +134,10 @@ export default class PatientBox extends Component {
       }
     } else {
       this.updatePrefetchRequest(null, patient, this.props.defaultUser);
+      this.props.callback('request', {});
+      this.props.callback('code', null);
+      this.props.callback('codeSystem', null);
+      this.props.callback('display', null);
     }
 
     if (this.state.response) {
@@ -323,7 +327,6 @@ export default class PatientBox extends Component {
   }
 
   getRequests() {
-    console.log(this.props.client);
     const patientId = this.props.patient.id;
     this.getDeviceRequest(patientId);
     this.getServiceRequest(patientId);
