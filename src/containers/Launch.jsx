@@ -1,4 +1,5 @@
 import env from 'env-var';
+import queryString from 'querystring';
 import FHIR from 'fhirclient';
 import React, { memo, useEffect, useState } from 'react';
 import RegisterPage from './register/RegisterPage';
@@ -25,8 +26,11 @@ const Launch = props => {
       }
     }
     const urlSearchString = window.location.search;
-    const params = new URLSearchParams(urlSearchString);
-    const iss = params.get('iss');
+    const params = queryString.parse((window.location.hash || '').replace(/\/?#\/?launch\?/, ''));
+    const iss = params.iss;
+    console.log('iss: ' + iss);
+    const launch = params.launch;
+    console.log('launch: ' + launch);
     if (iss) {
       const storedClient = clients.find(e => {
         return e.name == iss;
@@ -39,7 +43,9 @@ const Launch = props => {
           .authorize({
             clientId: clientId,
             scope: env.get('REACT_APP_CLIENT_SCOPES').asString(),
-            redirectUri: '/index'
+            redirectUri: props.redirect,
+            iss: iss,
+            launch: launch
           })
           .catch(e => {
             console.log(e);

@@ -385,10 +385,12 @@ export default class RequestBox extends Component {
                 </div>
               </div>
               <div className="action-btns">
-                <InProgressFormBox
-                  qrResponse={this.props.response}
-                  relaunch={this.relaunch}
-                />
+                {Object.keys(this.props.response).length ?
+                  <InProgressFormBox
+                    qrResponse={this.props.response}
+                    relaunch={this.relaunch}
+                  />
+                : <span />}
                 <ButtonGroup variant="outlined" aria-label="outlined button group">
                   <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
                     Launch SMART on FHIR App
