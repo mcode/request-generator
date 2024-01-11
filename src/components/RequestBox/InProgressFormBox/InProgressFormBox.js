@@ -4,7 +4,7 @@ import './InProgressFormBoxStyle.css';
 
 export default function InProgressFormBox(props) {
     return (
-        props.qrResponse.questionnaire ? (
+        props.qrResponse?.questionnaire ? (
                 <Box className={'inprogress-container'}>
                     <Typography variant='h6' color='text.primary' gutterBottom>
                         In Progress Form
