@@ -15,8 +15,6 @@ body {
   box-shadow: none;
 }
 
-
-
 .floating-label {
   position: absolute;
   pointer-events: none;
@@ -306,11 +304,30 @@ input:not(:focus):not([value=""]):valid ~ .floating-label{
 }
 
 .nav-header{
-    margin-bottom: 10px;
-    height: 55px;
-    padding:10px;
-    border-bottom: 1px solid black;
-    background-color: #005B94;
+  margin-bottom: 10px;
+  display: flow;
+  height: 55px;
+  padding:10px;
+  border-bottom: 1px solid black;
+  background-color: #005B94;
+}
+
+.loading{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  margin-bottom: 65px;
+}
+
+.settings-box {
+  width: 50%;
+  margin-left: 20px;
 }
 .decision-card {
     padding: 15px;
@@ -387,84 +404,6 @@ td, th{
   padding:0px 4px;
   border:1px solid;
 }
-.consoleMain{
-    border-width:1px 5px 3px 5px;
-    border-style: solid solid solid solid;
-    border-color: black;
-    background-color: #333333;
-    color:white;
-    overflow-y:scroll;
-    overflow-x: wrap;
-    word-break:break-all;
-    font-family: 'Courier New', Courier, monospace;
-    transition: all .2s ease;
-    /* transition-duration: .2s; */
-    transition-delay: .25s;
-}
-.resize{
-    resize: vertical;
-    transition-duration:0s;
-    transition-delay:0s;
-}
-.showConsole{
-    height:200px;
-
-
-}
-.hideConsole{
-    resize:none;
-    height:0px !important;
-    border-width: 0px;
-    transition-property: all;
-    transition-duration: .2s;
-    transition-delay: 0s;
-}
-
-.consoleHeader{
-    border: 3px solid black;
-    background-color: black;
-    color: white;
-    margin-top: 30px;
-    font-family: 'Courier New', Courier, monospace;
-    display:block;
-    font-size: 18px;
-    text-align: center;
-    transition-property: all;
-    transition-duration: .2s;
-    transition-delay: 0s;
-}
-
-.showHeader{
-    width:100%;
-}
-
-.collapseHeader{
-    width: 250px;
-    color: black;
-    text-align:center;
-    border-width: 1px 1px 1px 1px;
-    background-color: white;
-    transition-property: all;
-    transition-duration: .2s;
-    transition-delay: .25s;
-}
-
-.showHeader:hover ~ .resize{
-    transition-delay:.25s;
-    transition-duration:.4s;
-}
-
-.errorClass{
-    color:#dc3545;
-}
-
-.warningClass{
-    color: #ffc107;
-}
-
-.infoClass{
-    color: #17a2b8;
-}
 
 .setting-input {
     margin: 1px 0 10px 0;
@@ -507,112 +446,12 @@ td, th{
     color: #858282;
 }
 
-iframe{
-    width:100%;
-    height:100%;
-}
-html{
-    font-size: 14px;
-}
-
-.patient-selection-box{
-    width:100%;
-    padding:10px 10px 15px 10px;
-    flex:1 1;
-    background-color: #ddd;
-    display: grid;
-    grid-template-columns: 15% 35% 35% 10%;
-    grid-column-gap: 5px;
-    -webkit-column-gap: 5px;
-            column-gap: 5px;
-}
-
-.patient-box{
-    border-bottom: 2px solid black;
-}
-.patient-header{
-    color:white;
-    background-color: #535353;
-    padding: 10px;
-
-}
-.smartExit{
-
-    height:24px;
-    border-style: solid;
-    border-color:black;
-    background-color: #d9534f;
-    color:white;
-    font-family: 'Courier New', Courier, monospace;
-    border-width: 0px 0px 0px 1px;
-    float:right;
-}
-
-.smartHeader {
-    background-color: #5f636a;
-    display:block;
-    border-bottom: 1px solid black;
-    height:25px;
-}
-.smartMinimize{
-    position:absolute;
-    right:-25px;
-    border: 2px solid gray;
-    width:27px;
-    top:21px;
-}
-
-.minimizedFrame{
-    border-style: solid;
-    border-color: blue gray gray gray;
-    border-width: 2px;
-    padding: 2px;
-    margin-left: 10px;
-}
-
-.more-info {
-    float:right;
-}
-
-.patient-info {
-    display:inline-block;
-}
-
-.request-info {
-    display: inherit;
-
-}
-
-.ehr-setting {
-    margin: 10px;
-}
-
-.ui.header.text, .sub.header {
-    text-align: left;
-}
-.ui.header.text {
-    font-size: 1em;
-}
-
-.select-btn {
-    height: 40px;
-    align-self: center;
-}
-
-.emptyForm {
-    margin-left: 8px;
-    color: dimgray;
-    font-style: italic;
-}
-
-.ui.fluid.dropdown {
-    height: -webkit-fit-content;
-    height: -moz-fit-content;
-    height: fit-content;
-}
-
-.ui.dropdown>.text {
-    display: block;
+.inprogress-container {
+    background-color:#f8f8f8;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding:20px;
+    margin:20px 0 20px 0;
 }
 .request-header{
     margin-top: 10px;
@@ -628,10 +467,10 @@ html{
 
 .request {
     border: 1px solid black;
-    height:530px;
+    height: auto;
     padding: 10px;
     border-radius: 5px;
-    background-color: rgb(248, 248, 248)
+    background-color: rgb(248, 248, 248);
 }
 
 .select-button{
@@ -739,6 +578,157 @@ html{
 .empty-field {
     color: dimgrey;
     font-style: italic;
+}
+
+.patient-info {
+    margin: 5px;
+}
+iframe{
+    width:100%;
+    height:100%;
+}
+html{
+    font-size: 14px;
+}
+
+.patient-selection-box{
+    width:100%;
+    padding:10px 10px 15px 10px;
+    flex:1 1;
+    background-color: #ddd;
+    display: grid;
+    grid-template-columns: 15% 35% 35% 10%;
+    grid-column-gap: 5px;
+    column-gap: 5px;
+}
+
+.patient-box{
+    padding-bottom:10px;
+}
+.patient-header{
+    color:white;
+    background-color: #535353;
+    padding: 10px;
+
+}
+.smartExit{
+
+    height:24px;
+    border-style: solid;
+    border-color:black;
+    background-color: #d9534f;
+    color:white;
+    font-family: 'Courier New', Courier, monospace;
+    border-width: 0px 0px 0px 1px;
+    float:right;
+}
+
+.smartHeader {
+    background-color: #5f636a;
+    display:block;
+    border-bottom: 1px solid black;
+    height:25px;
+}
+.smartMinimize{
+    position:absolute;
+    right:-25px;
+    border: 2px solid gray;
+    width:27px;
+    top:21px;
+}
+
+.minimizedFrame{
+    border-style: solid;
+    border-color: blue gray gray gray;
+    border-width: 2px;
+    padding: 2px;
+    margin-left: 10px;
+}
+
+.more-info {
+    float:right;
+}
+
+.patient-info {
+    display:inline-block;
+}
+
+.request-info {
+    display: inherit;
+
+}
+
+.ehr-setting {
+    margin: 10px;
+}
+
+.ui.header.text, .sub.header {
+    text-align: left;
+}
+.ui.header.text {
+    font-size: 1em;
+}
+
+.select-btn {
+    height: 40px;
+    align-self: center;
+    margin-top: 25px !important;
+}
+
+.emptyForm {
+    margin-left: 8px;
+    color: dimgray;
+    font-style: italic;
+}
+
+.ui.fluid.dropdown {
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+}
+
+.ui.dropdown>.text {
+    display: block;
+}
+.patients {
+    padding: 5px;
+}
+
+.search-box {
+    width: 75%;
+    margin: 0px 10px 25px 20px;
+}
+
+.search-box-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly
+}
+
+.search-header {
+    display: flex;
+    align-items: center;
+}
+body {
+    background-color: #F5F5F7;
+}
+
+.registerContainer {
+    max-width:800px;
+    margin: 0;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+}
+
+.clientIds {
+    text-align: center;
+}
+.clientIdList {
+    text-align: center;
 }
 
 /*# sourceMappingURL=main.css.map*/
