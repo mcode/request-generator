@@ -1,0 +1,14 @@
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "d": "boatWqmVCQvm8wapC7XIF33oydjzXUrb6Mwz4XclkXHCSEYtdxj345LMwFJQAvrN",
+      "use": "sig",
+      "crv": "P-384",
+      "kid": "zGe023HzCFfY7NPb04EGvRDP1oYsTOtLNCNjDgr66AI",
+      "x": "GJ1EKKadP512kbQLAhu3qftADevkhCcaOFFZi376S8dvhjZU9vxNy3wplJv_GiOr",
+      "y": "-0nhaXoadjGOAOuMp4ekU7ricjF6So2n57k0N-VrJ9hqA-A0PhnShrmGQdBIEKah",
+      "alg": "ES384"
+    }
+  ]
+}

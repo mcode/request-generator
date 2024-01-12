@@ -86,6 +86,7 @@ html{
 .select-btn {
     height: 40px;
     align-self: center;
+    margin-top: 25px !important;
 }
 
 .emptyForm {
