@@ -9,7 +9,7 @@ import RegisterPage from '../containers/register/RegisterPage';
 import theme from '../containers/styles/theme';
 const isGhPages = process.env.REACT_APP_GH_PAGES === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
-const redirect = isGhPages ? '/#/index' : '/index';
+const redirect = isGhPages ? '/request-generator/#/index' : '/index';
 const App = () => {
   return (
     <Router>
