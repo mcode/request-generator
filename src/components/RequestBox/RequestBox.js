@@ -422,7 +422,7 @@ export default class RequestBox extends Component {
                 elevation={6}
                 variant="filled"
               >
-                Success! NewRx Recieved By Pharmacy
+                Success! NewRx Received By Pharmacy
               </MuiAlert>
             </Snackbar>
       </div>
