@@ -28,7 +28,7 @@ export default class RequestBuilder extends Component {
       patient: {}, 
       expanded: false,
       patientList: [],
-      response: null,
+      response: {},
       code: null,
       codeSystem: null,
       display: null,
@@ -298,6 +298,12 @@ export default class RequestBuilder extends Component {
                       getPatients = {this.getPatients}
                       searchablePatients={this.state.patientList}
                       client={this.props.client}
+                      pimsUrl={this.state.pimsUrl}
+                      prefetchedResources={this.state.prefetchedResources}
+                      request={this.state.request}
+                      response={this.state.response}
+                      submitInfo={this.submit_info}
+                      launchUrl={this.state.launchUrl}
                       callback={this.updateStateElement}
                       callbackList={this.updateStateList}
                       callbackMap={this.updateStateMap}

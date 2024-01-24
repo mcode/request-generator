@@ -15,7 +15,7 @@ html{
     justify-content: space-between;
 }
 .patient-info {
-    display:inline-block;
+    display: flex;
 }
 .button-options {
     display: flex;

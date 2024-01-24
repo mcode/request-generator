@@ -78,6 +78,12 @@ export default function PatientSearchBar(props) {
                                 key={patient.id}
                                 patient={props.searchablePatients.find(item => item.id === patient.id)}
                                 client={props.client}
+                                pimsUrl={props.pimsUrl}
+                                prefetchedResources={props.prefetchedResources}
+                                request={props.request}
+                                response={props.response}
+                                launchUrl={props.launchUrl}
+                                submitInfo={props.submitInfo}
                                 callback={props.callback}
                                 callbackList={props.callbackList}
                                 callbackMap={props.callbackMap}

@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import { getAge, getDrugCodeFromMedicationRequest } from '../../util/fhir';
 import './smart.css';
-import { Button, IconButton } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import { Button } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
 import MedicationIcon from '@mui/icons-material/Medication';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -16,6 +11,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { retrieveLaunchContext } from '../../util/util';
 
 export default class PatientBox extends Component {
   constructor(props) {
@@ -48,7 +44,6 @@ export default class PatientBox extends Component {
     this.getQuestionnaireTitles = this.getQuestionnaireTitles.bind(this);
     this.makeQROption = this.makeQROption.bind(this);
     this.handleResponseChange = this.handleResponseChange.bind(this);
-    this.makeDropdown = this.makeDropdown.bind(this);
   }
 
   componentDidMount() {
@@ -91,30 +86,6 @@ export default class PatientBox extends Component {
     return code;
   }
 
-  makeDropdown(options, label, stateVar, stateChange) {
-    return (
-      <Box sx={{ minWidth: 120 }}>
-        <FormControl fullWidth>
-          <InputLabel>{label}</InputLabel>
-          <Select
-            labelId={`${label}-label`}
-            value={stateVar}
-            label={label}
-            data-testid="dropdown-box"
-            onChange={stateChange}
-          >
-            {options.map(op => {
-              return (
-                <MenuItem key={op.key} value={op.value}>
-                  {op.text}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </Box>
-    );
-  }
 
   makeOption(request, options) {
     const code = this.getCoding(request);
@@ -155,16 +126,19 @@ export default class PatientBox extends Component {
 
     if (this.state.response) {
       const response = JSON.parse(this.state.response);
-      this.updateQRResponse(patient, response);
+      this.updateQRResponse(response);
     }
   }
 
-  updateQRResponse(patient, response) {
+  updatePatient(patient) {
+    this.props.callback('patient', patient);
+  }
+
+  updateQRResponse(response) {
     this.props.callback('response', response);
   }
 
   fetchResources(queries) {
-    console.log(queries);
     var requests = [];
     this.props.callback('prefetchCompleted', false);
     queries.forEach((query, queryKey) => {
@@ -308,8 +282,9 @@ export default class PatientBox extends Component {
       });
   }
 
-  handleRequestChange(e) {
-    const data = e.target.value;
+  handleRequestChange(data, patient) {
+    // const data = e.target.value;
+    console.log('data in request vchange is -- > ', data);
     if (data) {
       let coding = this.getCoding(JSON.parse(data));
       this.setState({
@@ -319,6 +294,18 @@ export default class PatientBox extends Component {
         display: coding.display,
         response: ''
       });
+      // update prefetch request for the medication
+      const request = JSON.parse(data);
+      if (
+        request.resourceType === 'DeviceRequest' ||
+        request.resourceType === 'ServiceRequest' ||
+        request.resourceType === 'MedicationRequest' ||
+        request.resourceType === 'MedicationDispense'
+      ) {
+        this.updatePrefetchRequest(request, patient, this.props.defaultUser);
+      } else {
+        this.props.clearCallback();
+      }
     } else {
       this.setState({
         request: ''
@@ -326,12 +313,13 @@ export default class PatientBox extends Component {
     }
   }
 
-  handleResponseChange(e) {
-    const data = e.target.value;
+  handleResponseChange(data) {
     if (data) {
       this.setState({
         response: data
       });
+      const response = JSON.parse(data);
+      this.updateQRResponse(response);
     } else {
       this.setState({
         response: ''
@@ -396,15 +384,84 @@ export default class PatientBox extends Component {
 
   makeQROption(qr) {
     const questionnaireTitle = this.state.questionnaireTitles[qr.questionnaire];
-    const display = `${questionnaireTitle}: created at ${qr.authored}`;
+    // const display = `${questionnaireTitle}: created at ${qr.authored}`;
     return {
       key: qr.id,
-      text: display,
+      text: questionnaireTitle,
+      time: qr.authored,
       value: JSON.stringify(qr)
     };
   }
 
-  makeTable(columns, options, type) {
+  isOrderNotSelected() {
+    return Object.keys(this.props.request).length === 0;
+  }
+
+  /**
+   * Launch In progress From
+  */
+
+  relaunch = (data) => {
+    this.handleResponseChange(data);
+    this.props.callback('expanded', false);
+    this.buildLaunchLink(data).then(link => {
+      //e.preventDefault();
+      window.open(link.url, '_blank');
+    });
+  };
+
+  async buildLaunchLink(data) {
+    // build appContext and URL encode it
+    let appContext = '';
+    let order = undefined,
+      coverage = undefined,
+      response = undefined;
+
+    if (!this.isOrderNotSelected()) {
+      if (Object.keys(this.props.request).length > 0) {
+        order = `${this.props.request.resourceType}/${this.props.request.id}`;
+        if (this.props.request.insurance && this.props.request.insurance.length > 0) {
+          coverage = `${this.props.request.insurance[0].reference}`;
+        }
+      }
+    }
+
+    if (order) {
+      appContext += `order=${order}`;
+
+      if (coverage) {
+        appContext += `&coverage=${coverage}`;
+      }
+    }
+
+    const resp = JSON.parse(data);
+    if (Object.keys(resp).length > 0) {
+      response = `QuestionnaireResponse/${resp.id}`;
+    }
+
+    if (order && response) {
+      appContext += `&response=${response}`;
+    } else if (!order && response) {
+      appContext += `response=${response}`;
+    }
+
+    const link = {
+      appContext: encodeURIComponent(appContext),
+      type: 'smart',
+      url: this.props.launchUrl
+    };
+
+    let linkCopy = Object.assign({}, link);
+
+    const result = await retrieveLaunchContext(linkCopy, this.props.patient.id, this.props.client.state);
+    linkCopy = result;
+    return linkCopy;
+  }
+
+  formIsSelected(value) {
+    return this.state.response !== value;
+  }
+  makeResponseTable(columns, options, type, patient) {
     return (
       <TableContainer key={type} component={Paper} sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}>
         <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
@@ -431,7 +488,49 @@ export default class PatientBox extends Component {
                   {row.name}
                 </TableCell>
                 <TableCell>{row.code}</TableCell>
-                <TableCell align="right"><Button>hi</Button></TableCell>
+                <TableCell align="right">
+                  <Button onClick={() => this.handleRequestChange(row.value, patient)}>Select Medication</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+
+  makeQuestionnaireTable(columns, options, type, patient) {
+    return (
+      <TableContainer key={type} component={Paper} sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}>
+        <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
+          <TableHead sx={{ borderBottom: '1px solid #535353'}}>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ border: 0 }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {options.map((row) => (
+              <TableRow
+                key={row.key}
+                sx={{ 'td, th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.text}
+                </TableCell>
+                <TableCell>{row.time}</TableCell>
+                <TableCell align="right">
+                  <Button onClick={() => this.relaunch(row.value)}>
+                    Open In-Progress Form
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -456,28 +555,23 @@ export default class PatientBox extends Component {
     // add all of the requests to the list of options
     let options = [];
     let responseOptions = [];
-    let returned = false;
     if (this.state.deviceRequests.data) {
-      returned = true;
       this.state.deviceRequests.data.forEach(e => {
         this.makeOption(e, options);
       });
     }
     if (this.state.serviceRequests.data) {
-      returned = true;
       this.state.serviceRequests.data.forEach(e => {
         this.makeOption(e, options);
       });
     }
     if (this.state.medicationRequests.data) {
-      returned = true;
       this.state.medicationRequests.data.forEach(e => {
         this.makeOption(e, options);
       });
     }
 
     if (this.state.medicationDispenses.data) {
-      returned = true;
       this.state.medicationDispenses.data.forEach(e => {
         this.makeOption(e, options);
       });
@@ -485,11 +579,8 @@ export default class PatientBox extends Component {
 
     if (this.state.questionnaireResponses.data) {
       responseOptions = this.state.questionnaireResponses.data.map(qr => this.makeQROption(qr));
-      returned = true;
     }
 
-    console.log('options -- > ', options);
-    console.log('responseOptions -- > ', responseOptions);
     const medicationColumns = [
       { id: 'name', label: 'Medication'},
       { id: 'code', label: 'Request #'},
@@ -497,15 +588,13 @@ export default class PatientBox extends Component {
     ];
 
     const questionnaireColumns = [
-      { id: 'name', label: 'Medication'},
-      { id: 'code', label: 'Request #'},
+      { id: 'name', label: 'Title'},
+      { id: 'time', label: 'Created'},
       { id: 'action', label: ''}
     ];
 
-    let noResults = 'No results found.';
-    if (!returned) {
-      noResults = 'Loading...';
-    }
+    const medicationTooltip = options.length === 0 ? 'No medications found.' : `${options.length} medications available`;
+    const formTooltip = this.state.numInProgressForms === 0 ? 'No In-Progress Forms' : 'Open In-Progress Forms';
 
     return (
       <div key={patient.id} className="patient-box">
@@ -527,69 +616,39 @@ export default class PatientBox extends Component {
           </div>
           <div className="button-options">
           { this.state.showMedications ? 
-            // <div className="request-info">
-            //   <span style={{ fontWeight: 'bold', marginRight: '5px', padding: '5px' }}>Request:</span>
-            //   {!options.length && returned ? (
-            //     <span className="emptyForm">No requests</span>
-            //   ) : (
-            //     this.makeDropdown(
-            //       options,
-            //       'Select a medication request',
-            //       this.state.request,
-            //       this.handleRequestChange
-            //     )
-            //   )}
-            // </div>
             <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} onClick={() => this.setState({ showMedications: false })}>Close Medications</Button>
-          : <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} onClick={() => this.setState({ showMedications: true, showQuestionnaires: false })}>Request New Medication</Button>}
+          : <Tooltip title={medicationTooltip} placement="top">
+            <span>
+              <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} disabled={options.length === 0} onClick={() => {
+                this.updatePatient(patient);
+                this.setState({ showMedications: true, showQuestionnaires: false });
+              }}>Request New Medication</Button>
+            </span>
+            </Tooltip>}
           { this.state.showQuestionnaires ? 
-            // <div className="request-info">
-            //   <span style={{ fontWeight: 'bold', marginRight: '5px', padding: '5px' }}>
-            //     In Progress Form:
-            //     <IconButton
-            //       color="primary"
-            //       style={{ padding: '0px 5px' }}
-            //       onClick={this.getResponses}
-            //     >
-            //       <RefreshIcon />
-            //     </IconButton>
-            //   </span>
-            //   {!responseOptions.length && returned ? (
-            //     <span className="emptyForm">No in progress forms</span>
-            //   ) : (
-            //     this.makeDropdown(
-            //       responseOptions,
-            //       'Choose an in-progress form',
-            //       this.state.response,
-            //       this.handleResponseChange
-            //     )
-            //   )}
-            // </div>
             <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} onClick={() => this.setState({ showQuestionnaires: false })}>Close In Progress Forms</Button>
-          : <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} onClick={() => this.setState({ showQuestionnaires: true, showMedications: false })}>{this.state.numInProgressForms} Form(s) In Progress</Button>}
-          
-          <Button
-            variant="outlined"
-            size="small"
-            className="select-btn"
-            onClick={() => this.updateValues(patient)}
-          >
-            Select
-          </Button>
-
+          :
+          <Tooltip title={formTooltip} placement="top">
+            <span>
+              <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} disabled={this.state.numInProgressForms === 0} onClick={() => {
+              this.updatePatient(patient);
+              this.setState({ showQuestionnaires: true, showMedications: false });
+            }}>{this.state.numInProgressForms} Form(s) In Progress</Button> 
+            </span>
+          </Tooltip> 
+          }
           </div>
         </div>
         { this.state.showMedications ?
           <div className='patient-table-info'>
-            { this.makeTable(medicationColumns, options, 'medication') }
+            { this.makeResponseTable(medicationColumns, options, 'medication', patient) }
           </div>
         : <span />}
         { this.state.showQuestionnaires ?
           <div className='patient-table-info'>
-            { this.makeTable(questionnaireColumns, responseOptions, 'questionnaire') }
+            { this.makeQuestionnaireTable(questionnaireColumns, responseOptions, 'questionnaire', patient) }
           </div>
         : <span />}
-        
       </div>
     );
   }

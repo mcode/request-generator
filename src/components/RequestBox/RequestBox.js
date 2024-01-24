@@ -158,6 +158,7 @@ export default class RequestBox extends Component {
     if (prefetchMap.size > 0) {
       return this.renderRequestResources(prefetchMap);
     }
+    return <div className="prefetched" />;
   }
 
   renderRequestResources(requestResources) {
