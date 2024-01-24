@@ -283,8 +283,6 @@ export default class PatientBox extends Component {
   }
 
   handleRequestChange(data, patient) {
-    // const data = e.target.value;
-    console.log('data in request vchange is -- > ', data);
     if (data) {
       let coding = this.getCoding(JSON.parse(data));
       this.setState({
@@ -294,6 +292,7 @@ export default class PatientBox extends Component {
         display: coding.display,
         response: ''
       });
+      this.props.callback('response', '');
       // update prefetch request for the medication
       const request = JSON.parse(data);
       if (
@@ -306,6 +305,8 @@ export default class PatientBox extends Component {
       } else {
         this.props.clearCallback();
       }
+      // close the accordian after selecting a medication, can change if we want to keep open
+      this.props.callback('expanded', false);
     } else {
       this.setState({
         request: ''
@@ -434,6 +435,7 @@ export default class PatientBox extends Component {
       }
     }
 
+    // using data passed in instead of waiting for state/props variables to be updated
     const resp = JSON.parse(data);
     if (Object.keys(resp).length > 0) {
       response = `QuestionnaireResponse/${resp.id}`;
@@ -458,9 +460,6 @@ export default class PatientBox extends Component {
     return linkCopy;
   }
 
-  formIsSelected(value) {
-    return this.state.response !== value;
-  }
   makeResponseTable(columns, options, type, patient) {
     return (
       <TableContainer key={type} component={Paper} sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}>
