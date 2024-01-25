@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Box, IconButton } from '@mui/material';
+import { Button, Box, IconButton, Modal, DialogTitle } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DisplayBox from '../components/DisplayBox/DisplayBox';
@@ -69,6 +69,17 @@ export default class RequestBuilder extends Component {
   }
 
   componentDidMount() {
+    // load settings
+    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach((element) => {
+      try {
+        this.setState({[element[0]]: element[1]});
+      } catch {
+        if(element[0]){
+          console.log('Could not load setting:' + element[0]);
+        }
+      }
+    });
+
     if (!this.state.client) {
       this.reconnectEhr();
     } else {
@@ -265,16 +276,15 @@ export default class RequestBuilder extends Component {
           </button>
         </div>
         <div>
-          {/* <div id="settings-header"></div> */}
-          {this.state.showSettings && (
-            <div className='settings-box'>
+          <Modal open = {this.state.showSettings} onClose = {()=>{this.setState({showSettings:false});}} >
+            <div className = 'settings-box'>
               <SettingsBox
                 state={this.state}
                 consoleLog={this.consoleLog}
                 updateCB={this.updateStateElement}
-              />
+              />         
             </div>
-            )}
+          </Modal>
         </div>
           <div style={{display: 'flex'}}>
             <Accordion style={{width: '95%'}} expanded={this.state.expanded} onChange={this.handleChange()}>
