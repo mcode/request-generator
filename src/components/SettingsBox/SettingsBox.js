@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import './SettingsBox.css';
 import InputBox from '../Inputs/InputBox';
-import CheckBox from '../Inputs/CheckBox';
+import Checkbox from '@mui/material/Checkbox';
+
 import { headerDefinitions, types } from '../../util/data';
 import FHIR from 'fhirclient';
+import { Box, Button, FormControlLabel, Grid, TextField } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 const clearQuestionnaireResponses =
   ({ ehrUrl, defaultUser, access_token }, consoleLog) =>
@@ -89,7 +92,7 @@ const resetRemsAdmin =
 
 const resetHeaderDefinitions = [
   {
-    display: 'Clear EHR QuestionnaireResponses',
+    display: 'Clear In-Progress Forms',
     key: 'clearQuestionnaireResponses',
     reset: clearQuestionnaireResponses
   },
@@ -108,12 +111,44 @@ const resetHeaderDefinitions = [
 export default class SettingsBox extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      originalValues: []
+    };
+    this.cancelSettings = this.cancelSettings.bind(this);
+    this.closeSettings = this.closeSettings.bind(this);
+    this.saveSettings = this.saveSettings.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    const headers = Object.keys(headerDefinitions).map(key => ([key, this.props.state[key]]));
+    this.setState({originalValues: headers});
+  }
+
+  closeSettings() {
+    this.props.updateCB('showSettings', false);
+  }
+  saveSettings() {
+    const headers = Object.keys(headerDefinitions).map(key => ([key, this.props.state[key]]));
+    console.log(headers);
+    localStorage.setItem('reqgenSettings', JSON.stringify(headers));
+    this.closeSettings();
+  }
+
+  cancelSettings() {
+    this.state.originalValues.forEach((e) => {
+      try{
+        this.props.updateCB(e[0], e[1]);
+      } catch {
+        console.log('Failed to reset setting value');
+      }
+    });
+    this.closeSettings();
+  }
 
   render() {
     const { state, consoleLog, updateCB } = this.props;
+    let firstCheckbox = true;
+    let showBreak = true;
 
     const headers = Object.keys(headerDefinitions)
       .map(key => ({ ...headerDefinitions[key], key }))
@@ -125,35 +160,46 @@ export default class SettingsBox extends Component {
 
     return (
       <div>
+        <Box flexGrow={1}>
+        <h4 className='setting-header'>Settings</h4>
+        <Grid container spacing={2} sx={{padding: '20px'}}>
         {headers.map(({ key, type, display }) => {
+
           switch (type) {
             case 'input':
               return (
-                <div key={key}>
-                  <p className="setting-header">{display}</p>
-                  <InputBox
-                    extraClass="setting-input"
-                    value={state[key]}
-                    updateCB={updateCB}
-                    elementName={key}
+                <Grid key = {key} item xs={6}>
+                <div>
+                  <TextField 
+                    label={display} 
+                    variant="outlined" 
+                    value={state[key]} 
+                    onChange = {(event)=>{updateCB(key, event.target.value);}}
+                    sx = {{width:'100%'}}
                   />
                 </div>
+                </Grid>
               );
             case 'check':
+              if(firstCheckbox) {
+                firstCheckbox = false;
+                showBreak = true;
+              } else {
+                showBreak = false;
+              }
               return (
-                <div key={key}>
-                  <p className="setting-header">
-                    {display}
-                    <CheckBox
-                      extraClass="setting-checkbox"
-                      extraInnerClass="setting-inner-checkbox"
-                      toggle={state[key]}
-                      updateCB={updateCB}
-                      elementName={key}
+                <React.Fragment key={key}>
+                  {showBreak ? <Grid item xs={12}></Grid> :''}
+                  <Grid item xs={3}>
+                    <FormControlLabel control = {
+                        <Checkbox 
+                        value = {state[key]}
+                        onChange = {(event) => {updateCB(key, event.target.value);}}/>
+                      }
+                      label = {display}
                     />
-                  </p>
-                  <p>&nbsp;</p>
-                </div>
+                  </Grid>
+                </React.Fragment>
               );
             default:
               return (
@@ -163,15 +209,29 @@ export default class SettingsBox extends Component {
               );
           }
         })}
-        {resetHeaderDefinitions.map(({ key, display, reset }) => {
-          return (
-            <div key={key}>
-              <button className={'setting-btn btn btn-class'} onClick={reset(state, consoleLog)}>
-                {display}
-              </button>
-            </div>
-          );
-        })}
+            {resetHeaderDefinitions.map(({ key, display, reset }) => {
+              return (
+                <Grid item key={key} xs={4}>
+                  <Button variant='outlined' onClick={reset(state, consoleLog)}>
+                    {display}
+                  </Button>
+                </Grid>
+              );
+            })}
+          {/* spacer */}
+          <hr style={{
+            'width':'100%'
+          }}/>
+          <Grid item xs={8} />
+
+          <Grid item xs={2}>
+            <Button variant = 'outlined' onClick = {this.cancelSettings}>Cancel</Button>
+          </Grid>
+          <Grid item xs={2}>
+            <Button variant = 'contained' onClick = {this.saveSettings}>Save</Button>
+          </Grid>
+        </Grid>
+      </Box>
       </div>
     );
   }

@@ -325,8 +325,16 @@ input:not(:focus):not([value=""]):valid ~ .floating-label{
 .title {
   margin-bottom: 65px;
 }
-
 .settings-box {
-  width: 50%;
-  margin-left: 20px;
+  border: 1px solid black;
+  width: 75%;
+  height: 75%;
+  background-color:white;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow-y: auto;
+  box-shadow: 10px 10px 20px black
+  
 }
