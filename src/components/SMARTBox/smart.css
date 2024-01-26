@@ -14,9 +14,6 @@ html{
     display: flex;
     justify-content: space-between;
 }
-.patient-info {
-    display: flex;
-}
 .button-options {
     display: flex;
     column-gap: 12px;
@@ -29,6 +26,9 @@ html{
 tr:nth-child(odd) { 
     background-color: #ddd !important; 
 } 
+.hover-row:hover {
+    background-color: #E7F1FF !important;
+}
 
 .big-button {
     display: flex !important;
@@ -100,9 +100,7 @@ tr:nth-child(odd) {
 }
 
 .select-btn {
-    height: 40px;
-    align-self: center;
-    margin-top: 25px !important;
+    height: 52px;
 }
 
 .emptyForm {

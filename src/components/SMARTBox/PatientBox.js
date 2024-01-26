@@ -479,18 +479,19 @@ export default class PatientBox extends Component {
           </TableHead>
           <TableBody>
             {options.map((row) => (
-              <TableRow
-                key={row.key}
-                sx={{ 'td, th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell>{row.code}</TableCell>
-                <TableCell align="right">
-                  <Button onClick={() => this.handleRequestChange(row.value, patient)}>Select Medication</Button>
-                </TableCell>
-              </TableRow>
+              <Tooltip title='Select Medication' arrow>
+                <TableRow
+                  key={row.key}
+                  sx={{ 'td, th': { border: 0 } }}
+                  className='hover-row'
+                  onClick={() => this.handleRequestChange(row.value, patient)}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell>{row.code}</TableCell>
+                </TableRow>
+              </Tooltip>
             ))}
           </TableBody>
         </Table>
@@ -517,20 +518,19 @@ export default class PatientBox extends Component {
           </TableHead>
           <TableBody>
             {options.map((row) => (
-              <TableRow
-                key={row.key}
-                sx={{ 'td, th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.text}
-                </TableCell>
-                <TableCell>{row.time}</TableCell>
-                <TableCell align="right">
-                  <Button onClick={() => this.relaunch(row.value)}>
-                    Open In-Progress Form
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <Tooltip title='Open In-Progress Form' arrow>
+                <TableRow
+                  key={row.key}
+                  sx={{ 'td, th': { border: 0 } }}
+                  onClick={() => this.relaunch(row.value)}
+                  className='hover-row'
+                >
+                  <TableCell component="th" scope="row">
+                    {row.text}
+                  </TableCell>
+                  <TableCell>{row.time}</TableCell>
+                </TableRow>
+              </Tooltip>
             ))}
           </TableBody>
         </Table>
@@ -583,13 +583,11 @@ export default class PatientBox extends Component {
     const medicationColumns = [
       { id: 'name', label: 'Medication'},
       { id: 'code', label: 'Request #'},
-      { id: 'action', label: ''}
     ];
 
     const questionnaireColumns = [
       { id: 'name', label: 'Title'},
-      { id: 'time', label: 'Created'},
-      { id: 'action', label: ''}
+      { id: 'time', label: 'Created'}
     ];
 
     const medicationTooltip = options.length === 0 ? 'No medications found.' : `${options.length} medications available`;
@@ -636,6 +634,13 @@ export default class PatientBox extends Component {
             </span>
           </Tooltip> 
           }
+          <Button
+            variant="contained"
+            className='select-btn'
+            onClick={() => this.updateValues(patient)}
+          >
+            Select Patient
+          </Button>
           </div>
         </div>
         { this.state.showMedications ?
