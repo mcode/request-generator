@@ -2,8 +2,18 @@
 
 import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 
+var SCRIPT_VERSION='20170715';
+
 function xmlAddTextNode(xmlDoc, parent, sectionName, value) {
   var section = xmlDoc.createElement(sectionName);
+  var textNode = xmlDoc.createTextNode(value);
+  section.appendChild(textNode);
+  parent.appendChild(section);
+}
+
+function xmlAddTextNodeWithAttribute(xmlDoc, parent, sectionName, value, attrName, attrValue) {
+  var section = xmlDoc.createElement(sectionName);
+  section.setAttribute(attrName, attrValue);
   var textNode = xmlDoc.createTextNode(value);
   section.appendChild(textNode);
   parent.appendChild(section);
@@ -62,6 +72,7 @@ function buildNewRxPatient(doc, patientResource) {
 function buildNewRxPrescriber(doc, practitionerResource) {
   var prescriber = doc.createElement('Prescriber');
   var nonVeterinarian = doc.createElement('NonVeterinarian');
+  var npi = null;
 
   //     Prescriber Identifier
   for (let i = 0; i < practitionerResource.identifier.length; i++) {
@@ -70,6 +81,7 @@ function buildNewRxPrescriber(doc, practitionerResource) {
       var identification = doc.createElement('Identification');
       xmlAddTextNode(doc, identification, 'NPI', id.value);
       nonVeterinarian.appendChild(identification);
+      npi = id.value;
     }
   }
 
@@ -96,7 +108,7 @@ function buildNewRxPrescriber(doc, practitionerResource) {
   nonVeterinarian.appendChild(communicationNumbers);
 
   prescriber.appendChild(nonVeterinarian);
-  return prescriber;
+  return [prescriber, npi];
 }
 
 function quantityUnitOfMeasureFromDrugFormCode(dispenseRequest) {
@@ -279,6 +291,15 @@ export default function buildNewRxRequest(
 ) {
   var doc = document.implementation.createDocument('', '', null);
   var message = doc.createElement('Message');
+  // set the message attributes
+  message.setAttribute('DatatypesVersion', SCRIPT_VERSION);
+  message.setAttribute('TransportVersion', SCRIPT_VERSION);
+  message.setAttribute('TransactionDomain', 'SCRIPT');
+  message.setAttribute('TransactionVersion', SCRIPT_VERSION);
+  message.setAttribute('StructuresVersion', SCRIPT_VERSION);
+  message.setAttribute('ECLVersion', SCRIPT_VERSION);
+  message.setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+  message.setAttribute('xsi:noNamespaceSchemaLocation', 'transport.xsd');
 
   // Header
   var header = doc.createElement('Header');
@@ -286,6 +307,16 @@ export default function buildNewRxRequest(
   const d1 = new Date();
   const messageIdValue = d1.getTime();
   xmlAddTextNode(doc, header, 'MessageID', messageIdValue);
+
+  // SentTime
+  xmlAddTextNode(doc, header, 'SentTime', d1.toISOString());
+
+  // PrescriberOrderNumber
+  xmlAddTextNode(doc, header, 'PrescriberOrderNumber', medicationRequestResource?.id);
+
+  // To
+  xmlAddTextNodeWithAttribute(doc, header, 'To', 'Pharmacy 123', 'Qualifier', 'P');
+
   message.appendChild(header);
 
   // Body
@@ -296,7 +327,15 @@ export default function buildNewRxRequest(
   newRx.appendChild(buildNewRxPatient(doc, patientResource));
 
   //   Prescriber
-  newRx.appendChild(buildNewRxPrescriber(doc, practitionerResource));
+  const [prescriber, prescriberNPI] = buildNewRxPrescriber(doc, practitionerResource);
+  newRx.appendChild(prescriber);
+  if (prescriberNPI) {
+    // set the prescriber NPI in the header.from
+    xmlAddTextNodeWithAttribute(doc, header, 'From', prescriberNPI, 'Qualifier', 'C');
+  } else {
+    // just set it to the request generator
+    xmlAddTextNodeWithAttribute(doc, header, 'From', 'Request Generator', 'Qualifier', 'C');
+  }
 
   //   Medication
   newRx.appendChild(buildNewRxMedication(doc, medicationRequestResource));
