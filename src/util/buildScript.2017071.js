@@ -2,7 +2,7 @@
 
 import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 
-var SCRIPT_VERSION='20170715';
+var SCRIPT_VERSION = '20170715';
 
 function xmlAddTextNode(xmlDoc, parent, sectionName, value) {
   var section = xmlDoc.createElement(sectionName);
@@ -69,20 +69,26 @@ function buildNewRxPatient(doc, patientResource) {
   return patient;
 }
 
-function buildNewRxPrescriber(doc, practitionerResource) {
-  var prescriber = doc.createElement('Prescriber');
-  var nonVeterinarian = doc.createElement('NonVeterinarian');
-  var npi = null;
-
-  //     Prescriber Identifier
+function getPractitionerNpi(practitionerResource) {
   for (let i = 0; i < practitionerResource.identifier.length; i++) {
     let id = practitionerResource.identifier[i];
     if (id.system && id.system.includes('us-npi')) {
-      var identification = doc.createElement('Identification');
-      xmlAddTextNode(doc, identification, 'NPI', id.value);
-      nonVeterinarian.appendChild(identification);
-      npi = id.value;
+      return id.value;
     }
+  } 
+  return null;
+}
+
+function buildNewRxPrescriber(doc, practitionerResource) {
+  var prescriber = doc.createElement('Prescriber');
+  var nonVeterinarian = doc.createElement('NonVeterinarian');
+  var npi = getPractitionerNpi(practitionerResource);
+
+  //     Prescriber Identifier
+  if (npi) {
+    var identification = doc.createElement('Identification');
+    xmlAddTextNode(doc, identification, 'NPI', npi);
+    nonVeterinarian.appendChild(identification);
   }
 
   //     Prescriber Name
@@ -108,7 +114,7 @@ function buildNewRxPrescriber(doc, practitionerResource) {
   nonVeterinarian.appendChild(communicationNumbers);
 
   prescriber.appendChild(nonVeterinarian);
-  return [prescriber, npi];
+  return prescriber;
 }
 
 function quantityUnitOfMeasureFromDrugFormCode(dispenseRequest) {
@@ -327,7 +333,8 @@ export default function buildNewRxRequest(
   newRx.appendChild(buildNewRxPatient(doc, patientResource));
 
   //   Prescriber
-  const [prescriber, prescriberNPI] = buildNewRxPrescriber(doc, practitionerResource);
+  const prescriber = buildNewRxPrescriber(doc, practitionerResource);
+  prescriberNPI = getPractitionerNpi(practitionerResource);
   newRx.appendChild(prescriber);
   if (prescriberNPI) {
     // set the prescriber NPI in the header.from
