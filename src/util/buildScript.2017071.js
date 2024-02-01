@@ -75,14 +75,13 @@ function getPractitionerNpi(practitionerResource) {
     if (id.system && id.system.includes('us-npi')) {
       return id.value;
     }
-  } 
+  }
   return null;
 }
 
-function buildNewRxPrescriber(doc, practitionerResource) {
+function buildNewRxPrescriber(doc, practitionerResource, npi) {
   var prescriber = doc.createElement('Prescriber');
   var nonVeterinarian = doc.createElement('NonVeterinarian');
-  var npi = getPractitionerNpi(practitionerResource);
 
   //     Prescriber Identifier
   if (npi) {
@@ -226,7 +225,8 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   var drugCoded = doc.createElement('DrugCoded');
 
   // loop through the coding values and find the ndc code and the rxnorm code
-  let medicationCodingList = getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
+  let medicationCodingList =
+    getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
@@ -333,12 +333,12 @@ export default function buildNewRxRequest(
   newRx.appendChild(buildNewRxPatient(doc, patientResource));
 
   //   Prescriber
-  const prescriber = buildNewRxPrescriber(doc, practitionerResource);
-  prescriberNPI = getPractitionerNpi(practitionerResource);
+  const npi = getPractitionerNpi(practitionerResource);
+  const prescriber = buildNewRxPrescriber(doc, practitionerResource, npi);
   newRx.appendChild(prescriber);
-  if (prescriberNPI) {
+  if (npi) {
     // set the prescriber NPI in the header.from
-    xmlAddTextNodeWithAttribute(doc, header, 'From', prescriberNPI, 'Qualifier', 'C');
+    xmlAddTextNodeWithAttribute(doc, header, 'From', npi, 'Qualifier', 'C');
   } else {
     // just set it to the request generator
     xmlAddTextNodeWithAttribute(doc, header, 'From', 'Request Generator', 'Qualifier', 'C');
