@@ -193,8 +193,8 @@ export default class SettingsBox extends Component {
                   <Grid item xs={3}>
                     <FormControlLabel control = {
                         <Checkbox 
-                        value = {state[key]}
-                        onChange = {(event) => {updateCB(key, event.target.value);}}/>
+                        checked = {Boolean(state[key])}
+                        onChange = {(event) => {updateCB(key, event.target.checked);}}/>
                       }
                       label = {display}
                     />
