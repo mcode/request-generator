@@ -465,7 +465,7 @@ export default class PatientBox extends Component {
       <TableContainer key={type} component={Paper} sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}>
         <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
           <TableHead sx={{ borderBottom: '1px solid #535353'}}>
-            <TableRow>
+            <TableRow key="bingobongo">
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
