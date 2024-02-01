@@ -377,6 +377,7 @@ export default class DisplayBox extends Component {
                   </Typography>
                 </CardContent>
                 <CardActions className={'links-section'}>{linksSection}</CardActions>
+                <CardActions>{suggestionsSection}</CardActions>
               </React.Fragment>
             </Card>
           );
@@ -401,7 +402,7 @@ export default class DisplayBox extends Component {
     // clear the suggestion buttons
     console.log(this.buttonList);
     this.buttonList.forEach((requestButton, id) => {
-      document.getElementById(requestButton).removeAttribute('disabled');
+      document.getElementById(requestButton)?.removeAttribute('disabled');
     });
   }
 }
