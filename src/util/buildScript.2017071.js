@@ -80,12 +80,12 @@ function getPractitionerNpi(practitionerResource) {
 }
 
 function buildNewRxPrescriber(doc, practitionerResource, npi) {
-  var prescriber = doc.createElement('Prescriber');
-  var nonVeterinarian = doc.createElement('NonVeterinarian');
+  const prescriber = doc.createElement('Prescriber');
+  const nonVeterinarian = doc.createElement('NonVeterinarian');
 
   //     Prescriber Identifier
   if (npi) {
-    var identification = doc.createElement('Identification');
+    const identification = doc.createElement('Identification');
     xmlAddTextNode(doc, identification, 'NPI', npi);
     nonVeterinarian.appendChild(identification);
   }
@@ -99,11 +99,11 @@ function buildNewRxPrescriber(doc, practitionerResource, npi) {
   nonVeterinarian.appendChild(buildNewRxAddress(doc, practitionerAddressResource));
 
   //     Prescriber Phone Number and Email
-  var communicationNumbers = doc.createElement('CommunicationNumbers');
+  const communicationNumbers = doc.createElement('CommunicationNumbers');
   for (let i = 0; i < practitionerResource.telecom.length; i++) {
     const telecom = practitionerResource.telecom[i];
     if (telecom.system === 'phone') {
-      var primaryTelephone = doc.createElement('PrimaryTelephone');
+      const primaryTelephone = doc.createElement('PrimaryTelephone');
       xmlAddTextNode(doc, primaryTelephone, 'Number', telecom.value);
       communicationNumbers.appendChild(primaryTelephone);
     } else if (telecom.system === 'email') {
