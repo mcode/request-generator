@@ -7,7 +7,7 @@ import '../index.css';
 import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
-import { types, defaultValues } from '../util/data.js';
+import { types, defaultValues, headerDefinitions } from '../util/data.js';
 import { createJwt, setupKeys } from '../util/auth';
 
 import env from 'env-var';
@@ -25,7 +25,7 @@ export default class RequestBuilder extends Component {
     this.state = {
       loading: false,
       logs: [],
-      patient: {}, 
+      patient: {},
       expanded: false,
       patientList: [],
       response: {},
@@ -38,26 +38,6 @@ export default class RequestBuilder extends Component {
       token: null,
       client: this.props.client,
       codeValues: defaultValues,
-      // Configurable values
-      alternativeTherapy: env.get('REACT_APP_ALT_DRUG').asBool(),
-      baseUrl: env.get('REACT_APP_EHR_BASE').asString(),
-      cdsUrl: env.get('REACT_APP_CDS_SERVICE').asString(),
-      defaultUser: env.get('REACT_APP_DEFAULT_USER').asString(),
-      ehrUrl: env.get('REACT_APP_EHR_SERVER').asString(),
-      ehrUrlSentToRemsAdminForPreFetch: env
-        .get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH')
-        .asString(),
-      generateJsonToken: env.get('REACT_APP_GENERATE_JWT').asBool(),
-      includeConfig: true,
-      launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
-      orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
-      orderSign: env.get('REACT_APP_ORDER_SIGN').asString(),
-      patientFhirQuery: env.get('REACT_APP_PATIENT_FHIR_QUERY').asString(),
-      patientView: env.get('REACT_APP_PATIENT_VIEW').asString(),
-      pimsUrl: env.get('REACT_APP_PIMS_SERVER').asString(),
-      responseExpirationDays: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),
-      sendPrefetch: true,
-      smartAppUrl: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
     };
 
     this.updateStateElement = this.updateStateElement.bind(this);
@@ -69,12 +49,16 @@ export default class RequestBuilder extends Component {
   }
 
   componentDidMount() {
+    // init settings
+    Object.keys(headerDefinitions).map((key) => {
+      this.setState({ [key]: headerDefinitions[key].default });
+    });
     // load settings
     JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach((element) => {
       try {
-        this.setState({[element[0]]: element[1]});
+        this.setState({ [element[0]]: element[1] });
       } catch {
-        if(element[0]){
+        if (element[0]) {
           console.log('Could not load setting:' + element[0]);
         }
       }
@@ -251,7 +235,7 @@ export default class RequestBuilder extends Component {
     });
   };
   handleChange = () => (event, isExpanded) => {
-    this.setState({ expanded: isExpanded ? true: false});
+    this.setState({ expanded: isExpanded ? true : false });
   };
 
   render() {
@@ -276,23 +260,23 @@ export default class RequestBuilder extends Component {
           </button>
         </div>
         <div>
-          <Modal open = {this.state.showSettings} onClose = {()=>{this.setState({showSettings:false});}} >
-            <div className = 'settings-box'>
+          <Modal open={this.state.showSettings} onClose={() => { this.setState({ showSettings: false }); }} >
+            <div className='settings-box'>
               <SettingsBox
                 state={this.state}
                 consoleLog={this.consoleLog}
                 updateCB={this.updateStateElement}
-              />         
+              />
             </div>
           </Modal>
         </div>
-          <div style={{display: 'flex'}}>
-            <Accordion style={{width: '95%'}} expanded={this.state.expanded} onChange={this.handleChange()}>
-              <AccordionSummary
+        <div style={{ display: 'flex' }}>
+          <Accordion style={{ width: '95%' }} expanded={this.state.expanded} onChange={this.handleChange()}>
+            <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
-              style={{marginLeft: '45%'}}
+              style={{ marginLeft: '45%' }}
             >
               <Button variant="contained" startIcon={<PersonIcon />}>
                 Select a patient
@@ -324,17 +308,17 @@ export default class RequestBuilder extends Component {
                 </div>
                 : <span></span>
               }
-              
+
             </AccordionDetails>
-            </Accordion>
-            <IconButton
-              color="primary"
-              onClick={() => this.getPatients()}
-              size="large"
-            >
-              <RefreshIcon fontSize="large" />
-            </IconButton>
-          </div>
+          </Accordion>
+          <IconButton
+            color="primary"
+            onClick={() => this.getPatients()}
+            size="large"
+          >
+            <RefreshIcon fontSize="large" />
+          </IconButton>
+        </div>
         <div className="form-group container left-form">
           <div>
             {/*for the ehr launch */}
