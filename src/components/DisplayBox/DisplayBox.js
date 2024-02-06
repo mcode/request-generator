@@ -75,7 +75,7 @@ export default class DisplayBox extends Component {
     }
   }
 
-  supportedRequesType(resource) {
+  supportedRequestType(resource) {
     let resourceType = resource.resourceType.toUpperCase();
     if (
       resourceType === 'DEVICEREQUEST' ||
@@ -102,7 +102,9 @@ export default class DisplayBox extends Component {
         }
       } else {
         // disable this suggestion button if any are allowed
-        document.getElementById(buttonId).setAttribute('disabled', 'true');
+        const element = document.getElementById(buttonId);
+        element.setAttribute('disabled', 'true');
+        element.setAttribute('style', 'background-color:#4BB543;');
       }
 
       if (suggestion.label) {
@@ -131,7 +133,7 @@ export default class DisplayBox extends Component {
               console.log('suggested action CREATE result:');
               console.log(result);
 
-              if (this.supportedRequesType(result)) {
+              if (this.supportedRequestType(result)) {
                 // call into the request builder to resubmit the CRD request with the suggested request
                 this.props.takeSuggestion(result);
               }
@@ -398,11 +400,4 @@ export default class DisplayBox extends Component {
     }
   }
 
-  componentDidUpdate() {
-    // clear the suggestion buttons
-    console.log(this.buttonList);
-    this.buttonList.forEach((requestButton, id) => {
-      document.getElementById(requestButton)?.removeAttribute('disabled');
-    });
-  }
 }
