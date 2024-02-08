@@ -56,7 +56,7 @@ export default class RequestBuilder extends Component {
     // load settings
     JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach((element) => {
       try {
-        this.setState({ [element[0]]: element[1] });
+        this.updateStateElement(element[0], element[1]);
       } catch {
         if (element[0]) {
           console.log('Could not load setting:' + element[0]);
