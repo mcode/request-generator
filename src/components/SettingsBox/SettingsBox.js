@@ -6,12 +6,10 @@ import { headerDefinitions, types } from '../../util/data';
 import FHIR from 'fhirclient';
 import { Box, Button, FormControlLabel, Grid, TextField } from '@mui/material';
 
-const clearMedicationDispenses = 
+const clearMedicationDispenses =
   ({ ehrUrl, access_token }, consoleLog) =>
   () => {
-    console.log(
-      'Clear MedicationDispenses from the EHR: ' + ehrUrl
-    );
+    console.log('Clear MedicationDispenses from the EHR: ' + ehrUrl);
     const client = FHIR.client({
       serverUrl: ehrUrl,
       ...(access_token ? { tokenResponse: access_token } : {})
@@ -160,23 +158,23 @@ export default class SettingsBox extends Component {
   }
 
   componentDidMount() {
-    const headers = Object.keys(headerDefinitions).map(key => ([key, this.props.state[key]]));
-    this.setState({originalValues: headers});
+    const headers = Object.keys(headerDefinitions).map(key => [key, this.props.state[key]]);
+    this.setState({ originalValues: headers });
   }
 
   closeSettings() {
     this.props.updateCB('showSettings', false);
   }
   saveSettings() {
-    const headers = Object.keys(headerDefinitions).map(key => ([key, this.props.state[key]]));
+    const headers = Object.keys(headerDefinitions).map(key => [key, this.props.state[key]]);
     console.log(headers);
     localStorage.setItem('reqgenSettings', JSON.stringify(headers));
     this.closeSettings();
   }
 
   cancelSettings() {
-    this.state.originalValues.forEach((e) => {
-      try{
+    this.state.originalValues.forEach(e => {
+      try {
         this.props.updateCB(e[0], e[1]);
       } catch {
         console.log('Failed to reset setting value');
@@ -201,77 +199,88 @@ export default class SettingsBox extends Component {
     return (
       <div>
         <Box flexGrow={1}>
-        <h4 className='setting-header'>Settings</h4>
-        <Grid container spacing={2} sx={{padding: '20px'}}>
-        {headers.map(({ key, type, display }) => {
-
-          switch (type) {
-            case 'input':
-              return (
-                <Grid key = {key} item xs={6}>
-                <div>
-                  <TextField 
-                    label={display} 
-                    variant="outlined" 
-                    value={state[key]} 
-                    onChange = {(event)=>{updateCB(key, event.target.value);}}
-                    sx = {{width:'100%'}}
-                  />
-                </div>
-                </Grid>
-              );
-            case 'check':
-              if(firstCheckbox) {
-                firstCheckbox = false;
-                showBreak = true;
-              } else {
-                showBreak = false;
+          <h4 className="setting-header">Settings</h4>
+          <Grid container spacing={2} sx={{ padding: '20px' }}>
+            {headers.map(({ key, type, display }) => {
+              switch (type) {
+                case 'input':
+                  return (
+                    <Grid key={key} item xs={6}>
+                      <div>
+                        <TextField
+                          label={display}
+                          variant="outlined"
+                          value={state[key]}
+                          onChange={event => {
+                            updateCB(key, event.target.value);
+                          }}
+                          sx={{ width: '100%' }}
+                        />
+                      </div>
+                    </Grid>
+                  );
+                case 'check':
+                  if (firstCheckbox) {
+                    firstCheckbox = false;
+                    showBreak = true;
+                  } else {
+                    showBreak = false;
+                  }
+                  return (
+                    <React.Fragment key={key}>
+                      {showBreak ? <Grid item xs={12}></Grid> : ''}
+                      <Grid item xs={3}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={Boolean(state[key])}
+                              onChange={event => {
+                                updateCB(key, event.target.checked);
+                              }}
+                            />
+                          }
+                          label={display}
+                        />
+                      </Grid>
+                    </React.Fragment>
+                  );
+                default:
+                  return (
+                    <div key={key}>
+                      <p className="setting-header">{display}</p>
+                    </div>
+                  );
               }
-              return (
-                <React.Fragment key={key}>
-                  {showBreak ? <Grid item xs={12}></Grid> :''}
-                  <Grid item xs={3}>
-                    <FormControlLabel control = {
-                        <Checkbox 
-                        checked = {Boolean(state[key])}
-                        onChange = {(event) => {updateCB(key, event.target.checked);}}/>
-                      }
-                      label = {display}
-                    />
-                  </Grid>
-                </React.Fragment>
-              );
-            default:
-              return (
-                <div key={key}>
-                  <p className="setting-header">{display}</p>
-                </div>
-              );
-          }
-        })}
+            })}
             {resetHeaderDefinitions.map(({ key, display, reset }) => {
               return (
                 <Grid item key={key} xs={3}>
-                  <Button variant='outlined' onClick={reset(state, consoleLog)}>
+                  <Button variant="outlined" onClick={reset(state, consoleLog)}>
                     {display}
                   </Button>
                 </Grid>
               );
             })}
-          {/* spacer */}
-          <hr style={{
-            'width':'100%'
-          }}/>
-          <Grid item xs={8} />
+            {/* spacer */}
+            <hr
+              style={{
+                width: '100%'
+              }}
+            />
+            <Grid item xs={8} />
 
-          <Grid item xs={2}>
-            <Button variant = 'outlined' onClick = {this.cancelSettings}>Cancel</Button>
+            <Grid item xs={2}>
+              <Button variant="outlined" onClick={this.cancelSettings}>
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button variant="contained" onClick={this.saveSettings}>
+                Save
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={2}>
-            <Button variant = 'contained' onClick = {this.saveSettings}>Save</Button>
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
       </div>
     );
   }

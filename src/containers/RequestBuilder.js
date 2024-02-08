@@ -37,7 +37,7 @@ export default class RequestBuilder extends Component {
       showSettings: false,
       token: null,
       client: this.props.client,
-      codeValues: defaultValues,
+      codeValues: defaultValues
     };
 
     this.updateStateElement = this.updateStateElement.bind(this);
@@ -50,11 +50,11 @@ export default class RequestBuilder extends Component {
 
   componentDidMount() {
     // init settings
-    Object.keys(headerDefinitions).map((key) => {
+    Object.keys(headerDefinitions).map(key => {
       this.setState({ [key]: headerDefinitions[key].default });
     });
     // load settings
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach((element) => {
+    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
       try {
         this.updateStateElement(element[0], element[1]);
       } catch {
@@ -103,7 +103,6 @@ export default class RequestBuilder extends Component {
       }, 1000);
     }
   };
-
 
   timeout = time => {
     let controller = new AbortController();
@@ -201,7 +200,7 @@ export default class RequestBuilder extends Component {
       .request(this.state.patientFhirQuery, { flat: true })
       .then(result => {
         this.setState({
-          patientList: result,
+          patientList: result
         });
       })
       .catch(e => {
@@ -260,8 +259,13 @@ export default class RequestBuilder extends Component {
           </button>
         </div>
         <div>
-          <Modal open={this.state.showSettings} onClose={() => { this.setState({ showSettings: false }); }} >
-            <div className='settings-box'>
+          <Modal
+            open={this.state.showSettings}
+            onClose={() => {
+              this.setState({ showSettings: false });
+            }}
+          >
+            <div className="settings-box">
               <SettingsBox
                 state={this.state}
                 consoleLog={this.consoleLog}
@@ -271,7 +275,11 @@ export default class RequestBuilder extends Component {
           </Modal>
         </div>
         <div style={{ display: 'flex' }}>
-          <Accordion style={{ width: '95%' }} expanded={this.state.expanded} onChange={this.handleChange()}>
+          <Accordion
+            style={{ width: '95%' }}
+            expanded={this.state.expanded}
+            onChange={this.handleChange()}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -283,39 +291,37 @@ export default class RequestBuilder extends Component {
               </Button>
             </AccordionSummary>
             <AccordionDetails>
-              {this.state.patientList.length > 0 && this.state.expanded ?
+              {this.state.patientList.length > 0 && this.state.expanded ? (
                 <div>
                   <Box>
-                  {this.state.patientList instanceof Error
-                    ? this.renderError()
-                    : <PatientSearchBar
-                      getPatients = {this.getPatients}
-                      searchablePatients={this.state.patientList}
-                      client={this.props.client}
-                      request={this.state.request}
-                      launchUrl={this.state.launchUrl}
-                      callback={this.updateStateElement}
-                      callbackList={this.updateStateList}
-                      callbackMap={this.updateStateMap}
-                      // updatePrefetchCallback={PrefetchTemplate.generateQueries}
-                      clearCallback={this.clearState}
-                      ehrUrl={this.state.ehrUrl} // is this used?
-                      options={this.state.codeValues}
-                      responseExpirationDays={this.state.responseExpirationDays}
-                      defaultUser={this.state.defaultUser}
-                    />}
+                    {this.state.patientList instanceof Error ? (
+                      this.renderError()
+                    ) : (
+                      <PatientSearchBar
+                        getPatients={this.getPatients}
+                        searchablePatients={this.state.patientList}
+                        client={this.props.client}
+                        request={this.state.request}
+                        launchUrl={this.state.launchUrl}
+                        callback={this.updateStateElement}
+                        callbackList={this.updateStateList}
+                        callbackMap={this.updateStateMap}
+                        // updatePrefetchCallback={PrefetchTemplate.generateQueries}
+                        clearCallback={this.clearState}
+                        ehrUrl={this.state.ehrUrl} // is this used?
+                        options={this.state.codeValues}
+                        responseExpirationDays={this.state.responseExpirationDays}
+                        defaultUser={this.state.defaultUser}
+                      />
+                    )}
                   </Box>
                 </div>
-                : <span></span>
-              }
-
+              ) : (
+                <span></span>
+              )}
             </AccordionDetails>
           </Accordion>
-          <IconButton
-            color="primary"
-            onClick={() => this.getPatients()}
-            size="large"
-          >
+          <IconButton color="primary" onClick={() => this.getPatients()} size="large">
             <RefreshIcon fontSize="large" />
           </IconButton>
         </div>
