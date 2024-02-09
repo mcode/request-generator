@@ -479,9 +479,8 @@ export default class PatientBox extends Component {
           </TableHead>
           <TableBody>
             {options.map((row) => (
-              <Tooltip title='Select Medication' arrow>
+              <Tooltip key={row.key} title='Select Medication' arrow>
                 <TableRow
-                  key={row.key}
                   sx={{ 'td, th': { border: 0 } }}
                   className='hover-row'
                   onClick={() => this.handleRequestChange(row.value, patient)}
