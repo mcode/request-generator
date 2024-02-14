@@ -18,6 +18,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
+import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -233,11 +234,18 @@ export default class RequestBuilder extends Component {
       response: {}
     });
   };
+
   handleChange = () => (event, isExpanded) => {
     this.setState({ expanded: isExpanded ? true : false });
   };
 
+  isOrderNotSelected() {
+    return Object.keys(this.state.request).length === 0;
+  }
+
   render() {
+    const disableGetMedicationStatus = this.isOrderNotSelected() || this.state.loading;
+
     return (
       <div>
         <div className="nav-header">
@@ -356,6 +364,9 @@ export default class RequestBuilder extends Component {
         </div>
 
         <div className="right-form">
+          {!disableGetMedicationStatus && (
+            <MedicationStatus ehrUrl={this.state.ehrUrl} request={this.state.request} />
+          )}
           <DisplayBox
             response={this.state.response}
             client={this.state.client}
