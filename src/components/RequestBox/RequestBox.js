@@ -93,10 +93,6 @@ export default class RequestBox extends Component {
     }
   }
 
-  updateStateElement = (elementName, text) => {
-    this.setState({ [elementName]: text });
-  };
-
   emptyField = (<span className="empty-field">empty</span>);
 
   renderPatientInfo() {
