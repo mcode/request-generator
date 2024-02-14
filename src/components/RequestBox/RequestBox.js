@@ -15,7 +15,7 @@ export default class RequestBox extends Component {
     this.state = {
       gatherCount: 0,
       response: {},
-      open: false
+      submittedRx: false
     };
 
     this.renderRequestResources = this.renderRequestResources.bind(this);
@@ -373,10 +373,10 @@ export default class RequestBox extends Component {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
-    const { open } = this.state;
+
     return (
-      <div>
-        {this.props.patient.id ? (
+      <>
+        {this.props.patient.id && (
           <div className="request">
             <div style={{ paddingTop: '15px' }}>
               <div className="request-header">
@@ -401,15 +401,13 @@ export default class RequestBox extends Component {
               </ButtonGroup>
             </div>
           </div>
-        ) : (
-          <span />
         )}
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'left'
           }}
-          open={open}
+          open={this.state.submittedRx}
           onClose={this.handleClose}
           autoHideDuration={6000}
         >
@@ -417,7 +415,7 @@ export default class RequestBox extends Component {
             Success! NewRx Received By Pharmacy
           </MuiAlert>
         </Snackbar>
-      </div>
+      </>
     );
   }
 }
