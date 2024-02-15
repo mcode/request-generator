@@ -197,91 +197,89 @@ export default class SettingsBox extends Component {
       );
 
     return (
-      <div>
-        <Box flexGrow={1}>
-          <h4 className="setting-header">Settings</h4>
-          <Grid container spacing={2} sx={{ padding: '20px' }}>
-            {headers.map(({ key, type, display }) => {
-              switch (type) {
-                case 'input':
-                  return (
-                    <Grid key={key} item xs={6}>
-                      <div>
-                        <TextField
-                          label={display}
-                          variant="outlined"
-                          value={state[key]}
-                          onChange={event => {
-                            updateCB(key, event.target.value);
-                          }}
-                          sx={{ width: '100%' }}
-                        />
-                      </div>
-                    </Grid>
-                  );
-                case 'check':
-                  if (firstCheckbox) {
-                    firstCheckbox = false;
-                    showBreak = true;
-                  } else {
-                    showBreak = false;
-                  }
-                  return (
-                    <React.Fragment key={key}>
-                      {showBreak ? <Grid item xs={12}></Grid> : ''}
-                      <Grid item xs={3}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={Boolean(state[key])}
-                              onChange={event => {
-                                updateCB(key, event.target.checked);
-                              }}
-                            />
-                          }
-                          label={display}
-                        />
-                      </Grid>
-                    </React.Fragment>
-                  );
-                default:
-                  return (
-                    <div key={key}>
-                      <p className="setting-header">{display}</p>
+      <Box flexGrow={1}>
+        <h4 className="setting-header">Settings</h4>
+        <Grid container spacing={2} sx={{ padding: '20px' }}>
+          {headers.map(({ key, type, display }) => {
+            switch (type) {
+              case 'input':
+                return (
+                  <Grid key={key} item xs={6}>
+                    <div>
+                      <TextField
+                        label={display}
+                        variant="outlined"
+                        value={state[key]}
+                        onChange={event => {
+                          updateCB(key, event.target.value);
+                        }}
+                        sx={{ width: '100%' }}
+                      />
                     </div>
-                  );
-              }
-            })}
-            {resetHeaderDefinitions.map(({ key, display, reset }) => {
-              return (
-                <Grid item key={key} xs={3}>
-                  <Button variant="outlined" onClick={reset(state, consoleLog)}>
-                    {display}
-                  </Button>
-                </Grid>
-              );
-            })}
-            {/* spacer */}
-            <hr
-              style={{
-                width: '100%'
-              }}
-            />
-            <Grid item xs={8} />
+                  </Grid>
+                );
+              case 'check':
+                if (firstCheckbox) {
+                  firstCheckbox = false;
+                  showBreak = true;
+                } else {
+                  showBreak = false;
+                }
+                return (
+                  <React.Fragment key={key}>
+                    {showBreak ? <Grid item xs={12}></Grid> : ''}
+                    <Grid item xs={3}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(state[key])}
+                            onChange={event => {
+                              updateCB(key, event.target.checked);
+                            }}
+                          />
+                        }
+                        label={display}
+                      />
+                    </Grid>
+                  </React.Fragment>
+                );
+              default:
+                return (
+                  <div key={key}>
+                    <p className="setting-header">{display}</p>
+                  </div>
+                );
+            }
+          })}
+          {resetHeaderDefinitions.map(({ key, display, reset }) => {
+            return (
+              <Grid item key={key} xs={3}>
+                <Button variant="outlined" onClick={reset(state, consoleLog)}>
+                  {display}
+                </Button>
+              </Grid>
+            );
+          })}
+          {/* spacer */}
+          <hr
+            style={{
+              width: '100%'
+            }}
+          />
+          <Grid item xs={8} />
 
-            <Grid item xs={2}>
-              <Button variant="outlined" onClick={this.cancelSettings}>
-                Cancel
-              </Button>
-            </Grid>
-            <Grid item xs={2}>
-              <Button variant="contained" onClick={this.saveSettings}>
-                Save
-              </Button>
-            </Grid>
+          <Grid item xs={2}>
+            <Button variant="outlined" onClick={this.cancelSettings}>
+              Cancel
+            </Button>
           </Grid>
-        </Box>
-      </div>
+          <Grid item xs={2}>
+            <Button variant="contained" onClick={this.saveSettings}>
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
     );
   }
 }

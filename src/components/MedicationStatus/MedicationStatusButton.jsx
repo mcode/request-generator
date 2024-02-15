@@ -1,49 +1,41 @@
 import { Button, Grid, Typography } from '@mui/material';
 import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy';
+import './MedicationStatusButton.css';
 import { getStatusText } from './MedicationStatus';
 
 export const MedicationStatusButton = props => {
-  const {
-    baseColor,
-    disabled,
-    medicationDispense,
-    handleOpenMedicationStatus,
-    lastCheckedMedicationTime
-  } = props;
+  const { baseColor, medicationDispense, handleOpenMedicationStatus, lastCheckedMedicationTime } =
+    props;
   return (
-    <Grid item sm={4} md={4} lg={4}>
-      <Button
-        sx={pharmSx(baseColor)}
-        variant="contained"
-        onClick={handleOpenMedicationStatus}
-        disabled={disabled}
-      >
-        <div>
-          <LocalPharmacyIcon fontSize="large" />
-          <Typography sx={{ mb: 0, fontWeight: 'bold' }} component="p">
-            Medication:{' '}
-          </Typography>
-          <p>{getStatusText(medicationDispense?.status)}</p>
-        </div>
+    <Grid item container flexDirection="column" alignItems="center">
+      <Button sx={buttonSx(baseColor)} variant="contained" onClick={handleOpenMedicationStatus}>
+        <LocalPharmacyIcon fontSize="large" />
+        <Typography className="etasuButtonText" component="p">
+          Medication:
+        </Typography>
+        <Typography component="p">{getStatusText(medicationDispense?.status)}</Typography>
       </Button>
       {renderTimestamp(lastCheckedMedicationTime)}
     </Grid>
   );
 };
 
-const pharmSx = baseColor => ({
+const buttonSx = baseColor => ({
   backgroundColor: baseColor,
-  ':hover': { filter: 'brightness(110%)', backgroundColor: baseColor }
+  ':hover': { filter: 'brightness(110%)', backgroundColor: baseColor },
+  flexDirection: 'column'
 });
 
 const renderTimestamp = checkedTime => {
   return checkedTime ? (
-    <div>
-      <Typography component="p">{convertTimeDifference(checkedTime)}</Typography>
-      <Typography component="p" color={'GrayText'}>
+    <>
+      <Typography component="p" className="etasuButtonTimestamp">
+        {convertTimeDifference(checkedTime)}
+      </Typography>
+      <Typography component="p" className="etasuButtonTimestamp timestampString">
         {new Date(checkedTime).toLocaleString()}
       </Typography>
-    </div>
+    </>
   ) : (
     <Typography>No medication selected</Typography>
   );

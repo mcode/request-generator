@@ -1,8 +1,10 @@
 import { Box, Grid, IconButton, Modal, Tooltip } from '@mui/material';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import { useState, useEffect } from 'react';
-import { getStatusColor } from './MedicationStatus';
-import { getStatusText } from './MedicationStatus';
+import { getStatusColor, getStatusText } from './MedicationStatus';
+import './MedicationStatusModal.css';
+
+const getIdText = medicationDispense => medicationDispense?.id || 'N/A';
 
 export const MedicationStatusModal = props => {
   const { callback, onClose, medicationDispense, update } = props;
@@ -23,17 +25,17 @@ export const MedicationStatusModal = props => {
         <div>
           <h1>Medication Status</h1>
           <div className="status-icon" style={{ backgroundColor: color }}></div>
-          <Grid container columns={12}>
+          <Grid container>
             <Grid item xs={10}>
-              <div className="bundle-entry">ID: {medicationDispense?.id || 'N/A'}</div>
+              <div className="bundle-entry">ID: {getIdText(medicationDispense)}</div>
               <div className="bundle-entry">Status: {status}</div>
             </Grid>
             <Grid item xs={2}>
               <div className="bundle-entry">
                 <Tooltip title="Refresh">
-                  <IconButton onClick={callback} data-testid="refresh">
+                  <IconButton onClick={callback}>
                     <AutorenewIcon
-                      className={spin === true ? 'refresh' : 'renew-icon'}
+                      className={spin ? 'refresh' : 'renew-icon'}
                       onAnimationEnd={() => setSpin(false)}
                     />
                   </IconButton>

@@ -376,32 +376,30 @@ export default class RequestBox extends Component {
 
     return (
       <>
-        {this.props.patient.id && (
-          <div className="request">
-            <div style={{ paddingTop: '15px' }}>
-              <div className="request-header">
-                <span>Patient ID: {this.props.patient.id}</span>
-              </div>
-              <div className="patient-info">
-                {this.renderPatientInfo()}
-                {this.renderPrefetchedResources()}
-              </div>
+        <div className="request">
+          <div>
+            <div className="request-header">
+              <span>Patient ID: {this.props.patient.id}</span>
             </div>
-            <div className="action-btns">
-              <ButtonGroup variant="outlined" aria-label="outlined button group">
-                <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-                  Launch SMART on FHIR App
-                </Button>
-                <Button onClick={this.sendRx} disabled={disableSendRx}>
-                  Send Rx to Pharmacy
-                </Button>
-                <Button onClick={this.submit} disabled={disableSendToCRD}>
-                  Sign Order
-                </Button>
-              </ButtonGroup>
+            <div className="patient-info">
+              {this.renderPatientInfo()}
+              {this.renderPrefetchedResources()}
             </div>
           </div>
-        )}
+          <div className="action-btns">
+            <ButtonGroup variant="outlined" aria-label="outlined button group">
+              <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
+                Launch SMART on FHIR App
+              </Button>
+              <Button onClick={this.sendRx} disabled={disableSendRx}>
+                Send Rx to Pharmacy
+              </Button>
+              <Button onClick={this.submit} disabled={disableSendToCRD}>
+                Sign Order
+              </Button>
+            </ButtonGroup>
+          </div>
+        </div>
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',

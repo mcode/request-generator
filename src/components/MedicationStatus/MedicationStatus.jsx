@@ -2,6 +2,7 @@ import axios from 'axios';
 import { MedicationStatusButton } from './MedicationStatusButton.jsx';
 import { MedicationStatusModal } from './MedicationStatusModal.jsx';
 import { useState, useEffect } from 'react';
+import { Card } from '@mui/material';
 
 export const MedicationStatus = props => {
   const { ehrUrl, request } = props;
@@ -34,7 +35,7 @@ export const MedicationStatus = props => {
   };
 
   return (
-    <>
+    <Card variant="outlined" sx={{ padding: 2 }}>
       <MedicationStatusButton
         baseColor={getStatusColor(medicationDispense?.status)}
         medicationDispense={medicationDispense}
@@ -47,7 +48,7 @@ export const MedicationStatus = props => {
         update={showMedicationStatus}
         onClose={handleCloseMedicationStatus}
       />
-    </>
+    </Card>
   );
 };
 
