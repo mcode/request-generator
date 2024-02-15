@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { Button, Box, Grid, IconButton, Modal, DialogTitle } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import DisplayBox from '../components/DisplayBox/DisplayBox';
 import '../index.css';
-import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
 import { types, defaultValues, headerDefinitions } from '../util/data.js';
-import { createJwt, setupKeys } from '../util/auth';
+import { createJwt } from '../util/auth';
 
 import env from 'env-var';
 import FHIR from 'fhirclient';
@@ -19,6 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
+import { stateActions } from './ContextProvider/reducer.js';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class RequestBuilder extends Component {
       loading: false,
       logs: [],
       patient: {},
-      expanded: false,
+      expanded: true,
       patientList: [],
       response: {},
       code: null,
@@ -78,7 +79,7 @@ export default class RequestBuilder extends Component {
   reconnectEhr() {
     FHIR.oauth2.authorize({
       clientId: env.get('REACT_APP_CLIENT').asString(),
-      iss: this.state.baseUrl,
+      iss: this.props.globalState.baseUrl,
       redirectUri: this.props.redirect,
       scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
     });
@@ -96,7 +97,14 @@ export default class RequestBuilder extends Component {
   }
 
   updateStateElement = (elementName, text) => {
-    this.setState({ [elementName]: text });
+    if(elementName === 'patient') {
+      this.props.dispatch({
+        type: stateActions.updatePatient,
+        value: text
+      });
+    } else {
+      this.setState({ [elementName]: text });
+    }
     // if the patientFhirQuery is updated, make a call to get the patients
     if (elementName === 'patientFhirQuery') {
       setTimeout(() => {
@@ -116,39 +124,39 @@ export default class RequestBuilder extends Component {
     this.consoleLog('Initiating form submission', types.info);
     this.setState({ patient });
     const hookConfig = {
-      includeConfig: this.state.includeConfig,
-      alternativeTherapy: this.state.alternativeTherapy
+      includeConfig: this.props.globalState.includeConfig,
+      alternativeTherapy: this.props.globalState.alternativeTherapy
     };
-    let user = this.state.defaultUser;
+    let user = this.props.globalState.defaultUser;
     let json_request = buildRequest(
       request,
       user,
       patient,
-      this.state.ehrUrlSentToRemsAdminForPreFetch,
+      this.props.globalState.ehrUrlSentToRemsAdminForPreFetch,
       this.state.client.state.tokenResponse,
       prefetch,
-      this.state.sendPrefetch,
+      this.props.globalState.sendPrefetch,
       hook,
       hookConfig
     );
-    let cdsUrl = this.state.cdsUrl;
+    let cdsUrl = this.props.globalState.cdsUrl;
     if (hook === 'order-sign') {
-      cdsUrl = cdsUrl + '/' + this.state.orderSign;
+      cdsUrl = cdsUrl + '/' + this.props.globalState.orderSign;
     } else if (hook === 'order-select') {
-      cdsUrl = cdsUrl + '/' + this.state.orderSelect;
+      cdsUrl = cdsUrl + '/' + this.props.globalState.orderSelect;
     } else if (hook === 'patient-view') {
-      cdsUrl = cdsUrl + '/' + this.state.patientView;
+      cdsUrl = cdsUrl + '/' + this.props.globalState.patientView;
     } else {
       this.consoleLog("ERROR: unknown hook type: '", hook, "'");
       return;
     }
 
-    let baseUrl = this.state.baseUrl;
+    let baseUrl = this.props.globalState.baseUrl;
 
     const headers = {
       'Content-Type': 'application/json'
     };
-    if (this.state.generateJsonToken) {
+    if (this.props.globalState.generateJsonToken) {
       const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
       headers.authorization = jwt;
     }
@@ -197,8 +205,9 @@ export default class RequestBuilder extends Component {
   }
 
   getPatients = () => {
-    this.props.client
-      .request(this.state.patientFhirQuery, { flat: true })
+    if(this.props.globalState.patientFhirQuery) {
+      this.props.client
+      .request(this.props.globalState.patientFhirQuery, { flat: true })
       .then(result => {
         this.setState({
           patientList: result
@@ -209,6 +218,7 @@ export default class RequestBuilder extends Component {
           patientList: e
         });
       });
+    }
   };
 
   updateStateList = (elementName, text) => {
@@ -309,15 +319,15 @@ export default class RequestBuilder extends Component {
                         searchablePatients={this.state.patientList}
                         client={this.props.client}
                         request={this.state.request}
-                        launchUrl={this.state.launchUrl}
+                        launchUrl={this.props.globalState.launchUrl}
                         callback={this.updateStateElement}
                         callbackList={this.updateStateList}
                         callbackMap={this.updateStateMap}
                         // updatePrefetchCallback={PrefetchTemplate.generateQueries}
                         clearCallback={this.clearState}
                         options={this.state.codeValues}
-                        responseExpirationDays={this.state.responseExpirationDays}
-                        defaultUser={this.state.defaultUser}
+                        responseExpirationDays={this.props.globalState.responseExpirationDays}
+                        defaultUser={this.props.globalState.defaultUser}
                       />
                     )}
                   </Box>
@@ -335,29 +345,29 @@ export default class RequestBuilder extends Component {
             {displayRequestBox && (
               <Grid item>
                 <RequestBox
-                  ehrUrl={this.state.ehrUrl}
+                  ehrUrl={this.props.globalState.ehrUrl}
                   submitInfo={this.submit_info}
                   access_token={this.state.token}
                   client={this.state.client}
-                  fhirServerUrl={this.state.baseUrl}
+                  fhirServerUrl={this.props.globalState.baseUrl}
                   fhirVersion={'r4'}
-                  patientId={this.state.patient.id}
-                  patient={this.state.patient}
+                  patientId={this.props.globalState.patient.id}
+                  patient={this.props.globalState.patient}
                   request={this.state.request}
                   response={this.state.response}
                   code={this.state.code}
                   codeSystem={this.state.codeSystem}
                   display={this.state.display}
                   prefetchedResources={this.state.prefetchedResources}
-                  launchUrl={this.state.launchUrl}
-                  responseExpirationDays={this.state.responseExpirationDays}
-                  pimsUrl={this.state.pimsUrl}
-                  smartAppUrl={this.state.smartAppUrl}
-                  defaultUser={this.state.defaultUser}
+                  launchUrl={this.props.globalState.launchUrl}
+                  responseExpirationDays={this.props.globalState.responseExpirationDays}
+                  pimsUrl={this.props.globalState.pimsUrl}
+                  smartAppUrl={this.props.globalState.smartAppUrl}
+                  defaultUser={this.props.globalState.defaultUser}
                   ref={this.requestBox}
                   loading={this.state.loading}
                   consoleLog={this.consoleLog}
-                  patientFhirQuery={this.state.patientFhirQuery}
+                  patientFhirQuery={this.props.globalState.patientFhirQuery}
                 />
               </Grid>
             )}
@@ -372,7 +382,7 @@ export default class RequestBuilder extends Component {
             <DisplayBox
               response={this.state.response}
               client={this.state.client}
-              patientId={this.state.patient.id}
+              patientId={this.props.globalState.patient.id}
               ehrLaunch={true}
               takeSuggestion={this.takeSuggestion}
             />

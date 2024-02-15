@@ -1,4 +1,4 @@
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
@@ -382,8 +382,14 @@ export default class RequestBox extends Component {
               <span>Patient ID: {this.props.patient.id}</span>
             </div>
             <div className="patient-info">
-              {this.renderPatientInfo()}
-              {this.renderPrefetchedResources()}
+              <Grid container>
+                  <Grid item xs={6}>
+                    {this.renderPatientInfo()}
+                  </Grid>
+                  <Grid item xs={6}>
+                    {this.renderPrefetchedResources()}
+                  </Grid>
+                </Grid>
             </div>
           </div>
           <div className="action-btns">

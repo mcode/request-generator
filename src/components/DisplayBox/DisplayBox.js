@@ -392,7 +392,7 @@ export default class DisplayBox extends Component {
       }
       return (
         <div>
-          Notification Cards ({renderedCards.length})<div>{renderedCards}</div>
+          <div>{renderedCards}</div>
         </div>
       );
     } else {
