@@ -86,7 +86,6 @@ export default function PatientSearchBar(props) {
                 callbackMap={props.callbackMap}
                 updatePrefetchCallback={PrefetchTemplate.generateQueries}
                 clearCallback={props.clearCallback}
-                ehrUrl={props.ehrUrl}
                 options={options}
                 responseExpirationDays={props.responseExpirationDays}
                 defaultUser={props.defaultUser}

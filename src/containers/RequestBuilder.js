@@ -308,7 +308,6 @@ export default class RequestBuilder extends Component {
                         callbackMap={this.updateStateMap}
                         // updatePrefetchCallback={PrefetchTemplate.generateQueries}
                         clearCallback={this.clearState}
-                        ehrUrl={this.state.ehrUrl} // is this used?
                         options={this.state.codeValues}
                         responseExpirationDays={this.state.responseExpirationDays}
                         defaultUser={this.state.defaultUser}
