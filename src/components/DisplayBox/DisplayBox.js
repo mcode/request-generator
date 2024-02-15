@@ -399,5 +399,4 @@ export default class DisplayBox extends Component {
       return <div></div>;
     }
   }
-
 }

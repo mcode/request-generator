@@ -2,7 +2,7 @@ import { makeStyles } from '@mui/styles';
 export default makeStyles(
   theme => ({
     disappear: {
-        display: 'none'
+      display: 'none'
     },
     spacer: {
       height: '50px', // must be same as buttons
@@ -45,16 +45,16 @@ export default makeStyles(
       height: 'auto',
       // margin: '0 15px 0 15px', // must be same as tabDivView
       borderLeft: '1px solid black',
-      borderRight: '1px solid black',
+      borderRight: '1px solid black'
     },
     noTasks: {
-        backgroundColor: '#e4e4e4',
-        padding: '10px',
-        fontSize: '18px'
+      backgroundColor: '#e4e4e4',
+      padding: '10px',
+      fontSize: '18px'
     },
     // DO NOT ALPHABETIZE
     // if you must alphabetize this file to have classes
-    // sorted, rename tabButtonView and selectedTabView such 
+    // sorted, rename tabButtonView and selectedTabView such
     // that tabButtonView occurs earlier in the list.
     // Otherwise, the styles will override incorrectly.
     tabButtonView: {
@@ -65,8 +65,7 @@ export default makeStyles(
         fontSize: '1.5rem',
         border: '1px solid black',
         boxShadow: 'none',
-        borderRadius: '0',
-
+        borderRadius: '0'
       },
       '& > *': {
         // generic child selector
@@ -77,32 +76,32 @@ export default makeStyles(
       }
     },
     selectedTabView: {
-        '&.MuiButtonBase-root': {
-          color: 'black',
-          borderBottom: 'none',
+      '&.MuiButtonBase-root': {
+        color: 'black',
+        borderBottom: 'none',
+        backgroundColor: '#F5F5F7',
+        '&:hover': {
           backgroundColor: '#F5F5F7',
-          '&:hover': {
-            backgroundColor: '#F5F5F7',
-            boxShadow: 'none'
-          },
+          boxShadow: 'none'
         }
+      }
     },
     taskDeleteHeader: {
-        padding: '15px 0 15px 0',
+      padding: '15px 0 15px 0'
     },
     taskDeleteModal: {
-        border: '1px solid black',
-        width: '400px',
+      border: '1px solid black',
+      width: '400px',
 
-        backgroundColor: 'white', 
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        padding: '15px', 
-        transform: 'translate(-50%, -50%)',
-        overflowY: 'auto',
-        fontSize: '18px',
-        boxShadow: '10px 10px 20px black'
+      backgroundColor: 'white',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      padding: '15px',
+      transform: 'translate(-50%, -50%)',
+      overflowY: 'auto',
+      fontSize: '18px',
+      boxShadow: '10px 10px 20px black'
     },
     tabDivView: {
       '&.MuiGrid-root': {
@@ -113,39 +112,38 @@ export default makeStyles(
       }
     },
     taskHeaderTabs: {
-        margin: '15px 15px 5px 15px', 
-        backgroundColor: '#F5F5F7',
+      margin: '15px 15px 5px 15px',
+      backgroundColor: '#F5F5F7'
     },
     taskRefreshButton: {
-        padding: '35px 0 0 0'
+      padding: '35px 0 0 0'
     },
     taskTabButton: {
-        padding: '10px 0px 5px 0px'
+      padding: '10px 0px 5px 0px'
     },
     taskTabMain: {
-        border: '0px solid black',
-        boxShadow: '2px 2px',
-        borderRadius: '5px',
-        padding: '8px',
-        background: 'linear-gradient(to right bottom, #F5F5F7, #eaeaef)',
-        '&:hover': {
-            background: 'linear-gradient(to right bottom, #FFFFFF, #efefff)',
-        }
+      border: '0px solid black',
+      boxShadow: '2px 2px',
+      borderRadius: '5px',
+      padding: '8px',
+      background: 'linear-gradient(to right bottom, #F5F5F7, #eaeaef)',
+      '&:hover': {
+        background: 'linear-gradient(to right bottom, #FFFFFF, #efefff)'
+      }
     },
     taskTabHeader: {
-        fontSize: '8px',
-        color: '#777',
-        borderBottom: '1px solid #e3e3ef',
+      fontSize: '8px',
+      color: '#777',
+      borderBottom: '1px solid #e3e3ef'
     },
     taskTabDescription: {
-        fontSize: '18px',
-        padding: '8px 0px 10px 2px',
+      fontSize: '18px',
+      padding: '8px 0px 10px 2px'
     },
     taskTabOwner: {
-        color: '#777'
-    },
+      color: '#777'
+    }
   }),
-
 
   { name: 'RequestDashboard', index: 1 }
 );
