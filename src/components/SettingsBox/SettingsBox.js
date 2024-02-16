@@ -1,16 +1,51 @@
 import React, { Component } from 'react';
 import './SettingsBox.css';
-import InputBox from '../Inputs/InputBox';
 import Checkbox from '@mui/material/Checkbox';
 
 import { headerDefinitions, types } from '../../util/data';
 import FHIR from 'fhirclient';
 import { Box, Button, FormControlLabel, Grid, TextField } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+
+const clearMedicationDispenses = 
+  ({ ehrUrl, access_token }, consoleLog) =>
+  () => {
+    console.log(
+      'Clear MedicationDispenses from the EHR: ' + ehrUrl
+    );
+    const client = FHIR.client({
+      serverUrl: ehrUrl,
+      ...(access_token ? { tokenResponse: access_token } : {})
+    });
+    client
+      .request('MedicationDispense', { flat: true })
+      .then(result => {
+        console.log(result);
+        result.forEach(resource => {
+          console.log(resource.id);
+          client
+            .delete('MedicationDispense/' + resource.id)
+            .then(result => {
+              consoleLog(
+                'Successfully deleted MedicationDispense ' + resource.id + ' from EHR',
+                types.info
+              );
+              console.log(result);
+            })
+            .catch(e => {
+              console.log('Failed to delete MedicationDispense ' + resource.id);
+              console.log(e);
+            });
+        });
+      })
+      .catch(e => {
+        console.log('Failed to retrieve list of MedicationDispense');
+        console.log(e);
+      });
+  };
 
 const clearQuestionnaireResponses =
   ({ ehrUrl, defaultUser, access_token }, consoleLog) =>
-  _event => {
+  () => {
     console.log(
       'Clear QuestionnaireResponses from the EHR: ' + ehrUrl + ' for author ' + defaultUser
     );
@@ -47,7 +82,7 @@ const clearQuestionnaireResponses =
 
 const resetPims =
   ({ pimsUrl }, consoleLog) =>
-  _event => {
+  () => {
     let url = new URL(pimsUrl);
     const resetUrl = url.origin + '/doctorOrders/api/deleteAll';
     console.log('reset pims: ' + resetUrl);
@@ -70,7 +105,7 @@ const resetPims =
 
 const resetRemsAdmin =
   ({ cdsUrl }, consoleLog) =>
-  _event => {
+  () => {
     let url = new URL(cdsUrl);
     const resetUrl = url.origin + '/etasu/reset';
 
@@ -95,6 +130,11 @@ const resetHeaderDefinitions = [
     display: 'Clear In-Progress Forms',
     key: 'clearQuestionnaireResponses',
     reset: clearQuestionnaireResponses
+  },
+  {
+    display: 'Clear EHR MedicationDispenses',
+    key: 'clearMedicationDispenses',
+    reset: clearMedicationDispenses
   },
   {
     display: 'Reset PIMS Database',
@@ -211,7 +251,7 @@ export default class SettingsBox extends Component {
         })}
             {resetHeaderDefinitions.map(({ key, display, reset }) => {
               return (
-                <Grid item key={key} xs={4}>
+                <Grid item key={key} xs={3}>
                   <Button variant='outlined' onClick={reset(state, consoleLog)}>
                     {display}
                   </Button>

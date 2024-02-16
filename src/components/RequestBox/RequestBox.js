@@ -2,13 +2,11 @@ import { Button, ButtonGroup } from '@mui/material';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
-import PersonIcon from '@mui/icons-material/Person';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { defaultValues, shortNameMap } from '../../util/data';
-import { getAge } from '../../util/fhir';
+import { shortNameMap } from '../../util/data';
+import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
-import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
 import './request.css';
 
 export default class RequestBox extends Component {
@@ -34,8 +32,6 @@ export default class RequestBox extends Component {
     this.props.callback(request,request);    // Submit the cds hook request.
     this.submitOrderSign(request);
   }
-
-  componentDidMount() { }
 
   prepPrefetch() {
     const preppedResources = new Map();
@@ -257,9 +253,8 @@ export default class RequestBox extends Component {
   /**
    * Relaunch DTR using the available context
    */
-  relaunch = e => {
+  relaunch = () => {
     this.buildLaunchLink().then(link => {
-      //e.preventDefault();
       window.open(link.url, '_blank');
     });
   };
@@ -317,7 +312,7 @@ export default class RequestBox extends Component {
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
-  sendRx = e => {
+  sendRx = () => {
     console.log('Sending NewRx to: ' + this.props.pimsUrl);
 
     // build the NewRx Message
@@ -344,7 +339,19 @@ export default class RequestBox extends Component {
     })
       .then(response => {
         console.log('Successfully sent NewRx to PIMS');
-        console.log(response);
+
+        // create the MedicationDispense
+        var medicationDispense = createMedicationDispenseFromMedicationRequest(this.props.request);
+        console.log('Create MedicationDispense:');
+        console.log(medicationDispense);
+
+        // store the MedicationDispense in the EHR
+        console.log(medicationDispense);
+        this.props.client.update(medicationDispense).then(result => {
+          console.log('Update MedicationDispense result:');
+          console.log(result);
+        });
+
         this.handleRxResponse();
       })
       .catch(error => {

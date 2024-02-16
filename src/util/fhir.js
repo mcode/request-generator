@@ -1,3 +1,4 @@
+
 function fhir(resource, ehrUrl, patient, auth) {
   const headers = {
     'Content-Type': 'application/json'
@@ -62,4 +63,20 @@ function getDrugCodeFromMedicationRequest(medicationRequest) {
   return codeableConcept?.coding?.[0];
  }
 
-export { fhir, getAge, getDrugCodeableConceptFromMedicationRequest, getDrugCodeFromMedicationRequest };
+function createMedicationDispenseFromMedicationRequest(medicationRequest) {
+  console.log('createMedicationDispenseFromMedicationRequest');
+  var medicationDispense = {};
+  medicationDispense.resourceType = 'MedicationDispense';
+  medicationDispense.id = medicationRequest?.id + '-dispense';
+  medicationDispense.status = 'unknown';
+  if (medicationRequest.medicationCodeableConcept) {
+    medicationDispense.medicationCodeableConcept = medicationRequest.medicationCodeableConcept;
+  } else if (medicationRequest.medicationReference) {
+    medicationDispense.medicationReference = medicationRequest.medicationReference;
+  }
+  medicationDispense.subject = medicationRequest.subject;
+  medicationDispense.authorizingPrescription = [ { 'reference': 'MedicationRequest/' + medicationRequest.id } ];
+  return medicationDispense;
+}
+
+export { fhir, getAge, getDrugCodeableConceptFromMedicationRequest, getDrugCodeFromMedicationRequest, createMedicationDispenseFromMedicationRequest };
