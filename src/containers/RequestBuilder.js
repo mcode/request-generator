@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Box, IconButton, Modal, DialogTitle } from '@mui/material';
+import { Button, Box, Grid, IconButton, Modal, DialogTitle } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DisplayBox from '../components/DisplayBox/DisplayBox';
@@ -16,8 +16,9 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import SettingsIcon from '@mui/icons-material/Settings';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
+import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -37,7 +38,7 @@ export default class RequestBuilder extends Component {
       showSettings: false,
       token: null,
       client: this.props.client,
-      codeValues: defaultValues,
+      codeValues: defaultValues
     };
 
     this.updateStateElement = this.updateStateElement.bind(this);
@@ -50,11 +51,11 @@ export default class RequestBuilder extends Component {
 
   componentDidMount() {
     // init settings
-    Object.keys(headerDefinitions).map((key) => {
+    Object.keys(headerDefinitions).map(key => {
       this.setState({ [key]: headerDefinitions[key].default });
     });
     // load settings
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach((element) => {
+    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
       try {
         this.updateStateElement(element[0], element[1]);
       } catch {
@@ -103,7 +104,6 @@ export default class RequestBuilder extends Component {
       }, 1000);
     }
   };
-
 
   timeout = time => {
     let controller = new AbortController();
@@ -201,7 +201,7 @@ export default class RequestBuilder extends Component {
       .request(this.state.patientFhirQuery, { flat: true })
       .then(result => {
         this.setState({
-          patientList: result,
+          patientList: result
         });
       })
       .catch(e => {
@@ -234,34 +234,49 @@ export default class RequestBuilder extends Component {
       response: {}
     });
   };
+
   handleChange = () => (event, isExpanded) => {
     this.setState({ expanded: isExpanded ? true : false });
   };
 
+  isOrderNotSelected() {
+    return Object.keys(this.state.request).length === 0;
+  }
+
   render() {
+    const displayRequestBox = !!this.state.patient.id;
+    const disableGetMedicationStatus = this.isOrderNotSelected() || this.state.loading;
+
     return (
-      <div>
-        <div className="nav-header">
-          <button
-            className={
-              'btn btn-class settings ' + (this.state.showSettings ? 'active' : 'not-active')
-            }
-            onClick={() => this.updateStateElement('showSettings', !this.state.showSettings)}
-          >
-            <span className="glyphicon glyphicon-cog settings-icon" />
-          </button>
-          <button
-            className="btn btn-class"
-            onClick={() => {
-              this.reconnectEhr();
-            }}
+      <>
+        <Grid
+          container
+          className="nav-header"
+          xs={12}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Button
+            sx={navigationBarButtonStyle}
+            onClick={() => this.reconnectEhr()}
+            variant="outlined"
           >
             Reconnect EHR
-          </button>
-        </div>
-        <div>
-          <Modal open={this.state.showSettings} onClose={() => { this.setState({ showSettings: false }); }} >
-            <div className='settings-box'>
+          </Button>
+          <Button
+            sx={navigationBarButtonStyle}
+            onClick={() => this.updateStateElement('showSettings', !this.state.showSettings)}
+            variant="outlined"
+          >
+            <SettingsIcon fontSize="large" />
+          </Button>
+          <Modal
+            open={this.state.showSettings}
+            onClose={() => {
+              this.setState({ showSettings: false });
+            }}
+          >
+            <div className="settings-box">
               <SettingsBox
                 state={this.state}
                 consoleLog={this.consoleLog}
@@ -269,97 +284,120 @@ export default class RequestBuilder extends Component {
               />
             </div>
           </Modal>
-        </div>
-        <div style={{ display: 'flex' }}>
-          <Accordion style={{ width: '95%' }} expanded={this.state.expanded} onChange={this.handleChange()}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-              style={{ marginLeft: '45%' }}
-            >
-              <Button variant="contained" startIcon={<PersonIcon />}>
-                Select a patient
-              </Button>
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.state.patientList.length > 0 && this.state.expanded ?
-                <div>
+        </Grid>
+        <Grid container spacing={2} padding={2}>
+          <Grid item xs={11}>
+            <Accordion expanded={this.state.expanded} onChange={this.handleChange()}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+                style={{ marginLeft: '45%' }}
+              >
+                <Button variant="contained" startIcon={<PersonIcon />}>
+                  Select a patient
+                </Button>
+              </AccordionSummary>
+              <AccordionDetails>
+                {this.state.patientList.length > 0 && this.state.expanded && (
                   <Box>
-                  {this.state.patientList instanceof Error
-                    ? this.renderError()
-                    : <PatientSearchBar
-                      getPatients = {this.getPatients}
-                      searchablePatients={this.state.patientList}
-                      client={this.props.client}
-                      request={this.state.request}
-                      launchUrl={this.state.launchUrl}
-                      callback={this.updateStateElement}
-                      callbackList={this.updateStateList}
-                      callbackMap={this.updateStateMap}
-                      // updatePrefetchCallback={PrefetchTemplate.generateQueries}
-                      clearCallback={this.clearState}
-                      ehrUrl={this.state.ehrUrl} // is this used?
-                      options={this.state.codeValues}
-                      responseExpirationDays={this.state.responseExpirationDays}
-                      defaultUser={this.state.defaultUser}
-                    />}
+                    {this.state.patientList instanceof Error ? (
+                      this.renderError()
+                    ) : (
+                      <PatientSearchBar
+                        getPatients={this.getPatients}
+                        searchablePatients={this.state.patientList}
+                        client={this.props.client}
+                        request={this.state.request}
+                        launchUrl={this.state.launchUrl}
+                        callback={this.updateStateElement}
+                        callbackList={this.updateStateList}
+                        callbackMap={this.updateStateMap}
+                        // updatePrefetchCallback={PrefetchTemplate.generateQueries}
+                        clearCallback={this.clearState}
+                        options={this.state.codeValues}
+                        responseExpirationDays={this.state.responseExpirationDays}
+                        defaultUser={this.state.defaultUser}
+                      />
+                    )}
                   </Box>
-                </div>
-                : <span></span>
-              }
+                )}
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+          <Grid item xs={1} alignContent="center" justifyContent="center">
+            <IconButton color="primary" onClick={() => this.getPatients()} size="large">
+              <RefreshIcon fontSize="large" />
+            </IconButton>
+          </Grid>
 
-            </AccordionDetails>
-          </Accordion>
-          <IconButton
-            color="primary"
-            onClick={() => this.getPatients()}
-            size="large"
-          >
-            <RefreshIcon fontSize="large" />
-          </IconButton>
-        </div>
-        <div className="form-group container left-form">
-          <div>
-            {/*for the ehr launch */}
-            <RequestBox
-              ehrUrl={this.state.ehrUrl}
-              submitInfo={this.submit_info}
-              access_token={this.state.token}
-              client={this.state.client}
-              fhirServerUrl={this.state.baseUrl}
-              fhirVersion={'r4'}
-              patientId={this.state.patient.id}
-              patient={this.state.patient}
-              request={this.state.request}
+          <Grid item container className="form-group" xs={12} md={6} spacing={2}>
+            {displayRequestBox && (
+              <Grid item>
+                <RequestBox
+                  ehrUrl={this.state.ehrUrl}
+                  submitInfo={this.submit_info}
+                  access_token={this.state.token}
+                  client={this.state.client}
+                  fhirServerUrl={this.state.baseUrl}
+                  fhirVersion={'r4'}
+                  patientId={this.state.patient.id}
+                  patient={this.state.patient}
+                  request={this.state.request}
+                  response={this.state.response}
+                  code={this.state.code}
+                  codeSystem={this.state.codeSystem}
+                  display={this.state.display}
+                  prefetchedResources={this.state.prefetchedResources}
+                  launchUrl={this.state.launchUrl}
+                  responseExpirationDays={this.state.responseExpirationDays}
+                  pimsUrl={this.state.pimsUrl}
+                  smartAppUrl={this.state.smartAppUrl}
+                  defaultUser={this.state.defaultUser}
+                  ref={this.requestBox}
+                  loading={this.state.loading}
+                  consoleLog={this.consoleLog}
+                  patientFhirQuery={this.state.patientFhirQuery}
+                />
+              </Grid>
+            )}
+            {!disableGetMedicationStatus && (
+              <Grid item>
+                <MedicationStatus ehrUrl={this.state.ehrUrl} request={this.state.request} />
+              </Grid>
+            )}
+          </Grid>
+
+          <Grid item container xs={12} md={6}>
+            <DisplayBox
               response={this.state.response}
-              code={this.state.code}
-              codeSystem={this.state.codeSystem}
-              display={this.state.display}
-              prefetchedResources={this.state.prefetchedResources}
-              launchUrl={this.state.launchUrl}
-              responseExpirationDays={this.state.responseExpirationDays}
-              pimsUrl={this.state.pimsUrl}
-              smartAppUrl={this.state.smartAppUrl}
-              defaultUser={this.state.defaultUser}
-              ref={this.requestBox}
-              loading={this.state.loading}
-              consoleLog={this.consoleLog}
-              patientFhirQuery={this.state.patientFhirQuery}
+              client={this.state.client}
+              patientId={this.state.patient.id}
+              ehrLaunch={true}
+              takeSuggestion={this.takeSuggestion}
             />
-          </div>
-        </div>
-
-        <div className="right-form">
-          <DisplayBox
-            response={this.state.response}
-            client={this.state.client}
-            patientId={this.state.patient.id}
-            ehrLaunch={true}
-            takeSuggestion={this.takeSuggestion}
-          />
-        </div>
-      </div>
+          </Grid>
+        </Grid>
+      </>
     );
   }
 }
+
+const navigationBarButtonStyle = {
+  backgroundColor: 'white',
+  color: 'black',
+  borderColor: 'black',
+  display: 'flex',
+  marginX: 2,
+  marginY: 1,
+  '&:hover': {
+    color: 'white',
+    backgroundColor: 'black',
+    borderColor: 'black'
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: 'black',
+    borderColor: 'black'
+  }
+};
