@@ -43,7 +43,7 @@ export default class RequestBuilder extends Component {
     };
 
     this.updateStateElement = this.updateStateElement.bind(this);
-    this.submit_info = this.submit_info.bind(this);
+    this.submitInfo = this.submitInfo.bind(this);
     this.consoleLog = this.consoleLog.bind(this);
     this.takeSuggestion = this.takeSuggestion.bind(this);
     this.requestBox = React.createRef();
@@ -102,7 +102,7 @@ export default class RequestBuilder extends Component {
     return controller;
   };
 
-  submit_info(prefetch, request, patient, hook) {
+  submitInfo(prefetch, request, patient, hook) {
     this.setState({ loading: true });
     this.consoleLog('Initiating form submission', types.info);
     this.setState({ patient });
@@ -293,7 +293,7 @@ export default class RequestBuilder extends Component {
               <Grid item>
                 <RequestBox
                   ehrUrl={this.props.globalState.ehrUrl}
-                  submitInfo={this.submit_info}
+                  submitInfo={this.submitInfo}
                   access_token={this.state.token}
                   client={this.state.client}
                   fhirServerUrl={this.props.globalState.baseUrl}
