@@ -2,7 +2,9 @@ import React, { memo, useState, useEffect } from 'react';
 import { Button, Box, FormControlLabel, Grid, Checkbox, TextField } from '@mui/material';
 
 import useStyles from './styles';
-import { headerDefinitions } from '../../util/data';
+import FHIR from 'fhirclient';
+
+import { headerDefinitions, types } from '../../util/data';
 import { stateActions } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
@@ -60,7 +62,7 @@ const SettingsSection = props => {
   };
   const clearQuestionnaireResponses =
     ({ defaultUser }) =>
-    _event => {
+    () => {
       props.client
         .request('QuestionnaireResponse?author=' + defaultUser, { flat: true })
         .then(result => {
@@ -84,7 +86,7 @@ const SettingsSection = props => {
 
   const resetPims =
     ({ pimsUrl }) =>
-    _event => {
+    () => {
       let url = new URL(pimsUrl);
       const resetUrl = url.origin + '/doctorOrders/api/deleteAll';
       console.log('reset pims: ' + resetUrl);
@@ -103,7 +105,7 @@ const SettingsSection = props => {
     };
   const resetRemsAdmin =
     ({ cdsUrl }) =>
-    _event => {
+    () => {
       let url = new URL(cdsUrl);
       const resetUrl = url.origin + '/etasu/reset';
 
@@ -117,6 +119,40 @@ const SettingsSection = props => {
         .catch(error => {
           console.log('Reset rems admin error: ');
           console.log(error);
+        });
+    };
+  const clearMedicationDispenses =
+    ({ ehrUrl, access_token }, consoleLog) =>
+    () => {
+      console.log('Clear MedicationDispenses from the EHR: ' + ehrUrl);
+      const client = FHIR.client({
+        serverUrl: ehrUrl,
+        ...(access_token ? { tokenResponse: access_token } : {})
+      });
+      client
+        .request('MedicationDispense', { flat: true })
+        .then(result => {
+          console.log(result);
+          result.forEach(resource => {
+            console.log(resource.id);
+            client
+              .delete('MedicationDispense/' + resource.id)
+              .then(result => {
+                consoleLog(
+                  'Successfully deleted MedicationDispense ' + resource.id + ' from EHR',
+                  types.info
+                );
+                console.log(result);
+              })
+              .catch(e => {
+                console.log('Failed to delete MedicationDispense ' + resource.id);
+                console.log(e);
+              });
+          });
+        })
+        .catch(e => {
+          console.log('Failed to retrieve list of MedicationDispense');
+          console.log(e);
         });
     };
   const resetHeaderDefinitions = [
@@ -134,6 +170,11 @@ const SettingsSection = props => {
       display: 'Reset REMS-Admin Database',
       key: 'resetRemsAdmin',
       reset: resetRemsAdmin
+    },
+    {
+      display: 'Clear EHR MedicationDispenses',
+      key: 'clearMedicationDispenses',
+      reset: clearMedicationDispenses
     }
   ];
 
@@ -196,7 +237,7 @@ const SettingsSection = props => {
           })}
           {resetHeaderDefinitions.map(({ key, display, reset }) => {
             return (
-              <Grid item key={key} xs={4}>
+              <Grid item key={key} xs={3}>
                 <Button variant="outlined" onClick={reset(state)}>
                   {display}
                 </Button>
