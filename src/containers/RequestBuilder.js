@@ -254,47 +254,11 @@ export default class RequestBuilder extends Component {
   }
 
   render() {
-    const displayRequestBox = !!this.state.patient.id;
+    const displayRequestBox = !!this.props.globalState.patient?.id;
     const disableGetMedicationStatus = this.isOrderNotSelected() || this.state.loading;
 
     return (
       <>
-        <Grid
-          container
-          className="nav-header"
-          xs={12}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Button
-            sx={navigationBarButtonStyle}
-            onClick={() => this.reconnectEhr()}
-            variant="outlined"
-          >
-            Reconnect EHR
-          </Button>
-          <Button
-            sx={navigationBarButtonStyle}
-            onClick={() => this.updateStateElement('showSettings', !this.state.showSettings)}
-            variant="outlined"
-          >
-            <SettingsIcon fontSize="large" />
-          </Button>
-          <Modal
-            open={this.state.showSettings}
-            onClose={() => {
-              this.setState({ showSettings: false });
-            }}
-          >
-            <div className="settings-box">
-              <SettingsBox
-                state={this.state}
-                consoleLog={this.consoleLog}
-                updateCB={this.updateStateElement}
-              />
-            </div>
-          </Modal>
-        </Grid>
         <Grid container spacing={2} padding={2}>
           <Grid item xs={11}>
             <Accordion expanded={this.state.expanded} onChange={this.handleChange()}>
@@ -373,7 +337,7 @@ export default class RequestBuilder extends Component {
             )}
             {!disableGetMedicationStatus && (
               <Grid item>
-                <MedicationStatus ehrUrl={this.state.ehrUrl} request={this.state.request} />
+                <MedicationStatus ehrUrl={this.props.globalState.ehrUrl} request={this.state.request} />
               </Grid>
             )}
           </Grid>
@@ -382,7 +346,7 @@ export default class RequestBuilder extends Component {
             <DisplayBox
               response={this.state.response}
               client={this.state.client}
-              patientId={this.props.globalState.patient.id}
+              patientId={this.props.globalState.patient?.id}
               ehrLaunch={true}
               takeSuggestion={this.takeSuggestion}
             />
