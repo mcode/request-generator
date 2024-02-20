@@ -97,7 +97,7 @@ export default class RequestBuilder extends Component {
   }
 
   updateStateElement = (elementName, text) => {
-    if(elementName === 'patient') {
+    if (elementName === 'patient') {
       this.props.dispatch({
         type: stateActions.updatePatient,
         value: text
@@ -205,19 +205,19 @@ export default class RequestBuilder extends Component {
   }
 
   getPatients = () => {
-    if(this.props.globalState.patientFhirQuery) {
+    if (this.props.globalState.patientFhirQuery) {
       this.props.client
-      .request(this.props.globalState.patientFhirQuery, { flat: true })
-      .then(result => {
-        this.setState({
-          patientList: result
+        .request(this.props.globalState.patientFhirQuery, { flat: true })
+        .then(result => {
+          this.setState({
+            patientList: result
+          });
+        })
+        .catch(e => {
+          this.setState({
+            patientList: e
+          });
         });
-      })
-      .catch(e => {
-        this.setState({
-          patientList: e
-        });
-      });
     }
   };
 
@@ -337,7 +337,10 @@ export default class RequestBuilder extends Component {
             )}
             {!disableGetMedicationStatus && (
               <Grid item>
-                <MedicationStatus ehrUrl={this.props.globalState.ehrUrl} request={this.state.request} />
+                <MedicationStatus
+                  ehrUrl={this.props.globalState.ehrUrl}
+                  request={this.state.request}
+                />
               </Grid>
             )}
           </Grid>

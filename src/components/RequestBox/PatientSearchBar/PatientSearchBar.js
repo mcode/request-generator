@@ -58,13 +58,9 @@ export default function PatientSearchBar(props) {
             Showing {getFilteredLength(input, listOfPatients)} of {props.searchablePatients.length}{' '}
             records
           </p>
-          <IconButton
-                color="primary"
-                onClick={() => props.getPatients()}
-                size="large"
-                >
-                    <RefreshIcon fontSize="large" />
-            </IconButton>
+          <IconButton color="primary" onClick={() => props.getPatients()} size="large">
+            <RefreshIcon fontSize="large" />
+          </IconButton>
         </span>
         {displayFilteredPatientList(input, listOfPatients[0])}
       </Box>

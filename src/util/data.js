@@ -29,9 +29,7 @@ const headerDefinitions = {
   ehrUrlSentToRemsAdminForPreFetch: {
     display: 'EHR Server Sent to REMS Admin for Prefetch',
     type: 'input',
-    default: env
-    .get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH')
-    .asString()
+    default: env.get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH').asString()
   },
   generateJsonToken: {
     display: 'Generate JSON Web Token',
@@ -86,7 +84,7 @@ const headerDefinitions = {
   smartAppUrl: {
     display: 'SMART App',
     type: 'input',
-    default:  env.get('REACT_APP_SMART_LAUNCH_URL').asString()
+    default: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
   }
 };
 

@@ -383,13 +383,13 @@ export default class RequestBox extends Component {
             </div>
             <div className="patient-info">
               <Grid container>
-                  <Grid item xs={6}>
-                    {this.renderPatientInfo()}
-                  </Grid>
-                  <Grid item xs={6}>
-                    {this.renderPrefetchedResources()}
-                  </Grid>
+                <Grid item xs={6}>
+                  {this.renderPatientInfo()}
                 </Grid>
+                <Grid item xs={6}>
+                  {this.renderPrefetchedResources()}
+                </Grid>
+              </Grid>
             </div>
           </div>
           <div className="action-btns">

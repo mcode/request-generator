@@ -3,7 +3,6 @@ export const stateActions = Object.freeze({
   updatePatient: 'update_patient',
   updateSetting: 'update_setting', // {type, settingId, value}
   flagStartup: 'flag_startup'
-
 });
 // todo: add an enum that defines possible settings
 export const reducer = (state, action) => {
@@ -19,10 +18,10 @@ export const reducer = (state, action) => {
         patient: action.value
       };
     case stateActions.flagStartup:
-        return {
-            ...state,
-            startup: true
-        };
+      return {
+        ...state,
+        startup: true
+      };
     default:
       return state;
   }

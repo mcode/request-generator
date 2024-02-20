@@ -217,7 +217,8 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   var drugCoded = doc.createElement('DrugCoded');
 
   // loop through the coding values and find the ndc code and the rxnorm code
-  let medicationCodingList = getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
+  let medicationCodingList =
+    getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();

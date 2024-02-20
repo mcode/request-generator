@@ -11,9 +11,11 @@ const PatientSection = props => {
   // we can get rid of this hacky shim
   return (
     <div>
-      {state.startup ? 
-        <RequestBuilder globalState={state} dispatch={dispatch} client={props.client} /> :
-        <>Loading...</>}
+      {state.startup ? (
+        <RequestBuilder globalState={state} dispatch={dispatch} client={props.client} />
+      ) : (
+        <>Loading...</>
+      )}
     </div>
   );
 };
