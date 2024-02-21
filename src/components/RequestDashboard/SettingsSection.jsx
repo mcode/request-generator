@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { Button, Box, FormControlLabel, Grid, Checkbox, TextField } from '@mui/material';
 
 import useStyles from './styles';
+import env from 'env-var';
 import FHIR from 'fhirclient';
 
 import { headerDefinitions, types } from '../../util/data';
@@ -122,7 +123,7 @@ const SettingsSection = props => {
         });
     };
   const clearMedicationDispenses =
-    ({ ehrUrl, access_token }, consoleLog) =>
+    ({ ehrUrl, access_token }) =>
     () => {
       console.log('Clear MedicationDispenses from the EHR: ' + ehrUrl);
       const client = FHIR.client({
@@ -138,10 +139,6 @@ const SettingsSection = props => {
             client
               .delete('MedicationDispense/' + resource.id)
               .then(result => {
-                consoleLog(
-                  'Successfully deleted MedicationDispense ' + resource.id + ' from EHR',
-                  types.info
-                );
                 console.log(result);
               })
               .catch(e => {
@@ -155,16 +152,26 @@ const SettingsSection = props => {
           console.log(e);
         });
     };
+  const reconnectEhr =
+    ({ baseUrl, redirect }) =>
+    () => {
+      FHIR.oauth2.authorize({
+        clientId: env.get('REACT_APP_CLIENT').asString(),
+        iss: baseUrl,
+        redirectUri: redirect,
+        scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
+      });
+    };
   const resetHeaderDefinitions = [
-    {
-      display: 'Clear In-Progress Forms',
-      key: 'clearQuestionnaireResponses',
-      reset: clearQuestionnaireResponses
-    },
     {
       display: 'Reset PIMS Database',
       key: 'resetPims',
       reset: resetPims
+    },
+    {
+      display: 'Clear In-Progress Forms',
+      key: 'clearQuestionnaireResponses',
+      reset: clearQuestionnaireResponses
     },
     {
       display: 'Reset REMS-Admin Database',
@@ -175,96 +182,100 @@ const SettingsSection = props => {
       display: 'Clear EHR MedicationDispenses',
       key: 'clearMedicationDispenses',
       reset: clearMedicationDispenses
+    },
+    {
+      display: 'Reconnect EHR',
+      key: 'reconnectEHR',
+      reset: reconnectEhr,
+      variant: 'contained'
     }
   ];
 
   let firstCheckbox = true;
   let showBreak = true;
   return (
-    <div>
-      <Box flexGrow={1}>
-        <Grid container spacing={2} sx={{ padding: '20px' }}>
-          {headers.map(({ key, type, display }) => {
-            switch (type) {
-              case 'input':
-                return (
-                  <Grid key={key} item xs={6}>
-                    <div>
-                      <TextField
-                        label={display}
-                        variant="outlined"
-                        value={state[key]}
-                        onChange={event => {
-                          updateSetting(key, event.target.value);
-                        }}
-                        sx={{ width: '100%' }}
-                      />
-                    </div>
-                  </Grid>
-                );
-              case 'check':
-                if (firstCheckbox) {
-                  firstCheckbox = false;
-                  showBreak = true;
-                } else {
-                  showBreak = false;
-                }
-                return (
-                  <React.Fragment key={key}>
-                    {showBreak ? <Grid item xs={12}></Grid> : ''}
-                    <Grid item xs={3}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={Boolean(state[key])}
-                            onChange={event => {
-                              updateSetting(key, event.target.checked);
-                            }}
-                          />
-                        }
-                        label={display}
-                      />
-                    </Grid>
-                  </React.Fragment>
-                );
-              default:
-                return (
-                  <div key={key}>
-                    <p className="setting-header">{display}</p>
+    <Box flexGrow={1}>
+      <Grid container spacing={2} sx={{ padding: '20px' }}>
+        {headers.map(({ key, type, display }) => {
+          switch (type) {
+            case 'input':
+              return (
+                <Grid key={key} item xs={6}>
+                  <div>
+                    <TextField
+                      label={display}
+                      variant="outlined"
+                      value={state[key]}
+                      onChange={event => {
+                        updateSetting(key, event.target.value);
+                      }}
+                      sx={{ width: '100%' }}
+                    />
                   </div>
-                );
-            }
-          })}
-          {resetHeaderDefinitions.map(({ key, display, reset }) => {
-            return (
-              <Grid item key={key} xs={3}>
-                <Button variant="outlined" onClick={reset(state)}>
-                  {display}
-                </Button>
-              </Grid>
-            );
-          })}
-          {/* spacer */}
-          <hr
-            style={{
-              width: '100%'
-            }}
-          />
-          <Grid item xs={8} />
+                </Grid>
+              );
+            case 'check':
+              if (firstCheckbox) {
+                firstCheckbox = false;
+                showBreak = true;
+              } else {
+                showBreak = false;
+              }
+              return (
+                <React.Fragment key={key}>
+                  {showBreak ? <Grid item xs={12}></Grid> : ''}
+                  <Grid item xs={3}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={Boolean(state[key])}
+                          onChange={event => {
+                            updateSetting(key, event.target.checked);
+                          }}
+                        />
+                      }
+                      label={display}
+                    />
+                  </Grid>
+                </React.Fragment>
+              );
+            default:
+              return (
+                <div key={key}>
+                  <p className="setting-header">{display}</p>
+                </div>
+              );
+          }
+        })}
+        {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
+          return (
+            <Grid item key={key} xs={6}>
+              <Button variant={variant ? variant : 'outlined'} onClick={reset(state)}>
+                {display}
+              </Button>
+            </Grid>
+          );
+        })}
+        {/* spacer */}
+        <hr
+          style={{
+            width: '100%'
+          }}
+        />
+        <Grid item xs={8} />
 
-          <Grid item xs={2}>
-            <Button variant="outlined" onClick={resetSettings}>
-              Reset
-            </Button>
-          </Grid>
-          <Grid item xs={2}>
-            <Button variant="contained" onClick={saveSettings}>
-              Save
-            </Button>
-          </Grid>
+        <Grid item xs={2}>
+          <Button variant="outlined" onClick={resetSettings}>
+            Reset
+          </Button>
         </Grid>
-      </Box>
-    </div>
+        <Grid item xs={2}>
+          <Button variant="contained" onClick={saveSettings}>
+            Save
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

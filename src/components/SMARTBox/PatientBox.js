@@ -540,6 +540,9 @@ export default class PatientBox extends Component {
 
   render() {
     const patient = this.props.patient;
+    if (!patient) {
+      return <></>;
+    }
     let name = '';
     let fullName = '';
     let formatBirthdate = '';

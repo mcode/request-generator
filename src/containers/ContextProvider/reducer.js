@@ -29,7 +29,8 @@ export const reducer = (state, action) => {
 
 const initialState = {
   patient: null,
-  startup: false
+  startup: false,
+  redirect: ''
 };
 Object.keys(headerDefinitions).forEach(e => {
   initialState[e] = headerDefinitions[e].default; // fill default settings values
