@@ -365,9 +365,9 @@ export default class RequestBox extends Component {
   }
 
   // SnackBar
-  handleRxResponse = () => this.setState({ open: true });
+  handleRxResponse = () => this.setState({ submittedRx: true });
 
-  handleClose = () => this.setState({ open: false });
+  handleClose = () => this.setState({ submittedRx: false });
 
   render() {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
