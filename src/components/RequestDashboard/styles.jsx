@@ -116,7 +116,7 @@ export default makeStyles(
     },
     taskTabMain: {
       border: '0px solid black',
-      boxShadow: '2px 2px',
+      boxShadow: '-2px -2px 3px 1px',
       borderRadius: '5px',
       padding: '8px',
       background: 'linear-gradient(to right bottom, #F5F5F7, #eaeaef)',
@@ -125,7 +125,7 @@ export default makeStyles(
       }
     },
     taskTabHeader: {
-      fontSize: '8px',
+      fontSize: '9px',
       color: '#777',
       borderBottom: '1px solid #e3e3ef'
     },
