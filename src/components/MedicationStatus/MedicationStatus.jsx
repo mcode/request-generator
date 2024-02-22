@@ -1,30 +1,14 @@
-import axios from 'axios';
 import { MedicationStatusButton } from './MedicationStatusButton.jsx';
 import { MedicationStatusModal } from './MedicationStatusModal.jsx';
 import { useState, useEffect } from 'react';
 import { Card } from '@mui/material';
 
 export const MedicationStatus = props => {
-  const { ehrUrl, request } = props;
-  const [medicationDispense, setMedicationDispense] = useState(null);
+  const { ehrUrl, request, medicationDispense, getMedicationStatus, lastCheckedMedicationTime } =
+    props;
   const [showMedicationStatus, setShowMedicationStatus] = useState(false);
-  const [lastCheckedMedicationTime, setLastCheckedMedicationTime] = useState(null);
 
-  useEffect(() => getMedicationStatus(), [request.id]);
-
-  const getMedicationStatus = () => {
-    setLastCheckedMedicationTime(Date.now());
-
-    axios.get(`${ehrUrl}/MedicationDispense?prescription=${request.id}`).then(
-      response => {
-        const bundle = response.data;
-        setMedicationDispense(bundle.entry?.[0].resource);
-      },
-      error => {
-        console.log('Was not able to get medication status', error);
-      }
-    );
-  };
+  useEffect(() => getMedicationStatus(), [request.id, ehrUrl]);
 
   const handleCloseMedicationStatus = () => {
     setShowMedicationStatus(false);

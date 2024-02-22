@@ -7,7 +7,7 @@ import DisplayBox from '../components/DisplayBox/DisplayBox';
 import '../index.css';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
-import { types, defaultValues, headerDefinitions } from '../util/data.js';
+import { types, defaultValues as codeValues, headerDefinitions } from '../util/data.js';
 import { createJwt } from '../util/auth';
 
 import env from 'env-var';
@@ -20,6 +20,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 import { actionTypes } from './ContextProvider/reducer.js';
+import axios from 'axios';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -39,7 +40,8 @@ export default class RequestBuilder extends Component {
       showSettings: false,
       token: null,
       client: this.props.client,
-      codeValues: defaultValues
+      medicationDispense: null,
+      lastCheckedMedicationTime: null
     };
 
     this.updateStateElement = this.updateStateElement.bind(this);
@@ -48,6 +50,20 @@ export default class RequestBuilder extends Component {
     this.takeSuggestion = this.takeSuggestion.bind(this);
     this.requestBox = React.createRef();
   }
+
+  getMedicationStatus = () => {
+    this.setState({ lastCheckedMedicationTime: Date.now() });
+
+    axios.get(`${this.state.ehrUrl}/MedicationDispense?prescription=${this.state.request.id}`).then(
+      response => {
+        const bundle = response.data;
+        this.setState({ medicationDispense: bundle.entry?.[0].resource });
+      },
+      error => {
+        console.log('Was not able to get medication status', error);
+      }
+    );
+  };
 
   componentDidMount() {
     if (!this.state.client) {
@@ -272,7 +288,7 @@ export default class RequestBuilder extends Component {
                         callbackMap={this.updateStateMap}
                         // updatePrefetchCallback={PrefetchTemplate.generateQueries}
                         clearCallback={this.clearState}
-                        options={this.state.codeValues}
+                        options={codeValues}
                         responseExpirationDays={this.props.globalState.responseExpirationDays}
                         defaultUser={this.props.globalState.defaultUser}
                       />
@@ -323,6 +339,9 @@ export default class RequestBuilder extends Component {
                 <MedicationStatus
                   ehrUrl={this.props.globalState.ehrUrl}
                   request={this.state.request}
+                  medicationDispense={this.state.medicationDispense}
+                  getMedicationStatus={this.getMedicationStatus}
+                  lastCheckedMedicationTime={this.state.lastCheckedMedicationTime}
                 />
               </Grid>
             )}
