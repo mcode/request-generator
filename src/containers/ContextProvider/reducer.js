@@ -1,23 +1,23 @@
 import { headerDefinitions } from '../../util/data';
-export const stateActions = Object.freeze({
-  updatePatient: 'update_patient',
+export const actionTypes = Object.freeze({
+  updatePatient: 'update_patient', // {type, value}
   updateSetting: 'update_setting', // {type, settingId, value}
-  flagStartup: 'flag_startup'
+  flagStartup: 'flag_startup'      // {type}
 });
 // todo: add an enum that defines possible settings
 export const reducer = (state, action) => {
   switch (action.type) {
-    case stateActions.updateSetting:
+    case actionTypes.updateSetting:
       return {
         ...state,
         [action.settingId]: action.value
       };
-    case stateActions.updatePatient:
+    case actionTypes.updatePatient:
       return {
         ...state,
         patient: action.value
       };
-    case stateActions.flagStartup:
+    case actionTypes.flagStartup:
       return {
         ...state,
         startup: true

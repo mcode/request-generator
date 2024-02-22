@@ -8,7 +8,7 @@ import PatientPortal from '../containers/PatientPortal';
 import RegisterPage from '../containers/register/RegisterPage';
 import theme from '../containers/styles/theme';
 import { SettingsContext } from '../containers/ContextProvider/SettingsProvider';
-import { stateActions } from '../containers/ContextProvider/reducer';
+import { actionTypes } from '../containers/ContextProvider/reducer';
 
 const isGhPages = process.env.REACT_APP_GH_PAGES === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
@@ -17,7 +17,7 @@ const App = () => {
   const [state, dispatch] = React.useContext(SettingsContext);
   useEffect(() => {
     dispatch({
-      type: stateActions.updateSetting,
+      type: actionTypes.updateSetting,
       settingId: 'redirect',
       value: redirect
     });

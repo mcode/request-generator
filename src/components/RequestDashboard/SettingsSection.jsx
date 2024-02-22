@@ -6,7 +6,7 @@ import env from 'env-var';
 import FHIR from 'fhirclient';
 
 import { headerDefinitions, types } from '../../util/data';
-import { stateActions } from '../../containers/ContextProvider/reducer';
+import { actionTypes } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
 const SettingsSection = props => {
@@ -36,13 +36,13 @@ const SettingsSection = props => {
       }
       // indicate to the rest of the app that the settings have been loaded
       dispatch({
-        type: stateActions.flagStartup
+        type: actionTypes.flagStartup
       });
     });
   }, []);
   const updateSetting = (key, value) => {
     dispatch({
-      type: stateActions.updateSetting,
+      type: actionTypes.updateSetting,
       settingId: key,
       value: value
     });

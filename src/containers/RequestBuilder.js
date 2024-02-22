@@ -19,7 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
-import { stateActions } from './ContextProvider/reducer.js';
+import { actionTypes } from './ContextProvider/reducer.js';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -56,12 +56,12 @@ export default class RequestBuilder extends Component {
       // Call patients on load of page
       this.getPatients();
       this.props.dispatch({
-        type: stateActions.updateSetting,
+        type: actionTypes.updateSetting,
         settingId: 'baseUrl',
         value: this.state.client.state.serverUrl
       });
       this.props.dispatch({
-        type: stateActions.updateSetting,
+        type: actionTypes.updateSetting,
         settingId: 'ehrUrl',
         value: this.state.client.state.serverUrl
       });
@@ -82,7 +82,7 @@ export default class RequestBuilder extends Component {
   updateStateElement = (elementName, text) => {
     if (elementName === 'patient') {
       this.props.dispatch({
-        type: stateActions.updatePatient,
+        type: actionTypes.updatePatient,
         value: text
       });
     } else {
