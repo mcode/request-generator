@@ -46,43 +46,26 @@ export default class RequestBuilder extends Component {
     this.submit_info = this.submit_info.bind(this);
     this.consoleLog = this.consoleLog.bind(this);
     this.takeSuggestion = this.takeSuggestion.bind(this);
-    this.reconnectEhr = this.reconnectEhr.bind(this);
     this.requestBox = React.createRef();
   }
 
   componentDidMount() {
-    // init settings
-    Object.keys(headerDefinitions).map(key => {
-      this.setState({ [key]: headerDefinitions[key].default });
-    });
-    // load settings
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
-      try {
-        this.updateStateElement(element[0], element[1]);
-      } catch {
-        if (element[0]) {
-          console.log('Could not load setting:' + element[0]);
-        }
-      }
-    });
-
     if (!this.state.client) {
       this.reconnectEhr();
     } else {
       // Call patients on load of page
       this.getPatients();
-      this.setState({ baseUrl: this.state.client.state.serverUrl });
-      this.setState({ ehrUrl: this.state.client.state.serverUrl });
+      this.props.dispatch({
+        type: stateActions.updateSetting,
+        settingId: 'baseUrl',
+        value: this.state.client.state.serverUrl
+      });
+      this.props.dispatch({
+        type: stateActions.updateSetting,
+        settingId: 'ehrUrl',
+        value: this.state.client.state.serverUrl
+      });
     }
-  }
-
-  reconnectEhr() {
-    FHIR.oauth2.authorize({
-      clientId: env.get('REACT_APP_CLIENT').asString(),
-      iss: this.props.globalState.baseUrl,
-      redirectUri: this.props.redirect,
-      scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
-    });
   }
 
   consoleLog(content, type) {
@@ -359,22 +342,3 @@ export default class RequestBuilder extends Component {
     );
   }
 }
-
-const navigationBarButtonStyle = {
-  backgroundColor: 'white',
-  color: 'black',
-  borderColor: 'black',
-  display: 'flex',
-  marginX: 2,
-  marginY: 1,
-  '&:hover': {
-    color: 'white',
-    backgroundColor: 'black',
-    borderColor: 'black'
-  },
-  '&:active': {
-    color: 'white',
-    backgroundColor: 'black',
-    borderColor: 'black'
-  }
-};

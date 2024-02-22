@@ -10,11 +10,6 @@ export default makeStyles(
       flexGrow: 1,
       backgroundColor: '#005B94'
     },
-    mainButton: {
-      '&.MuiButtonBase-root': {
-        // transition: 'all 250ms ease-in 0ms',
-      }
-    },
     mainButtonView: {
       '&.MuiButtonBase-root': {
         width: '600px',
@@ -43,7 +38,6 @@ export default makeStyles(
     mainSectionView: {
       width: 'auto',
       height: 'auto',
-      // margin: '0 15px 0 15px', // must be same as tabDivView
       borderLeft: '1px solid black',
       borderRight: '1px solid black'
     },
@@ -70,7 +64,7 @@ export default makeStyles(
       '& > *': {
         // generic child selector
         '&.MuiButton-iconSizeMedium': {
-          // specificty
+          // specificity
           marginRight: 0
         }
       }
@@ -105,7 +99,6 @@ export default makeStyles(
     },
     tabDivView: {
       '&.MuiGrid-root': {
-        // padding: '0 15px 0 15px',
         marginTop: '0vh',
         alignItems: 'flex-start',
         justifyContent: 'flex-start'

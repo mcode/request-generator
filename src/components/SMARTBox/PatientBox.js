@@ -396,7 +396,7 @@ export default class PatientBox extends Component {
   }
 
   /**
-   * Launch In progress From
+   * Launch In progress Form
    */
 
   relaunch = data => {

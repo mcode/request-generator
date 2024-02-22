@@ -71,7 +71,7 @@ const Home = props => {
           </Grid>
         ) : (
           <Grid item xs={3}></Grid>
-        )}{' '}
+        )}
         {/* spacer */}
       </Grid>
     );

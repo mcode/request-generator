@@ -7,8 +7,7 @@ import { SettingsContext } from '../../containers/ContextProvider/SettingsProvid
 const PatientSection = props => {
   const classes = useStyles();
   const [state, dispatch] = React.useContext(SettingsContext);
-  // TODO: Make request builder use react-hooks so
-  // we can get rid of this hacky shim
+  // TODO: Make request builder use react-hooks
   return (
     <div>
       {state.startup ? (
