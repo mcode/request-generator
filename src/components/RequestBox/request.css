@@ -12,7 +12,6 @@
 
 .request {
     border: 1px solid black;
-    height: auto;
     padding: 10px;
     border-radius: 5px;
     background-color: rgb(248, 248, 248);
@@ -32,8 +31,6 @@
 }
 
 .demographics {
-    width: 50%;
-    float: left;
     padding:10px 10px 10px 0px;
 }
 
@@ -54,8 +51,6 @@
 }
 
 .prefetched {
-    width: 50%;
-    float:left;
     padding:10px 10px 10px 0px;
     margin-top: 5px;
 }

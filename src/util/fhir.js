@@ -1,4 +1,3 @@
-
 function fhir(resource, ehrUrl, patient, auth) {
   const headers = {
     'Content-Type': 'application/json'
@@ -29,9 +28,9 @@ function getAge(dateString) {
 }
 
 /*
-* Retrieve the CodeableConcept for the medication from the medicationCodeableConcept if available.
-* Read CodeableConcept from contained Medication matching the medicationReference otherwise.
-*/
+ * Retrieve the CodeableConcept for the medication from the medicationCodeableConcept if available.
+ * Read CodeableConcept from contained Medication matching the medicationReference otherwise.
+ */
 function getDrugCodeableConceptFromMedicationRequest(medicationRequest) {
   if (medicationRequest) {
     if (medicationRequest?.medicationCodeableConcept) {
@@ -48,20 +47,20 @@ function getDrugCodeableConceptFromMedicationRequest(medicationRequest) {
           }
         }
       });
-      return coding; 
+      return coding;
     }
   }
   return undefined;
- }
- 
- /*
+}
+
+/*
  * Retrieve the coding for the medication from the medicationCodeableConcept if available.
  * Read coding from contained Medication matching the medicationReference otherwise.
  */
 function getDrugCodeFromMedicationRequest(medicationRequest) {
   const codeableConcept = getDrugCodeableConceptFromMedicationRequest(medicationRequest);
   return codeableConcept?.coding?.[0];
- }
+}
 
 function createMedicationDispenseFromMedicationRequest(medicationRequest) {
   console.log('createMedicationDispenseFromMedicationRequest');
@@ -75,8 +74,16 @@ function createMedicationDispenseFromMedicationRequest(medicationRequest) {
     medicationDispense.medicationReference = medicationRequest.medicationReference;
   }
   medicationDispense.subject = medicationRequest.subject;
-  medicationDispense.authorizingPrescription = [ { 'reference': 'MedicationRequest/' + medicationRequest.id } ];
+  medicationDispense.authorizingPrescription = [
+    { reference: 'MedicationRequest/' + medicationRequest.id }
+  ];
   return medicationDispense;
 }
 
-export { fhir, getAge, getDrugCodeableConceptFromMedicationRequest, getDrugCodeFromMedicationRequest, createMedicationDispenseFromMedicationRequest };
+export {
+  fhir,
+  getAge,
+  getDrugCodeableConceptFromMedicationRequest,
+  getDrugCodeFromMedicationRequest,
+  createMedicationDispenseFromMedicationRequest
+};

@@ -29,7 +29,7 @@ export default class PatientBox extends Component {
       questionnaireTitles: {},
       showMedications: false,
       showQuestionnaires: false,
-      numInProgressForms: 0,
+      numInProgressForms: 0
     };
 
     this.handleRequestChange = this.handleRequestChange.bind(this);
@@ -49,7 +49,7 @@ export default class PatientBox extends Component {
   componentDidMount() {
     // get requests and responses on open of patients
     this.getRequests();
-    this.getResponses(); // TODO: PatientBox should not be rendering itself, needs to recieve its state from parent 
+    this.getResponses(); // TODO: PatientBox should not be rendering itself, needs to receive its state from parent
   }
 
   getCoding(resource) {
@@ -85,7 +85,6 @@ export default class PatientBox extends Component {
     }
     return code;
   }
-
 
   makeOption(request, options) {
     const code = this.getCoding(request);
@@ -232,7 +231,6 @@ export default class PatientBox extends Component {
         flat: true
       })
       .then(result => {
-
         // add the medicationReference as a contained resource
         result?.data.forEach(e => {
           if (e?.medicationReference) {
@@ -264,7 +262,6 @@ export default class PatientBox extends Component {
             }
           }
         });
-
 
         this.setState({ medicationRequests: result });
       });
@@ -399,10 +396,10 @@ export default class PatientBox extends Component {
   }
 
   /**
-   * Launch In progress From
-  */
+   * Launch In progress Form
+   */
 
-  relaunch = (data) => {
+  relaunch = data => {
     this.handleResponseChange(data);
     this.props.callback('expanded', false);
     this.buildLaunchLink(data).then(link => {
@@ -455,34 +452,38 @@ export default class PatientBox extends Component {
 
     let linkCopy = Object.assign({}, link);
 
-    const result = await retrieveLaunchContext(linkCopy, this.props.patient.id, this.props.client.state);
+    const result = await retrieveLaunchContext(
+      linkCopy,
+      this.props.patient.id,
+      this.props.client.state
+    );
     linkCopy = result;
     return linkCopy;
   }
 
   makeResponseTable(columns, options, type, patient) {
     return (
-      <TableContainer key={type} component={Paper} sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}>
+      <TableContainer
+        key={type}
+        component={Paper}
+        sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}
+      >
         <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
-          <TableHead sx={{ borderBottom: '1px solid #535353'}}>
+          <TableHead sx={{ borderBottom: '1px solid #535353' }}>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ border: 0 }}
-                >
+              {columns.map(column => (
+                <TableCell key={column.id} align={column.align} style={{ border: 0 }}>
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {options.map((row) => (
-              <Tooltip key={row.key} title='Select Medication' arrow>
+            {options.map(row => (
+              <Tooltip key={row.key} title="Select Medication" arrow>
                 <TableRow
                   sx={{ 'td, th': { border: 0 } }}
-                  className='hover-row'
+                  className="hover-row"
                   onClick={() => this.handleRequestChange(row.value, patient)}
                 >
                   <TableCell component="th" scope="row">
@@ -500,29 +501,29 @@ export default class PatientBox extends Component {
 
   makeQuestionnaireTable(columns, options, type, patient) {
     return (
-      <TableContainer key={type} component={Paper} sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}>
+      <TableContainer
+        key={type}
+        component={Paper}
+        sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}
+      >
         <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
-          <TableHead sx={{ borderBottom: '1px solid #535353'}}>
+          <TableHead sx={{ borderBottom: '1px solid #535353' }}>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ border: 0 }}
-                >
+              {columns.map(column => (
+                <TableCell key={column.id} align={column.align} style={{ border: 0 }}>
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {options.map((row) => (
-              <Tooltip title='Open In-Progress Form' arrow>
+            {options.map(row => (
+              <Tooltip title="Open In-Progress Form" arrow>
                 <TableRow
                   key={row.key}
                   sx={{ 'td, th': { border: 0 } }}
                   onClick={() => this.relaunch(row.value)}
-                  className='hover-row'
+                  className="hover-row"
                 >
                   <TableCell component="th" scope="row">
                     {row.text}
@@ -539,6 +540,9 @@ export default class PatientBox extends Component {
 
   render() {
     const patient = this.props.patient;
+    if (!patient) {
+      return <></>;
+    }
     let name = '';
     let fullName = '';
     let formatBirthdate = '';
@@ -580,17 +584,19 @@ export default class PatientBox extends Component {
     }
 
     const medicationColumns = [
-      { id: 'name', label: 'Medication'},
-      { id: 'code', label: 'Request #'},
+      { id: 'name', label: 'Medication' },
+      { id: 'code', label: 'Request #' }
     ];
 
     const questionnaireColumns = [
-      { id: 'name', label: 'Title'},
-      { id: 'time', label: 'Created'}
+      { id: 'name', label: 'Title' },
+      { id: 'time', label: 'Created' }
     ];
 
-    const medicationTooltip = options.length === 0 ? 'No medications found.' : `${options.length} medications available`;
-    const formTooltip = this.state.numInProgressForms === 0 ? 'No In-Progress Forms' : 'Open In-Progress Forms';
+    const medicationTooltip =
+      options.length === 0 ? 'No medications found.' : `${options.length} medications available`;
+    const formTooltip =
+      this.state.numInProgressForms === 0 ? 'No In-Progress Forms' : 'Open In-Progress Forms';
 
     return (
       <div key={patient.id} className="patient-box">
@@ -604,54 +610,97 @@ export default class PatientBox extends Component {
               <span style={{ fontWeight: 'bold' }}>Full Name</span>: {fullName}
             </div>
             <div>
-              <span style={{ fontWeight: 'bold' }}>Gender</span>: {patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}
+              <span style={{ fontWeight: 'bold' }}>Gender</span>:{' '}
+              {patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}
             </div>
             <div>
-              <span style={{ fontWeight: 'bold' }}>DoB/Age</span>: {formatBirthdate} ({getAge(patient.birthDate)} years old)
+              <span style={{ fontWeight: 'bold' }}>DoB/Age</span>: {formatBirthdate} (
+              {getAge(patient.birthDate)} years old)
             </div>
           </div>
           <div className="button-options">
-          { this.state.showMedications ? 
-            <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} onClick={() => this.setState({ showMedications: false })}>Close Medications</Button>
-          : <Tooltip title={medicationTooltip} placement="top">
-            <span>
-              <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} disabled={options.length === 0} onClick={() => {
-                this.updatePatient(patient);
-                this.setState({ showMedications: true, showQuestionnaires: false });
-              }}>Request New Medication</Button>
-            </span>
-            </Tooltip>}
-          { this.state.showQuestionnaires ? 
-            <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} onClick={() => this.setState({ showQuestionnaires: false })}>Close In Progress Forms</Button>
-          :
-          <Tooltip title={formTooltip} placement="top">
-            <span>
-              <Button variant='contained' className='big-button' startIcon={<MedicationIcon />} disabled={this.state.numInProgressForms === 0} onClick={() => {
-              this.updatePatient(patient);
-              this.setState({ showQuestionnaires: true, showMedications: false });
-            }}>{this.state.numInProgressForms} Form(s) In Progress</Button> 
-            </span>
-          </Tooltip> 
-          }
-          <Button
-            variant="contained"
-            className='select-btn'
-            onClick={() => this.updateValues(patient)}
-          >
-            Select Patient
-          </Button>
+            {this.state.showMedications ? (
+              <Button
+                variant="contained"
+                className="big-button"
+                startIcon={<MedicationIcon />}
+                onClick={() => this.setState({ showMedications: false })}
+              >
+                Close Medications
+              </Button>
+            ) : (
+              <Tooltip title={medicationTooltip} placement="top">
+                <span>
+                  <Button
+                    variant="contained"
+                    className="big-button"
+                    startIcon={<MedicationIcon />}
+                    disabled={options.length === 0}
+                    onClick={() => {
+                      this.updatePatient(patient);
+                      this.setState({ showMedications: true, showQuestionnaires: false });
+                    }}
+                  >
+                    Request New Medication
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+            {this.state.showQuestionnaires ? (
+              <Button
+                variant="contained"
+                className="big-button"
+                startIcon={<MedicationIcon />}
+                onClick={() => this.setState({ showQuestionnaires: false })}
+              >
+                Close In Progress Forms
+              </Button>
+            ) : (
+              <Tooltip title={formTooltip} placement="top">
+                <span>
+                  <Button
+                    variant="contained"
+                    className="big-button"
+                    startIcon={<MedicationIcon />}
+                    disabled={this.state.numInProgressForms === 0}
+                    onClick={() => {
+                      this.updatePatient(patient);
+                      this.setState({ showQuestionnaires: true, showMedications: false });
+                    }}
+                  >
+                    {this.state.numInProgressForms} Form(s) In Progress
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+            <Button
+              variant="contained"
+              className="select-btn"
+              onClick={() => this.updateValues(patient)}
+            >
+              Select Patient
+            </Button>
           </div>
         </div>
-        { this.state.showMedications ?
-          <div className='patient-table-info'>
-            { this.makeResponseTable(medicationColumns, options, 'medication', patient) }
+        {this.state.showMedications ? (
+          <div className="patient-table-info">
+            {this.makeResponseTable(medicationColumns, options, 'medication', patient)}
           </div>
-        : <span />}
-        { this.state.showQuestionnaires ?
-          <div className='patient-table-info'>
-            { this.makeQuestionnaireTable(questionnaireColumns, responseOptions, 'questionnaire', patient) }
+        ) : (
+          <span />
+        )}
+        {this.state.showQuestionnaires ? (
+          <div className="patient-table-info">
+            {this.makeQuestionnaireTable(
+              questionnaireColumns,
+              responseOptions,
+              'questionnaire',
+              patient
+            )}
           </div>
-        : <span />}
+        ) : (
+          <span />
+        )}
       </div>
     );
   }

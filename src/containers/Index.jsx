@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
 import env from 'env-var';
-import RequestBuilder from '../containers/RequestBuilder';
+import Home from '../components/RequestDashboard/Home';
 
 const Index = props => {
   const [client, setClient] = useState(null);
@@ -15,7 +15,7 @@ const Index = props => {
   return (
     <div>
       {client ? (
-        <RequestBuilder client={client} />
+        <Home client={client} />
       ) : (
         <div className="loading">
           <h1>Getting Client...</h1>
