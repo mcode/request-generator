@@ -1,5 +1,16 @@
 import React, { memo, useState, useEffect, Fragment } from 'react';
-import { Button, Box, Modal, Grid, Tabs, Tab, Stack, Select, FormControl, InputLabel } from '@mui/material';
+import {
+  Button,
+  Box,
+  Modal,
+  Grid,
+  Tabs,
+  Tab,
+  Stack,
+  Select,
+  FormControl,
+  InputLabel
+} from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -79,7 +90,6 @@ const TasksSection = props => {
         fetchTasks();
       });
     }
-    
   };
   const deleteTask = () => {
     if (taskToDelete) {
@@ -200,16 +210,19 @@ const TasksSection = props => {
               </Button>
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <FormControl sx={{ marginTop:0, marginBottom: 0, minWidth: 120, paddingTop: 0 }} size="small">
+              <FormControl
+                sx={{ marginTop: 0, marginBottom: 0, minWidth: 120, paddingTop: 0 }}
+                size="small"
+              >
                 <InputLabel id="demo-simple-select-label">Assign</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  onChange={(e) => handleChangeAssign(e, task)}
+                  onChange={e => handleChangeAssign(e, task)}
                   defaultValue={''}
                 >
-                  <MenuItem value='me'>Assign to me</MenuItem>
-                  <MenuItem value='patient'>Assign to patient</MenuItem>
+                  <MenuItem value="me">Assign to me</MenuItem>
+                  <MenuItem value="patient">Assign to patient</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

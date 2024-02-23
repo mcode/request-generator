@@ -30,7 +30,7 @@ const Dashboard = props => {
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
-  
+
   const drawerWidth = '340px';
 
   const createIcons = () => {
@@ -58,13 +58,13 @@ const Dashboard = props => {
   }, [selectedIndex]);
 
   const renderBody = () => {
-    switch(selectedIndex) {
+    switch (selectedIndex) {
       case 2:
-        return (<PatientTaskSection client={props.client} />);
+        return <PatientTaskSection client={props.client} />;
       case 3:
-        return (<FormsSection client={props.client} />);
-      default: 
-        return (<EmptySection />);
+        return <FormsSection client={props.client} />;
+      default:
+        return <EmptySection />;
     }
   };
 
@@ -87,8 +87,13 @@ const Dashboard = props => {
             <List>
               {createIcons().map((option, index) => (
                 <div key={`icon-${index}`}>
-                  <ListItem key={option[0]} style={option[2]} selected={selectedIndex === index} disablePadding>
-                    <ListItemButton onClick={(event) => handleListItemClick(event, index)}>
+                  <ListItem
+                    key={option[0]}
+                    style={option[2]}
+                    selected={selectedIndex === index}
+                    disablePadding
+                  >
+                    <ListItemButton onClick={event => handleListItemClick(event, index)}>
                       <ListItemIcon>{option[1]}</ListItemIcon>
                       <ListItemText
                         primaryTypographyProps={{ fontSize: '18px' }}
@@ -104,7 +109,7 @@ const Dashboard = props => {
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
-          { renderBody() }
+          {renderBody()}
         </Box>
       </Box>
     </div>

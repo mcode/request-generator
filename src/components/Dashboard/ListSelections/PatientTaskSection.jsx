@@ -11,7 +11,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const PatientTaskSection = props => {
-
   const classes = useStyles();
   const [tasks, setTasks] = useState([]);
   const [taskToDelete, setTaskToDelete] = useState('');
@@ -165,43 +164,42 @@ const PatientTaskSection = props => {
 
   return (
     <div className={classes.dashboardArea}>
-        <h2 className={classes.elementHeader}>Tasks</h2>
-        {renderTasks(tasks)}
-        <Modal open={open} onClose={handleClose}>
-          <Box className={classes.taskDeleteModal}>
-            <Grid container>
-              <Grid className={classes.taskDeleteHeader} item xs={12}>
-                {taskToDelete ? `Are you sure you want to delete Task ${taskToDelete.id}` : ''}
-              </Grid>
-              <Grid item xs={7}>
-                {/*spacer*/}
-              </Grid>
-              <Grid item xs={3}>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                >
-                  No
-                </Button>
-              </Grid>
-              <Grid item xs={2}>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    deleteTask();
-                  }}
-                >
-                  Yes
-                </Button>
-              </Grid>
+      <h2 className={classes.elementHeader}>Tasks</h2>
+      {renderTasks(tasks)}
+      <Modal open={open} onClose={handleClose}>
+        <Box className={classes.taskDeleteModal}>
+          <Grid container>
+            <Grid className={classes.taskDeleteHeader} item xs={12}>
+              {taskToDelete ? `Are you sure you want to delete Task ${taskToDelete.id}` : ''}
             </Grid>
-          </Box>
-        </Modal>
+            <Grid item xs={7}>
+              {/*spacer*/}
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                No
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  deleteTask();
+                }}
+              >
+                Yes
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
     </div>
   );
-
 };
 
 export default memo(PatientTaskSection);

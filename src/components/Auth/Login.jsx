@@ -12,7 +12,7 @@ const Login = props => {
   const [password, _setPassword] = useState('');
   const handleClose = () => setMessage(null);
   document.title = 'EHR | Patient Portal';
-  
+
   const onSubmit = useCallback(() => {
     if (username && password) {
       const params = new URLSearchParams();
