@@ -210,8 +210,9 @@ const TasksSection = props => {
               </Button>
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <FormControl
-                sx={{ marginTop: 0, marginBottom: 0, minWidth: 120, paddingTop: 0 }}
+              <FormControl 
+                variant="filled"
+                sx={{ marginTop: 0, marginBottom: 0, minWidth: 120}}
                 size="small"
               >
                 <InputLabel id="demo-simple-select-label">Assign</InputLabel>
