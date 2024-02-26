@@ -286,9 +286,7 @@ export default class RequestBuilder extends Component {
                         callback={this.updateStateElement}
                         callbackList={this.updateStateList}
                         callbackMap={this.updateStateMap}
-                        // updatePrefetchCallback={PrefetchTemplate.generateQueries}
                         clearCallback={this.clearState}
-                        options={codeValues}
                         responseExpirationDays={this.props.globalState.responseExpirationDays}
                         defaultUser={this.props.globalState.defaultUser}
                       />
