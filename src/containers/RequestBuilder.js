@@ -55,7 +55,9 @@ export default class RequestBuilder extends Component {
     this.setState({ lastCheckedMedicationTime: Date.now() });
 
     axios
-      .get(`${this.globalState.ehrUrl}/MedicationDispense?prescription=${this.state.request.id}`)
+      .get(
+        `${this.props.globalState.ehrUrl}/MedicationDispense?prescription=${this.state.request.id}`
+      )
       .then(
         response => {
           const bundle = response.data;
