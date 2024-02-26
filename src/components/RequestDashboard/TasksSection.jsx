@@ -1,5 +1,16 @@
 import React, { memo, useState, useEffect, Fragment } from 'react';
-import { Button, Box, Modal, Grid, Tabs, Tab, Stack } from '@mui/material';
+import {
+  Button,
+  Box,
+  Modal,
+  Grid,
+  Tabs,
+  Tab,
+  Stack,
+  Select,
+  FormControl,
+  InputLabel
+} from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,6 +24,7 @@ import useStyles from './styles';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import { MemoizedTabPanel } from './TabPanel';
 import { Info, Refresh } from '@mui/icons-material';
+import MenuItem from '@mui/material/MenuItem';
 
 const TasksSection = props => {
   const classes = useStyles();
@@ -21,6 +33,15 @@ const TasksSection = props => {
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState('');
+
+  const handleChangeAssign = (event, task) => {
+    if (event.target.value === 'me') {
+      assignTaskToMe(task);
+    } else {
+      assignTaskToPatient(task);
+    }
+  };
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -32,13 +53,30 @@ const TasksSection = props => {
     setTaskToDelete(task);
     setOpen(true);
   };
-  const assignTask = task => {
-    // TODO: should allow assigning to anybody, not just self
+  const assignTaskToMe = task => {
     if (task) {
       let user = props.client.user.id;
       if (!user) {
         user = `Practitioner/${state.defaultUser}`;
       }
+      task.owner = {
+        reference: user
+      };
+      if (task.for) {
+        // reset 'for' element before updating
+        task.for = {
+          reference: `${task.for.resourceType}/${task.for.id}`
+        };
+      }
+      props.client.update(task).then(e => {
+        fetchTasks();
+      });
+    }
+  };
+  const assignTaskToPatient = task => {
+    if (task) {
+      let patientId = task.for.id;
+      let user = `Patient/${patientId}`;
       task.owner = {
         reference: user
       };
@@ -103,16 +141,24 @@ const TasksSection = props => {
 
     let taskForName = 'N/A';
     let taskOwnerName = 'N/A';
-    if (task.for.resourceType.toLowerCase() === 'patient') {
+    if (task.for?.resourceType?.toLowerCase() === 'patient') {
       const patient = task.for;
       if (patient.name) {
         taskForName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
       }
     }
-    if (task.owner && task.owner.resourceType.toLowerCase() === 'practitioner') {
+    if (task.owner && task.owner?.resourceType?.toLowerCase() === 'practitioner') {
       const practitioner = task.owner;
       if (practitioner.name) {
         taskOwnerName = `${practitioner.name[0].given[0]} ${practitioner.name[0].family}`;
+      } else {
+        taskOwnerName = task.owner.id;
+      }
+    }
+    if (task.owner && task.owner?.resourceType?.toLowerCase() === 'patient') {
+      const patient = task.owner;
+      if (patient.name) {
+        taskOwnerName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
       } else {
         taskOwnerName = task.owner.id;
       }
@@ -164,15 +210,22 @@ const TasksSection = props => {
               </Button>
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <Button
-                variant="outlined"
-                startIcon={<PersonAddIcon />}
-                onClick={() => {
-                  assignTask(task);
-                }}
+              <FormControl 
+                variant="filled"
+                sx={{ marginTop: 0, marginBottom: 0, minWidth: 120}}
+                size="small"
               >
-                Assign
-              </Button>
+                <InputLabel id="demo-simple-select-label">Assign</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  onChange={e => handleChangeAssign(e, task)}
+                  defaultValue={''}
+                >
+                  <MenuItem value="me">Assign to me</MenuItem>
+                  <MenuItem value="patient">Assign to patient</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={1}>
               {/*spacer*/}
