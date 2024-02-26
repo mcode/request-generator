@@ -54,15 +54,17 @@ export default class RequestBuilder extends Component {
   getMedicationStatus = () => {
     this.setState({ lastCheckedMedicationTime: Date.now() });
 
-    axios.get(`${this.state.ehrUrl}/MedicationDispense?prescription=${this.state.request.id}`).then(
-      response => {
-        const bundle = response.data;
-        this.setState({ medicationDispense: bundle.entry?.[0].resource });
-      },
-      error => {
-        console.log('Was not able to get medication status', error);
-      }
-    );
+    axios
+      .get(`${this.globalState.ehrUrl}/MedicationDispense?prescription=${this.state.request.id}`)
+      .then(
+        response => {
+          const bundle = response.data;
+          this.setState({ medicationDispense: bundle.entry?.[0].resource });
+        },
+        error => {
+          console.log('Was not able to get medication status', error);
+        }
+      );
   };
 
   componentDidMount() {
