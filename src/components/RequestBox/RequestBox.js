@@ -1,14 +1,12 @@
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
-import PersonIcon from '@mui/icons-material/Person';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { defaultValues, shortNameMap } from '../../util/data';
-import { getAge } from '../../util/fhir';
+import { shortNameMap } from '../../util/data';
+import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir';
 import { retrieveLaunchContext } from '../../util/util';
-import InProgressFormBox from './InProgressFormBox/InProgressFormBox.js';
 import './request.css';
 
 export default class RequestBox extends Component {
@@ -17,7 +15,7 @@ export default class RequestBox extends Component {
     this.state = {
       gatherCount: 0,
       response: {},
-      open: false
+      submittedRx: false
     };
 
     this.renderRequestResources = this.renderRequestResources.bind(this);
@@ -31,11 +29,9 @@ export default class RequestBox extends Component {
 
   // TODO - see how to submit response for alternative therapy
   replaceRequestAndSubmit(request) {
-    this.props.callback(request,request);    // Submit the cds hook request.
+    this.props.callback(request, request); // Submit the cds hook request.
     this.submitOrderSign(request);
   }
-
-  componentDidMount() { }
 
   prepPrefetch() {
     const preppedResources = new Map();
@@ -97,10 +93,6 @@ export default class RequestBox extends Component {
     }
   }
 
-  updateStateElement = (elementName, text) => {
-    this.setState({ [elementName]: text });
-  };
-
   emptyField = (<span className="empty-field">empty</span>);
 
   renderPatientInfo() {
@@ -158,6 +150,7 @@ export default class RequestBox extends Component {
     if (prefetchMap.size > 0) {
       return this.renderRequestResources(prefetchMap);
     }
+    return <div className="prefetched" />;
   }
 
   renderRequestResources(requestResources) {
@@ -234,7 +227,7 @@ export default class RequestBox extends Component {
     if (!userId) {
       console.log(
         'Practitioner not populated from prefetch, using default from config: ' +
-        this.props.defaultUser
+          this.props.defaultUser
       );
       userId = this.props.defaultUser;
     }
@@ -256,9 +249,8 @@ export default class RequestBox extends Component {
   /**
    * Relaunch DTR using the available context
    */
-  relaunch = e => {
+  relaunch = () => {
     this.buildLaunchLink().then(link => {
-      //e.preventDefault();
       window.open(link.url, '_blank');
     });
   };
@@ -316,7 +308,7 @@ export default class RequestBox extends Component {
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
-  sendRx = e => {
+  sendRx = () => {
     console.log('Sending NewRx to: ' + this.props.pimsUrl);
 
     // build the NewRx Message
@@ -343,7 +335,19 @@ export default class RequestBox extends Component {
     })
       .then(response => {
         console.log('Successfully sent NewRx to PIMS');
-        console.log(response);
+
+        // create the MedicationDispense
+        var medicationDispense = createMedicationDispenseFromMedicationRequest(this.props.request);
+        console.log('Create MedicationDispense:');
+        console.log(medicationDispense);
+
+        // store the MedicationDispense in the EHR
+        console.log(medicationDispense);
+        this.props.client.update(medicationDispense).then(result => {
+          console.log('Update MedicationDispense result:');
+          console.log(result);
+        });
+
         this.handleRxResponse();
       })
       .catch(error => {
@@ -360,72 +364,62 @@ export default class RequestBox extends Component {
     return Object.keys(this.props.patient).length === 0;
   }
 
-  // SnackBar 
-  handleRxResponse = () => this.setState({ open: true });
+  // SnackBar
+  handleRxResponse = () => this.setState({ submittedRx: true });
 
-  handleClose = () => this.setState({ open: false });
-
+  handleClose = () => this.setState({ submittedRx: false });
 
   render() {
     const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
     const disableSendRx = this.isOrderNotSelected() || this.props.loading;
     const disableLaunchSmartOnFhir = this.isPatientNotSelected();
-    const { open } = this.state;
+
     return (
-      <div>
-        { this.props.patient.id ? (
-            <div className="request">
-              <div style={{paddingTop: '15px'}}>
-                <div className="request-header">
-                  <span>Patient ID: {this.props.patient.id}</span>
-                </div>
-                <div className='patient-info'>
+      <>
+        <div className="request">
+          <div>
+            <div className="request-header">
+              <span>Patient ID: {this.props.patient.id}</span>
+            </div>
+            <div className="patient-info">
+              <Grid container>
+                <Grid item xs={6}>
                   {this.renderPatientInfo()}
+                </Grid>
+                <Grid item xs={6}>
                   {this.renderPrefetchedResources()}
-                </div>
-              </div>
-              <div className="action-btns">
-                {Object.keys(this.props.response).length ?
-                  <InProgressFormBox
-                    qrResponse={this.props.response}
-                    relaunch={this.relaunch}
-                  />
-                : <span />}
-                <ButtonGroup variant="outlined" aria-label="outlined button group">
-                  <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-                    Launch SMART on FHIR App
-                  </Button>
-                  <Button onClick={this.sendRx} disabled={disableSendRx}>
-                    Send Rx to Pharmacy
-                  </Button>
-                  <Button onClick={this.submit} disabled={disableSendToCRD}>
-                    Sign Order
-                  </Button>
-                </ButtonGroup>
-              </div>
+                </Grid>
+              </Grid>
+            </div>
           </div>
-        ) : (
-          <span/>
-        )}
+          <div className="action-btns">
+            <ButtonGroup variant="outlined" aria-label="outlined button group">
+              <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
+                Launch SMART on FHIR App
+              </Button>
+              <Button onClick={this.sendRx} disabled={disableSendRx}>
+                Send Rx to Pharmacy
+              </Button>
+              <Button onClick={this.submit} disabled={disableSendToCRD}>
+                Sign Order
+              </Button>
+            </ButtonGroup>
+          </div>
+        </div>
         <Snackbar
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left'
-              }}
-              open={open}
-              onClose={this.handleClose}
-              autoHideDuration={6000}
-            >
-              <MuiAlert
-                onClose={this.handleClose}
-                severity="success"
-                elevation={6}
-                variant="filled"
-              >
-                Success! NewRx Recieved By Pharmacy
-              </MuiAlert>
-            </Snackbar>
-      </div>
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}
+          open={this.state.submittedRx}
+          onClose={this.handleClose}
+          autoHideDuration={6000}
+        >
+          <MuiAlert onClose={this.handleClose} severity="success" elevation={6} variant="filled">
+            Success! NewRx Received By Pharmacy
+          </MuiAlert>
+        </Snackbar>
+      </>
     );
   }
 }

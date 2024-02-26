@@ -1,71 +1,90 @@
+import env from 'env-var';
+
 const headerDefinitions = {
   alternativeTherapy: {
     display: 'Alternative Therapy Cards Allowed',
-    type: 'check'
+    type: 'check',
+    default: env.get('REACT_APP_ALT_DRUG').asBool()
   },
   baseUrl: {
     display: 'Base Server',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_EHR_BASE').asString()
   },
   cdsUrl: {
     display: 'REMS Admin',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_CDS_SERVICE').asString()
   },
   defaultUser: {
     display: 'Default User',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_DEFAULT_USER').asString()
   },
   ehrUrl: {
     display: 'EHR Server',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_EHR_SERVER').asString()
   },
   ehrUrlSentToRemsAdminForPreFetch: {
     display: 'EHR Server Sent to REMS Admin for Prefetch',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH').asString()
   },
   generateJsonToken: {
     display: 'Generate JSON Web Token',
-    type: 'check'
+    type: 'check',
+    default: env.get('REACT_APP_GENERATE_JWT').asBool()
   },
   includeConfig: {
     display: 'Include Configuration in CRD Request',
-    type: 'check'
+    type: 'check',
+    default: true
   },
   launchUrl: {
     display: 'DTR Launch URL (QuestionnaireForm)',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_LAUNCH_URL').asString()
   },
   orderSelect: {
     display: 'Order Select Rest End Point',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_ORDER_SELECT').asString()
   },
   orderSign: {
     display: 'Order Sign Rest End Point',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_ORDER_SIGN').asString()
   },
   patientFhirQuery: {
     display: 'Patient FHIR Query',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_PATIENT_FHIR_QUERY').asString()
   },
   patientView: {
     display: 'Patient View Rest End Point',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_PATIENT_VIEW').asString()
   },
   pimsUrl: {
     display: 'PIMS Server',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_PIMS_SERVER').asString()
   },
   responseExpirationDays: {
     display: 'In Progress Form Expiration Days',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt()
   },
   sendPrefetch: {
     display: 'Send Prefetch',
-    type: 'check'
+    type: 'check',
+    default: true
   },
   smartAppUrl: {
     display: 'SMART App',
-    type: 'input'
+    type: 'input',
+    default: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
   }
 };
 

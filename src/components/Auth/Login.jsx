@@ -11,6 +11,7 @@ const Login = props => {
   const [username, _setUsername] = useState('');
   const [password, _setPassword] = useState('');
   const handleClose = () => setMessage(null);
+  document.title = 'EHR | Patient Portal';
 
   const onSubmit = useCallback(() => {
     if (username && password) {

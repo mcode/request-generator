@@ -28,9 +28,9 @@ function getAge(dateString) {
 }
 
 /*
-* Retrieve the CodeableConcept for the medication from the medicationCodeableConcept if available.
-* Read CodeableConcept from contained Medication matching the medicationReference otherwise.
-*/
+ * Retrieve the CodeableConcept for the medication from the medicationCodeableConcept if available.
+ * Read CodeableConcept from contained Medication matching the medicationReference otherwise.
+ */
 function getDrugCodeableConceptFromMedicationRequest(medicationRequest) {
   if (medicationRequest) {
     if (medicationRequest?.medicationCodeableConcept) {
@@ -47,19 +47,43 @@ function getDrugCodeableConceptFromMedicationRequest(medicationRequest) {
           }
         }
       });
-      return coding; 
+      return coding;
     }
   }
   return undefined;
- }
- 
- /*
+}
+
+/*
  * Retrieve the coding for the medication from the medicationCodeableConcept if available.
  * Read coding from contained Medication matching the medicationReference otherwise.
  */
 function getDrugCodeFromMedicationRequest(medicationRequest) {
   const codeableConcept = getDrugCodeableConceptFromMedicationRequest(medicationRequest);
   return codeableConcept?.coding?.[0];
- }
+}
 
-export { fhir, getAge, getDrugCodeableConceptFromMedicationRequest, getDrugCodeFromMedicationRequest };
+function createMedicationDispenseFromMedicationRequest(medicationRequest) {
+  console.log('createMedicationDispenseFromMedicationRequest');
+  var medicationDispense = {};
+  medicationDispense.resourceType = 'MedicationDispense';
+  medicationDispense.id = medicationRequest?.id + '-dispense';
+  medicationDispense.status = 'unknown';
+  if (medicationRequest.medicationCodeableConcept) {
+    medicationDispense.medicationCodeableConcept = medicationRequest.medicationCodeableConcept;
+  } else if (medicationRequest.medicationReference) {
+    medicationDispense.medicationReference = medicationRequest.medicationReference;
+  }
+  medicationDispense.subject = medicationRequest.subject;
+  medicationDispense.authorizingPrescription = [
+    { reference: 'MedicationRequest/' + medicationRequest.id }
+  ];
+  return medicationDispense;
+}
+
+export {
+  fhir,
+  getAge,
+  getDrugCodeableConceptFromMedicationRequest,
+  getDrugCodeFromMedicationRequest,
+  createMedicationDispenseFromMedicationRequest
+};

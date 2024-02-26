@@ -30,8 +30,14 @@ const PatientPortal = () => {
         setPatientName(getName(patient));
       });
       setClient(client);
+      document.title = 'EHR | Patient Portal';
     }
   }, [token]);
+
+  const logout = () => {
+    setClient(null);
+    setPatientName(null);
+  };
 
   const getName = patient => {
     const name = [];
@@ -60,7 +66,7 @@ const PatientPortal = () => {
         </Toolbar>
       </AppBar>
       {token && client ? (
-        <Dashboard client={client}></Dashboard>
+        <Dashboard client={client} logout={logout}></Dashboard>
       ) : (
         <Login tokenCallback={setToken}></Login>
       )}

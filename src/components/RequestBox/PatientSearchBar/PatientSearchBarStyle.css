@@ -17,5 +17,6 @@
 
 .search-header {
     display: flex;
+    padding: 12px;
     align-items: center;
 }

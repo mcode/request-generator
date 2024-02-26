@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Box, IconButton } from '@mui/material';
+import { Button, Box, Grid, IconButton, Modal, DialogTitle } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import DisplayBox from '../components/DisplayBox/DisplayBox';
 import '../index.css';
-import SettingsBox from '../components/SettingsBox/SettingsBox';
 import RequestBox from '../components/RequestBox/RequestBox';
 import buildRequest from '../util/buildRequest.js';
-import { types, defaultValues } from '../util/data.js';
-import { createJwt, setupKeys } from '../util/auth';
+import { types, defaultValues as codeValues, headerDefinitions } from '../util/data.js';
+import { createJwt } from '../util/auth';
 
 import env from 'env-var';
 import FHIR from 'fhirclient';
@@ -16,8 +16,11 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import SettingsIcon from '@mui/icons-material/Settings';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
+import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
+import { actionTypes } from './ContextProvider/reducer.js';
+import axios from 'axios';
 
 export default class RequestBuilder extends Component {
   constructor(props) {
@@ -25,10 +28,10 @@ export default class RequestBuilder extends Component {
     this.state = {
       loading: false,
       logs: [],
-      patient: {}, 
-      expanded: false,
+      patient: {},
+      expanded: true,
       patientList: [],
-      response: null,
+      response: {},
       code: null,
       codeSystem: null,
       display: null,
@@ -37,36 +40,34 @@ export default class RequestBuilder extends Component {
       showSettings: false,
       token: null,
       client: this.props.client,
-      codeValues: defaultValues,
-      // Configurable values
-      alternativeTherapy: env.get('REACT_APP_ALT_DRUG').asBool(),
-      baseUrl: env.get('REACT_APP_EHR_BASE').asString(),
-      cdsUrl: env.get('REACT_APP_CDS_SERVICE').asString(),
-      defaultUser: env.get('REACT_APP_DEFAULT_USER').asString(),
-      ehrUrl: env.get('REACT_APP_EHR_SERVER').asString(),
-      ehrUrlSentToRemsAdminForPreFetch: env
-        .get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH')
-        .asString(),
-      generateJsonToken: env.get('REACT_APP_GENERATE_JWT').asBool(),
-      includeConfig: true,
-      launchUrl: env.get('REACT_APP_LAUNCH_URL').asString(),
-      orderSelect: env.get('REACT_APP_ORDER_SELECT').asString(),
-      orderSign: env.get('REACT_APP_ORDER_SIGN').asString(),
-      patientFhirQuery: env.get('REACT_APP_PATIENT_FHIR_QUERY').asString(),
-      patientView: env.get('REACT_APP_PATIENT_VIEW').asString(),
-      pimsUrl: env.get('REACT_APP_PIMS_SERVER').asString(),
-      responseExpirationDays: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt(),
-      sendPrefetch: true,
-      smartAppUrl: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
+      medicationDispense: null,
+      lastCheckedMedicationTime: null
     };
 
     this.updateStateElement = this.updateStateElement.bind(this);
-    this.submit_info = this.submit_info.bind(this);
+    this.submitInfo = this.submitInfo.bind(this);
     this.consoleLog = this.consoleLog.bind(this);
     this.takeSuggestion = this.takeSuggestion.bind(this);
-    this.reconnectEhr = this.reconnectEhr.bind(this);
     this.requestBox = React.createRef();
   }
+
+  getMedicationStatus = () => {
+    this.setState({ lastCheckedMedicationTime: Date.now() });
+
+    axios
+      .get(
+        `${this.props.globalState.ehrUrl}/MedicationDispense?prescription=${this.state.request.id}`
+      )
+      .then(
+        response => {
+          const bundle = response.data;
+          this.setState({ medicationDispense: bundle.entry?.[0].resource });
+        },
+        error => {
+          console.log('Was not able to get medication status', error);
+        }
+      );
+  };
 
   componentDidMount() {
     if (!this.state.client) {
@@ -74,18 +75,17 @@ export default class RequestBuilder extends Component {
     } else {
       // Call patients on load of page
       this.getPatients();
-      this.setState({ baseUrl: this.state.client.state.serverUrl });
-      this.setState({ ehrUrl: this.state.client.state.serverUrl });
+      this.props.dispatch({
+        type: actionTypes.updateSetting,
+        settingId: 'baseUrl',
+        value: this.state.client.state.serverUrl
+      });
+      this.props.dispatch({
+        type: actionTypes.updateSetting,
+        settingId: 'ehrUrl',
+        value: this.state.client.state.serverUrl
+      });
     }
-  }
-
-  reconnectEhr() {
-    FHIR.oauth2.authorize({
-      clientId: env.get('REACT_APP_CLIENT').asString(),
-      iss: this.state.baseUrl,
-      redirectUri: this.props.redirect,
-      scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
-    });
   }
 
   consoleLog(content, type) {
@@ -100,7 +100,14 @@ export default class RequestBuilder extends Component {
   }
 
   updateStateElement = (elementName, text) => {
-    this.setState({ [elementName]: text });
+    if (elementName === 'patient') {
+      this.props.dispatch({
+        type: actionTypes.updatePatient,
+        value: text
+      });
+    } else {
+      this.setState({ [elementName]: text });
+    }
     // if the patientFhirQuery is updated, make a call to get the patients
     if (elementName === 'patientFhirQuery') {
       setTimeout(() => {
@@ -109,51 +116,50 @@ export default class RequestBuilder extends Component {
     }
   };
 
-
   timeout = time => {
     let controller = new AbortController();
     setTimeout(() => controller.abort(), time * 1000);
     return controller;
   };
 
-  submit_info(prefetch, request, patient, hook) {
+  submitInfo(prefetch, request, patient, hook) {
     this.setState({ loading: true });
     this.consoleLog('Initiating form submission', types.info);
     this.setState({ patient });
     const hookConfig = {
-      includeConfig: this.state.includeConfig,
-      alternativeTherapy: this.state.alternativeTherapy
+      includeConfig: this.props.globalState.includeConfig,
+      alternativeTherapy: this.props.globalState.alternativeTherapy
     };
-    let user = this.state.defaultUser;
+    let user = this.props.globalState.defaultUser;
     let json_request = buildRequest(
       request,
       user,
       patient,
-      this.state.ehrUrlSentToRemsAdminForPreFetch,
+      this.props.globalState.ehrUrlSentToRemsAdminForPreFetch,
       this.state.client.state.tokenResponse,
       prefetch,
-      this.state.sendPrefetch,
+      this.props.globalState.sendPrefetch,
       hook,
       hookConfig
     );
-    let cdsUrl = this.state.cdsUrl;
+    let cdsUrl = this.props.globalState.cdsUrl;
     if (hook === 'order-sign') {
-      cdsUrl = cdsUrl + '/' + this.state.orderSign;
+      cdsUrl = cdsUrl + '/' + this.props.globalState.orderSign;
     } else if (hook === 'order-select') {
-      cdsUrl = cdsUrl + '/' + this.state.orderSelect;
+      cdsUrl = cdsUrl + '/' + this.props.globalState.orderSelect;
     } else if (hook === 'patient-view') {
-      cdsUrl = cdsUrl + '/' + this.state.patientView;
+      cdsUrl = cdsUrl + '/' + this.props.globalState.patientView;
     } else {
       this.consoleLog("ERROR: unknown hook type: '", hook, "'");
       return;
     }
 
-    let baseUrl = this.state.baseUrl;
+    let baseUrl = this.props.globalState.baseUrl;
 
     const headers = {
       'Content-Type': 'application/json'
     };
-    if (this.state.generateJsonToken) {
+    if (this.props.globalState.generateJsonToken) {
       const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
       headers.authorization = jwt;
     }
@@ -202,18 +208,20 @@ export default class RequestBuilder extends Component {
   }
 
   getPatients = () => {
-    this.props.client
-      .request(this.state.patientFhirQuery, { flat: true })
-      .then(result => {
-        this.setState({
-          patientList: result,
+    if (this.props.globalState.patientFhirQuery) {
+      this.props.client
+        .request(this.props.globalState.patientFhirQuery, { flat: true })
+        .then(result => {
+          this.setState({
+            patientList: result
+          });
+        })
+        .catch(e => {
+          this.setState({
+            patientList: e
+          });
         });
-      })
-      .catch(e => {
-        this.setState({
-          patientList: e
-        });
-      });
+    }
   };
 
   updateStateList = (elementName, text) => {
@@ -239,131 +247,119 @@ export default class RequestBuilder extends Component {
       response: {}
     });
   };
+
   handleChange = () => (event, isExpanded) => {
-    this.setState({ expanded: isExpanded ? true: false});
+    this.setState({ expanded: isExpanded ? true : false });
   };
 
+  isOrderNotSelected() {
+    return Object.keys(this.state.request).length === 0;
+  }
+
   render() {
+    const displayRequestBox = !!this.props.globalState.patient?.id;
+    const disableGetMedicationStatus = this.isOrderNotSelected() || this.state.loading;
+
     return (
-      <div>
-        <div className="nav-header">
-          <button
-            className={
-              'btn btn-class settings ' + (this.state.showSettings ? 'active' : 'not-active')
-            }
-            onClick={() => this.updateStateElement('showSettings', !this.state.showSettings)}
-          >
-            <span className="glyphicon glyphicon-cog settings-icon" />
-          </button>
-          <button
-            className="btn btn-class"
-            onClick={() => {
-              this.reconnectEhr();
-            }}
-          >
-            Reconnect EHR
-          </button>
-        </div>
-        <div>
-          {/* <div id="settings-header"></div> */}
-          {this.state.showSettings && (
-            <div className='settings-box'>
-              <SettingsBox
-                state={this.state}
-                consoleLog={this.consoleLog}
-                updateCB={this.updateStateElement}
-              />
-            </div>
-            )}
-        </div>
-          <div style={{display: 'flex'}}>
-            <Accordion style={{width: '95%'}} expanded={this.state.expanded} onChange={this.handleChange()}>
+      <>
+        <Grid container spacing={2} padding={2}>
+          <Grid item xs={11}>
+            <Accordion expanded={this.state.expanded} onChange={this.handleChange()}>
               <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-              style={{marginLeft: '45%'}}
-            >
-              <Button variant="contained" startIcon={<PersonIcon />}>
-                Select a patient
-              </Button>
-            </AccordionSummary>
-            <AccordionDetails>
-              {this.state.patientList.length > 0 && this.state.expanded ?
-                <div>
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+                style={{ marginLeft: '45%' }}
+              >
+                <Button variant="contained" startIcon={<PersonIcon />}>
+                  Select a patient
+                </Button>
+              </AccordionSummary>
+              <AccordionDetails>
+                {this.state.patientList.length > 0 && this.state.expanded && (
                   <Box>
-                  {this.state.patientList instanceof Error
-                    ? this.renderError()
-                    : <PatientSearchBar
-                      getPatients = {this.getPatients}
-                      searchablePatients={this.state.patientList}
-                      client={this.props.client}
-                      callback={this.updateStateElement}
-                      callbackList={this.updateStateList}
-                      callbackMap={this.updateStateMap}
-                      // updatePrefetchCallback={PrefetchTemplate.generateQueries}
-                      clearCallback={this.clearState}
-                      ehrUrl={this.state.ehrUrl} // is this used?
-                      options={this.state.codeValues}
-                      responseExpirationDays={this.state.responseExpirationDays}
-                      defaultUser={this.state.defaultUser}
-                    />}
+                    {this.state.patientList instanceof Error ? (
+                      this.renderError()
+                    ) : (
+                      <PatientSearchBar
+                        getPatients={this.getPatients}
+                        searchablePatients={this.state.patientList}
+                        client={this.props.client}
+                        request={this.state.request}
+                        launchUrl={this.props.globalState.launchUrl}
+                        callback={this.updateStateElement}
+                        callbackList={this.updateStateList}
+                        callbackMap={this.updateStateMap}
+                        clearCallback={this.clearState}
+                        responseExpirationDays={this.props.globalState.responseExpirationDays}
+                        defaultUser={this.props.globalState.defaultUser}
+                      />
+                    )}
                   </Box>
-                </div>
-                : <span></span>
-              }
-              
-            </AccordionDetails>
+                )}
+              </AccordionDetails>
             </Accordion>
-            <IconButton
-              color="primary"
-              onClick={() => this.getPatients()}
-              size="large"
-            >
+          </Grid>
+          <Grid item xs={1} alignContent="center" justifyContent="center">
+            <IconButton color="primary" onClick={() => this.getPatients()} size="large">
               <RefreshIcon fontSize="large" />
             </IconButton>
-          </div>
-        <div className="form-group container left-form">
-          <div>
-            {/*for the ehr launch */}
-            <RequestBox
-              ehrUrl={this.state.ehrUrl}
-              submitInfo={this.submit_info}
-              access_token={this.state.token}
-              client={this.state.client}
-              fhirServerUrl={this.state.baseUrl}
-              fhirVersion={'r4'}
-              patientId={this.state.patient.id}
-              patient={this.state.patient}
-              request={this.state.request}
-              response={this.state.response}
-              code={this.state.code}
-              codeSystem={this.state.codeSystem}
-              display={this.state.display}
-              prefetchedResources={this.state.prefetchedResources}
-              launchUrl={this.state.launchUrl}
-              responseExpirationDays={this.state.responseExpirationDays}
-              pimsUrl={this.state.pimsUrl}
-              smartAppUrl={this.state.smartAppUrl}
-              defaultUser={this.state.defaultUser}
-              ref={this.requestBox}
-              loading={this.state.loading}
-              consoleLog={this.consoleLog}
-              patientFhirQuery={this.state.patientFhirQuery}
-            />
-          </div>
-        </div>
+          </Grid>
 
-        <div className="right-form">
-          <DisplayBox
-            response={this.state.response}
-            client={this.state.client}
-            patientId={this.state.patient.id}
-            ehrLaunch={true}
-            takeSuggestion={this.takeSuggestion}
-          />
-        </div>
-      </div>
+          <Grid item container className="form-group" xs={12} md={6} spacing={2}>
+            {displayRequestBox && (
+              <Grid item>
+                <RequestBox
+                  ehrUrl={this.props.globalState.ehrUrl}
+                  submitInfo={this.submitInfo}
+                  access_token={this.state.token}
+                  client={this.state.client}
+                  fhirServerUrl={this.props.globalState.baseUrl}
+                  fhirVersion={'r4'}
+                  patientId={this.props.globalState.patient.id}
+                  patient={this.props.globalState.patient}
+                  request={this.state.request}
+                  response={this.state.response}
+                  code={this.state.code}
+                  codeSystem={this.state.codeSystem}
+                  display={this.state.display}
+                  prefetchedResources={this.state.prefetchedResources}
+                  launchUrl={this.props.globalState.launchUrl}
+                  responseExpirationDays={this.props.globalState.responseExpirationDays}
+                  pimsUrl={this.props.globalState.pimsUrl}
+                  smartAppUrl={this.props.globalState.smartAppUrl}
+                  defaultUser={this.props.globalState.defaultUser}
+                  ref={this.requestBox}
+                  loading={this.state.loading}
+                  consoleLog={this.consoleLog}
+                  patientFhirQuery={this.props.globalState.patientFhirQuery}
+                />
+              </Grid>
+            )}
+            {!disableGetMedicationStatus && (
+              <Grid item>
+                <MedicationStatus
+                  ehrUrl={this.props.globalState.ehrUrl}
+                  request={this.state.request}
+                  medicationDispense={this.state.medicationDispense}
+                  getMedicationStatus={this.getMedicationStatus}
+                  lastCheckedMedicationTime={this.state.lastCheckedMedicationTime}
+                />
+              </Grid>
+            )}
+          </Grid>
+
+          <Grid item container xs={12} md={6}>
+            <DisplayBox
+              response={this.state.response}
+              client={this.state.client}
+              patientId={this.props.globalState.patient?.id}
+              ehrLaunch={true}
+              takeSuggestion={this.takeSuggestion}
+            />
+          </Grid>
+        </Grid>
+      </>
     );
   }
 }
