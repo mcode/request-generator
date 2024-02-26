@@ -34,10 +34,11 @@ const SettingsSection = props => {
           console.log('Could not load setting:' + element[0]);
         }
       }
-      // indicate to the rest of the app that the settings have been loaded
-      dispatch({
-        type: actionTypes.flagStartup
-      });
+    });
+
+    // indicate to the rest of the app that the settings have been loaded
+    dispatch({
+      type: actionTypes.flagStartup
     });
   }, []);
   const updateSetting = (key, value) => {
