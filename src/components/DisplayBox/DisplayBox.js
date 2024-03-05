@@ -1,81 +1,24 @@
-import React, { Component } from 'react';
-import FHIR from 'fhirclient';
+import React, { useEffect, useState } from 'react';
 import './card-list.css';
 import { Button, Card, CardActions, CardContent, Typography } from '@mui/material';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { retrieveLaunchContext } from '../../util/util';
 import './displayBox.css';
 
-const propTypes = {
-  /**
-   * A boolean to determine if the context of this component is under the Demo Card feature of the Sandbox, or in the actual
-   * hook views that render cards themselves. This flag is necessary to make links and suggestions unactionable in the Card Demo view.
-   */
-  isDemoCard: PropTypes.bool,
-  /**
-   * The FHIR access token retrieved from the authorization server. Used to retrieve a launch context for a SMART app
-   */
-  fhirAccessToken: PropTypes.object,
-  /**
-   * Function callback to take a specific suggestion from a card
-   */
-  takeSuggestion: PropTypes.func.isRequired,
-  /**
-   * Identifier of the Patient resource for the patient in context
-   */
-  patientId: PropTypes.string,
-  /**
-   * The FHIR server URL in context
-   */
-  fhirServerUrl: PropTypes.string,
-  /**
-   * The FHIR version in use
-   */
-  fhirVersion: PropTypes.string,
-  /**
-   * JSON response from a CDS service containing potential cards to display
-   */
-  cardResponses: PropTypes.object
-};
+const DisplayBox = (props) => {
 
-export default class DisplayBox extends Component {
-  constructor(props) {
-    super(props);
-    this.launchLink = this.launchLink.bind(this);
-    this.launchSource = this.launchSource.bind(this);
-    this.renderSource = this.renderSource.bind(this);
-    this.modifySmartLaunchUrls = this.modifySmartLaunchUrls.bind(this);
-    this.exitSmart = this.exitSmart.bind(this);
-    this.state = {
-      value: '',
-      smartLink: '',
-      response: {}
-    };
-  }
+  const [state, setState] = useState({ smartLink: '', response: {}});
+  const { isDemoCard, fhirAccessToken, ehrLaunch, patientId, client, response } = props;
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (JSON.stringify(nextProps.response) !== JSON.stringify(prevState.response)) {
-      return { response: nextProps.response };
-    } else {
-      return null;
+  useEffect(() => {
+    if (response !== state.response) {
+      setState(prevState => ({...prevState, response: response}));
     }
-  }
+  }, [response]);
 
-  shouldComponentUpdate(nextProps, prevState) {
-    if (
-      JSON.stringify(nextProps.response) !== JSON.stringify(this.state.response) ||
-      this.state.smartLink !== prevState.smartLink
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  supportedRequestType(resource) {
+  const supportedRequestType = (resource) => {
     let resourceType = resource.resourceType.toUpperCase();
     if (
       resourceType === 'DEVICEREQUEST' ||
@@ -85,15 +28,15 @@ export default class DisplayBox extends Component {
     ) {
       return true;
     }
-  }
+  };
   /**
    * Take a suggestion from a CDS service based on action on from a card. Also pings the analytics endpoint (if any) of the
    * CDS service to notify that a suggestion was taken
    * @param {*} suggestion - CDS service-defined suggestion to take based on CDS Hooks specification
    * @param {*} url - CDS service endpoint URL
    */
-  takeSuggestion(suggestion, url, buttonId, suggestionCount, cardNum, selectionBehavior) {
-    if (!this.props.isDemoCard) {
+  const takeSuggestion = (suggestion, url, buttonId, suggestionCount, cardNum, selectionBehavior) => {
+    if (!isDemoCard) {
       if (selectionBehavior === 'at-most-one') {
         // disable all suggestion buttons for this card
         for (var i = 0; i < suggestionCount; i++) {
@@ -122,26 +65,26 @@ export default class DisplayBox extends Component {
           if (action.type.toUpperCase() === 'DELETE') {
             uri = action.resource.resourceType + '/' + action.resource.id;
             console.log('completing suggested action DELETE: ' + uri);
-            this.props.client.delete(uri).then(result => {
+            client.delete(uri).then(result => {
               console.log('suggested action DELETE result:');
               console.log(result);
             });
           } else if (action.type.toUpperCase() === 'CREATE') {
             uri = action.resource.resourceType;
             console.log('completing suggested action CREATE: ' + uri);
-            this.props.client.create(action.resource).then(result => {
+            client.create(action.resource).then(result => {
               console.log('suggested action CREATE result:');
               console.log(result);
 
-              if (this.supportedRequestType(result)) {
+              if (supportedRequestType(result)) {
                 // call into the request builder to resubmit the CRD request with the suggested request
-                this.props.takeSuggestion(result);
+                takeSuggestion(result);
               }
             });
           } else if (action.type.toUpperCase() === 'UPDATE') {
             uri = action.resource.resourceType + '/' + action.resource.id;
             console.log('completing suggested action UPDATE: ' + uri);
-            this.props.client.update(action.resource).then(result => {
+            client.update(action.resource).then(result => {
               console.log('suggested action UPDATE result:');
               console.log(result);
             });
@@ -153,28 +96,28 @@ export default class DisplayBox extends Component {
         console.error('There was no label on this suggestion', suggestion);
       }
     }
-  }
+  };
 
   /**
    * Prevent the source link from opening in the same tab
    * @param {*} e - Event emitted when source link is clicked
    */
-  launchSource(e, link) {
+  const launchSource = (e, link)  => {
     e.preventDefault();
     window.open(link.url, '_blank');
-  }
+  };
 
-  exitSmart(e) {
-    this.setState({ smartLink: '' });
-  }
+  const exitSmart = (e) => {
+    setState(prevState => ({...prevState, smartLink: ''}));
+  };
   /**
    * Open the absolute or SMART link in a new tab and display an error if a SMART link does not have
    * appropriate launch context if used against a secured FHIR endpoint.
    * @param {*} e - Event emitted when link is clicked
    * @param {*} link - Link object that contains the URL and any error state to catch
    */
-  launchLink(e, link) {
-    if (!this.props.isDemoCard) {
+  const launchLink = (e, link) => {
+    if (!isDemoCard) {
       e.preventDefault();
       if (link.error) {
         // TODO: Create an error modal to display for SMART link that cannot be launched securely
@@ -182,7 +125,7 @@ export default class DisplayBox extends Component {
       }
       window.open(link.url, '_blank');
     }
-  }
+  };
 
   /**
    * For SMART links, modify the link URLs as this component processes them according to two scenarios:
@@ -190,17 +133,17 @@ export default class DisplayBox extends Component {
    * 2 - Open: Append a fhirServiceUrl and patientId parameter to the link for use against open endpoints
    * @param {*} card - Card object to process the links for
    */
-  modifySmartLaunchUrls(card) {
-    if (!this.props.isDemoCard) {
+  const modifySmartLaunchUrls = (card) => {
+    if (!isDemoCard) {
       return card.links.map(link => {
         let linkCopy = Object.assign({}, link);
 
         if (
           link.type === 'smart' &&
-          (this.props.fhirAccessToken || this.props.ehrLaunch) &&
-          !this.state.smartLink
+          (fhirAccessToken || ehrLaunch) &&
+          !state.smartLink
         ) {
-          retrieveLaunchContext(linkCopy, this.props.patientId, this.props.client.state).then(
+          retrieveLaunchContext(linkCopy, patientId, client.state).then(
             result => {
               linkCopy = result;
               return linkCopy;
@@ -219,13 +162,13 @@ export default class DisplayBox extends Component {
       });
     }
     return undefined;
-  }
+  };
 
   /**
    * Helper function to build out the UI for the source of the Card
    * @param {*} source - Object as part of the card to build the UI for
    */
-  renderSource(source) {
+  const renderSource = (source) => {
     if (!source.label) {
       return null;
     }
@@ -241,14 +184,14 @@ export default class DisplayBox extends Component {
         />
       );
     }
-    if (!this.props.isDemoCard) {
+    if (!isDemoCard) {
       return (
         <div className="card-source">
           Source:{' '}
           <a
             className="source-link"
             href={source.url || '#'}
-            onClick={e => this.launchSource(e, source)}
+            onClick={e => launchSource(e, source)}
           >
             {source.label}
           </a>
@@ -259,16 +202,16 @@ export default class DisplayBox extends Component {
     return (
       <div className="card-source">
         Source:
-        <a className="source-link" href="#" onClick={e => this.launchSource(e, source)}>
+        <a className="source-link" href="#" onClick={e => launchSource(e, source)}>
           {source.label}
         </a>
         {icon}
       </div>
     );
-  }
+  };
 
-  render() {
-    this.buttonList = [];
+  const renderCards = () => {
+    let buttonList = [];
     const indicators = {
       info: 0,
       warning: 1,
@@ -283,9 +226,10 @@ export default class DisplayBox extends Component {
       error: '#333'
     };
     const renderedCards = [];
+
     // Iterate over each card in the cards array
-    if (this.state.response != null && this.state.response.cards != null) {
-      this.state.response.cards
+    if (state.response != null && state.response.cards != null) {
+      state.response.cards
         .sort((b, a) => indicators[a.indicator] - indicators[b.indicator])
         .forEach((c, cardInd) => {
           const card = JSON.parse(JSON.stringify(c));
@@ -295,7 +239,7 @@ export default class DisplayBox extends Component {
 
           // -- Source --
           const sourceSection =
-            card.source && Object.keys(card.source).length ? this.renderSource(card.source) : '';
+            card.source && Object.keys(card.source).length ? renderSource(card.source) : '';
 
           // -- Detail (ReactMarkdown supports Github-flavored markdown) --
           const detailSection = card.detail ? (
@@ -311,13 +255,13 @@ export default class DisplayBox extends Component {
           if (card.suggestions) {
             card.suggestions.forEach((item, ind) => {
               var buttonId = 'suggestion_button-' + cardInd + '-' + ind;
-              this.buttonList.push(buttonId);
+              buttonList.push(buttonId);
 
               suggestionsSection.push(
                 <Button
                   key={ind}
                   onClick={() =>
-                    this.takeSuggestion(
+                    takeSuggestion(
                       item,
                       card.serviceUrl,
                       buttonId,
@@ -338,18 +282,18 @@ export default class DisplayBox extends Component {
           // -- Links --
           let linksSection;
           if (card.links) {
-            card.links = this.modifySmartLaunchUrls(card) || card.links;
+            card.links = modifySmartLaunchUrls(card) || card.links;
             linksSection = card.links.map((link, ind) => {
               if (link.type === 'smart') {
                 return (
-                  <Button key={ind} variant="outlined" onClick={e => this.launchLink(e, link)}>
+                  <Button key={ind} variant="outlined" onClick={e => launchLink(e, link)}>
                     {link.label}
                   </Button>
                 );
               }
               const pdfIcon = <PictureAsPdfIcon />;
               return (
-                <Button key={ind} onClick={e => this.launchLink(e, link)} endIcon={pdfIcon}>
+                <Button key={ind} onClick={e => launchLink(e, link)} endIcon={pdfIcon}>
                   {link.label}
                 </Button>
               );
@@ -386,17 +330,20 @@ export default class DisplayBox extends Component {
 
           renderedCards.push(builtCard);
         });
-
-      if (renderedCards.length === 0) {
-        return <div>Notification Cards ({renderedCards.length})</div>;
-      }
       return (
         <div>
+            { renderedCards.length === 0 ? <div>Notification Cards ({renderedCards.length})</div> : <></>}
           <div>{renderedCards}</div>
         </div>
       );
-    } else {
-      return <div></div>;
     }
-  }
-}
+  };
+
+  return (
+    <div>
+      {renderCards()}
+    </div>
+  );
+};
+
+export default DisplayBox;
