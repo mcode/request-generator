@@ -35,7 +35,7 @@ const taskStatus = Object.freeze({
   completed: 'completed',
   ready: 'ready',
   cancelled: 'cancelled',
-  onHold: 'on-hold',
+  onHold: 'on-hold'
 });
 const TasksSection = props => {
   const classes = useStyles();
@@ -72,15 +72,15 @@ const TasksSection = props => {
     }
     handleAssignMenuClose();
   };
-const handleAssignMenuClick = (event, task) => {
-  setAnchorAssign({
-    anchor: event.currentTarget,
-    task: task
-  });
-};
-const handleAssignMenuClose = () => {
-  setAnchorAssign(null);
-};
+  const handleAssignMenuClick = (event, task) => {
+    setAnchorAssign({
+      anchor: event.currentTarget,
+      task: task
+    });
+  };
+  const handleAssignMenuClose = () => {
+    setAnchorAssign(null);
+  };
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -174,7 +174,7 @@ const handleAssignMenuClose = () => {
   const launchTask = lTask => {
     let link = '';
     let appContext = '';
-    lTask.input.forEach((input) => {
+    lTask.input.forEach(input => {
       const code = input?.type?.coding?.[0]?.code;
       if (code && code.toLowerCase() === 'smartonfhir-application') {
         link = input.valueUrl;
@@ -188,7 +188,7 @@ const handleAssignMenuClose = () => {
       url: link
     };
     const patient = lTask.for.id;
-    retrieveLaunchContext(smartLink, patient, props.client.state).then((result) => {
+    retrieveLaunchContext(smartLink, patient, props.client.state).then(result => {
       updateTaskStatus(lTask, 'in-progress');
       lTask.status = 'in-progress';
       props.client.update(washTask(lTask)).then(e => {
@@ -198,31 +198,39 @@ const handleAssignMenuClose = () => {
     });
   };
   const renderStatusMenu = () => {
-    return (<Menu
-      anchorEl={anchorStatus?.anchor}
-      open={menuOpen}
-      onClose={handleMenuClose}
-    >
-      {Object.keys(taskStatus).map((op) => {
-        return(
-          <MenuItem key = {op} onClick={() => {handleTaskStatusOptionSelect(anchorStatus.task, taskStatus[op]);}}>{taskStatus[op]}</MenuItem>
-        );
-      })}
-    </Menu>);
+    return (
+      <Menu anchorEl={anchorStatus?.anchor} open={menuOpen} onClose={handleMenuClose}>
+        {Object.keys(taskStatus).map(op => {
+          return (
+            <MenuItem
+              key={op}
+              onClick={() => {
+                handleTaskStatusOptionSelect(anchorStatus.task, taskStatus[op]);
+              }}
+            >
+              {taskStatus[op]}
+            </MenuItem>
+          );
+        })}
+      </Menu>
+    );
   };
   const renderAssignMenu = () => {
     const assignOptions = ['me', 'patient'];
-    return (<Menu
-      anchorEl={anchorAssign?.anchor}
-      open={assignMenuOpen}
-      onClose={handleAssignMenuClose}
-    >
-      {assignOptions.map((op) => {
-        return(
-          <MenuItem key = {op} onClick={() => {handleChangeAssign(anchorAssign?.task, op);}}>{`Assign to ${op}`}</MenuItem>
-        );
-      })}
-    </Menu>);
+    return (
+      <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
+        {assignOptions.map(op => {
+          return (
+            <MenuItem
+              key={op}
+              onClick={() => {
+                handleChangeAssign(anchorAssign?.task, op);
+              }}
+            >{`Assign to ${op}`}</MenuItem>
+          );
+        })}
+      </Menu>
+    );
   };
   const renderTasks = taskSubset => {
     if (taskSubset.length > 0) {
@@ -242,7 +250,7 @@ const handleAssignMenuClose = () => {
       statusColor = '#198754';
     } else if (tStatus === taskStatus.inProgress) {
       statusColor = '#fd7e14';
-    } else if(tStatus === taskStatus.completed){
+    } else if (tStatus === taskStatus.completed) {
       statusColor = '#0d6efd';
     }
 
@@ -312,19 +320,31 @@ const handleAssignMenuClose = () => {
               {ownerText}
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <Button variant="outlined" onClick = {(event) => {handleMenuClick(event, task);}} endIcon={<ExpandMoreIcon />}>
+              <Button
+                variant="outlined"
+                onClick={event => {
+                  handleMenuClick(event, task);
+                }}
+                endIcon={<ExpandMoreIcon />}
+              >
                 Status
               </Button>
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={3}>
-              <Button variant = "outlined" onClick = {(event) => {handleAssignMenuClick(event, task);}} endIcon={<ExpandMoreIcon />}>
+            <Grid className={classes.taskTabButton} item xs={2}>
+              <Button
+                variant="outlined"
+                onClick={event => {
+                  handleAssignMenuClick(event, task);
+                }}
+                endIcon={<ExpandMoreIcon />}
+              >
                 Assign
               </Button>
             </Grid>
             <Grid item xs={1}>
               {/*spacer*/}
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={2}>
+            <Grid className={classes.taskTabButton} item xs={3}>
               <Button
                 variant="contained"
                 color="error"
@@ -337,8 +357,14 @@ const handleAssignMenuClose = () => {
               </Button>
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <Button variant="contained" onClick={() => { launchTask(task); }} endIcon={<ArrowForwardIcon />}>
-                Process Task
+              <Button
+                variant="contained"
+                onClick={() => {
+                  launchTask(task);
+                }}
+                endIcon={<ArrowForwardIcon />}
+              >
+                Launch
               </Button>
             </Grid>
           </Grid>
@@ -347,8 +373,53 @@ const handleAssignMenuClose = () => {
     );
   };
 
-  const unassignedTasks = tasks.filter(t => !t.owner);
-  const assignedTasks = tasks.filter(t => t.owner?.id === state.defaultUser); // should check current user, not default
+  const renderMainView = () => {
+    const unassignedTasks = tasks.filter(t => !t.owner);
+    const assignedTasks = tasks.filter(t => t.owner?.id === state.defaultUser); // should check current user, not default
+    return (
+      <div>
+        <Grid container>
+          <Grid item xs={10}>
+            <Tabs className={classes.taskHeaderTabs} value={value} onChange={handleChange}>
+              <Tab icon={<AssignmentIcon />} label={`ALL TASKS (${tasks.length})`} />
+              <Tab icon={<PersonIcon />} label={`MY TASKS (${assignedTasks.length})`} />
+              <Tab icon={<EditNoteIcon />} label={`UNASSIGNED TASKS (${unassignedTasks.length})`} />
+            </Tabs>
+          </Grid>
+          <Grid className={classes.taskRefreshButton} item xs={2}>
+            <Button
+              variant="contained"
+              startIcon={<Refresh />}
+              onClick={() => {
+                fetchTasks();
+              }}
+            >
+              Refresh
+            </Button>
+          </Grid>
+        </Grid>
+        <MemoizedTabPanel value={value} index={0}>
+          {/* all tasks */}
+          {renderTasks(tasks)}
+        </MemoizedTabPanel>
+        <MemoizedTabPanel value={value} index={1}>
+          {/* my tasks */}
+          {renderTasks(assignedTasks)}
+        </MemoizedTabPanel>
+        <MemoizedTabPanel value={value} index={2}>
+          {/* unassigned tasks */}
+          {renderTasks(unassignedTasks)}
+        </MemoizedTabPanel>
+      </div>
+    );
+  };
+
+  const renderPortalView = () => {
+    const patientTasks = tasks.filter(t => t.owner?.id === state.patient?.id);
+
+    return <>{renderTasks(patientTasks)}</>;
+  };
+
   return (
     <>
       <Modal open={open} onClose={handleClose}>
@@ -385,40 +456,7 @@ const handleAssignMenuClose = () => {
       </Modal>
       {renderStatusMenu()}
       {renderAssignMenu()}
-      <div>
-        <Grid container>
-          <Grid item xs={10}>
-            <Tabs className={classes.taskHeaderTabs} value={value} onChange={handleChange}>
-              <Tab icon={<AssignmentIcon />} label={`ALL TASKS (${tasks.length})`} />
-              <Tab icon={<PersonIcon />} label={`MY TASKS (${assignedTasks.length})`} />
-              <Tab icon={<EditNoteIcon />} label={`UNASSIGNED TASKS (${unassignedTasks.length})`} />
-            </Tabs>
-          </Grid>
-          <Grid className={classes.taskRefreshButton} item xs={2}>
-            <Button
-              variant="contained"
-              startIcon={<Refresh />}
-              onClick={() => {
-                fetchTasks();
-              }}
-            >
-              Refresh
-            </Button>
-          </Grid>
-        </Grid>
-        <MemoizedTabPanel value={value} index={0}>
-          {/* all tasks */}
-          {renderTasks(tasks)}
-        </MemoizedTabPanel>
-        <MemoizedTabPanel value={value} index={1}>
-          {/* my tasks */}
-          {renderTasks(assignedTasks)}
-        </MemoizedTabPanel>
-        <MemoizedTabPanel value={value} index={2}>
-          {/* unassigned tasks */}
-          {renderTasks(unassignedTasks)}
-        </MemoizedTabPanel>
-      </div>
+      {props.portalView ? renderPortalView() : renderMainView()}
     </>
   );
 };
