@@ -198,14 +198,6 @@ const RequestBox = (props) => {
     return value;
   };
 
-  // const renderError = () => {
-  //   return (
-  //     <span className="patient-error">
-  //       Encountered Error: Try Refreshing The Client <br /> {state.patientList.message}{' '}
-  //     </span>
-  //   );
-  // };
-
   const launchSmartOnFhirApp = () => {
     console.log('Launch SMART on FHIR App');
 
@@ -231,65 +223,6 @@ const RequestBox = (props) => {
       window.open(link.url, '_blank');
     });
   };
-
-  // /**
-  //  * Relaunch DTR using the available context
-  //  */
-  // const relaunch = () => {
-  //   buildLaunchLink().then(link => {
-  //     window.open(link.url, '_blank');
-  //   });
-  // };
-
-  // const buildLaunchLink = async () => {
-  //   // build appContext and URL encode it
-  //   let appContext = '';
-  //   let order = undefined,
-  //     coverage = undefined,
-  //     response = undefined;
-
-  //   if (!isOrderNotSelected()) {
-  //     if (Object.keys(request).length > 0) {
-  //       order = `${request.resourceType}/${request.id}`;
-  //       if (request.insurance && request.insurance.length > 0) {
-  //         coverage = `${request.insurance[0].reference}`;
-  //       }
-  //     }
-  //   }
-
-  //   if (order) {
-  //     appContext += `order=${order}`;
-
-  //     if (coverage) {
-  //       appContext += `&coverage=${coverage}`;
-  //     }
-  //   }
-
-  //   if (Object.keys(this.props.response).length > 0) {
-  //     response = `QuestionnaireResponse/${this.props.response.id}`;
-  //   }
-
-  //   if (order && response) {
-  //     appContext += `&response=${response}`;
-  //   } else if (!order && response) {
-  //     appContext += `response=${response}`;
-  //   }
-
-  //   const link = {
-  //     appContext: encodeURIComponent(appContext),
-  //     type: 'smart',
-  //     url: this.props.launchUrl
-  //   };
-
-  //   let linkCopy = Object.assign({}, link);
-
-  //   return retrieveLaunchContext(linkCopy, this.props.patient.id, this.props.client.state).then(
-  //     result => {
-  //       linkCopy = result;
-  //       return linkCopy;
-  //     }
-  //   );
-  // };
 
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
