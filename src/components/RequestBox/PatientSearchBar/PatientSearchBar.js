@@ -87,7 +87,6 @@ const PatientSearchBar = (props) => {
                 request={props.request}
                 launchUrl={props.launchUrl}
                 callback={props.callback}
-                callbackList={props.callbackList}
                 callbackMap={props.callbackMap}
                 updatePrefetchCallback={PrefetchTemplate.generateQueries}
                 clearCallback={props.clearCallback}

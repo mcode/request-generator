@@ -106,10 +106,6 @@ const DisplayBox = (props) => {
     e.preventDefault();
     window.open(link.url, '_blank');
   };
-
-  const exitSmart = (e) => {
-    setState(prevState => ({...prevState, smartLink: ''}));
-  };
   /**
    * Open the absolute or SMART link in a new tab and display an error if a SMART link does not have
    * appropriate launch context if used against a secured FHIR endpoint.
@@ -219,12 +215,6 @@ const DisplayBox = (props) => {
       error: 3
     };
 
-    const summaryColors = {
-      info: '#0079be',
-      warning: '#ffae42',
-      'hard-stop': '#c00',
-      error: '#333'
-    };
     const renderedCards = [];
 
     // Iterate over each card in the cards array

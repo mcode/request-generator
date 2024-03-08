@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Box, Grid, IconButton  } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -22,7 +22,6 @@ const RequestBuilder = (props) => {
   const { globalState, dispatch, client } = props;
   const [state, setState] = useState({
     loading: false,
-    logs: [],
     patient: {},
     expanded: true,
     patientList: [],
@@ -38,7 +37,6 @@ const RequestBuilder = (props) => {
     medicationDispense: null,
     lastCheckedMedicationTime: null
   });
-  const requestBox = useRef();
   const displayRequestBox = !!globalState.patient?.id;
 
   const isOrderNotSelected = () => {
@@ -87,18 +85,6 @@ const RequestBuilder = (props) => {
     }
   }, []);
 
-  const consoleLog = (content, type) => {
-    console.log(content);
-    let jsonContent = {
-      content: content,
-      type: type
-    };
-    setState(prevState => ({
-      ...prevState,
-      logs: [...prevState.logs, jsonContent]
-    }));
-  };
-
   const updateStateElement = (elementName, text) => {
     if (elementName === 'patient') {
       dispatch({
@@ -119,14 +105,8 @@ const RequestBuilder = (props) => {
     }
   };
 
-  const timeout = time => {
-    let controller = new AbortController();
-    setTimeout(() => controller.abort(), time * 1000);
-    return controller;
-  };
-
   const submitInfo = (prefetch, request, patient, hook) => {
-    consoleLog('Initiating form submission', types.info);
+    console.log('Initiating form submission ', types.info);
     setState(prevState => ({
       ...prevState,
       loading: true,
@@ -156,7 +136,7 @@ const RequestBuilder = (props) => {
     } else if (hook === 'patient-view') {
       cdsUrl = cdsUrl + '/' + globalState.patientView;
     } else {
-      consoleLog("ERROR: unknown hook type: '", hook, "'");
+      console.log("ERROR: unknown hook type: '", hook);
       return;
     }
 
@@ -174,19 +154,14 @@ const RequestBuilder = (props) => {
       fetch(cdsUrl, {
         method: 'POST',
         headers: new Headers(headers),
-        body: JSON.stringify(json_request),
-        signal: timeout(10).signal //Timeout set to 10 seconds
+        body: JSON.stringify(json_request)
       })
         .then(response => {
-          clearTimeout(timeout);
           response.json().then(fhirResponse => {
             console.log(fhirResponse);
             if (fhirResponse?.status) {
-              consoleLog(
-                'Server returned status ' + fhirResponse.status + ': ' + fhirResponse.error,
-                types.error
-              );
-              consoleLog(fhirResponse.message, types.error);
+              console.log('Server returned status ' + fhirResponse.status + ': ' + fhirResponse.error);
+              console.log(fhirResponse.message);
             } else {
               setState(prevState => ({ ...prevState, response: fhirResponse }));
             }
@@ -194,39 +169,32 @@ const RequestBuilder = (props) => {
           });
         })
         .catch(() => {
-          consoleLog('No response received from the server', types.error);
+          console.log('No response received from the server', types.error);
           setState(prevState => ({ ...prevState, response: {}, loading: false }));
         });
     } catch (error) {
       
       setState(prevState => ({ ...prevState, loading: false }));
-      consoleLog('Unexpected error occurred', types.error);
+      console.log('Unexpected error occurred', types.error);
       if (error instanceof TypeError) {
-        consoleLog(error.name + ': ' + error.message, types.error);
+        console.log(error.name + ': ' + error.message);
       }
     }
   };
 
-  const takeSuggestion = (resource) => {
-    // when a suggestion is taken, call into the requestBox to resubmit the CRD request with the new request
-    requestBox.current.replaceRequestAndSubmit(resource);
-  };
-
   const getPatients = () => {
+    setState(prevState => ({ ...prevState, expanded: false}));
     if (globalState.patientFhirQuery) {
       client
         .request(globalState.patientFhirQuery, { flat: true })
         .then(result => {
-          setState(prevState => ({ ...prevState, patientList: result }));
+          setState(prevState => ({ ...prevState, patientList: result, expanded: true }));
         })
         .catch(e => {
           setState(prevState => ({ ...prevState, patientList: e }));
+          console.log(e);
         });
     }
-  };
-
-  const updateStateList = (elementName, text) => {
-    setState(prevState => ({ ...prevState, [elementName]: [...prevState[elementName], text] }));
   };
 
   const updateStateMap = (elementName, key, text) => {
@@ -289,7 +257,6 @@ const RequestBuilder = (props) => {
                       request={state.request}
                       launchUrl={globalState.launchUrl}
                       callback={updateStateElement}
-                      callbackList={updateStateList}
                       callbackMap={updateStateMap}
                       clearCallback={clearState}
                       responseExpirationDays={globalState.responseExpirationDays}
@@ -330,9 +297,7 @@ const RequestBuilder = (props) => {
                 pimsUrl={globalState.pimsUrl}
                 smartAppUrl={globalState.smartAppUrl}
                 defaultUser={globalState.defaultUser}
-                ref={requestBox}
                 loading={state.loading}
-                consoleLog={consoleLog}
                 patientFhirQuery={globalState.patientFhirQuery}
               />
             </Grid>
@@ -356,7 +321,6 @@ const RequestBuilder = (props) => {
             client={state.client}
             patientId={globalState.patient?.id}
             ehrLaunch={true}
-            takeSuggestion={takeSuggestion}
           />
         </Grid>
       </Grid>

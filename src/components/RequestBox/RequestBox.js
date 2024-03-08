@@ -24,12 +24,6 @@ const RequestBox = (props) => {
   const emptyField = (<span className="empty-field">empty</span>);
 
 
-  // TODO - see how to submit response for alternative therapy
-  const replaceRequestAndSubmit = (request) => {
-    callback(request, request); // Submit the cds hook request.
-    submitOrderSign(request);
-  };
-
   const prepPrefetch = () =>  {
     const preppedResources = new Map();
     Object.keys(prefetchedResources).forEach(resourceKey => {
@@ -140,7 +134,7 @@ const RequestBox = (props) => {
   };
 
   const renderRequestResources = (requestResources) => {
-    let renderedPrefetches = new Map();
+    const renderedPrefetches = new Map();
     requestResources.forEach((resourceList, resourceKey) => {
       const renderedList = [];
       if (Array.isArray(resourceList)) {
