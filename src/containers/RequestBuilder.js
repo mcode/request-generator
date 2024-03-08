@@ -97,12 +97,6 @@ const RequestBuilder = (props) => {
         [elementName]: text
       }));
     }
-    // if the patientFhirQuery is updated, make a call to get the patients
-    if (elementName === 'patientFhirQuery') {
-      setTimeout(() => {
-        getPatients();
-      }, 1000);
-    }
   };
 
   const submitInfo = (prefetch, request, patient, hook) => {
