@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -9,94 +9,74 @@ import { getAge, createMedicationDispenseFromMedicationRequest } from '../../uti
 import { retrieveLaunchContext } from '../../util/util';
 import './request.css';
 
-export default class RequestBox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+const RequestBox = (props) => {
+
+  const [state, setState] = useState(
+    {
       gatherCount: 0,
       response: {},
       submittedRx: false
-    };
+    }
+  );
 
-    this.renderRequestResources = this.renderRequestResources.bind(this);
-    this.renderPatientInfo = this.renderPatientInfo.bind(this);
-    this.renderOtherInfo = this.renderOtherInfo.bind(this);
-    this.renderResource = this.renderResource.bind(this);
-    this.renderPrefetchedResources = this.renderPrefetchedResources.bind(this);
-    this.renderError = this.renderError.bind(this);
-    this.buildLaunchLink = this.buildLaunchLink.bind(this);
-  }
+  const { callback, prefetchedResources, submitInfo, patient, request, loading,
+  code, codeSystem, display, defaultUser, smartAppUrl, client, pimsUrl } = props;
+  const emptyField = (<span className="empty-field">empty</span>);
 
-  // TODO - see how to submit response for alternative therapy
-  replaceRequestAndSubmit(request) {
-    this.props.callback(request, request); // Submit the cds hook request.
-    this.submitOrderSign(request);
-  }
 
-  prepPrefetch() {
+  const prepPrefetch = () =>  {
     const preppedResources = new Map();
-    Object.keys(this.props.prefetchedResources).forEach(resourceKey => {
+    Object.keys(prefetchedResources).forEach(resourceKey => {
       let resourceList = [];
-      if (Array.isArray(this.props.prefetchedResources[resourceKey])) {
-        resourceList = this.props.prefetchedResources[resourceKey].map(resource => {
+      if (Array.isArray(prefetchedResources[resourceKey])) {
+        resourceList = prefetchedResources[resourceKey].map(resource => {
           return resource;
         });
       } else {
-        resourceList = this.props.prefetchedResources[resourceKey];
+        resourceList = prefetchedResources[resourceKey];
       }
 
       preppedResources.set(resourceKey, resourceList);
     });
     return preppedResources;
-  }
-
-  submitPatientView = () => {
-    this.props.submitInfo(this.prepPrefetch(), null, this.props.patient, 'patient-view');
   };
 
-  submitOrderSelect = () => {
-    if (!_.isEmpty(this.props.request)) {
-      this.props.submitInfo(
-        this.prepPrefetch(),
-        this.props.request,
-        this.props.patient,
+  const submitPatientView = () => {
+    submitInfo(prepPrefetch(), null, patient, 'patient-view');
+  };
+
+  const submitOrderSelect = () => {
+    if (!_.isEmpty(request)) {
+      submitInfo(
+        prepPrefetch(),
+        request,
+        patient,
         'order-select'
       );
     }
   };
 
-  submitOrderSign = request => {
-    this.props.submitInfo(this.prepPrefetch(), request, this.props.patient, 'order-sign');
+  const submitOrderSign = request => {
+    submitInfo(prepPrefetch(), request, patient, 'order-sign');
   };
 
-  submit = () => {
-    if (!_.isEmpty(this.props.request)) {
-      this.submitOrderSign(this.props.request);
+  const submit = () => {
+    if (!_.isEmpty(request)) {
+      submitOrderSign(request);
     }
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  useEffect(() => {
     // if prefetch completed
-    if (
-      prevState.prefetchCompleted != this.state.prefetchCompleted &&
-      this.state.prefetchCompleted
-    ) {
+    if (state.prefetchCompleted) {
       // if the prefetch contains a medicationRequests bundle
-      if (this.props.prefetchedResources.medicationRequests) {
-        this.submitPatientView();
+      if (prefetchedResources.medicationRequests) {
+        submitPatientView();
       }
-      // we could use this in the future to send order-select
-      //// if the prefetch contains a request
-      //if (this.props.prefetchedResources.request) {
-      //  this.submitOrderSelect();
-      //}
     }
-  }
+  }, [state.prefetchCompleted]);
 
-  emptyField = (<span className="empty-field">empty</span>);
-
-  renderPatientInfo() {
-    const patient = this.props.patient;
+  const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
       return <div className="demographics"></div>;
     }
@@ -104,7 +84,7 @@ export default class RequestBox extends Component {
     if (patient.name) {
       name = <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>;
     } else {
-      name = this.emptyField;
+      name = emptyField;
     }
     return (
       <div className="demographics">
@@ -113,58 +93,58 @@ export default class RequestBox extends Component {
         </div>
         <div className="info lower-border">Name: {name}</div>
         <div className="info lower-border">
-          Age: {patient.birthDate ? getAge(patient.birthDate) : this.emptyField}
+          Age: {patient.birthDate ? getAge(patient.birthDate) : emptyField}
         </div>
         <div className="info lower-border">
-          Gender: {patient.gender ? patient.gender : this.emptyField}
+          Gender: {patient.gender ? patient.gender : emptyField}
         </div>
         <div className="info lower-border">
-          State: {this.state.patientState ? this.state.patientState : this.emptyField}
+          State: {state.patientState ? state.patientState : emptyField}
         </div>
-        {this.renderOtherInfo()}
+        {renderOtherInfo()}
       </div>
     );
-  }
+  };
 
-  renderOtherInfo() {
+  const renderOtherInfo = () => {
     return (
       <div className="other-info">
         <div className="lower-border">
           <span style={{ fontWeight: 'bold' }}>Coding</span>
         </div>
         <div className="info lower-border">
-          Code: {this.props.code ? this.props.code : this.emptyField}
+          Code: {code ? code : emptyField}
         </div>
         <div className="info lower-border">
-          System: {this.props.codeSystem ? shortNameMap[this.props.codeSystem] : this.emptyField}
+          System: {codeSystem ? shortNameMap[codeSystem] : emptyField}
         </div>
         <div className="info lower-border">
-          Display: {this.props.display ? this.props.display : this.emptyField}
+          Display: {display ? display : emptyField}
         </div>
       </div>
     );
-  }
+  };
 
-  renderPrefetchedResources() {
-    const prefetchMap = new Map(Object.entries(this.props.prefetchedResources));
+  const renderPrefetchedResources = () => {
+    const prefetchMap = new Map(Object.entries(prefetchedResources));
     if (prefetchMap.size > 0) {
-      return this.renderRequestResources(prefetchMap);
+      return renderRequestResources(prefetchMap);
     }
     return <div className="prefetched" />;
-  }
+  };
 
-  renderRequestResources(requestResources) {
-    var renderedPrefetches = new Map();
+  const renderRequestResources = (requestResources) => {
+    const renderedPrefetches = new Map();
     requestResources.forEach((resourceList, resourceKey) => {
       const renderedList = [];
       if (Array.isArray(resourceList)) {
         resourceList.forEach(resource => {
           console.log('Request resources:' + JSON.stringify(requestResources));
           console.log('Request key:' + resourceKey);
-          renderedList.push(this.renderResource(resource));
+          renderedList.push(renderResource(resource));
         });
       } else {
-        renderedList.push(this.renderResource(resourceList));
+        renderedList.push(renderResource(resourceList));
       }
 
       renderedPrefetches.set(resourceKey, renderedList);
@@ -185,9 +165,9 @@ export default class RequestBox extends Component {
         })}
       </div>
     );
-  }
+  };
 
-  renderResource(resource) {
+  const renderResource = (resource) => {
     let value = <div>N/A</div>;
     if (!resource.id) {
       resource = resource.resource;
@@ -210,35 +190,27 @@ export default class RequestBox extends Component {
       );
     }
     return value;
-  }
+  };
 
-  renderError() {
-    return (
-      <span className="patient-error">
-        Encountered Error: Try Refreshing The Client <br /> {this.state.patientList.message}{' '}
-      </span>
-    );
-  }
-
-  launchSmartOnFhirApp = () => {
+  const launchSmartOnFhirApp = () => {
     console.log('Launch SMART on FHIR App');
 
-    let userId = this.props.prefetchedResources?.practitioner?.id;
+    let userId = prefetchedResources?.practitioner?.id;
     if (!userId) {
       console.log(
         'Practitioner not populated from prefetch, using default from config: ' +
-          this.props.defaultUser
+          defaultUser
       );
-      userId = this.props.defaultUser;
+      userId = defaultUser;
     }
 
     let link = {
-      appContext: 'user=' + userId + '&patient=' + this.props.patient.id,
+      appContext: 'user=' + userId + '&patient=' + patient.id,
       type: 'smart',
-      url: this.props.smartAppUrl
+      url: smartAppUrl
     };
 
-    retrieveLaunchContext(link, this.props.patient.id, this.props.client.state).then(result => {
+    retrieveLaunchContext(link, patient.id, client.state).then(result => {
       link = result;
       console.log(link);
       // launch the application in a new window
@@ -247,75 +219,16 @@ export default class RequestBox extends Component {
   };
 
   /**
-   * Relaunch DTR using the available context
-   */
-  relaunch = () => {
-    this.buildLaunchLink().then(link => {
-      window.open(link.url, '_blank');
-    });
-  };
-
-  buildLaunchLink() {
-    // build appContext and URL encode it
-    let appContext = '';
-    let order = undefined,
-      coverage = undefined,
-      response = undefined;
-
-    if (!this.isOrderNotSelected()) {
-      if (Object.keys(this.props.request).length > 0) {
-        order = `${this.props.request.resourceType}/${this.props.request.id}`;
-        if (this.props.request.insurance && this.props.request.insurance.length > 0) {
-          coverage = `${this.props.request.insurance[0].reference}`;
-        }
-      }
-    }
-
-    if (order) {
-      appContext += `order=${order}`;
-
-      if (coverage) {
-        appContext += `&coverage=${coverage}`;
-      }
-    }
-
-    if (Object.keys(this.props.response).length > 0) {
-      response = `QuestionnaireResponse/${this.props.response.id}`;
-    }
-
-    if (order && response) {
-      appContext += `&response=${response}`;
-    } else if (!order && response) {
-      appContext += `response=${response}`;
-    }
-
-    const link = {
-      appContext: encodeURIComponent(appContext),
-      type: 'smart',
-      url: this.props.launchUrl
-    };
-
-    let linkCopy = Object.assign({}, link);
-
-    return retrieveLaunchContext(linkCopy, this.props.patient.id, this.props.client.state).then(
-      result => {
-        linkCopy = result;
-        return linkCopy;
-      }
-    );
-  }
-
-  /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
-  sendRx = () => {
-    console.log('Sending NewRx to: ' + this.props.pimsUrl);
+  const sendRx = () => {
+    console.log('Sending NewRx to: ' + pimsUrl);
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
-      this.props.prefetchedResources.patient,
-      this.props.prefetchedResources.practitioner,
-      this.props.request
+      prefetchedResources.patient,
+      prefetchedResources.practitioner,
+      request
     );
 
     console.log('Prepared NewRx:');
@@ -324,7 +237,7 @@ export default class RequestBox extends Component {
     const serializer = new XMLSerializer();
 
     // Sending NewRx to the Pharmacy
-    fetch(this.props.pimsUrl, {
+    fetch(pimsUrl, {
       method: 'POST',
       //mode: 'no-cors',
       headers: {
@@ -337,18 +250,18 @@ export default class RequestBox extends Component {
         console.log('Successfully sent NewRx to PIMS');
 
         // create the MedicationDispense
-        var medicationDispense = createMedicationDispenseFromMedicationRequest(this.props.request);
+        var medicationDispense = createMedicationDispenseFromMedicationRequest(request);
         console.log('Create MedicationDispense:');
         console.log(medicationDispense);
 
         // store the MedicationDispense in the EHR
         console.log(medicationDispense);
-        this.props.client.update(medicationDispense).then(result => {
+        client.update(medicationDispense).then(result => {
           console.log('Update MedicationDispense result:');
           console.log(result);
         });
 
-        this.handleRxResponse();
+        handleRxResponse();
       })
       .catch(error => {
         console.log('sendRx Error - unable to send NewRx to PIMS: ');
@@ -356,70 +269,70 @@ export default class RequestBox extends Component {
       });
   };
 
-  isOrderNotSelected() {
-    return Object.keys(this.props.request).length === 0;
-  }
+  const isOrderNotSelected = () => {
+    return Object.keys(request).length === 0;
+  };
 
-  isPatientNotSelected() {
-    return Object.keys(this.props.patient).length === 0;
-  }
+  const isPatientNotSelected = () => {
+    return Object.keys(patient).length === 0;
+  };
 
   // SnackBar
-  handleRxResponse = () => this.setState({ submittedRx: true });
+  const handleRxResponse = () => setState(prevState => ({ ...prevState, submittedRx: true }));
 
-  handleClose = () => this.setState({ submittedRx: false });
+  const handleClose = () => setState(prevState => ({ ...prevState, submittedRx: false }));
 
-  render() {
-    const disableSendToCRD = this.isOrderNotSelected() || this.props.loading;
-    const disableSendRx = this.isOrderNotSelected() || this.props.loading;
-    const disableLaunchSmartOnFhir = this.isPatientNotSelected();
+  const disableSendToCRD = isOrderNotSelected() || loading;
+  const disableSendRx = isOrderNotSelected() || loading;
+  const disableLaunchSmartOnFhir = isPatientNotSelected();
 
-    return (
-      <>
-        <div className="request">
-          <div>
-            <div className="request-header">
-              <span>Patient ID: {this.props.patient.id}</span>
-            </div>
-            <div className="patient-info">
-              <Grid container>
-                <Grid item xs={6}>
-                  {this.renderPatientInfo()}
-                </Grid>
-                <Grid item xs={6}>
-                  {this.renderPrefetchedResources()}
-                </Grid>
-              </Grid>
-            </div>
+  return (
+    <>
+      <div className="request">
+        <div>
+          <div className="request-header">
+            <span>Patient ID: {patient.id}</span>
           </div>
-          <div className="action-btns">
-            <ButtonGroup variant="outlined" aria-label="outlined button group">
-              <Button onClick={this.launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
-                Launch SMART on FHIR App
-              </Button>
-              <Button onClick={this.sendRx} disabled={disableSendRx}>
-                Send Rx to Pharmacy
-              </Button>
-              <Button onClick={this.submit} disabled={disableSendToCRD}>
-                Sign Order
-              </Button>
-            </ButtonGroup>
+          <div className="patient-info">
+            <Grid container>
+              <Grid item xs={6}>
+                {renderPatientInfo()}
+              </Grid>
+              <Grid item xs={6}>
+                {renderPrefetchedResources()}
+              </Grid>
+            </Grid>
           </div>
         </div>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left'
-          }}
-          open={this.state.submittedRx}
-          onClose={this.handleClose}
-          autoHideDuration={6000}
-        >
-          <MuiAlert onClose={this.handleClose} severity="success" elevation={6} variant="filled">
-            Success! NewRx Received By Pharmacy
-          </MuiAlert>
-        </Snackbar>
-      </>
-    );
-  }
-}
+        <div className="action-btns">
+          <ButtonGroup variant="outlined" aria-label="outlined button group">
+            <Button onClick={launchSmartOnFhirApp} disabled={disableLaunchSmartOnFhir}>
+              Launch SMART on FHIR App
+            </Button>
+            <Button onClick={sendRx} disabled={disableSendRx}>
+              Send Rx to Pharmacy
+            </Button>
+            <Button onClick={submit} disabled={disableSendToCRD}>
+              Sign Order
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        open={state.submittedRx}
+        onClose={handleClose}
+        autoHideDuration={6000}
+      >
+        <MuiAlert onClose={handleClose} severity="success" elevation={6} variant="filled">
+          Success! NewRx Received By Pharmacy
+        </MuiAlert>
+      </Snackbar>
+    </>
+  );
+};
+
+export default RequestBox;

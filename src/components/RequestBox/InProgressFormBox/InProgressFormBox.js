@@ -2,7 +2,7 @@ import { Box, Button, Typography, ButtonGroup } from '@mui/material';
 import React from 'react';
 import './InProgressFormBoxStyle.css';
 
-export default function InProgressFormBox(props) {
+const InProgressFormBox = (props) => {
   return props.qrResponse?.questionnaire ? (
     <Box className={'inprogress-container'}>
       <Typography variant="h6" color="text.primary" gutterBottom>
@@ -34,4 +34,6 @@ export default function InProgressFormBox(props) {
   ) : (
     ''
   );
-}
+};
+
+export default InProgressFormBox;
