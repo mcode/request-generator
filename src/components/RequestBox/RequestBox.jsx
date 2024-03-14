@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { shortNameMap } from '../../util/data';
-import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir';
-import { retrieveLaunchContext } from '../../util/util';
+import { shortNameMap } from '../../util/data.js';
+import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
+import { retrieveLaunchContext } from '../../util/util.js';
 import './request.css';
 
 const RequestBox = (props) => {
