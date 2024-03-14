@@ -23,7 +23,7 @@ const FormElement = props => {
     const link = {
       appContext: encodeURIComponent(`response=QuestionnaireResponse/${resource.id}`),
       type: 'smart',
-      url: env.get('REACT_APP_LAUNCH_URL').asString()
+      url: env.get('VITE_LAUNCH_URL').asString()
     };
     retrieveLaunchContext(link, clientState.tokenResponse.patient, clientState).then(e => {
       window.open(e.url, '_blank');

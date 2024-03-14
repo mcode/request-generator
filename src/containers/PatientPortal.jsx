@@ -22,7 +22,7 @@ const PatientPortal = () => {
     if (token) {
       const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64'));
       const client = FHIR.client({
-        serverUrl: env.get('REACT_APP_EHR_BASE').asString(),
+        serverUrl: env.get('VITE_EHR_BASE').asString(),
         tokenResponse: {
           type: 'bearer',
           access_token: token,

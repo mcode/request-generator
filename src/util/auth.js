@@ -5,15 +5,15 @@ import env from 'env-var';
 
 function login() {
   const tokenUrl =
-    env.get('REACT_APP_AUTH').asString() +
+    env.get('VITE_AUTH').asString() +
     '/realms/' +
-    env.get('REACT_APP_REALM').asString() +
+    env.get('VITE_REALM').asString() +
     '/protocol/openid-connect/token';
   let params = {
     grant_type: 'password',
-    username: env.get('REACT_APP_USER').asString(),
-    password: env.get('REACT_APP_PASSWORD').asString(),
-    client_id: env.get('REACT_APP_CLIENT').asString()
+    username: env.get('VITE_USER').asString(),
+    password: env.get('VITE_PASSWORD').asString(),
+    client_id: env.get('VITE_CLIENT').asString()
   };
 
   // Encodes the params to be compliant with
@@ -53,7 +53,7 @@ function createJwt(baseUrl, audience) {
     alg: 'ES384',
     typ: 'JWT',
     kid: 'zGe023HzCFfY7NPb04EGvRDP1oYsTOtLNCNjDgr66AI',
-    jku: env.get('REACT_APP_PUBLIC_KEYS').asString()
+    jku: env.get('VITE_PUBLIC_KEYS').asString()
   });
 
   return KJUR.jws.JWS.sign(null, jwtHeader, jwtPayload, privKey);
