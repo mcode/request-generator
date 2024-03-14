@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
-import { retrieveLaunchContext } from '../../util/util.js';
-import { headers } from '../../util/data.js';
+import { retrieveLaunchContext } from '../../util/util';
 import { Paper } from '@mui/material';
 import useStyles from './styles.jsx';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
