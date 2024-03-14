@@ -84,12 +84,12 @@ const headerDefinitions = {
   smartAppUrl: {
     display: 'SMART App',
     type: 'input',
-    default: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
+    default: env.get('VITE_APP_SMART_LAUNCH_URL').asString()
   },
   remsAdminServer: {
     display: 'REMS Admin Server',
     type: 'input',
-    default: env.get('REACT_APP_SERVER').asString()
+    default: env.get('VITE_APP_SERVER').asString()
   }
 };
 
