@@ -2,7 +2,7 @@ import { headerDefinitions } from '../../util/data';
 export const actionTypes = Object.freeze({
   updatePatient: 'update_patient', // {type, value}
   updateSetting: 'update_setting', // {type, settingId, value}
-  flagStartup: 'flag_startup'      // {type}
+  flagStartup: 'flag_startup' // {type}
 });
 // todo: add an enum that defines possible settings
 export const reducer = (state, action) => {

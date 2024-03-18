@@ -22,7 +22,7 @@ const Login = props => {
       params.append('client_id', env.get('REACT_APP_CLIENT').asString());
       axios
         .post(
-          `${env.get('REACT_APP_AUTH').asString()}/realms/${env
+          `${env.get('REACT_APP_AUTH').asString()}/${env
             .get('REACT_APP_REALM')
             .asString()}/protocol/openid-connect/token`,
           params,
