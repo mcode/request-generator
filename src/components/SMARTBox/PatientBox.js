@@ -210,37 +210,6 @@ const PatientBox = (props) => {
     }
   };
 
-  const getDeviceRequest = (patientId) => {
-    client
-      .request(`DeviceRequest?subject=Patient/${patientId}`, {
-        resolveReferences: ['subject', 'performer'],
-        graph: false,
-        flat: true
-      })
-      .then(result => {
-        setState(prevState => ({...prevState, deviceRequests: result}));
-        // now take results and make option
-        result.data.forEach(e => {
-          makeOption(e, state.options);
-        });
-      });
-  };
-
-  const getServiceRequest = (patientId) => {
-    client
-      .request(`ServiceRequest?subject=Patient/${patientId}`, {
-        resolveReferences: ['subject', 'performer'],
-        graph: false,
-        flat: true
-      })
-      .then(result => {
-        setState(prevState => ({...prevState, serviceRequests: result}));
-        result.data.forEach(e => {
-          makeOption(e, state.options);
-        });
-      });
-  };
-
   const getMedicationRequest = (patientId) => {
     client
       .request(`MedicationRequest?subject=Patient/${patientId}`, {
@@ -281,21 +250,6 @@ const PatientBox = (props) => {
           }
         });
         setState(prevState => ({...prevState, medicationRequests: result}));
-        result.data.forEach(e => {
-          makeOption(e, state.options);
-        });
-      });
-  };
-
-  const getMedicationDispense = (patientId) => {
-    client
-      .request(`MedicationDispense?subject=Patient/${patientId}`, {
-        resolveReferences: ['subject', 'performer'],
-        graph: false,
-        flat: true
-      })
-      .then(result => {
-        setState(prevState => ({...prevState, medicationDispenses: result}));
         result.data.forEach(e => {
           makeOption(e, state.options);
         });
@@ -355,10 +309,7 @@ const PatientBox = (props) => {
 
   const getRequests = () => {
     const patientId = patient.id;
-    getDeviceRequest(patientId);
-    getServiceRequest(patientId);
     getMedicationRequest(patientId);
-    getMedicationDispense(patientId);
   };
 
   /**
