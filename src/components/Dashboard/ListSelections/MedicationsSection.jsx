@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Paper } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import useStyles from '../styles';
 import { MedicationStatus } from '../../MedicationStatus/MedicationStatus';
@@ -9,7 +9,6 @@ const MedicationsSection = props => {
   const classes = useStyles();
   const [message, setMessage] = useState('Loading...');
   const [resources, setResources] = useState([]);
-  const ehrUrl = props.client.state.serverUrl;
   const patientId = props.client.patient.id;
 
   useEffect(() => {
@@ -41,8 +40,6 @@ const MedicationsSection = props => {
         resources.map(resource => (
           <MedicationElement
             key={resource.id}
-            ehrUrl={ehrUrl}
-            patientId={patientId}
             initialMedicationDispense={resource}
             client={props.client}
           />
@@ -54,19 +51,22 @@ const MedicationsSection = props => {
   );
 };
 
-const MedicationElement = (ehrUrl, patientId, initialMedicationDispense, client) => {
-  //   const classes = useStyles();
+const MedicationElement = props => {
+  const { initialMedicationDispense, client } = props;
   const [lastCheckedMedicationTime, setMedicationTime] = useState(null);
   const [medicationDispense, setMedicationDispense] = useState(initialMedicationDispense);
+  const ehrUrl = client.state.serverUrl;
+  const patientId = client.patient.id;
+  const medicationRequest = medicationDispense?.authorizingPrescription?.[0];
 
   const getMedicationStatus = () => {
     setMedicationTime(Date.now());
 
     if (client?.patient && patientId) {
-      client.patient.request('MedicationDispense', {
+      client.request(`MedicationDispense/${medicationDispense.id}`, {
         pageLimit: 0,
         onPage: bundle => {
-          setMedicationDispense(bundle.entry[0]);
+          setMedicationDispense(bundle.entry[0].resource);
         },
         resolveReferences: 'authorizingPrescription'
       });
@@ -76,7 +76,7 @@ const MedicationElement = (ehrUrl, patientId, initialMedicationDispense, client)
   return (
     <MedicationStatus
       ehrUrl={ehrUrl}
-      request={medicationDispense?.authorizingPrescription?.[0] || { id: null }}
+      request={medicationRequest || { id: null }}
       medicationDispense={medicationDispense}
       getMedicationStatus={getMedicationStatus}
       lastCheckedMedicationTime={lastCheckedMedicationTime}
