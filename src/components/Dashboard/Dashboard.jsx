@@ -22,6 +22,7 @@ import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import FormsSection from './ListSelections/FormsSection';
 import EmptySection from './ListSelections/EmptySection';
 import PatientTaskSection from './ListSelections/PatientTaskSection';
+import MedicationsSection from './ListSelections/MedicationsSection';
 
 // Since we're using JS and can't use TS enums
 const Section = Object.freeze({
@@ -76,6 +77,8 @@ const Dashboard = props => {
         return <PatientTaskSection client={props.client} />;
       case Section.QUESTIONNAIRE_FORMS:
         return <FormsSection client={props.client} />;
+      case Section.MEDICATIONS:
+        return <MedicationsSection client={props.client} />;
       default:
         return <EmptySection />;
     }
