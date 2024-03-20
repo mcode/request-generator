@@ -24,6 +24,13 @@ This project provides a small web application that is capable of generating requ
 
 This should open a browser window directed to the value set in `VITE_URL` followed by the string `/request-generator`. The request-generator assumes the REMS Admin is running on the default value set for `VITE_SERVER`. This can be changed in the properties file [.env](./.env). [The following section](./README.md#how-to-override-defaults) lists the default values for these environment variables.
 
+## Running with docker
+
+Run the following commands
+
+- `docker build -t reqgen .`
+- `docker run -p 3000:3000 reqgen`
+
 ## Keys
 
 Embedded in the application are the public and private keys used to generate and verify JSON Web Tokens (JWT) that are used to authenticate/authorize calls to a CDS-Hooks service. The public key is contained in the public/.well-known/jwks.json document. The private key is contained in src/keys/crdPrivateKey.js file. The keys were generated from https://mkjwk.org/. To update these keys you can generate a new key pair from this site, ensure that you request the Show X.509 option is set to yes. Once generated you can replace the public and private keys. You will also need to update the src/utils/auth.js file with the corresponding key information.
