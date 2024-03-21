@@ -1,7 +1,7 @@
 import { MedicationStatusButton } from './MedicationStatusButton.jsx';
 import { MedicationStatusModal } from './MedicationStatusModal.jsx';
 import { useState, useEffect } from 'react';
-import { Card } from '@mui/material';
+import { Card, Typography } from '@mui/material';
 
 export const MedicationStatus = props => {
   const { ehrUrl, request, medicationDispense, getMedicationStatus, lastCheckedMedicationTime } =
@@ -20,6 +20,9 @@ export const MedicationStatus = props => {
 
   return (
     <Card variant="outlined" sx={{ padding: 2 }}>
+      <Typography variant="h6" align="center" mb={2}>
+        {request?.medicationCodeableConcept?.coding?.[0].display}
+      </Typography>
       <MedicationStatusButton
         baseColor={getStatusColor(medicationDispense?.status)}
         medicationDispense={medicationDispense}

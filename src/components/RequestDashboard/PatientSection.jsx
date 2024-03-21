@@ -5,9 +5,7 @@ import RequestBuilder from '../../containers/RequestBuilder';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
 const PatientSection = props => {
-  const classes = useStyles();
   const [state, dispatch] = React.useContext(SettingsContext);
-  // TODO: Make request builder use react-hooks
   return (
     <div>
       {state.startup ? (

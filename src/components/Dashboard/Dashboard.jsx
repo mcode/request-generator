@@ -22,10 +22,24 @@ import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import FormsSection from './ListSelections/FormsSection';
 import EmptySection from './ListSelections/EmptySection';
 import PatientTaskSection from './ListSelections/PatientTaskSection';
+import MedicationsSection from './ListSelections/MedicationsSection';
+
+// Since we're using JS and can't use TS enums
+const Section = Object.freeze({
+  NOTIFICATIONS: 0,
+  APPOINTMENTS: 1,
+  TASKS: 2,
+  QUESTIONNAIRE_FORMS: 3,
+  HEALTH_DATA: 4,
+  MEDICATIONS: 5,
+  TESTS_AND_RESULTS: 6,
+  SETTINGS: 7,
+  LOGOUT: 8
+});
 
 const Dashboard = props => {
   const classes = useStyles();
-  const [selectedIndex, setSelectedIndex] = useState(3);
+  const [selectedIndex, setSelectedIndex] = useState(Section.QUESTIONNAIRE_FORMS);
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
@@ -51,7 +65,7 @@ const Dashboard = props => {
   };
 
   useEffect(() => {
-    if (selectedIndex === 8) {
+    if (selectedIndex === Section.LOGOUT) {
       // logout - set client to null to display login page
       props.logout();
     }
@@ -59,10 +73,12 @@ const Dashboard = props => {
 
   const renderBody = () => {
     switch (selectedIndex) {
-      case 2:
+      case Section.TASKS:
         return <PatientTaskSection client={props.client} />;
-      case 3:
+      case Section.QUESTIONNAIRE_FORMS:
         return <FormsSection client={props.client} />;
+      case Section.MEDICATIONS:
+        return <MedicationsSection client={props.client} />;
       default:
         return <EmptySection />;
     }
@@ -87,13 +103,11 @@ const Dashboard = props => {
             <List>
               {createIcons().map((option, index) => (
                 <div key={`icon-${index}`}>
-                  <ListItem
-                    key={option[0]}
-                    style={option[2]}
-                    selected={selectedIndex === index}
-                    disablePadding
-                  >
-                    <ListItemButton onClick={event => handleListItemClick(event, index)}>
+                  <ListItem key={option[0]} style={option[2]} disablePadding>
+                    <ListItemButton
+                      onClick={event => handleListItemClick(event, index)}
+                      selected={selectedIndex === index}
+                    >
                       <ListItemIcon>{option[1]}</ListItemIcon>
                       <ListItemText
                         primaryTypographyProps={{ fontSize: '18px' }}

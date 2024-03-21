@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
-import { retrieveLaunchContext } from '../../util/util';
+import { retrieveLaunchContext } from '../../util/util.js';
 import { headers } from '../../util/data.js';
 import { Paper } from '@mui/material';
-import useStyles from './styles';
+import useStyles from './styles.jsx';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import env from 'env-var';
 
-const DashboardElement = props => {
+const FormElement = props => {
   const classes = useStyles();
   const resource = props.resource;
   const clientState = props.client.state;
@@ -56,4 +56,4 @@ const DashboardElement = props => {
   );
 };
 
-export default memo(DashboardElement);
+export default memo(FormElement);
