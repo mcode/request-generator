@@ -7,18 +7,17 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { retrieveLaunchContext } from '../../util/util';
 import './displayBox.css';
 
-const DisplayBox = (props) => {
-
-  const [state, setState] = useState({ smartLink: '', response: {}});
+const DisplayBox = props => {
+  const [state, setState] = useState({ smartLink: '', response: {} });
   const { isDemoCard, fhirAccessToken, ehrLaunch, patientId, client, response } = props;
 
   useEffect(() => {
     if (response !== state.response) {
-      setState(prevState => ({...prevState, response: response}));
+      setState(prevState => ({ ...prevState, response: response }));
     }
   }, [response]);
 
-  const supportedRequestType = (resource) => {
+  const supportedRequestType = resource => {
     let resourceType = resource.resourceType.toUpperCase();
     if (
       resourceType === 'DEVICEREQUEST' ||
@@ -35,7 +34,14 @@ const DisplayBox = (props) => {
    * @param {*} suggestion - CDS service-defined suggestion to take based on CDS Hooks specification
    * @param {*} url - CDS service endpoint URL
    */
-  const takeSuggestion = (suggestion, url, buttonId, suggestionCount, cardNum, selectionBehavior) => {
+  const takeSuggestion = (
+    suggestion,
+    url,
+    buttonId,
+    suggestionCount,
+    cardNum,
+    selectionBehavior
+  ) => {
     if (!isDemoCard) {
       if (selectionBehavior === 'at-most-one') {
         // disable all suggestion buttons for this card
@@ -102,7 +108,7 @@ const DisplayBox = (props) => {
    * Prevent the source link from opening in the same tab
    * @param {*} e - Event emitted when source link is clicked
    */
-  const launchSource = (e, link)  => {
+  const launchSource = (e, link) => {
     e.preventDefault();
     window.open(link.url, '_blank');
   };
@@ -129,22 +135,16 @@ const DisplayBox = (props) => {
    * 2 - Open: Append a fhirServiceUrl and patientId parameter to the link for use against open endpoints
    * @param {*} card - Card object to process the links for
    */
-  const modifySmartLaunchUrls = (card) => {
+  const modifySmartLaunchUrls = card => {
     if (!isDemoCard) {
       return card.links.map(link => {
         let linkCopy = Object.assign({}, link);
 
-        if (
-          link.type === 'smart' &&
-          (fhirAccessToken || ehrLaunch) &&
-          !state.smartLink
-        ) {
-          retrieveLaunchContext(linkCopy, patientId, client.state).then(
-            result => {
-              linkCopy = result;
-              return linkCopy;
-            }
-          );
+        if (link.type === 'smart' && (fhirAccessToken || ehrLaunch) && !state.smartLink) {
+          retrieveLaunchContext(linkCopy, patientId, client.state).then(result => {
+            linkCopy = result;
+            return linkCopy;
+          });
         } else if (link.type === 'smart') {
           if (link.url.indexOf('?') < 0) {
             linkCopy.url += '?';
@@ -164,7 +164,7 @@ const DisplayBox = (props) => {
    * Helper function to build out the UI for the source of the Card
    * @param {*} source - Object as part of the card to build the UI for
    */
-  const renderSource = (source) => {
+  const renderSource = source => {
     if (!source.label) {
       return null;
     }
@@ -322,18 +322,18 @@ const DisplayBox = (props) => {
         });
       return (
         <div>
-            { renderedCards.length === 0 ? <div>Notification Cards ({renderedCards.length})</div> : <></>}
+          {renderedCards.length === 0 ? (
+            <div>Notification Cards ({renderedCards.length})</div>
+          ) : (
+            <></>
+          )}
           <div>{renderedCards}</div>
         </div>
       );
     }
   };
 
-  return (
-    <div>
-      {renderCards()}
-    </div>
-  );
+  return <div>{renderCards()}</div>;
 };
 
 export default DisplayBox;
