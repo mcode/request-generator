@@ -86,10 +86,10 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
   },
-  remsAdminBaseUrl: {
-    display: 'REMS Admin Base',
+  remsAdminServer: {
+    display: 'REMS Admin Server',
     type: 'input',
-    default: env.get('REACT_APP_REMS_ADMIN_SERVER_BASE').asString()
+    default: env.get('REACT_APP_SERVER').asString()
   }
 };
 
