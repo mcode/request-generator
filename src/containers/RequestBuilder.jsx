@@ -90,7 +90,7 @@ const RequestBuilder = props => {
         ' - ' +
         state.code
     );
-    const etasuUrl = `${globalState.remsAdminBaseUrl}/etasu/met/patient/${patientFirstName}/${patientLastName}/${patientDOB}/drugCode/${state.code}`;
+    const etasuUrl = `${globalState.remsAdminServer}/etasu/met/patient/${patientFirstName}/${patientLastName}/${patientDOB}/drugCode/${state.code}`;
     axios({
       method: 'get',
       url: etasuUrl
