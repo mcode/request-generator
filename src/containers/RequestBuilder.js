@@ -16,7 +16,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 import { actionTypes } from './ContextProvider/reducer.js';
+
 import axios from 'axios';
+import { EtasuStatus } from '../components/EtasuStatus/EtasuStatus';
 
 const RequestBuilder = (props) => {
   const { globalState, dispatch, client } = props;
@@ -35,7 +37,9 @@ const RequestBuilder = (props) => {
     token: null,
     client: client,
     medicationDispense: null,
-    lastCheckedMedicationTime: null
+    lastCheckedMedicationTime: null,
+    remsAdminResponse: {},
+    lastCheckedEtasuTime: null
   });
   const displayRequestBox = !!globalState.patient?.id;
 
@@ -43,7 +47,9 @@ const RequestBuilder = (props) => {
     return Object.keys(state.request).length === 0;
   };
 
+
   const disableGetMedicationStatus = isOrderNotSelected() || state.loading;
+  const disableGetEtasu = isOrderNotSelected() || state.loading;
   const getMedicationStatus = () => {
     setState(prevState => ({
       ...prevState,
@@ -66,6 +72,55 @@ const RequestBuilder = (props) => {
           console.log('Was not able to get medication status', error);
         }
       );
+  };
+
+  const getEtasu = () => {
+    setState(prevState => ({
+      ...prevState,
+      lastCheckedEtasuTime: Date.now()
+    }));
+
+    const patientFirstName = globalState.patient?.name?.at(0)?.given?.at(0);
+    const patientLastName = globalState.patient?.name?.at(0)?.family;
+    const patientDOB = globalState.patient?.birthDate;
+
+    console.log(
+      'get Etastu Status: ' +
+        patientFirstName +
+        ' ' +
+        patientLastName +
+        ' - ' +
+        patientDOB +
+        ' - ' +
+        state.code
+    );
+    const etasuUrl = `${globalState.remsAdminBaseUrl}/etasu/met/patient/${patientFirstName}/${patientLastName}/${patientDOB}/drugCode/${state.code}`;
+    axios({
+      method: 'get',
+      url: etasuUrl
+    }).then(
+      response => {
+        // Sorting an array mutates the data in place.
+        const remsMetRes = response.data;
+        if (remsMetRes.metRequirements) {
+          remsMetRes.metRequirements.sort((first, second) => {
+            // Keep the other forms unsorted.
+            if (second.requirementName.includes('Patient Status Update')) {
+              // Sort the Patient Status Update forms in descending order of timestamp.
+              return second.requirementName.localeCompare(first.requirementName);
+            }
+            return 0;
+          });
+        }
+        setState(prevState => ({
+          ...prevState,
+          remsAdminResponse: response.data
+        }));
+      },
+      error => {
+        console.log(error);
+      }
+    );
   };
 
   useEffect(() => {
@@ -296,17 +351,30 @@ const RequestBuilder = (props) => {
               />
             </Grid>
           )}
-          {!disableGetMedicationStatus && (
-            <Grid item>
-              <MedicationStatus
-                ehrUrl={globalState.ehrUrl}
-                request={state.request}
-                medicationDispense={state.medicationDispense}
-                getMedicationStatus={getMedicationStatus}
-                lastCheckedMedicationTime={state.lastCheckedMedicationTime}
-              />
-            </Grid>
-          )}
+          <Grid item container justifyContent="center" textAlign="center" spacing={2}>
+            {!disableGetEtasu && (
+              <Grid item>
+                <EtasuStatus 
+                  etasuUrl={globalState}
+                  request={state.request}
+                  remsAdminResponse={state.remsAdminResponse}
+                  getEtasuStatus={getEtasu}
+                  lastCheckedEtasuTime={state.lastCheckedEtasuTime}
+                />
+              </Grid>
+            )}
+            {!disableGetMedicationStatus && (
+              <Grid item>
+                <MedicationStatus
+                  ehrUrl={globalState.ehrUrl}
+                  request={state.request}
+                  medicationDispense={state.medicationDispense}
+                  getMedicationStatus={getMedicationStatus}
+                  lastCheckedMedicationTime={state.lastCheckedMedicationTime}
+                />
+              </Grid>
+            )}
+          </Grid>
         </Grid>
 
         <Grid item container xs={12} md={6}>
