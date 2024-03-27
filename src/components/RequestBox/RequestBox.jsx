@@ -4,27 +4,36 @@ import React, { useEffect, useState } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { shortNameMap } from '../../util/data';
-import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir';
-import { retrieveLaunchContext } from '../../util/util';
+import { shortNameMap } from '../../util/data.js';
+import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
+import { retrieveLaunchContext } from '../../util/util.js';
 import './request.css';
 
-const RequestBox = (props) => {
+const RequestBox = props => {
+  const [state, setState] = useState({
+    gatherCount: 0,
+    response: {},
+    submittedRx: false
+  });
 
-  const [state, setState] = useState(
-    {
-      gatherCount: 0,
-      response: {},
-      submittedRx: false
-    }
-  );
+  const {
+    callback,
+    prefetchedResources,
+    submitInfo,
+    patient,
+    request,
+    loading,
+    code,
+    codeSystem,
+    display,
+    defaultUser,
+    smartAppUrl,
+    client,
+    pimsUrl
+  } = props;
+  const emptyField = <span className="empty-field">empty</span>;
 
-  const { callback, prefetchedResources, submitInfo, patient, request, loading,
-  code, codeSystem, display, defaultUser, smartAppUrl, client, pimsUrl } = props;
-  const emptyField = (<span className="empty-field">empty</span>);
-
-
-  const prepPrefetch = () =>  {
+  const prepPrefetch = () => {
     const preppedResources = new Map();
     Object.keys(prefetchedResources).forEach(resourceKey => {
       let resourceList = [];
@@ -47,12 +56,7 @@ const RequestBox = (props) => {
 
   const submitOrderSelect = () => {
     if (!_.isEmpty(request)) {
-      submitInfo(
-        prepPrefetch(),
-        request,
-        patient,
-        'order-select'
-      );
+      submitInfo(prepPrefetch(), request, patient, 'order-select');
     }
   };
 
@@ -112,15 +116,11 @@ const RequestBox = (props) => {
         <div className="lower-border">
           <span style={{ fontWeight: 'bold' }}>Coding</span>
         </div>
-        <div className="info lower-border">
-          Code: {code ? code : emptyField}
-        </div>
+        <div className="info lower-border">Code: {code ? code : emptyField}</div>
         <div className="info lower-border">
           System: {codeSystem ? shortNameMap[codeSystem] : emptyField}
         </div>
-        <div className="info lower-border">
-          Display: {display ? display : emptyField}
-        </div>
+        <div className="info lower-border">Display: {display ? display : emptyField}</div>
       </div>
     );
   };
@@ -133,7 +133,7 @@ const RequestBox = (props) => {
     return <div className="prefetched" />;
   };
 
-  const renderRequestResources = (requestResources) => {
+  const renderRequestResources = requestResources => {
     const renderedPrefetches = new Map();
     requestResources.forEach((resourceList, resourceKey) => {
       const renderedList = [];
@@ -167,7 +167,7 @@ const RequestBox = (props) => {
     );
   };
 
-  const renderResource = (resource) => {
+  const renderResource = resource => {
     let value = <div>N/A</div>;
     if (!resource.id) {
       resource = resource.resource;
@@ -198,8 +198,7 @@ const RequestBox = (props) => {
     let userId = prefetchedResources?.practitioner?.id;
     if (!userId) {
       console.log(
-        'Practitioner not populated from prefetch, using default from config: ' +
-          defaultUser
+        'Practitioner not populated from prefetch, using default from config: ' + defaultUser
       );
       userId = defaultUser;
     }

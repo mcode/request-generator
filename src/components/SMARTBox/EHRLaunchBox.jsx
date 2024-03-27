@@ -9,7 +9,7 @@ const EHRLaunchBox = () => {
       <div>
         <label className="ehr-setting">Select EHR: </label>
         <select>
-          <option value={env.get('REACT_APP_EHR_LINK').asString()}>Local</option>
+          <option value={env.get('VITE_EHR_LINK').asString()}>Local</option>
         </select>
         <div className="ehr-setting">
           Note: Only the local EHR is supported at this time for EHR launch

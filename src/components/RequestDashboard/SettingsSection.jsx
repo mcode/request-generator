@@ -157,10 +157,10 @@ const SettingsSection = props => {
     ({ baseUrl, redirect }) =>
     () => {
       FHIR.oauth2.authorize({
-        clientId: env.get('REACT_APP_CLIENT').asString(),
+        clientId: env.get('VITE_CLIENT').asString(),
         iss: baseUrl,
         redirectUri: redirect,
-        scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
+        scope: env.get('VITE_CLIENT_SCOPES').asString()
       });
     };
   const resetHeaderDefinitions = [

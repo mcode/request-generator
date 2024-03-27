@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box, Grid, IconButton  } from '@mui/material';
+import { Button, Box, Grid, IconButton } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import DisplayBox from '../components/DisplayBox/DisplayBox';
+import DisplayBox from '../components/DisplayBox/DisplayBox.jsx';
 import '../index.css';
-import RequestBox from '../components/RequestBox/RequestBox';
+import RequestBox from '../components/RequestBox/RequestBox.jsx';
 import buildRequest from '../util/buildRequest.js';
 import { types } from '../util/data.js';
-import { createJwt } from '../util/auth';
+import { createJwt } from '../util/auth.js';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar';
+import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar.jsx';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 import { actionTypes } from './ContextProvider/reducer.js';
 import axios from 'axios';
 
-const RequestBuilder = (props) => {
+const RequestBuilder = props => {
   const { globalState, dispatch, client } = props;
   const [state, setState] = useState({
     loading: false,
@@ -50,22 +50,18 @@ const RequestBuilder = (props) => {
       lastCheckedMedicationTime: Date.now()
     }));
 
-    axios
-      .get(
-        `${globalState.ehrUrl}/MedicationDispense?prescription=${state.request.id}`
-      )
-      .then(
-        response => {
-          const bundle = response.data;
-          setState(prevState => ({
-            ...prevState,
-            medicationDispense: bundle.entry?.[0].resource
-          }));
-        },
-        error => {
-          console.log('Was not able to get medication status', error);
-        }
-      );
+    axios.get(`${globalState.ehrUrl}/MedicationDispense?prescription=${state.request.id}`).then(
+      response => {
+        const bundle = response.data;
+        setState(prevState => ({
+          ...prevState,
+          medicationDispense: bundle.entry?.[0].resource
+        }));
+      },
+      error => {
+        console.log('Was not able to get medication status', error);
+      }
+    );
   };
 
   useEffect(() => {
@@ -122,7 +118,7 @@ const RequestBuilder = (props) => {
       hook,
       hookConfig
     );
-    let cdsUrl =globalState.cdsUrl;
+    let cdsUrl = globalState.cdsUrl;
     if (hook === 'order-sign') {
       cdsUrl = cdsUrl + '/' + globalState.orderSign;
     } else if (hook === 'order-select') {
@@ -154,7 +150,9 @@ const RequestBuilder = (props) => {
           response.json().then(fhirResponse => {
             console.log(fhirResponse);
             if (fhirResponse?.status) {
-              console.log('Server returned status ' + fhirResponse.status + ': ' + fhirResponse.error);
+              console.log(
+                'Server returned status ' + fhirResponse.status + ': ' + fhirResponse.error
+              );
               console.log(fhirResponse.message);
             } else {
               setState(prevState => ({ ...prevState, response: fhirResponse }));
@@ -167,7 +165,6 @@ const RequestBuilder = (props) => {
           setState(prevState => ({ ...prevState, response: {}, loading: false }));
         });
     } catch (error) {
-      
       setState(prevState => ({ ...prevState, loading: false }));
       console.log('Unexpected error occurred', types.error);
       if (error instanceof TypeError) {
@@ -177,7 +174,7 @@ const RequestBuilder = (props) => {
   };
 
   const getPatients = () => {
-    setState(prevState => ({ ...prevState, expanded: false}));
+    setState(prevState => ({ ...prevState, expanded: false }));
     if (globalState.patientFhirQuery) {
       client
         .request(globalState.patientFhirQuery, { flat: true })
@@ -192,15 +189,15 @@ const RequestBuilder = (props) => {
   };
 
   const updateStateMap = (elementName, key, text) => {
-    setState(prevState => ({ 
-      ...prevState, 
-      [elementName]: { ...prevState[elementName], [key]: text } 
+    setState(prevState => ({
+      ...prevState,
+      [elementName]: { ...prevState[elementName], [key]: text }
     }));
   };
 
   const clearState = () => {
-    setState(prevState => ({ 
-      ...prevState, 
+    setState(prevState => ({
+      ...prevState,
       prefetchedResources: new Map(),
       practitioner: {},
       coverage: {},
@@ -209,8 +206,8 @@ const RequestBuilder = (props) => {
   };
 
   const handleChange = () => (event, isExpanded) => {
-    setState(prevState => ({ 
-      ...prevState, 
+    setState(prevState => ({
+      ...prevState,
       expanded: isExpanded ? true : false
     }));
   };

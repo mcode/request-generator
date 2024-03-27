@@ -16,9 +16,10 @@ import useStyles from './styles';
 
 const Gateway = props => {
   const classes = useStyles();
-  const envFhir = env.get('REACT_APP_EHR_SERVER').asString();
-  const envClient = env.get('REACT_APP_CLIENT').asString();
-  const envScope = env.get('REACT_APP_CLIENT_SCOPES').asString().split(' ');
+  const envFhir = env.get('VITE_EHR_SERVER').asString();
+  const envClient = env.get('VITE_CLIENT').asString();
+  console.log(env.get('VITE_EHR_SERVER').asString());
+  const envScope = env.get('VITE_CLIENT_SCOPES').asString().split(' ');
   const [clientId, setClientId] = useState(envClient || '');
   const [fhirUrl, setFhirUrl] = useState(envFhir || '');
   const [scope, _setScope] = useState(envScope || []);
