@@ -23,6 +23,7 @@ import FormsSection from './ListSelections/FormsSection';
 import EmptySection from './ListSelections/EmptySection';
 import PatientTaskSection from './ListSelections/PatientTaskSection';
 import MedicationsSection from './ListSelections/MedicationsSection';
+import NotificationsSection from './ListSelections/NotificationsSection';
 
 // Since we're using JS and can't use TS enums
 const Section = Object.freeze({
@@ -79,6 +80,8 @@ const Dashboard = props => {
         return <FormsSection client={props.client} />;
       case Section.MEDICATIONS:
         return <MedicationsSection client={props.client} />;
+      case Section.NOTIFICATIONS:
+        return <NotificationsSection />
       default:
         return <EmptySection />;
     }

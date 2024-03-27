@@ -19,9 +19,11 @@ import { actionTypes } from './ContextProvider/reducer.js';
 
 import axios from 'axios';
 import { EtasuStatus } from '../components/EtasuStatus/EtasuStatus';
+import { SettingsContext } from './ContextProvider/SettingsProvider.jsx';
 
 const RequestBuilder = props => {
-  const { globalState, dispatch, client } = props;
+  const { client } = props;
+  const [globalState, dispatch] = React.useContext(SettingsContext);
   const [state, setState] = useState({
     loading: false,
     patient: {},
@@ -38,8 +40,6 @@ const RequestBuilder = props => {
     client: client,
     medicationDispense: null,
     lastCheckedMedicationTime: null,
-    remsAdminResponse: {},
-    lastCheckedEtasuTime: null
   });
   const displayRequestBox = !!globalState.patient?.id;
 
@@ -70,54 +70,7 @@ const RequestBuilder = props => {
     );
   };
 
-  const getEtasu = () => {
-    setState(prevState => ({
-      ...prevState,
-      lastCheckedEtasuTime: Date.now()
-    }));
 
-    const patientFirstName = globalState.patient?.name?.at(0)?.given?.at(0);
-    const patientLastName = globalState.patient?.name?.at(0)?.family;
-    const patientDOB = globalState.patient?.birthDate;
-
-    console.log(
-      'get Etastu Status: ' +
-        patientFirstName +
-        ' ' +
-        patientLastName +
-        ' - ' +
-        patientDOB +
-        ' - ' +
-        state.code
-    );
-    const etasuUrl = `${globalState.remsAdminServer}/etasu/met/patient/${patientFirstName}/${patientLastName}/${patientDOB}/drugCode/${state.code}`;
-    axios({
-      method: 'get',
-      url: etasuUrl
-    }).then(
-      response => {
-        // Sorting an array mutates the data in place.
-        const remsMetRes = response.data;
-        if (remsMetRes.metRequirements) {
-          remsMetRes.metRequirements.sort((first, second) => {
-            // Keep the other forms unsorted.
-            if (second.requirementName.includes('Patient Status Update')) {
-              // Sort the Patient Status Update forms in descending order of timestamp.
-              return second.requirementName.localeCompare(first.requirementName);
-            }
-            return 0;
-          });
-        }
-        setState(prevState => ({
-          ...prevState,
-          remsAdminResponse: response.data
-        }));
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  };
 
   useEffect(() => {
     if (state.client) {
@@ -352,11 +305,7 @@ const RequestBuilder = props => {
             {!disableGetEtasu && (
               <Grid item>
                 <EtasuStatus 
-                  etasuUrl={globalState}
-                  request={state.request}
-                  remsAdminResponse={state.remsAdminResponse}
-                  getEtasuStatus={getEtasu}
-                  lastCheckedEtasuTime={state.lastCheckedEtasuTime}
+                  code={state.code}
                 />
               </Grid>
             )}

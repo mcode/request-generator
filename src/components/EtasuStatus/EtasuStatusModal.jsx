@@ -1,7 +1,7 @@
 import { Box, Grid, IconButton, Modal, Tooltip, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import { useState, useEffect } from 'react';
-import { getStatusColor } from './EtasuStatus';
+import { getStatusColor } from './EtasuStatusComponent';
 import './EtasuStatusModal.css';
 import CheckCircle from '@mui/icons-material/CheckCircle';
 import Close from '@mui/icons-material/Close';
