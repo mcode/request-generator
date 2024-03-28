@@ -466,7 +466,7 @@ const PatientBox = props => {
       <TableContainer
         key={type}
         component={Paper}
-        sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}
+        sx={{ backgroundColor: '#ddd', border: '1px solid #535353' }}
       >
         <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
           <TableHead sx={{ borderBottom: '1px solid #535353' }}>
