@@ -7,7 +7,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import PatientBox from '../../SMARTBox/PatientBox';
 import './PatientSearchBarStyle.css';
 
-const PatientSearchBar = (props) => {
+const PatientSearchBar = props => {
   const [options] = useState(defaultValues);
   const [input, setInput] = useState('');
   const [listOfPatients, setListOfPatients] = useState([]);

@@ -1,7 +1,9 @@
-FROM node:14-alpine
+FROM node:21-alpine
+
 WORKDIR /home/node/app/request-generator
 COPY --chown=node:node . .
 RUN npm install
-COPY --chown=node:node . .
 EXPOSE 3000
+COPY --chown=node:node . .
+
 CMD npm run start

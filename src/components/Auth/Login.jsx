@@ -19,11 +19,11 @@ const Login = props => {
       params.append('username', username);
       params.append('password', password);
       params.append('grant_type', 'password');
-      params.append('client_id', env.get('REACT_APP_CLIENT').asString());
+      params.append('client_id', env.get('VITE_CLIENT').asString());
       axios
         .post(
-          `${env.get('REACT_APP_AUTH').asString()}/${env
-            .get('REACT_APP_REALM')
+          `${env.get('VITE_AUTH').asString()}/auth/realms/${env
+            .get('VITE_REALM')
             .asString()}/protocol/openid-connect/token`,
           params,
           { withCredentials: true }

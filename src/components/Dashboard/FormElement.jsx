@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
-import { retrieveLaunchContext } from '../../util/util.js';
-import { headers } from '../../util/data.js';
+import { retrieveLaunchContext } from '../../util/util';
 import { Paper } from '@mui/material';
 import useStyles from './styles.jsx';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -24,7 +23,7 @@ const FormElement = props => {
     const link = {
       appContext: encodeURIComponent(`response=QuestionnaireResponse/${resource.id}`),
       type: 'smart',
-      url: env.get('REACT_APP_LAUNCH_URL').asString()
+      url: env.get('VITE_LAUNCH_URL').asString()
     };
     retrieveLaunchContext(link, clientState.tokenResponse.patient, clientState).then(e => {
       window.open(e.url, '_blank');

@@ -13,32 +13,40 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { retrieveLaunchContext } from '../../util/util';
 
-const PatientBox = (props) => {
-  const [state, setState] = useState(
-    {
-      request: '',
-      deviceRequests: {},
-      medicationRequests: {},
-      serviceRequests: {},
-      medicationDispenses: {},
-      response: '',
-      questionnaireResponses: {},
-      openRequests: false,
-      openQuestionnaires: false,
-      questionnaireTitles: {},
-      showMedications: false,
-      showQuestionnaires: false,
-      numInProgressForms: 0,
-      name: 'N/A',
-      fullName: 'N/A',
-      formatBirthdate: '',
-      options: [],
-      responseOptions: []
-    }
-  );
+const PatientBox = props => {
+  const [state, setState] = useState({
+    request: '',
+    deviceRequests: {},
+    medicationRequests: {},
+    serviceRequests: {},
+    medicationDispenses: {},
+    response: '',
+    questionnaireResponses: {},
+    openRequests: false,
+    openQuestionnaires: false,
+    questionnaireTitles: {},
+    showMedications: false,
+    showQuestionnaires: false,
+    numInProgressForms: 0,
+    name: 'N/A',
+    fullName: 'N/A',
+    formatBirthdate: '',
+    options: [],
+    responseOptions: []
+  });
 
-  const { patient, callback, clearCallback, defaultUser, client, callbackMap,
-    updatePrefetchCallback, responseExpirationDays, request, launchUrl } = props;
+  const {
+    patient,
+    callback,
+    clearCallback,
+    defaultUser,
+    client,
+    callbackMap,
+    updatePrefetchCallback,
+    responseExpirationDays,
+    request,
+    launchUrl
+  } = props;
 
   const medicationColumns = [
     { id: 'name', label: 'Medication' },
@@ -49,19 +57,20 @@ const PatientBox = (props) => {
     { id: 'time', label: 'Created' }
   ];
   const medicationTooltip =
-    state.options.length === 0 ? 'No medications found.' : `${state.options.length} medications available`;
+    state.options.length === 0
+      ? 'No medications found.'
+      : `${state.options.length} medications available`;
   const formTooltip =
     state.numInProgressForms === 0 ? 'No In-Progress Forms' : 'Open In-Progress Forms';
 
   useEffect(() => {
-
     // get requests and responses on open of patients
     getRequests();
     getResponses(); // TODO: PatientBox should not be rendering itself, needs to receive its state from parent
     getPatientInfo();
   }, []);
 
-  const getCoding =(resource) => {
+  const getCoding = resource => {
     let code = null;
     if (resource.resourceType === 'DeviceRequest') {
       code = resource?.codeCodeableConcept.coding[0];
@@ -95,7 +104,7 @@ const PatientBox = (props) => {
     return code;
   };
 
- const makeOption = (request, options) => {
+  const makeOption = (request, options) => {
     const code = getCoding(request);
     const tempOptions = options;
 
@@ -107,10 +116,10 @@ const PatientBox = (props) => {
       value: JSON.stringify(request)
     };
     tempOptions.push(option);
-    setState(prevState => ({ ...prevState, options: tempOptions}));
+    setState(prevState => ({ ...prevState, options: tempOptions }));
   };
 
-  const updateValues = (patient) => {
+  const updateValues = patient => {
     callback('patient', patient);
     callback('expanded', false);
     clearCallback();
@@ -140,15 +149,15 @@ const PatientBox = (props) => {
     }
   };
 
-  const updatePatient = (patient) => {
+  const updatePatient = patient => {
     callback('patient', patient);
   };
 
-  const updateQRResponse = (response) => {
+  const updateQRResponse = response => {
     callback('response', response);
   };
 
-  const fetchResources = (queries) => {
+  const fetchResources = queries => {
     let requests = [];
     callback('prefetchCompleted', false);
     queries.forEach((query, queryKey) => {
@@ -210,7 +219,7 @@ const PatientBox = (props) => {
     }
   };
 
-  const getMedicationRequest = (patientId) => {
+  const getMedicationRequest = patientId => {
     client
       .request(`MedicationRequest?subject=Patient/${patientId}`, {
         resolveReferences: ['subject', 'performer', 'medicationReference'],
@@ -249,7 +258,7 @@ const PatientBox = (props) => {
             }
           }
         });
-        setState(prevState => ({...prevState, medicationRequests: result}));
+        setState(prevState => ({ ...prevState, medicationRequests: result }));
         result.data.forEach(e => {
           makeOption(e, state.options);
         });
@@ -259,7 +268,7 @@ const PatientBox = (props) => {
   const handleRequestChange = (data, patient) => {
     if (data) {
       let coding = getCoding(JSON.parse(data));
-      
+
       setState(prevState => ({
         ...prevState,
         request: data,
@@ -291,7 +300,7 @@ const PatientBox = (props) => {
     }
   };
 
-  const handleResponseChange = (data) => {
+  const handleResponseChange = data => {
     if (data) {
       setState(prevState => ({
         ...prevState,
@@ -342,7 +351,7 @@ const PatientBox = (props) => {
       });
   };
 
-  const getQuestionnaireTitles = (qResponse) => {
+  const getQuestionnaireTitles = qResponse => {
     const promises = [];
     if (qResponse.data) {
       if (qResponse.data.length > 0) {
@@ -357,17 +366,19 @@ const PatientBox = (props) => {
         }
         Promise.all(promises).then(pairs => {
           setState(prevState => ({
-            ...prevState, questionnaireTitles: Object.fromEntries(pairs) }));
-          // call get response options from here, to pass in the questionnaireResponses data and questionnaireTitles 
+            ...prevState,
+            questionnaireTitles: Object.fromEntries(pairs)
+          }));
+          // call get response options from here, to pass in the questionnaireResponses data and questionnaireTitles
           // before state variables are set
           getResponseOptions(qResponse.data, Object.fromEntries(pairs));
         });
       }
     }
-};
+  };
 
   const getResponseOptions = (data, title) => {
-    const temp =  data.map(qr => makeQROption(qr, title));
+    const temp = data.map(qr => makeQROption(qr, title));
     setState(prevState => ({
       ...prevState,
       responseOptions: temp
@@ -401,7 +412,7 @@ const PatientBox = (props) => {
     });
   };
 
-  const buildLaunchLink = async (data) => {
+  const buildLaunchLink = async data => {
     // build appContext and URL encode it
     let appContext = '';
     let order = undefined,
@@ -445,11 +456,7 @@ const PatientBox = (props) => {
 
     let linkCopy = Object.assign({}, link);
 
-    const result = await retrieveLaunchContext(
-      linkCopy,
-      patient.id,
-      client.state
-    );
+    const result = await retrieveLaunchContext(linkCopy, patient.id, client.state);
     linkCopy = result;
     return linkCopy;
   };
@@ -533,19 +540,27 @@ const PatientBox = (props) => {
 
   const getPatientInfo = () => {
     if (patient.name) {
-      setState(prevState => ({ ...prevState, name: `${patient.name[0].given[0]} ${patient.name[0].family}`}));
-      setState(prevState => ({ ...prevState, fullName: `${patient.name[0].given.join(' ')} ${patient.name[0].family}`}));
+      setState(prevState => ({
+        ...prevState,
+        name: `${patient.name[0].given[0]} ${patient.name[0].family}`
+      }));
+      setState(prevState => ({
+        ...prevState,
+        fullName: `${patient.name[0].given.join(' ')} ${patient.name[0].family}`
+      }));
     }
     if (patient.birthDate) {
-      setState(prevState => ({ ...prevState, formatBirthdate: new Date(patient.birthDate).toDateString()}));
+      setState(prevState => ({
+        ...prevState,
+        formatBirthdate: new Date(patient.birthDate).toDateString()
+      }));
     }
   };
 
   return (
     <div key={patient.id} className="patient-box">
       <div className="patient-header">
-        <span style={{ fontWeight: 'bolder' }}>{state.name}</span>{' '}
-        {`(ID: ${patient.id})`}
+        <span style={{ fontWeight: 'bolder' }}>{state.name}</span> {`(ID: ${patient.id})`}
       </div>
       <div className="patient-selection-box">
         <div className="patient-info">
@@ -581,7 +596,11 @@ const PatientBox = (props) => {
                   disabled={state.options.length === 0}
                   onClick={() => {
                     updatePatient(patient);
-                    setState(prevState => ({ ...prevState, showMedications: true, showQuestionnaires: false }));
+                    setState(prevState => ({
+                      ...prevState,
+                      showMedications: true,
+                      showQuestionnaires: false
+                    }));
                   }}
                 >
                   Request New Medication
@@ -594,7 +613,7 @@ const PatientBox = (props) => {
               variant="contained"
               className="big-button"
               startIcon={<MedicationIcon />}
-              onClick={() => setState(prevState => ({...prevState, showQuestionnaires: false }))}
+              onClick={() => setState(prevState => ({ ...prevState, showQuestionnaires: false }))}
             >
               Close In Progress Forms
             </Button>
@@ -608,7 +627,11 @@ const PatientBox = (props) => {
                   disabled={state.numInProgressForms === 0}
                   onClick={() => {
                     updatePatient(patient);
-                    setState(prevState => ({ ...prevState, showQuestionnaires: true, showMedications: false }));
+                    setState(prevState => ({
+                      ...prevState,
+                      showQuestionnaires: true,
+                      showMedications: false
+                    }));
                   }}
                 >
                   {state.numInProgressForms} Form(s) In Progress
@@ -616,11 +639,7 @@ const PatientBox = (props) => {
               </span>
             </Tooltip>
           )}
-          <Button
-            variant="contained"
-            className="select-btn"
-            onClick={() => updateValues(patient)}
-          >
+          <Button variant="contained" className="select-btn" onClick={() => updateValues(patient)}>
             Select Patient
           </Button>
         </div>
