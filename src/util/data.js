@@ -12,7 +12,7 @@ const headerDefinitions = {
     default: env.get('VITE_EHR_BASE').asString()
   },
   cdsUrl: {
-    display: 'REMS Admin',
+    display: 'REMS Admin Reset Url',
     type: 'input',
     default: env.get('VITE_CDS_SERVICE').asString()
   },
@@ -46,25 +46,10 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('VITE_LAUNCH_URL').asString()
   },
-  orderSelect: {
-    display: 'Order Select Rest End Point',
-    type: 'input',
-    default: env.get('VITE_ORDER_SELECT').asString()
-  },
-  orderSign: {
-    display: 'Order Sign Rest End Point',
-    type: 'input',
-    default: env.get('VITE_ORDER_SIGN').asString()
-  },
   patientFhirQuery: {
     display: 'Patient FHIR Query',
     type: 'input',
     default: env.get('VITE_PATIENT_FHIR_QUERY').asString()
-  },
-  patientView: {
-    display: 'Patient View Rest End Point',
-    type: 'input',
-    default: env.get('VITE_PATIENT_VIEW').asString()
   },
   pimsUrl: {
     display: 'PIMS Server',
@@ -98,36 +83,36 @@ const medicationRequestToRemsAdmins = Object.freeze([
     rxnorm: 2183126,
     display: 'Turalio 200 MG Oral Capsule',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
     ]
   },
   {
     rxnorm: 6064,
     display: 'Isotretinoin 20 MG Oral Capsule',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
     ]
   },
   {
     rxnorm: 1237051,
     display: 'TIRF 200 UG Oral Transmucosal Lozenge',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
     ]
   },
   {
     rxnorm: 1666386,
     display: 'Addyi 100 MG Oral Tablet',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
     ]
   }
 ]);

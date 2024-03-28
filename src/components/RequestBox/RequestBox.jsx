@@ -17,7 +17,6 @@ const RequestBox = props => {
   });
 
   const {
-    callback,
     prefetchedResources,
     submitInfo,
     patient,
@@ -29,7 +28,8 @@ const RequestBox = props => {
     defaultUser,
     smartAppUrl,
     client,
-    pimsUrl
+    pimsUrl,
+    getRemsAdminUrl
   } = props;
   const emptyField = <span className="empty-field">empty</span>;
 
@@ -61,12 +61,8 @@ const RequestBox = props => {
   };
 
   const submitOrderSign = request => {
-    submitInfo(prepPrefetch(), request, patient, 'order-sign');
-  };
-
-  const submit = () => {
     if (!_.isEmpty(request)) {
-      submitOrderSign(request);
+      submitInfo(prepPrefetch(), request, patient, 'order-sign');
     }
   };
 
@@ -149,8 +145,7 @@ const RequestBox = props => {
 
       renderedPrefetches.set(resourceKey, renderedList);
     });
-    console.log(renderedPrefetches);
-    console.log(Object.entries(renderedPrefetches));
+
     return (
       <div className="prefetched">
         <div className="prefetch-header">Prefetched</div>
@@ -284,6 +279,7 @@ const RequestBox = props => {
   const disableSendToCRD = isOrderNotSelected() || loading;
   const disableSendRx = isOrderNotSelected() || loading;
   const disableLaunchSmartOnFhir = isPatientNotSelected();
+  const orderSignRemsAdmin = getRemsAdminUrl(request, 'order-sign');
 
   return (
     <>
@@ -311,7 +307,10 @@ const RequestBox = props => {
             <Button onClick={sendRx} disabled={disableSendRx}>
               Send Rx to Pharmacy
             </Button>
-            <Button onClick={submit} disabled={disableSendToCRD}>
+            <Button
+              onClick={() => submitOrderSign(request)}
+              disabled={disableSendToCRD || !orderSignRemsAdmin}
+            >
               Sign Order
             </Button>
           </ButtonGroup>
