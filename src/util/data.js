@@ -93,6 +93,45 @@ const headerDefinitions = {
   }
 };
 
+const medicationRequestToRemsAdmins = Object.freeze([
+  {
+    rxnorm: 2183126,
+    display: 'Turalio 200 MG Oral Capsule',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+    ]
+  },
+  {
+    rxnorm: 6064,
+    display: 'Isotretinoin 20 MG Oral Capsule',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+    ]
+  },
+  {
+    rxnorm: 1237051,
+    display: 'TIRF 200 UG Oral Transmucosal Lozenge',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+    ]
+  },
+  {
+    rxnorm: 1666386,
+    display: 'Addyi 100 MG Oral Tablet',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/patient-view' }
+    ]
+  }
+]);
+
 const types = {
   error: 'errorClass',
   info: 'infoClass',
@@ -218,4 +257,12 @@ const shortNameMap = {
   'http://hl7.org/fhir/sid/ndc': 'NDC'
 };
 
-export { defaultValues, genderOptions, headerDefinitions, shortNameMap, stateOptions, types };
+export {
+  defaultValues,
+  genderOptions,
+  headerDefinitions,
+  shortNameMap,
+  stateOptions,
+  types,
+  medicationRequestToRemsAdmins
+};

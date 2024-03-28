@@ -1,31 +1,65 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Button, Box, FormControlLabel, Grid, Checkbox, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField
+} from '@mui/material';
 
-import useStyles from './styles';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
-import { headerDefinitions, types } from '../../util/data';
+import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
 import { actionTypes } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
 const SettingsSection = props => {
-  const classes = useStyles();
   const [state, dispatch] = React.useContext(SettingsContext);
   const [headers, setHeaders] = useState([]);
   const [originalValues, setOriginalValues] = useState([]);
 
   useEffect(() => {
-    const headers = Object.keys(headerDefinitions)
-      .map(key => ({ ...headerDefinitions[key], key }))
+    const remsAdminHookEndpoints = {};
+    medicationRequestToRemsAdmins.forEach(row => {
+      const { rxnorm, display, hookEndpoints } = row;
+      hookEndpoints.forEach(endpoint => {
+        const { hook, remsAdmin } = endpoint;
+        const key = `${rxnorm}_${hook}`;
+        remsAdminHookEndpoints[key] = {
+          display,
+          hook,
+          type: 'tableInput',
+          default: remsAdmin
+        };
+      });
+    });
+
+    const headers = [
+      ...Object.keys(headerDefinitions).map(key => ({ ...headerDefinitions[key], key })),
+      ...Object.keys(remsAdminHookEndpoints).map(key => ({ ...remsAdminHookEndpoints[key], key }))
+    ]
       // Display the fields in descending order of type. If two fields are the same type, then sort by ascending order of display text.
       .sort(
         (self, other) =>
           -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
       );
     setHeaders(headers);
-    const originals = Object.keys(headerDefinitions).map(key => [key, state[key]]);
+
+    const originals = [
+      ...Object.keys(headerDefinitions).map(key => [key, state[key]]),
+      ...Object.keys(remsAdminHookEndpoints).map(key => [key, state[key]])
+    ];
     setOriginalValues(originals);
+
     JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
       try {
         updateSetting(element[0], element[1]);
@@ -41,6 +75,7 @@ const SettingsSection = props => {
       type: actionTypes.flagStartup
     });
   }, []);
+
   const updateSetting = (key, value) => {
     dispatch({
       type: actionTypes.updateSetting,
@@ -48,6 +83,7 @@ const SettingsSection = props => {
       value: value
     });
   };
+
   const saveSettings = () => {
     const headers = Object.keys(headerDefinitions).map(key => [key, state[key]]);
     localStorage.setItem('reqgenSettings', JSON.stringify(headers));
@@ -62,6 +98,7 @@ const SettingsSection = props => {
       }
     });
   };
+
   const clearQuestionnaireResponses =
     ({ defaultUser }) =>
     () => {
@@ -105,6 +142,7 @@ const SettingsSection = props => {
           console.log(error);
         });
     };
+
   const resetRemsAdmin =
     ({ cdsUrl }) =>
     () => {
@@ -123,6 +161,7 @@ const SettingsSection = props => {
           console.log(error);
         });
     };
+
   const clearMedicationDispenses =
     ({ ehrUrl, access_token }) =>
     () => {
@@ -153,6 +192,7 @@ const SettingsSection = props => {
           console.log(e);
         });
     };
+
   const reconnectEhr =
     ({ baseUrl, redirect }) =>
     () => {
@@ -163,6 +203,7 @@ const SettingsSection = props => {
         scope: env.get('VITE_CLIENT_SCOPES').asString()
       });
     };
+
   const resetHeaderDefinitions = [
     {
       display: 'Reset PIMS Database',
@@ -195,59 +236,61 @@ const SettingsSection = props => {
   let firstCheckbox = true;
   let showBreak = true;
   return (
-    <Box flexGrow={1}>
-      <Grid container spacing={2} sx={{ padding: '20px' }}>
-        {headers.map(({ key, type, display }) => {
-          switch (type) {
-            case 'input':
-              return (
-                <Grid key={key} item xs={6}>
-                  <div>
-                    <TextField
-                      label={display}
-                      variant="outlined"
-                      value={state[key]}
-                      onChange={event => {
-                        updateSetting(key, event.target.value);
-                      }}
-                      sx={{ width: '100%' }}
-                    />
-                  </div>
-                </Grid>
-              );
-            case 'check':
-              if (firstCheckbox) {
-                firstCheckbox = false;
-                showBreak = true;
-              } else {
-                showBreak = false;
-              }
-              return (
-                <React.Fragment key={key}>
-                  {showBreak ? <Grid item xs={12}></Grid> : ''}
-                  <Grid item xs={3}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(state[key])}
-                          onChange={event => {
-                            updateSetting(key, event.target.checked);
-                          }}
-                        />
-                      }
-                      label={display}
-                    />
+    <Grid container spacing={2} sx={{ padding: '20px' }}>
+      <Grid container item xs={12} direction="row" spacing={2}>
+        {headers
+          .filter(header => header.type !== 'tableInput')
+          .map(({ key, type, display }) => {
+            switch (type) {
+              case 'input':
+                return (
+                  <Grid key={key} item xs={6}>
+                    <div>
+                      <TextField
+                        label={display}
+                        variant="outlined"
+                        value={state[key]}
+                        onChange={event => {
+                          updateSetting(key, event.target.value);
+                        }}
+                        sx={{ width: '100%' }}
+                      />
+                    </div>
                   </Grid>
-                </React.Fragment>
-              );
-            default:
-              return (
-                <div key={key}>
-                  <p className="setting-header">{display}</p>
-                </div>
-              );
-          }
-        })}
+                );
+              case 'check':
+                if (firstCheckbox) {
+                  firstCheckbox = false;
+                  showBreak = true;
+                } else {
+                  showBreak = false;
+                }
+                return (
+                  <React.Fragment key={key}>
+                    {showBreak ? <Grid item xs={12}></Grid> : ''}
+                    <Grid item xs={3}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(state[key])}
+                            onChange={event => {
+                              updateSetting(key, event.target.checked);
+                            }}
+                          />
+                        }
+                        label={display}
+                      />
+                    </Grid>
+                  </React.Fragment>
+                );
+              default:
+                return (
+                  <div key={key}>
+                    <p className="setting-header">{display}</p>
+                  </div>
+                );
+            }
+          })}
         {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
           return (
             <Grid item key={key} xs={6}>
@@ -257,26 +300,65 @@ const SettingsSection = props => {
             </Grid>
           );
         })}
-        {/* spacer */}
-        <hr
-          style={{
-            width: '100%'
-          }}
-        />
-        <Grid item xs={8} />
+      </Grid>
 
-        <Grid item xs={2}>
+      <Grid item xs={12}>
+        <TableContainer
+          component={Paper}
+          sx={{ border: '1px solid #535353', 'td, th': { border: 0 }, 'td, input': { py: 1 } }}
+        >
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow sx={{ th: { fontWeight: 'bold' } }}>
+                <TableCell>Medication</TableCell>
+                <TableCell>CDS Hook</TableCell>
+                <TableCell>REMS Admin Endpoint</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {headers
+                .filter(header => header.type === 'tableInput')
+                .map(({ key, hook, display }) => (
+                  <TableRow key={key}>
+                    <TableCell>{display}</TableCell>
+                    <TableCell>{hook}</TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={state[key]}
+                        onChange={event => {
+                          updateSetting(key, event.target.value);
+                        }}
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+
+      {/* spacer */}
+      <hr
+        style={{
+          width: '100%'
+        }}
+      />
+
+      <Grid container item xs={12} justifyContent="flex-end" direction="row" spacing={2}>
+        <Grid item>
           <Button variant="outlined" onClick={resetSettings}>
             Reset
           </Button>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item>
           <Button variant="contained" onClick={saveSettings}>
             Save
           </Button>
         </Grid>
       </Grid>
-    </Box>
+    </Grid>
   );
 };
 

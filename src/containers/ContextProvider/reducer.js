@@ -1,4 +1,4 @@
-import { headerDefinitions } from '../../util/data';
+import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
 export const actionTypes = Object.freeze({
   updatePatient: 'update_patient', // {type, value}
   updateSetting: 'update_setting', // {type, settingId, value}
@@ -32,8 +32,18 @@ const initialState = {
   startup: false,
   redirect: ''
 };
+
 Object.keys(headerDefinitions).forEach(e => {
   initialState[e] = headerDefinitions[e].default; // fill default settings values
+});
+
+medicationRequestToRemsAdmins.forEach(row => {
+  const { rxnorm, hookEndpoints } = row;
+  hookEndpoints.forEach(endpoint => {
+    const { hook, remsAdmin } = endpoint;
+    const key = `${rxnorm}_${hook}`;
+    initialState[key] = remsAdmin;
+  });
 });
 
 export { initialState };
