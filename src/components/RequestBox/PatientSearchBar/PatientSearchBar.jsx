@@ -2,7 +2,6 @@ import { Autocomplete, Box, TextField, IconButton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { PrefetchTemplate } from '../../../PrefetchTemplate';
 import { defaultValues } from '../../../util/data';
-import RefreshIcon from '@mui/icons-material/Refresh';
 
 import PatientBox from '../../SMARTBox/PatientBox';
 import './PatientSearchBarStyle.css';
@@ -58,9 +57,6 @@ const PatientSearchBar = props => {
             Showing {getFilteredLength(input, listOfPatients)} of {props.searchablePatients.length}{' '}
             records
           </p>
-          <IconButton color="primary" onClick={() => props.getPatients()} size="large">
-            <RefreshIcon fontSize="large" />
-          </IconButton>
         </span>
         {displayFilteredPatientList(input, listOfPatients[0])}
       </Box>
