@@ -21,24 +21,47 @@ const getNewStateWithoutCdsHookSetting = (state, settingId) => {
   return newState;
 };
 
+const getNewStateWithNewCdsHookSetting = (state, settingId) => {
+  const original = Object.entries(state.medicationRequestToRemsAdmins);
+  const indexOfSiblingToInsertBelow = original.findIndex(([key, _value]) => key === settingId);
+  const firstHalf =
+    indexOfSiblingToInsertBelow === 0
+      ? [original[0]]
+      : original.slice(0, indexOfSiblingToInsertBelow + 1);
+  const secondHalf =
+    indexOfSiblingToInsertBelow === 0
+      ? original.slice(indexOfSiblingToInsertBelow)
+      : original.slice(indexOfSiblingToInsertBelow - 1);
+
+  const newState = { ...state, medicationRequestToRemsAdmins: {} };
+
+  for (const pair of firstHalf) {
+    const [key, value] = pair;
+    newState.medicationRequestToRemsAdmins[key] = value;
+  }
+
+  newState.medicationRequestToRemsAdmins[uuidv4()] = {
+    rxnorm: 'Fill out Medication RxNorm Code',
+    display: 'Fill out Medication Display Name',
+    hook: 'order-sign',
+    remsAdmin: 'REMS Admin URL for CDS Hook'
+  };
+
+  for (const pair of secondHalf) {
+    const [key, value] = pair;
+    newState.medicationRequestToRemsAdmins[key] = value;
+  }
+
+  return newState;
+};
+
 // todo: add an enum that defines possible settings
 export const reducer = (state, action) => {
   switch (action.type) {
     case actionTypes.deleteCdsHookSetting:
       return getNewStateWithoutCdsHookSetting(state, action.settingId);
     case actionTypes.addCdsHookSetting:
-      return {
-        ...state,
-        medicationRequestToRemsAdmins: {
-          ...state.medicationRequestToRemsAdmins,
-          [uuidv4()]: {
-            rxnorm: 'Fill out Medication RxNorm Code',
-            display: 'Fill out Medication Display Name',
-            hook: 'order-sign',
-            remsAdmin: 'REMS Admin URL for CDS Hook'
-          }
-        }
-      };
+      return getNewStateWithNewCdsHookSetting(state, action.settingId);
     case actionTypes.updateCdsHookSetting:
       return {
         ...state,

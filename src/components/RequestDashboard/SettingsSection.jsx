@@ -354,7 +354,9 @@ const SettingsSection = props => {
                     <TableCell width={150} align="right">
                       <IconButton
                         color="primary"
-                        onClick={() => dispatch({ type: actionTypes.addCdsHookSetting })}
+                        onClick={() =>
+                          dispatch({ type: actionTypes.addCdsHookSetting, settingId: key })
+                        }
                         size="large"
                       >
                         <AddIcon fontSize="large" />
