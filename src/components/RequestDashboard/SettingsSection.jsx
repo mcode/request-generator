@@ -5,7 +5,10 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
+  IconButton,
   Paper,
+  Select,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -14,6 +17,8 @@ import {
   TableRow,
   TextField
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 import env from 'env-var';
 import FHIR from 'fhirclient';
@@ -22,44 +27,52 @@ import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/dat
 import { actionTypes } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
+function getRemsAdminHookEndpoints() {
+  const remsAdminHookEndpoints = {};
+  medicationRequestToRemsAdmins.forEach(row => {
+    const { rxnorm, display, hookEndpoints } = row;
+    hookEndpoints.forEach(endpoint => {
+      const { hook, remsAdmin } = endpoint;
+      const key = `${rxnorm}_${hook}`;
+      remsAdminHookEndpoints[key] = {
+        rxnorm,
+        display,
+        hook,
+        remsAdmin,
+        type: 'tableInput'
+      };
+    });
+  });
+  return remsAdminHookEndpoints;
+}
+
+const remsAdminHookEndpoints = getRemsAdminHookEndpoints();
+
+const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view'];
+
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
-  const [headers, setHeaders] = useState([]);
-  const [originalValues, setOriginalValues] = useState([]);
 
-  useEffect(() => {
-    const remsAdminHookEndpoints = {};
-    medicationRequestToRemsAdmins.forEach(row => {
-      const { rxnorm, display, hookEndpoints } = row;
-      hookEndpoints.forEach(endpoint => {
-        const { hook, remsAdmin } = endpoint;
-        const key = `${rxnorm}_${hook}`;
-        remsAdminHookEndpoints[key] = {
-          display,
-          hook,
-          type: 'tableInput',
-          default: remsAdmin
-        };
-      });
-    });
-
-    const headers = [
-      ...Object.keys(headerDefinitions).map(key => ({ ...headerDefinitions[key], key })),
-      ...Object.keys(remsAdminHookEndpoints).map(key => ({ ...remsAdminHookEndpoints[key], key }))
-    ]
-      // Display the fields in descending order of type. If two fields are the same type, then sort by ascending order of display text.
+  const [fieldHeaders, _setFieldHeaders] = useState(
+    Object.keys(headerDefinitions)
+      .map(key => ({ ...headerDefinitions[key], key }))
       .sort(
         (self, other) =>
           -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
-      );
-    setHeaders(headers);
+      )
+  );
 
-    const originals = [
-      ...Object.keys(headerDefinitions).map(key => [key, state[key]]),
-      ...Object.keys(remsAdminHookEndpoints).map(key => [key, state[key]])
-    ];
-    setOriginalValues(originals);
+  const [tableHeaders, setTableHeaders] = useState(
+    Object.keys(remsAdminHookEndpoints).map(key => ({
+      ...remsAdminHookEndpoints[key],
+      key
+    }))
+  );
 
+  const originalFieldHeaders = Object.keys(headerDefinitions).map(key => [key, state[key]]);
+  const originalTableHeaders = Object.keys(remsAdminHookEndpoints).map(key => [key, state[key]]);
+
+  useEffect(() => {
     JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
       try {
         updateSetting(element[0], element[1]);
@@ -90,13 +103,14 @@ const SettingsSection = props => {
   };
 
   const resetSettings = () => {
-    originalValues.forEach(e => {
+    [...originalFieldHeaders, ...originalTableHeaders].forEach(e => {
       try {
         updateSetting(e[0], e[1]);
       } catch {
         console.log('Failed to reset setting value');
       }
     });
+    setTableHeaders(originalTableHeaders);
   };
 
   const clearQuestionnaireResponses =
@@ -238,7 +252,7 @@ const SettingsSection = props => {
   return (
     <Grid container spacing={2} sx={{ padding: '20px' }}>
       <Grid container item xs={12} direction="row" spacing={2}>
-        {headers
+        {fieldHeaders
           .filter(header => header.type !== 'tableInput')
           .map(({ key, type, display }) => {
             switch (type) {
@@ -310,30 +324,90 @@ const SettingsSection = props => {
           <Table stickyHeader>
             <TableHead>
               <TableRow sx={{ th: { fontWeight: 'bold' } }}>
-                <TableCell>Medication</TableCell>
-                <TableCell>CDS Hook</TableCell>
-                <TableCell>REMS Admin Endpoint</TableCell>
+                <TableCell width={500}>Medication Display</TableCell>
+                <TableCell width={200}>Medication RxNorm Code</TableCell>
+                <TableCell width={200}>CDS Hook</TableCell>
+                <TableCell width={500}>REMS Admin Endpoint</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {headers
+              {tableHeaders
                 .filter(header => header.type === 'tableInput')
-                .map(({ key, hook, display }) => (
-                  <TableRow key={key}>
-                    <TableCell>{display}</TableCell>
-                    <TableCell>{hook}</TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        value={state[key]}
-                        onChange={event => {
-                          updateSetting(key, event.target.value);
-                        }}
-                        sx={{ width: '100%' }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                .map(({ key, rxnorm, display, hook, remsAdmin }) => {
+                  return (
+                    <TableRow key={key}>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={state[key].display}
+                          onChange={event => {
+                            updateSetting(key, { ...state[key], display: event.target.value });
+                          }}
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={state[key].rxnorm}
+                          onChange={event => {
+                            updateSetting(key, { ...state[key], rxnorm: event.target.value });
+                          }}
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          labelId="dropdown-label"
+                          id="dropdown"
+                          value={state[key].hook}
+                          onChange={event => {
+                            updateSetting(key, { ...state[key], hook: event.target.value });
+                          }}
+                          sx={{ width: '100%' }}
+                        >
+                          {CDS_HOOKS.map(hook => (
+                            <MenuItem key={hook} value={hook}>
+                              {hook}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={state[key].remsAdmin}
+                          onChange={event => {
+                            updateSetting(key, { ...state[key], remsAdmin: event.target.value });
+                          }}
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell width={150} align="right">
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            console.log('clicked add row function');
+                          }}
+                          size="large"
+                        >
+                          <AddIcon fontSize="large" />
+                        </IconButton>
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            console.log('clicked delete row function');
+                            dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key });
+                            setTableHeaders(tableHeaders.filter(header => header.key === key));
+                          }}
+                          size="large"
+                        >
+                          <DeleteIcon fontSize="large" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>

@@ -106,11 +106,18 @@ const RequestBuilder = props => {
 
   const submitInfo = (prefetch, request, patient, hook) => {
     console.log('Initiating form submission ', types.info);
+    const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+
     setState(prevState => ({
       ...prevState,
-      loading: true,
+      loading: !!remsAdminUrl,
       patient
     }));
+
+    if (!remsAdminUrl) {
+      return;
+    }
+
     const hookConfig = {
       includeConfig: globalState.includeConfig,
       alternativeTherapy: globalState.alternativeTherapy
@@ -127,11 +134,6 @@ const RequestBuilder = props => {
       hook,
       hookConfig
     );
-
-    const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
-    if (!remsAdminUrl) {
-      return;
-    }
 
     let baseUrl = globalState.baseUrl;
 

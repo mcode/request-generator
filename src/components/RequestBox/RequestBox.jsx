@@ -307,10 +307,7 @@ const RequestBox = props => {
             <Button onClick={sendRx} disabled={disableSendRx}>
               Send Rx to Pharmacy
             </Button>
-            <Button
-              onClick={() => submitOrderSign(request)}
-              disabled={disableSendToCRD || !orderSignRemsAdmin}
-            >
+            <Button onClick={() => submitOrderSign(request)} disabled={disableSendToCRD}>
               Sign Order
             </Button>
           </ButtonGroup>

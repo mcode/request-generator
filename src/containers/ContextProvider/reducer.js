@@ -2,11 +2,20 @@ import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/dat
 export const actionTypes = Object.freeze({
   updatePatient: 'update_patient', // {type, value}
   updateSetting: 'update_setting', // {type, settingId, value}
-  flagStartup: 'flag_startup' // {type}
+  flagStartup: 'flag_startup', // {type}
+  deleteCdsHookSetting: 'DELETE_CDS_HOOK_SETTING'
 });
 // todo: add an enum that defines possible settings
 export const reducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.deleteCdsHookSetting:
+      return Object.keys(state).reduce((previousState, currentKey) => {
+        const newState = { ...previousState };
+        if (currentKey !== action.settingId) {
+          newState[currentKey] = state[currentKey];
+        }
+        return newState;
+      }, {});
     case actionTypes.updateSetting:
       return {
         ...state,
@@ -38,11 +47,10 @@ Object.keys(headerDefinitions).forEach(e => {
 });
 
 medicationRequestToRemsAdmins.forEach(row => {
-  const { rxnorm, hookEndpoints } = row;
-  hookEndpoints.forEach(endpoint => {
-    const { hook, remsAdmin } = endpoint;
+  const { rxnorm, display, hookEndpoints } = row;
+  hookEndpoints.forEach(({ hook, remsAdmin }) => {
     const key = `${rxnorm}_${hook}`;
-    initialState[key] = remsAdmin;
+    initialState[key] = { rxnorm, display, hook, remsAdmin };
   });
 });
 
