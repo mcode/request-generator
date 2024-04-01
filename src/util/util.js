@@ -107,8 +107,9 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
     return undefined;
   }
 
-  const key = `${rxnorm}_${hook}`;
-  const cdsUrl = globalState[key]?.remsAdmin;
+  const cdsUrl = Object.values(globalState.medicationRequestToRemsAdmins).find(
+    value => Number(value.rxnorm) === Number(rxnorm) && value.hook === hook
+  )?.remsAdmin;
 
   if (!cdsUrl) {
     console.log(`Medication ${display} is not a REMS medication`);

@@ -24,61 +24,28 @@ import env from 'env-var';
 import FHIR from 'fhirclient';
 
 import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
-import { actionTypes } from '../../containers/ContextProvider/reducer';
+import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
-
-function getRemsAdminHookEndpoints() {
-  const remsAdminHookEndpoints = {};
-  medicationRequestToRemsAdmins.forEach(row => {
-    const { rxnorm, display, hookEndpoints } = row;
-    hookEndpoints.forEach(endpoint => {
-      const { hook, remsAdmin } = endpoint;
-      const key = `${rxnorm}_${hook}`;
-      remsAdminHookEndpoints[key] = {
-        rxnorm,
-        display,
-        hook,
-        remsAdmin,
-        type: 'tableInput'
-      };
-    });
-  });
-  return remsAdminHookEndpoints;
-}
-
-const remsAdminHookEndpoints = getRemsAdminHookEndpoints();
 
 const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view'];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
 
-  const [fieldHeaders, _setFieldHeaders] = useState(
-    Object.keys(headerDefinitions)
-      .map(key => ({ ...headerDefinitions[key], key }))
-      .sort(
-        (self, other) =>
-          -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
-      )
-  );
-
-  const [tableHeaders, setTableHeaders] = useState(
-    Object.keys(remsAdminHookEndpoints).map(key => ({
-      ...remsAdminHookEndpoints[key],
-      key
-    }))
-  );
-
-  const originalFieldHeaders = Object.keys(headerDefinitions).map(key => [key, state[key]]);
-  const originalTableHeaders = Object.keys(remsAdminHookEndpoints).map(key => [key, state[key]]);
+  const fieldHeaders = Object.keys(headerDefinitions)
+    .map(key => ({ ...headerDefinitions[key], key }))
+    .sort(
+      (self, other) =>
+        -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
+    );
 
   useEffect(() => {
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
+    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(([key, value]) => {
       try {
-        updateSetting(element[0], element[1]);
+        updateSetting(key, value);
       } catch {
-        if (element[0]) {
-          console.log('Could not load setting:' + element[0]);
+        if (!key) {
+          console.log('Could not load setting:' + key);
         }
       }
     });
@@ -98,19 +65,12 @@ const SettingsSection = props => {
   };
 
   const saveSettings = () => {
-    const headers = Object.keys(headerDefinitions).map(key => [key, state[key]]);
+    const headers = Object.keys(state).map(key => [key, state[key]]);
     localStorage.setItem('reqgenSettings', JSON.stringify(headers));
   };
 
   const resetSettings = () => {
-    [...originalFieldHeaders, ...originalTableHeaders].forEach(e => {
-      try {
-        updateSetting(e[0], e[1]);
-      } catch {
-        console.log('Failed to reset setting value');
-      }
-    });
-    setTableHeaders(originalTableHeaders);
+    dispatch({ type: actionTypes.resetSettings });
   };
 
   const clearQuestionnaireResponses =
@@ -252,59 +212,53 @@ const SettingsSection = props => {
   return (
     <Grid container spacing={2} sx={{ padding: '20px' }}>
       <Grid container item xs={12} direction="row" spacing={2}>
-        {fieldHeaders
-          .filter(header => header.type !== 'tableInput')
-          .map(({ key, type, display }) => {
-            switch (type) {
-              case 'input':
-                return (
-                  <Grid key={key} item xs={6}>
-                    <div>
-                      <TextField
-                        label={display}
-                        variant="outlined"
-                        value={state[key]}
-                        onChange={event => {
-                          updateSetting(key, event.target.value);
-                        }}
-                        sx={{ width: '100%' }}
-                      />
-                    </div>
-                  </Grid>
-                );
-              case 'check':
-                if (firstCheckbox) {
-                  firstCheckbox = false;
-                  showBreak = true;
-                } else {
-                  showBreak = false;
-                }
-                return (
-                  <React.Fragment key={key}>
-                    {showBreak ? <Grid item xs={12}></Grid> : ''}
-                    <Grid item xs={3}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={Boolean(state[key])}
-                            onChange={event => {
-                              updateSetting(key, event.target.checked);
-                            }}
-                          />
-                        }
-                        label={display}
-                      />
-                    </Grid>
-                  </React.Fragment>
-                );
-              default:
-                return (
-                  <div key={key}>
-                    <p className="setting-header">{display}</p>
+        {fieldHeaders.map(({ key, type, display }) => {
+          switch (type) {
+            case 'input':
+              return (
+                <Grid key={key} item xs={6}>
+                  <div>
+                    <TextField
+                      label={display}
+                      variant="outlined"
+                      value={state[key]}
+                      onChange={event => updateSetting(key, event.target.value)}
+                      sx={{ width: '100%' }}
+                    />
                   </div>
-                );
-            }
-          })}
+                </Grid>
+              );
+            case 'check':
+              if (firstCheckbox) {
+                firstCheckbox = false;
+                showBreak = true;
+              } else {
+                showBreak = false;
+              }
+              return (
+                <React.Fragment key={key}>
+                  {showBreak ? <Grid item xs={12}></Grid> : ''}
+                  <Grid item xs={3}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={Boolean(state[key])}
+                          onChange={event => updateSetting(key, event.target.checked)}
+                        />
+                      }
+                      label={display}
+                    />
+                  </Grid>
+                </React.Fragment>
+              );
+            default:
+              return (
+                <div key={key}>
+                  <p className="setting-header">{display}</p>
+                </div>
+              );
+          }
+        })}
         {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
           return (
             <Grid item key={key} xs={6}>
@@ -331,83 +285,93 @@ const SettingsSection = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tableHeaders
-                .filter(header => header.type === 'tableInput')
-                .map(({ key, rxnorm, display, hook, remsAdmin }) => {
-                  return (
-                    <TableRow key={key}>
-                      <TableCell>
-                        <TextField
-                          variant="outlined"
-                          value={state[key].display}
-                          onChange={event => {
-                            updateSetting(key, { ...state[key], display: event.target.value });
-                          }}
-                          sx={{ width: '100%' }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          variant="outlined"
-                          value={state[key].rxnorm}
-                          onChange={event => {
-                            updateSetting(key, { ...state[key], rxnorm: event.target.value });
-                          }}
-                          sx={{ width: '100%' }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          labelId="dropdown-label"
-                          id="dropdown"
-                          value={state[key].hook}
-                          onChange={event => {
-                            updateSetting(key, { ...state[key], hook: event.target.value });
-                          }}
-                          sx={{ width: '100%' }}
-                        >
-                          {CDS_HOOKS.map(hook => (
-                            <MenuItem key={hook} value={hook}>
-                              {hook}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          variant="outlined"
-                          value={state[key].remsAdmin}
-                          onChange={event => {
-                            updateSetting(key, { ...state[key], remsAdmin: event.target.value });
-                          }}
-                          sx={{ width: '100%' }}
-                        />
-                      </TableCell>
-                      <TableCell width={150} align="right">
-                        <IconButton
-                          color="primary"
-                          onClick={() => {
-                            console.log('clicked add row function');
-                          }}
-                          size="large"
-                        >
-                          <AddIcon fontSize="large" />
-                        </IconButton>
-                        <IconButton
-                          color="primary"
-                          onClick={() => {
-                            console.log('clicked delete row function');
-                            dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key });
-                            setTableHeaders(tableHeaders.filter(header => header.key === key));
-                          }}
-                          size="large"
-                        >
-                          <DeleteIcon fontSize="large" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+              {Object.entries(state.medicationRequestToRemsAdmins).map(([key, row]) => {
+                return (
+                  <TableRow key={key}>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={row.display}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { display: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={row.rxnorm}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { rxnorm: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        labelId="dropdown-label"
+                        id="dropdown"
+                        value={row.hook}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { hook: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      >
+                        {CDS_HOOKS.map(hook => (
+                          <MenuItem key={hook} value={hook}>
+                            {hook}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={row.remsAdmin}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { remsAdmin: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                    <TableCell width={150} align="right">
+                      <IconButton
+                        color="primary"
+                        onClick={() => dispatch({ type: actionTypes.addCdsHookSetting })}
+                        size="large"
+                      >
+                        <AddIcon fontSize="large" />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        onClick={() =>
+                          dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key })
+                        }
+                        size="large"
+                      >
+                        <DeleteIcon fontSize="large" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
