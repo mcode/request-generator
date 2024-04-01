@@ -34,6 +34,8 @@ const SettingsSection = props => {
 
   const fieldHeaders = Object.keys(headerDefinitions)
     .map(key => ({ ...headerDefinitions[key], key }))
+    // Display the fields in descending order of type. If two fields are the same type,
+    // then sort by ascending order of display text.
     .sort(
       (self, other) =>
         -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
