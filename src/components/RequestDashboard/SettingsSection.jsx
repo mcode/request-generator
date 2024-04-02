@@ -15,6 +15,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   TextField
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -258,29 +259,29 @@ const SettingsSection = props => {
               );
           }
         })}
-        {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
-          return (
-            <Grid item key={key} xs={6}>
-              <Button variant={variant ? variant : 'outlined'} onClick={reset(state)}>
-                {display}
-              </Button>
-            </Grid>
-          );
-        })}
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer
           component={Paper}
-          sx={{ border: '1px solid #535353', 'td, th': { border: 0 }, 'td, input': { py: 1 } }}
+          sx={{
+            border: '1px solid #535353',
+            'td, th': { border: 0 },
+            'td, input': { py: 1 },
+            maxHeight: 440
+          }}
         >
-          <Table stickyHeader>
+          <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow sx={{ th: { fontWeight: 'bold' } }}>
                 <TableCell width={500}>Medication Display</TableCell>
                 <TableCell width={200}>Medication RxNorm Code</TableCell>
                 <TableCell width={200}>CDS Hook</TableCell>
                 <TableCell width={500}>REMS Admin Endpoint</TableCell>
+                {/* This empty TableCell corresponds to the add and delete 
+                buttons. It is used to fill up the sticky header which 
+                will appear over the gray/white table rows. */}
+                <TableCell width={150} />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -350,25 +351,29 @@ const SettingsSection = props => {
                         sx={{ width: '100%' }}
                       />
                     </TableCell>
-                    <TableCell width={150} align="right">
-                      <IconButton
-                        color="primary"
-                        onClick={() =>
-                          dispatch({ type: actionTypes.addCdsHookSetting, settingId: key })
-                        }
-                        size="large"
-                      >
-                        <AddIcon fontSize="large" />
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        onClick={() =>
-                          dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key })
-                        }
-                        size="large"
-                      >
-                        <DeleteIcon fontSize="large" />
-                      </IconButton>
+                    <TableCell align="right">
+                      <Tooltip title="Add a new row below">
+                        <IconButton
+                          color="primary"
+                          onClick={() =>
+                            dispatch({ type: actionTypes.addCdsHookSetting, settingId: key })
+                          }
+                          size="large"
+                        >
+                          <AddIcon fontSize="large" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete this row">
+                        <IconButton
+                          color="primary"
+                          onClick={() =>
+                            dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key })
+                          }
+                          size="large"
+                        >
+                          <DeleteIcon fontSize="large" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );
@@ -385,7 +390,19 @@ const SettingsSection = props => {
         }}
       />
 
-      <Grid container item xs={12} justifyContent="flex-end" direction="row" spacing={2}>
+      <Grid container item xs={6} justifyContent="flex-start" direction="row" spacing={2}>
+        {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
+          return (
+            <Grid item key={key}>
+              <Button variant={variant ? variant : 'outlined'} onClick={reset(state)}>
+                {display}
+              </Button>
+            </Grid>
+          );
+        })}
+      </Grid>
+
+      <Grid container item xs={6} justifyContent="flex-end" direction="row" spacing={2}>
         <Grid item>
           <Button variant="outlined" onClick={resetSettings}>
             Reset
