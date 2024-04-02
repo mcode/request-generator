@@ -1,9 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { Paper, Typography } from '@mui/material';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import useStyles from '../styles';
 import { MedicationStatus } from '../../MedicationStatus/MedicationStatus';
-import axios from 'axios';
 
 const MedicationsSection = props => {
   const classes = useStyles();

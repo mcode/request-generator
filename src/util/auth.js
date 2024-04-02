@@ -1,5 +1,5 @@
 import privKey from '../keys/crdPrivateKey.js';
-import KJUR, { KEYUTIL } from 'jsrsasign';
+import KJUR from 'jsrsasign';
 import { v4 as uuidv4 } from 'uuid';
 import env from 'env-var';
 

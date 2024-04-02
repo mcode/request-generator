@@ -1,5 +1,5 @@
 import { Autocomplete, Box, TextField, IconButton } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PrefetchTemplate } from '../../../PrefetchTemplate';
 import { defaultValues } from '../../../util/data';
 
@@ -26,12 +26,12 @@ const PatientSearchBar = props => {
     return '';
   }
 
-  function getFilteredLength(searchstring, listOfPatients) {
+  function getFilteredLength(searchString, listOfPatients) {
     const filteredListOfPatients = listOfPatients[0].filter(element => {
-      if (searchstring === '') {
+      if (searchString === '') {
         return element;
       } else {
-        return element.name.toLowerCase().includes(searchstring);
+        return element.name.toLowerCase().includes(searchString);
       }
     });
 
@@ -63,12 +63,12 @@ const PatientSearchBar = props => {
     );
   }
 
-  function displayFilteredPatientList(searchstring, listOfPatients) {
+  function displayFilteredPatientList(searchString, listOfPatients) {
     const filteredListOfPatients = listOfPatients.filter(element => {
-      if (searchstring === '') {
+      if (searchString === '') {
         return element;
       } else {
-        return element.name.toLowerCase().includes(searchstring);
+        return element.name.toLowerCase().includes(searchString);
       }
     });
     return (

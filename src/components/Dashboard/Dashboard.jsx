@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import useStyles from './styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';

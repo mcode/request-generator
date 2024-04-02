@@ -148,12 +148,10 @@ input:not(:focus):not([value='']):valid ~ .floating-label {
   margin-left: 5px;
 }
 .onOff {
-  /* border-color: #E34531; */
   border-color: #c5c5c5;
 }
 
 .onOffActive {
-  /* border-color: #5CB85C; */
   border-color: #222222;
 }
 
@@ -177,7 +175,6 @@ input:not(:focus):not([value='']):valid ~ .floating-label {
   opacity: 1;
 }
 .invisible {
-  /* display:none; */
   opacity: 0;
 }
 .spinner {

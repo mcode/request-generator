@@ -1,7 +1,7 @@
 import env from 'env-var';
 import queryString from 'querystring';
 import FHIR from 'fhirclient';
-import React, { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import RegisterPage from './register/RegisterPage';
 
 const Launch = props => {
@@ -25,7 +25,6 @@ const Launch = props => {
         localStorage.setItem('clients', JSON.stringify(clients));
       }
     }
-    const urlSearchString = window.location.search;
     const params = queryString.parse((window.location.hash || '').replace(/\/?#\/?launch\?/, ''));
     const iss = params.iss;
     console.log('iss: ' + iss);

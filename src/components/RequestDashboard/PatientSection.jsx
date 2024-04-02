@@ -1,11 +1,10 @@
-import React, { memo } from 'react';
+import { memo, useContext } from 'react';
 
-import useStyles from './styles';
 import RequestBuilder from '../../containers/RequestBuilder';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
 const PatientSection = props => {
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [state, dispatch] = useContext(SettingsContext);
   return (
     <div>
       {state.startup ? (
