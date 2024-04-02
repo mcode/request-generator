@@ -122,10 +122,7 @@ const SettingsSection = props => {
   const resetRemsAdmin =
     ({ cdsUrl }) =>
     () => {
-      let url = new URL(cdsUrl);
-      const resetUrl = url.origin + '/etasu/reset';
-
-      fetch(resetUrl, {
+      fetch(cdsUrl, {
         method: 'POST'
       })
         .then(response => {
