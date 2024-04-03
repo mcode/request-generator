@@ -92,7 +92,6 @@ function getEtasu(etasuUrl, responseCallback) {
   );
 }
 
-export { retrieveLaunchContext, getEtasu };
 const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   const display = request.medicationCodeableConcept?.coding?.[0]?.display;
   const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
@@ -119,4 +118,4 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   return cdsUrl;
 };
 
-export { retrieveLaunchContext, getMedicationSpecificRemsAdminUrl };
+export { retrieveLaunchContext, getEtasu, getMedicationSpecificRemsAdminUrl };
