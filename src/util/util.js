@@ -66,4 +66,30 @@ function retrieveLaunchContext(link, patientId, clientState) {
   });
 }
 
-export { retrieveLaunchContext };
+function getEtasu(etasuUrl, responseCallback) {
+  axios({
+    method: 'get',
+    url: etasuUrl
+  }).then(
+    response => {
+      // Sorting an array mutates the data in place.
+      const remsMetRes = response.data;
+      if (remsMetRes.metRequirements) {
+        remsMetRes.metRequirements.sort((first, second) => {
+          // Keep the other forms unsorted.
+          if (second.requirementName.includes('Patient Status Update')) {
+            // Sort the Patient Status Update forms in descending order of timestamp.
+            return second.requirementName.localeCompare(first.requirementName);
+          }
+          return 0;
+        });
+      }
+      responseCallback(response.data);
+    },
+    error => {
+      console.log(error);
+    }
+  );
+}
+
+export { retrieveLaunchContext, getEtasu };

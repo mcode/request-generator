@@ -85,6 +85,11 @@ const headerDefinitions = {
     display: 'SMART App',
     type: 'input',
     default: env.get('VITE_SMART_LAUNCH_URL').asString()
+  },
+  remsAdminServer: {
+    display: 'REMS Admin Server',
+    type: 'input',
+    default: env.get('VITE_SERVER').asString()
   }
 };
 

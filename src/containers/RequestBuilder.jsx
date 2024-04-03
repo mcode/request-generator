@@ -16,10 +16,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar.jsx';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 import { actionTypes } from './ContextProvider/reducer.js';
+
 import axios from 'axios';
+import { EtasuStatus } from '../components/EtasuStatus/EtasuStatus';
+import { SettingsContext } from './ContextProvider/SettingsProvider.jsx';
 
 const RequestBuilder = props => {
-  const { globalState, dispatch, client } = props;
+  const { client } = props;
+  const [globalState, dispatch] = React.useContext(SettingsContext);
   const [state, setState] = useState({
     loading: false,
     patient: {},
@@ -35,7 +39,7 @@ const RequestBuilder = props => {
     token: null,
     client: client,
     medicationDispense: null,
-    lastCheckedMedicationTime: null
+    lastCheckedMedicationTime: null,
   });
   const displayRequestBox = !!globalState.patient?.id;
 
@@ -43,7 +47,9 @@ const RequestBuilder = props => {
     return Object.keys(state.request).length === 0;
   };
 
+
   const disableGetMedicationStatus = isOrderNotSelected() || state.loading;
+  const disableGetEtasu = isOrderNotSelected() || state.loading;
   const getMedicationStatus = () => {
     setState(prevState => ({
       ...prevState,
@@ -63,6 +69,8 @@ const RequestBuilder = props => {
       }
     );
   };
+
+
 
   useEffect(() => {
     if (state.client) {
@@ -293,17 +301,26 @@ const RequestBuilder = props => {
               />
             </Grid>
           )}
-          {!disableGetMedicationStatus && (
-            <Grid item>
-              <MedicationStatus
-                ehrUrl={globalState.ehrUrl}
-                request={state.request}
-                medicationDispense={state.medicationDispense}
-                getMedicationStatus={getMedicationStatus}
-                lastCheckedMedicationTime={state.lastCheckedMedicationTime}
-              />
-            </Grid>
-          )}
+          <Grid item container justifyContent="center" textAlign="center" spacing={2}>
+            {!disableGetEtasu && (
+              <Grid item>
+                <EtasuStatus 
+                  code={state.code}
+                />
+              </Grid>
+            )}
+            {!disableGetMedicationStatus && (
+              <Grid item>
+                <MedicationStatus
+                  ehrUrl={globalState.ehrUrl}
+                  request={state.request}
+                  medicationDispense={state.medicationDispense}
+                  getMedicationStatus={getMedicationStatus}
+                  lastCheckedMedicationTime={state.lastCheckedMedicationTime}
+                />
+              </Grid>
+            )}
+          </Grid>
         </Grid>
 
         <Grid item container xs={12} md={6}>
