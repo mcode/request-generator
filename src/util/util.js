@@ -66,30 +66,29 @@ function retrieveLaunchContext(link, patientId, clientState) {
   });
 }
 
-function getEtasu(etasuUrl, responseCallback) {
+function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
   axios({
-    method: 'get',
-    url: etasuUrl
-  }).then(
-    response => {
+    method: 'post',
+    url: etasuUrl,
+    data: body
+  }).then(response => {
       // Sorting an array mutates the data in place.
       const remsMetRes = response.data;
-      if (remsMetRes.metRequirements) {
-        remsMetRes.metRequirements.sort((first, second) => {
+      if (remsMetRes?.parameter[0]?.resource?.contained) {
+        remsMetRes.parameter[0].resource.contained[0].parameter.sort((first, second) => {
           // Keep the other forms unsorted.
-          if (second.requirementName.includes('Patient Status Update')) {
+          if (second.name.includes('Patient Status Update')) {
             // Sort the Patient Status Update forms in descending order of timestamp.
-            return second.requirementName.localeCompare(first.requirementName);
+            return second.name.localeCompare(first.name);
           }
           return 0;
         });
       }
-      responseCallback(response.data);
-    },
-    error => {
-      console.log(error);
+      responseCallback(response.data.parameter[0].resource);
+    }, error => {
+      console.log('error -- > ', error);
     }
-  );
+  )
 }
 
-export { retrieveLaunchContext, getEtasu };
+export { retrieveLaunchContext, standardsBasedGetEtasu };

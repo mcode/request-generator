@@ -31,7 +31,7 @@ export const EtasuStatusModal = props => {
                     <div className="bundle-entry">
                         Case Number: {getIdText(remsAdminResponse)}
                     </div>
-                    <div className="bundle-entry">Status: {remsAdminResponse.status || 'N/A'}</div>
+                    <div className="bundle-entry">Status: {convertStatus(remsAdminResponse.status)}</div>
                 </Grid>
                 <Grid item xs={2}>
                     <div className="bundle-entry">
@@ -53,24 +53,24 @@ export const EtasuStatusModal = props => {
                 <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                     {remsAdminResponse ? (
                         <List>
-                        {remsAdminResponse?.metRequirements?.map((metRequirements) => (
+                        {remsAdminResponse?.contained[0]?.parameter.map((metRequirements) => (
                             <ListItem
                                 disablePadding
-                                key={metRequirements.metRequirementId}
+                                key={metRequirements.name}
                                 data-testid="etasu-item"
                             >
                             <ListItemIcon>
-                                {metRequirements.completed ? (
+                                {metRequirements.resource.status === 'success' ? (
                                 <CheckCircle color="success" />
                                 ) : (
                                 <Close color="warning" />
                                 )}
                             </ListItemIcon>
-                            {metRequirements.completed ? (
-                                <ListItemText primary={metRequirements.requirementName} />
+                            {metRequirements.resource.status === 'success' ? (
+                                <ListItemText primary={metRequirements.name} />
                             ) : (
                                 <ListItemText
-                                primary={metRequirements.requirementName}
+                                primary={metRequirements.name}
                                 secondary={metRequirements.requirementDescription}
                                 />
                             )}
@@ -99,3 +99,13 @@ const modalStyle = {
   boxShadow: 24,
   p: 4
 };
+
+const convertStatus = status => {
+    if (status === 'success') {
+      return 'Approved';
+    } else if (status === 'data-required') {
+      return 'Pending';
+    } else {
+      return 'Not Started';
+    }
+  }

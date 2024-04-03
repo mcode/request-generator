@@ -12,7 +12,7 @@ export const EtasuStatusButton = props => {
         <Typography className="etasuButtonText" component="p">
           ETASU:
         </Typography>
-        <Typography component="p">{remsAdminResponse?.status || 'Not Started'}</Typography>
+        <Typography component="p">{convertStatus(remsAdminResponse?.status)}</Typography>
       </Button>
       {renderTimestamp(lastCheckedEtasuTime)}
     </Grid>
@@ -62,3 +62,13 @@ const convertTimeDifference = start => {
   }
   return `Last checked ${prefix} ago`;
 };
+
+const convertStatus = status => {
+  if (status === 'success') {
+    return 'Approved';
+  } else if (status === 'data-required') {
+    return 'Pending';
+  } else {
+    return 'Not Started';
+  }
+}
