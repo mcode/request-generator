@@ -92,4 +92,30 @@ function getEtasu(etasuUrl, responseCallback) {
   );
 }
 
-export { retrieveLaunchContext, getEtasu };
+const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
+  const display = request.medicationCodeableConcept?.coding?.[0]?.display;
+  const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
+
+  if (!rxnorm) {
+    console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
+    return undefined;
+  }
+
+  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select')) {
+    console.log(`ERROR: unknown hook type: ${hook}`);
+    return undefined;
+  }
+
+  const cdsUrl = Object.values(globalState.medicationRequestToRemsAdmins).find(
+    value => Number(value.rxnorm) === Number(rxnorm) && value.hook === hook
+  )?.remsAdmin;
+
+  if (!cdsUrl) {
+    console.log(`Medication ${display} is not a REMS medication`);
+    return undefined;
+  }
+
+  return cdsUrl;
+};
+
+export { retrieveLaunchContext, getEtasu, getMedicationSpecificRemsAdminUrl };

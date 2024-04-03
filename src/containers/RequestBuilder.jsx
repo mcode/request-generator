@@ -8,6 +8,7 @@ import RequestBox from '../components/RequestBox/RequestBox.jsx';
 import buildRequest from '../util/buildRequest.js';
 import { types } from '../util/data.js';
 import { createJwt } from '../util/auth.js';
+import { getMedicationSpecificRemsAdminUrl } from '../util/util.js';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -105,11 +106,18 @@ const RequestBuilder = props => {
 
   const submitInfo = (prefetch, request, patient, hook) => {
     console.log('Initiating form submission ', types.info);
+    const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+
     setState(prevState => ({
       ...prevState,
-      loading: true,
+      loading: !!remsAdminUrl,
       patient
     }));
+
+    if (!remsAdminUrl) {
+      return;
+    }
+
     const hookConfig = {
       includeConfig: globalState.includeConfig,
       alternativeTherapy: globalState.alternativeTherapy
@@ -126,17 +134,6 @@ const RequestBuilder = props => {
       hook,
       hookConfig
     );
-    let cdsUrl = globalState.cdsUrl;
-    if (hook === 'order-sign') {
-      cdsUrl = cdsUrl + '/' + globalState.orderSign;
-    } else if (hook === 'order-select') {
-      cdsUrl = cdsUrl + '/' + globalState.orderSelect;
-    } else if (hook === 'patient-view') {
-      cdsUrl = cdsUrl + '/' + globalState.patientView;
-    } else {
-      console.log("ERROR: unknown hook type: '", hook);
-      return;
-    }
 
     let baseUrl = globalState.baseUrl;
 
@@ -144,12 +141,12 @@ const RequestBuilder = props => {
       'Content-Type': 'application/json'
     };
     if (globalState.generateJsonToken) {
-      const jwt = 'Bearer ' + createJwt(baseUrl, cdsUrl);
+      const jwt = 'Bearer ' + createJwt(baseUrl, remsAdminUrl);
       headers.authorization = jwt;
     }
 
     try {
-      fetch(cdsUrl, {
+      fetch(remsAdminUrl, {
         method: 'POST',
         headers: new Headers(headers),
         body: JSON.stringify(json_request)
@@ -298,6 +295,9 @@ const RequestBuilder = props => {
                 defaultUser={globalState.defaultUser}
                 loading={state.loading}
                 patientFhirQuery={globalState.patientFhirQuery}
+                getRemsAdminUrl={(request, hook) =>
+                  getMedicationSpecificRemsAdminUrl(request, globalState, hook)
+                }
               />
             </Grid>
           )}
