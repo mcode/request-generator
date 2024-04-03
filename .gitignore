@@ -64,3 +64,6 @@ src/db.json
 
 # Environment variable files
 .env.local
+
+# Mac OS files
+**/.DS_Store
