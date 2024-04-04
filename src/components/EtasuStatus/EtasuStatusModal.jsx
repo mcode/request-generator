@@ -6,8 +6,6 @@ import './EtasuStatusModal.css';
 import CheckCircle from '@mui/icons-material/CheckCircle';
 import Close from '@mui/icons-material/Close';
 
-const getIdText = remsAdminResponse => remsAdminResponse?.case_number || 'N/A';
-
 export const EtasuStatusModal = props => {
   const { callback, onClose, remsAdminResponse, update } = props;
   const [spin, setSpin] = useState(false);
@@ -28,9 +26,6 @@ export const EtasuStatusModal = props => {
             <div className="status-icon" style={{ backgroundColor: color }}></div>
             <Grid container columns={12}>
                 <Grid item xs={10}>
-                    <div className="bundle-entry">
-                        Case Number: {getIdText(remsAdminResponse)}
-                    </div>
                     <div className="bundle-entry">Status: {convertStatus(remsAdminResponse.status)}</div>
                 </Grid>
                 <Grid item xs={2}>
