@@ -1,14 +1,14 @@
 import { EtasuStatusButton } from './EtasuStatusButton.jsx';
 import { EtasuStatusModal } from './EtasuStatusModal.jsx';
 import { useState, useEffect, useContext } from 'react';
-import { Card } from '@mui/material';
+import { Card, Typography } from '@mui/material';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
 import { standardsBasedGetEtasu } from '../../util/util.js';
 
 export const EtasuStatusComponent = props => {
   const [globalState, _] = useContext(SettingsContext);
 
-  const { remsAdminResponseInit, data } =
+  const { remsAdminResponseInit, data, display } =
     props;
 
   const [remsAdminResponse, setRemsAdminResponse] = useState(remsAdminResponseInit);
@@ -36,6 +36,9 @@ export const EtasuStatusComponent = props => {
   }
   return (
     <Card variant="outlined" sx={{ padding: 2 }}>
+      <Typography variant="h6" align="center" mb={2}>
+        {display}
+      </Typography>
       <EtasuStatusButton
         baseColor={getStatusColor(remsAdminResponse?.status)}
         remsAdminResponse={remsAdminResponse}

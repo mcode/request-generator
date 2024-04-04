@@ -12,6 +12,7 @@ export const EtasuStatus = props => {
   const { code, request } = props;
   const [remsAdminResponse, setRemsAdminResponse] = useState({});
   const [etasuData, setEtasuData] = useState({});
+  const [display, setDisplay] = useState('');
 
   useEffect(() => { 
     const medication = createMedicationFromMedicationRequest(request);
@@ -21,6 +22,8 @@ export const EtasuStatus = props => {
   const getEtasuStatus = (medication) => {
     const body = makeBody(medication);
     setEtasuData(body);
+    const display = body.parameter[1]?.resource.code.coding[0].display;
+    setDisplay(display);
     const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
     standardsBasedGetEtasu(standardEtasuUrl, body, setRemsAdminResponse);
 
@@ -45,7 +48,7 @@ export const EtasuStatus = props => {
 
   return (
     <>
-      {remsAdminResponse.contained ? <EtasuStatusComponent remsAdminResponseInit={remsAdminResponse} data={etasuData} /> : ""}
+      {remsAdminResponse.contained ? <EtasuStatusComponent remsAdminResponseInit={remsAdminResponse} data={etasuData} display={display} /> : ""}
     </>
   );
 };

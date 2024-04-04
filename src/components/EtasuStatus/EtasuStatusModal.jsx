@@ -51,7 +51,7 @@ export const EtasuStatusModal = props => {
                 <br></br>
                 <h3>ETASU</h3>
                 <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {remsAdminResponse ? (
+                    {remsAdminResponse && remsAdminResponse.contained ? (
                         <List>
                         {remsAdminResponse?.contained[0]?.parameter.map((metRequirements) => (
                             <ListItem
