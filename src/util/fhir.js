@@ -86,8 +86,6 @@ function createMedicationFromMedicationRequest(medicationRequest) {
   medication.id = medicationRequest?.id + '-med';
   if (medicationRequest.medicationCodeableConcept) {
     medication.code = medicationRequest.medicationCodeableConcept;
-  } else if (medicationRequest.medicationReference) {
-    medication.medicationReference = medicationRequest.medicationReference;
   }
   return medication;
 }
