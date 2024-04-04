@@ -5,6 +5,7 @@ import { getStatusColor } from './EtasuStatusComponent';
 import './EtasuStatusModal.css';
 import CheckCircle from '@mui/icons-material/CheckCircle';
 import Close from '@mui/icons-material/Close';
+import { convertStatus } from './EtasuStatusButton';
 
 export const EtasuStatusModal = props => {
   const { callback, onClose, remsAdminResponse, update } = props;
@@ -94,13 +95,3 @@ const modalStyle = {
   boxShadow: 24,
   p: 4
 };
-
-const convertStatus = status => {
-    if (status === 'success') {
-      return 'Approved';
-    } else if (status === 'data-required') {
-      return 'Pending';
-    } else {
-      return 'Not Started';
-    }
-  }

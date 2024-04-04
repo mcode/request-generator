@@ -31,6 +31,7 @@ export const EtasuStatus = props => {
 
 
   const makeBody = (medication) => {
+    console.log('patient -- > ', globalState.patient);
     return {
       resourceType: "Parameters",
       parameter: [

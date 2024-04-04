@@ -63,7 +63,7 @@ const convertTimeDifference = start => {
   return `Last checked ${prefix} ago`;
 };
 
-const convertStatus = status => {
+export const convertStatus = status => {
   if (status === 'success') {
     return 'Approved';
   } else if (status === 'data-required') {

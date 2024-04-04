@@ -29,8 +29,8 @@ export const EtasuStatusComponent = props => {
 
   const refreshEtasu = () => {
     if(remsAdminResponse) {
-        const standarEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
-        standardsBasedGetEtasu(standarEtasuUrl, data, setRemsAdminResponse);
+        const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+        standardsBasedGetEtasu(standardEtasuUrl, data, setRemsAdminResponse);
         setLastCheckedEtasuTime(Date.now());
     }
   }
