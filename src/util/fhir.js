@@ -80,10 +80,21 @@ function createMedicationDispenseFromMedicationRequest(medicationRequest) {
   return medicationDispense;
 }
 
+function createMedicationFromMedicationRequest(medicationRequest) {
+  let medication = {};
+  medication.resourceType = 'Medication';
+  medication.id = medicationRequest?.id + '-med';
+  if (medicationRequest.medicationCodeableConcept) {
+    medication.code = medicationRequest.medicationCodeableConcept;
+  }
+  return medication;
+}
+
 export {
   fhir,
   getAge,
   getDrugCodeableConceptFromMedicationRequest,
   getDrugCodeFromMedicationRequest,
-  createMedicationDispenseFromMedicationRequest
+  createMedicationDispenseFromMedicationRequest,
+  createMedicationFromMedicationRequest
 };

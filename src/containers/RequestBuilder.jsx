@@ -306,6 +306,7 @@ const RequestBuilder = props => {
               <Grid item>
                 <EtasuStatus 
                   code={state.code}
+                  request={state.request}
                 />
               </Grid>
             )}

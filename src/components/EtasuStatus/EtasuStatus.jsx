@@ -1,43 +1,55 @@
-import { EtasuStatusButton } from './EtasuStatusButton.jsx';
-import { EtasuStatusModal } from './EtasuStatusModal.jsx';
 import { useState, useEffect, useContext } from 'react';
-import { Card, Typography } from '@mui/material';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
-import axios from 'axios';
 import { EtasuStatusComponent } from './EtasuStatusComponent.jsx';
-import { getEtasu } from '../../util/util.js';
+import { standardsBasedGetEtasu } from '../../util/util.js';
+import { createMedicationFromMedicationRequest } from '../../util/fhir.js';
 
 // converts code into etasu for the component to render
 // simplifies usage for applications that only know the code, not the case they want to display
 export const EtasuStatus = props => {
   const [globalState, _] = useContext(SettingsContext);
 
-  const { code } =
-    props;
+  const { code, request } = props;
   const [remsAdminResponse, setRemsAdminResponse] = useState({});
-  useEffect(() => getEtasuStatus(), [code]);
-  const getEtasuStatus = () => {
-    const patientFirstName = globalState.patient?.name?.at(0)?.given?.at(0);
-    const patientLastName = globalState.patient?.name?.at(0)?.family;
-    const patientDOB = globalState.patient?.birthDate;
+  const [etasuData, setEtasuData] = useState({});
+  const [display, setDisplay] = useState('');
 
-    console.log(
-      'get Etastu Status: ' +
-        patientFirstName +
-        ' ' +
-        patientLastName +
-        ' - ' +
-        patientDOB +
-        ' - ' +
-        code
-    );
-    const etasuUrl = `${globalState.remsAdminServer}/etasu/met/patient/${patientFirstName}/${patientLastName}/${patientDOB}/drugCode/${code}`;
-    getEtasu(etasuUrl, setRemsAdminResponse);
+  useEffect(() => { 
+    const medication = createMedicationFromMedicationRequest(request);
+    getEtasuStatus(medication);
+  }, [code]);
+
+  const getEtasuStatus = (medication) => {
+    const body = makeBody(medication);
+    setEtasuData(body);
+    const display = body.parameter[1]?.resource.code.coding[0].display;
+    setDisplay(display);
+    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    standardsBasedGetEtasu(standardEtasuUrl, body, setRemsAdminResponse);
+
   };
+
+
+  const makeBody = (medication) => {
+    console.log('patient -- > ', globalState.patient);
+    return {
+      resourceType: "Parameters",
+      parameter: [
+        {
+          name: 'patient',
+          resource: globalState.patient
+        },
+        {
+          name: 'medication',
+          resource: medication
+        }
+      ]
+    }
+  }
 
   return (
     <>
-      {remsAdminResponse.case_number ? <EtasuStatusComponent remsAdminResponseInit={remsAdminResponse} /> : ""}
+      {remsAdminResponse.contained ? <EtasuStatusComponent remsAdminResponseInit={remsAdminResponse} data={etasuData} display={display} /> : ""}
     </>
   );
 };

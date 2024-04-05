@@ -5,8 +5,7 @@ import { getStatusColor } from './EtasuStatusComponent';
 import './EtasuStatusModal.css';
 import CheckCircle from '@mui/icons-material/CheckCircle';
 import Close from '@mui/icons-material/Close';
-
-const getIdText = remsAdminResponse => remsAdminResponse?.case_number || 'N/A';
+import { convertStatus } from './EtasuStatusButton';
 
 export const EtasuStatusModal = props => {
   const { callback, onClose, remsAdminResponse, update } = props;
@@ -28,10 +27,7 @@ export const EtasuStatusModal = props => {
             <div className="status-icon" style={{ backgroundColor: color }}></div>
             <Grid container columns={12}>
                 <Grid item xs={10}>
-                    <div className="bundle-entry">
-                        Case Number: {getIdText(remsAdminResponse)}
-                    </div>
-                    <div className="bundle-entry">Status: {remsAdminResponse.status || 'N/A'}</div>
+                    <div className="bundle-entry">Status: {convertStatus(remsAdminResponse.status)}</div>
                 </Grid>
                 <Grid item xs={2}>
                     <div className="bundle-entry">
@@ -51,26 +47,26 @@ export const EtasuStatusModal = props => {
                 <br></br>
                 <h3>ETASU</h3>
                 <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {remsAdminResponse ? (
+                    {remsAdminResponse && remsAdminResponse.contained ? (
                         <List>
-                        {remsAdminResponse?.metRequirements?.map((metRequirements) => (
+                        {remsAdminResponse?.contained[0]?.parameter.map((metRequirements) => (
                             <ListItem
                                 disablePadding
-                                key={metRequirements.metRequirementId}
+                                key={metRequirements.name}
                                 data-testid="etasu-item"
                             >
                             <ListItemIcon>
-                                {metRequirements.completed ? (
+                                {metRequirements.resource.status === 'success' ? (
                                 <CheckCircle color="success" />
                                 ) : (
                                 <Close color="warning" />
                                 )}
                             </ListItemIcon>
-                            {metRequirements.completed ? (
-                                <ListItemText primary={metRequirements.requirementName} />
+                            {metRequirements.resource.status === 'success' ? (
+                                <ListItemText primary={metRequirements.name} />
                             ) : (
                                 <ListItemText
-                                primary={metRequirements.requirementName}
+                                primary={metRequirements.name}
                                 secondary={metRequirements.requirementDescription}
                                 />
                             )}
