@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
-import env from 'env-var';
 import Home from '../components/RequestDashboard/Home';
 
-const Index = props => {
+const Index = () => {
   const [client, setClient] = useState(null);
 
   useEffect(() => {

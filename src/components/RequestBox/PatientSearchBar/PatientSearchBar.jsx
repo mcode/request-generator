@@ -1,13 +1,12 @@
 import { Autocomplete, Box, TextField, IconButton } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PrefetchTemplate } from '../../../PrefetchTemplate';
 import { defaultValues } from '../../../util/data';
-import RefreshIcon from '@mui/icons-material/Refresh';
 
 import PatientBox from '../../SMARTBox/PatientBox';
 import './PatientSearchBarStyle.css';
 
-export default function PatientSearchBar(props) {
+const PatientSearchBar = props => {
   const [options] = useState(defaultValues);
   const [input, setInput] = useState('');
   const [listOfPatients, setListOfPatients] = useState([]);
@@ -27,12 +26,12 @@ export default function PatientSearchBar(props) {
     return '';
   }
 
-  function getFilteredLength(searchstring, listOfPatients) {
+  function getFilteredLength(searchString, listOfPatients) {
     const filteredListOfPatients = listOfPatients[0].filter(element => {
-      if (searchstring === '') {
+      if (searchString === '') {
         return element;
       } else {
-        return element.name.toLowerCase().includes(searchstring);
+        return element.name.toLowerCase().includes(searchString);
       }
     });
 
@@ -58,21 +57,18 @@ export default function PatientSearchBar(props) {
             Showing {getFilteredLength(input, listOfPatients)} of {props.searchablePatients.length}{' '}
             records
           </p>
-          <IconButton color="primary" onClick={() => props.getPatients()} size="large">
-            <RefreshIcon fontSize="large" />
-          </IconButton>
         </span>
         {displayFilteredPatientList(input, listOfPatients[0])}
       </Box>
     );
   }
 
-  function displayFilteredPatientList(searchstring, listOfPatients) {
+  function displayFilteredPatientList(searchString, listOfPatients) {
     const filteredListOfPatients = listOfPatients.filter(element => {
-      if (searchstring === '') {
+      if (searchString === '') {
         return element;
       } else {
-        return element.name.toLowerCase().includes(searchstring);
+        return element.name.toLowerCase().includes(searchString);
       }
     });
     return (
@@ -87,7 +83,6 @@ export default function PatientSearchBar(props) {
                 request={props.request}
                 launchUrl={props.launchUrl}
                 callback={props.callback}
-                callbackList={props.callbackList}
                 callbackMap={props.callbackMap}
                 updatePrefetchCallback={PrefetchTemplate.generateQueries}
                 clearCallback={props.clearCallback}
@@ -103,4 +98,6 @@ export default function PatientSearchBar(props) {
   }
 
   return <span>{listOfPatients[0] ? patientSearchBar() : 'loading...'}</span>;
-}
+};
+
+export default PatientSearchBar;

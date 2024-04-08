@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Paper } from '@mui/material';
-import DashboardElement from '../DashboardElement';
+import FormElement from '../FormElement';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import useStyles from '../styles';
@@ -61,9 +61,7 @@ const FormsSection = props => {
       />
       {resources.length > 0 ? (
         renderElements().map(e => {
-          return (
-            <DashboardElement key={e.id} status={e.status} resource={e} client={props.client} />
-          );
+          return <FormElement key={e.id} status={e.status} resource={e} client={props.client} />;
         })
       ) : (
         <Paper className={classes.dashboardElement}>{message}</Paper>

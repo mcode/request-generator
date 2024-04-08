@@ -1,7 +1,7 @@
 import env from 'env-var';
 import queryString from 'querystring';
 import FHIR from 'fhirclient';
-import React, { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import RegisterPage from './register/RegisterPage';
 
 const Launch = props => {
@@ -18,14 +18,13 @@ const Launch = props => {
   const smartLaunch = () => {
     let clients = JSON.parse(localStorage.getItem('clients') || '[]');
     if (clients.length === 0) {
-      const defaultClient = env.get('REACT_APP_CLIENT').asString();
-      const defaultIss = env.get('REACT_APP_EHR_BASE').asString();
+      const defaultClient = env.get('VITE_CLIENT').asString();
+      const defaultIss = env.get('VITE_EHR_BASE').asString();
       if (defaultClient && defaultIss) {
         clients = [{ client: defaultClient, name: defaultIss }];
         localStorage.setItem('clients', JSON.stringify(clients));
       }
     }
-    const urlSearchString = window.location.search;
     const params = queryString.parse((window.location.hash || '').replace(/\/?#\/?launch\?/, ''));
     const iss = params.iss;
     console.log('iss: ' + iss);
@@ -42,7 +41,7 @@ const Launch = props => {
         FHIR.oauth2
           .authorize({
             clientId: clientId,
-            scope: env.get('REACT_APP_CLIENT_SCOPES').asString(),
+            scope: env.get('VITE_CLIENT_SCOPES').asString(),
             redirectUri: props.redirect,
             iss: iss,
             launch: launch

@@ -234,6 +234,11 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     if (system.endsWith('rxnorm')) {
       //     Medication Drug Description
       xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
+      //     Medication Drug Code
+      var drugDbCode = doc.createElement('DrugDBCode');
+      xmlAddTextNode(doc, drugDbCode, 'Code', coding.code);
+      xmlAddTextNode(doc, drugDbCode, 'Qualifier', 'BPK'); // Branded Package BPCK (BPK)
+      drugCoded.appendChild(drugDbCode);
     } else if (system.endsWith('ndc')) {
       //     Medication Drug Code
       var productCode = doc.createElement('ProductCode');

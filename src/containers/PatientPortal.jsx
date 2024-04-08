@@ -8,18 +8,21 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import env from 'env-var';
+import { actionTypes } from './ContextProvider/reducer';
+import { SettingsContext } from './ContextProvider/SettingsProvider';
 
 const PatientPortal = () => {
   const classes = useStyles();
   const [token, setToken] = useState(null);
   const [client, setClient] = useState(null);
   const [patientName, setPatientName] = useState(null);
+  const [, dispatch] = React.useContext(SettingsContext);
 
   useEffect(() => {
     if (token) {
       const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64'));
       const client = FHIR.client({
-        serverUrl: env.get('REACT_APP_EHR_BASE').asString(),
+        serverUrl: env.get('VITE_EHR_BASE').asString(),
         tokenResponse: {
           type: 'bearer',
           access_token: token,
@@ -28,6 +31,10 @@ const PatientPortal = () => {
       });
       client.request(`Patient/${client.patient.id}`).then(patient => {
         setPatientName(getName(patient));
+        dispatch({
+          type: actionTypes.updatePatient,
+          value: patient
+        });
       });
       setClient(client);
       document.title = 'EHR | Patient Portal';

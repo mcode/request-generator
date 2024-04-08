@@ -4,37 +4,37 @@ const headerDefinitions = {
   alternativeTherapy: {
     display: 'Alternative Therapy Cards Allowed',
     type: 'check',
-    default: env.get('REACT_APP_ALT_DRUG').asBool()
+    default: env.get('VITE_ALT_DRUG').asBool()
   },
   baseUrl: {
     display: 'Base Server',
     type: 'input',
-    default: env.get('REACT_APP_EHR_BASE').asString()
+    default: env.get('VITE_EHR_BASE').asString()
   },
   cdsUrl: {
-    display: 'REMS Admin',
+    display: 'REMS Admin Reset Url',
     type: 'input',
-    default: env.get('REACT_APP_CDS_SERVICE').asString()
+    default: env.get('VITE_CDS_SERVICE').asString()
   },
   defaultUser: {
     display: 'Default User',
     type: 'input',
-    default: env.get('REACT_APP_DEFAULT_USER').asString()
+    default: env.get('VITE_DEFAULT_USER').asString()
   },
   ehrUrl: {
     display: 'EHR Server',
     type: 'input',
-    default: env.get('REACT_APP_EHR_SERVER').asString()
+    default: env.get('VITE_EHR_SERVER').asString()
   },
   ehrUrlSentToRemsAdminForPreFetch: {
     display: 'EHR Server Sent to REMS Admin for Prefetch',
     type: 'input',
-    default: env.get('REACT_APP_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH').asString()
+    default: env.get('VITE_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH').asString()
   },
   generateJsonToken: {
     display: 'Generate JSON Web Token',
     type: 'check',
-    default: env.get('REACT_APP_GENERATE_JWT').asBool()
+    default: env.get('VITE_GENERATE_JWT').asBool()
   },
   includeConfig: {
     display: 'Include Configuration in CRD Request',
@@ -44,37 +44,22 @@ const headerDefinitions = {
   launchUrl: {
     display: 'DTR Launch URL (QuestionnaireForm)',
     type: 'input',
-    default: env.get('REACT_APP_LAUNCH_URL').asString()
-  },
-  orderSelect: {
-    display: 'Order Select Rest End Point',
-    type: 'input',
-    default: env.get('REACT_APP_ORDER_SELECT').asString()
-  },
-  orderSign: {
-    display: 'Order Sign Rest End Point',
-    type: 'input',
-    default: env.get('REACT_APP_ORDER_SIGN').asString()
+    default: env.get('VITE_LAUNCH_URL').asString()
   },
   patientFhirQuery: {
     display: 'Patient FHIR Query',
     type: 'input',
-    default: env.get('REACT_APP_PATIENT_FHIR_QUERY').asString()
-  },
-  patientView: {
-    display: 'Patient View Rest End Point',
-    type: 'input',
-    default: env.get('REACT_APP_PATIENT_VIEW').asString()
+    default: env.get('VITE_PATIENT_FHIR_QUERY').asString()
   },
   pimsUrl: {
     display: 'PIMS Server',
     type: 'input',
-    default: env.get('REACT_APP_PIMS_SERVER').asString()
+    default: env.get('VITE_PIMS_SERVER').asString()
   },
   responseExpirationDays: {
     display: 'In Progress Form Expiration Days',
     type: 'input',
-    default: env.get('REACT_APP_RESPONSE_EXPIRATION_DAYS').asInt()
+    default: env.get('VITE_RESPONSE_EXPIRATION_DAYS').asInt()
   },
   sendPrefetch: {
     display: 'Send Prefetch',
@@ -84,9 +69,53 @@ const headerDefinitions = {
   smartAppUrl: {
     display: 'SMART App',
     type: 'input',
-    default: env.get('REACT_APP_SMART_LAUNCH_URL').asString()
+    default: env.get('VITE_SMART_LAUNCH_URL').asString()
+  },
+  remsAdminServer: {
+    display: 'REMS Admin Server',
+    type: 'input',
+    default: env.get('VITE_SERVER').asString()
   }
 };
+
+const medicationRequestToRemsAdmins = Object.freeze([
+  {
+    rxnorm: 2183126,
+    display: 'Turalio 200 MG Oral Capsule',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+    ]
+  },
+  {
+    rxnorm: 6064,
+    display: 'Isotretinoin 20 MG Oral Capsule',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+    ]
+  },
+  {
+    rxnorm: 1237051,
+    display: 'TIRF 200 UG Oral Transmucosal Lozenge',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+    ]
+  },
+  {
+    rxnorm: 1666386,
+    display: 'Addyi 100 MG Oral Tablet',
+    hookEndpoints: [
+      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+    ]
+  }
+]);
 
 const types = {
   error: 'errorClass',
@@ -213,4 +242,12 @@ const shortNameMap = {
   'http://hl7.org/fhir/sid/ndc': 'NDC'
 };
 
-export { defaultValues, genderOptions, headerDefinitions, shortNameMap, stateOptions, types };
+export {
+  defaultValues,
+  genderOptions,
+  headerDefinitions,
+  shortNameMap,
+  stateOptions,
+  types,
+  medicationRequestToRemsAdmins
+};

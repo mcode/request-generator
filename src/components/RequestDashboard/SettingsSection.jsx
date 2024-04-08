@@ -1,37 +1,54 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Button, Box, FormControlLabel, Grid, Checkbox, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Paper,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  TextField
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
-import useStyles from './styles';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
-import { headerDefinitions, types } from '../../util/data';
-import { actionTypes } from '../../containers/ContextProvider/reducer';
+import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
+import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
+const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view'];
+
 const SettingsSection = props => {
-  const classes = useStyles();
   const [state, dispatch] = React.useContext(SettingsContext);
-  const [headers, setHeaders] = useState([]);
-  const [originalValues, setOriginalValues] = useState([]);
+
+  const fieldHeaders = Object.keys(headerDefinitions)
+    .map(key => ({ ...headerDefinitions[key], key }))
+    // Display the fields in descending order of type. If two fields are the same type,
+    // then sort by ascending order of display text.
+    .sort(
+      (self, other) =>
+        -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
+    );
 
   useEffect(() => {
-    const headers = Object.keys(headerDefinitions)
-      .map(key => ({ ...headerDefinitions[key], key }))
-      // Display the fields in descending order of type. If two fields are the same type, then sort by ascending order of display text.
-      .sort(
-        (self, other) =>
-          -self.type.localeCompare(other.type) || self.display.localeCompare(other.display)
-      );
-    setHeaders(headers);
-    const originals = Object.keys(headerDefinitions).map(key => [key, state[key]]);
-    setOriginalValues(originals);
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(element => {
+    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(([key, value]) => {
       try {
-        updateSetting(element[0], element[1]);
+        updateSetting(key, value);
       } catch {
-        if (element[0]) {
-          console.log('Could not load setting:' + element[0]);
+        if (!key) {
+          console.log('Could not load setting:' + key);
         }
       }
     });
@@ -41,6 +58,7 @@ const SettingsSection = props => {
       type: actionTypes.flagStartup
     });
   }, []);
+
   const updateSetting = (key, value) => {
     dispatch({
       type: actionTypes.updateSetting,
@@ -48,20 +66,16 @@ const SettingsSection = props => {
       value: value
     });
   };
+
   const saveSettings = () => {
-    const headers = Object.keys(headerDefinitions).map(key => [key, state[key]]);
+    const headers = Object.keys(state).map(key => [key, state[key]]);
     localStorage.setItem('reqgenSettings', JSON.stringify(headers));
   };
 
   const resetSettings = () => {
-    originalValues.forEach(e => {
-      try {
-        updateSetting(e[0], e[1]);
-      } catch {
-        console.log('Failed to reset setting value');
-      }
-    });
+    dispatch({ type: actionTypes.resetSettings });
   };
+
   const clearQuestionnaireResponses =
     ({ defaultUser }) =>
     () => {
@@ -105,13 +119,11 @@ const SettingsSection = props => {
           console.log(error);
         });
     };
+
   const resetRemsAdmin =
     ({ cdsUrl }) =>
     () => {
-      let url = new URL(cdsUrl);
-      const resetUrl = url.origin + '/etasu/reset';
-
-      fetch(resetUrl, {
+      fetch(cdsUrl, {
         method: 'POST'
       })
         .then(response => {
@@ -123,6 +135,7 @@ const SettingsSection = props => {
           console.log(error);
         });
     };
+
   const clearMedicationDispenses =
     ({ ehrUrl, access_token }) =>
     () => {
@@ -153,16 +166,18 @@ const SettingsSection = props => {
           console.log(e);
         });
     };
+
   const reconnectEhr =
     ({ baseUrl, redirect }) =>
     () => {
       FHIR.oauth2.authorize({
-        clientId: env.get('REACT_APP_CLIENT').asString(),
+        clientId: env.get('VITE_CLIENT').asString(),
         iss: baseUrl,
         redirectUri: redirect,
-        scope: env.get('REACT_APP_CLIENT_SCOPES').asString()
+        scope: env.get('VITE_CLIENT_SCOPES').asString()
       });
     };
+
   const resetHeaderDefinitions = [
     {
       display: 'Reset PIMS Database',
@@ -195,9 +210,9 @@ const SettingsSection = props => {
   let firstCheckbox = true;
   let showBreak = true;
   return (
-    <Box flexGrow={1}>
-      <Grid container spacing={2} sx={{ padding: '20px' }}>
-        {headers.map(({ key, type, display }) => {
+    <Grid container spacing={2} sx={{ padding: '20px' }}>
+      <Grid container item xs={12} direction="row" spacing={2}>
+        {fieldHeaders.map(({ key, type, display }) => {
           switch (type) {
             case 'input':
               return (
@@ -207,9 +222,7 @@ const SettingsSection = props => {
                       label={display}
                       variant="outlined"
                       value={state[key]}
-                      onChange={event => {
-                        updateSetting(key, event.target.value);
-                      }}
+                      onChange={event => updateSetting(key, event.target.value)}
                       sx={{ width: '100%' }}
                     />
                   </div>
@@ -230,9 +243,7 @@ const SettingsSection = props => {
                       control={
                         <Checkbox
                           checked={Boolean(state[key])}
-                          onChange={event => {
-                            updateSetting(key, event.target.checked);
-                          }}
+                          onChange={event => updateSetting(key, event.target.checked)}
                         />
                       }
                       label={display}
@@ -248,35 +259,162 @@ const SettingsSection = props => {
               );
           }
         })}
+      </Grid>
+
+      <Grid item xs={12} sx={{ width: '100%', overflow: 'hidden' }}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            border: '1px solid #535353',
+            'td, th': { border: 0 },
+            'td, input': { py: 1 },
+            maxHeight: 440
+          }}
+        >
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow sx={{ th: { fontWeight: 'bold' } }}>
+                <TableCell width={500}>Medication Display</TableCell>
+                <TableCell width={200}>Medication RxNorm Code</TableCell>
+                <TableCell width={200}>CDS Hook</TableCell>
+                <TableCell width={500}>REMS Admin Endpoint</TableCell>
+                {/* This empty TableCell corresponds to the add and delete 
+                buttons. It is used to fill up the sticky header which 
+                will appear over the gray/white table rows. */}
+                <TableCell width={150} />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.entries(state.medicationRequestToRemsAdmins).map(([key, row]) => {
+                return (
+                  <TableRow key={key}>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={row.display}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { display: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={row.rxnorm}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { rxnorm: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        labelId="dropdown-label"
+                        id="dropdown"
+                        value={row.hook}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { hook: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      >
+                        {CDS_HOOKS.map(hook => (
+                          <MenuItem key={hook} value={hook}>
+                            {hook}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        value={row.remsAdmin}
+                        onChange={event =>
+                          dispatch({
+                            type: actionTypes.updateCdsHookSetting,
+                            settingId: key,
+                            value: { remsAdmin: event.target.value }
+                          })
+                        }
+                        sx={{ width: '100%' }}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Tooltip title="Add a new row below">
+                        <IconButton
+                          color="primary"
+                          onClick={() =>
+                            dispatch({ type: actionTypes.addCdsHookSetting, settingId: key })
+                          }
+                          size="large"
+                        >
+                          <AddIcon fontSize="large" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete this row">
+                        <IconButton
+                          color="primary"
+                          onClick={() =>
+                            dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key })
+                          }
+                          size="large"
+                        >
+                          <DeleteIcon fontSize="large" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+
+      {/* spacer */}
+      <hr
+        style={{
+          width: '100%'
+        }}
+      />
+
+      <Grid container item xs={6} justifyContent="flex-start" direction="row" spacing={2}>
         {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
           return (
-            <Grid item key={key} xs={6}>
+            <Grid item key={key}>
               <Button variant={variant ? variant : 'outlined'} onClick={reset(state)}>
                 {display}
               </Button>
             </Grid>
           );
         })}
-        {/* spacer */}
-        <hr
-          style={{
-            width: '100%'
-          }}
-        />
-        <Grid item xs={8} />
+      </Grid>
 
-        <Grid item xs={2}>
+      <Grid container item xs={6} justifyContent="flex-end" direction="row" spacing={2}>
+        <Grid item>
           <Button variant="outlined" onClick={resetSettings}>
             Reset
           </Button>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item>
           <Button variant="contained" onClick={saveSettings}>
             Save
           </Button>
         </Grid>
       </Grid>
-    </Box>
+    </Grid>
   );
 };
 

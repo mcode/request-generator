@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import { memo, useState } from 'react';
 import { Button, Grid, Tooltip } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -6,7 +6,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import useStyles from './styles';
 import PatientSection from './PatientSection';
-import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import SettingsSection from './SettingsSection';
 import TasksSection from './TasksSection';
 
@@ -16,7 +15,6 @@ const Home = props => {
   const taskButton = 'View Tasks';
   const settingsButton = 'Settings';
   const [section, setSection] = useState('');
-  const [state, dispatch] = React.useContext(SettingsContext);
 
   const openSection = buttonId => {
     setSection(buttonId);
@@ -79,12 +77,10 @@ const Home = props => {
 
   // render content of each view, makes other content invisible so it doesn't rerender every time
   const renderSectionView = () => {
-    let renderSection = <div>Loading...</div>;
-
     if (section) {
-      let patientRenderClass = section === patientButton ? '' : classes.disappear;
-      let taskRenderClass = section === taskButton ? '' : classes.disappear;
-      let settingsRenderClass = section === settingsButton ? '' : classes.disappear;
+      const patientRenderClass = section === patientButton ? '' : classes.disappear;
+      const taskRenderClass = section === taskButton ? '' : classes.disappear;
+      const settingsRenderClass = section === settingsButton ? '' : classes.disappear;
 
       return (
         <div className={classes.mainSectionView}>

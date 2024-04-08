@@ -9,7 +9,9 @@ import {
   Stack,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  MenuItem,
+  Menu
 } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PersonIcon from '@mui/icons-material/Person';
@@ -19,29 +21,66 @@ import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CheckIcon from '@mui/icons-material/Check';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import useStyles from './styles';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import { MemoizedTabPanel } from './TabPanel';
 import { Info, Refresh } from '@mui/icons-material';
-import MenuItem from '@mui/material/MenuItem';
+import { retrieveLaunchContext } from '../../util/util';
 
+const taskStatus = Object.freeze({
+  inProgress: 'in-progress',
+  completed: 'completed',
+  ready: 'ready',
+  cancelled: 'cancelled',
+  onHold: 'on-hold'
+});
 const TasksSection = props => {
   const classes = useStyles();
   const [tasks, setTasks] = useState([]);
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [state] = React.useContext(SettingsContext);
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState('');
+  const [anchorStatus, setAnchorStatus] = useState(null);
+  const [anchorAssign, setAnchorAssign] = useState(null);
 
-  const handleChangeAssign = (event, task) => {
-    if (event.target.value === 'me') {
-      assignTaskToMe(task);
-    } else {
-      assignTaskToPatient(task);
-    }
+  const menuOpen = Boolean(anchorStatus);
+  const assignMenuOpen = Boolean(anchorAssign);
+
+  const handleMenuClick = (event, task) => {
+    setAnchorStatus({
+      anchor: event.currentTarget,
+      task: task
+    });
   };
-
+  const handleMenuClose = () => {
+    setAnchorStatus(null);
+  };
+  const handleTaskStatusOptionSelect = (task, status) => {
+    updateTaskStatus(task, status);
+    handleMenuClose();
+  };
+  const handleChangeAssign = (task, val) => {
+    const taskClone = structuredClone(task);
+    if (val === 'me') {
+      assignTaskToMe(taskClone);
+    } else {
+      assignTaskToPatient(taskClone);
+    }
+    handleAssignMenuClose();
+  };
+  const handleAssignMenuClick = (event, task) => {
+    setAnchorAssign({
+      anchor: event.currentTarget,
+      task: task
+    });
+  };
+  const handleAssignMenuClose = () => {
+    setAnchorAssign(null);
+  };
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -53,8 +92,22 @@ const TasksSection = props => {
     setTaskToDelete(task);
     setOpen(true);
   };
+  const washTask = task => {
+    if (task.owner && task.owner.id) {
+      task.owner = {
+        reference: `${task.owner.resourceType}/${task.owner.id}`
+      };
+    }
+    if (task.for && task.for.id) {
+      task.for = {
+        reference: `${task.for.resourceType}/${task.for.id}`
+      };
+    }
+    return task;
+  };
   const assignTaskToMe = task => {
     if (task) {
+      task = washTask(task);
       let user = props.client.user.id;
       if (!user) {
         user = `Practitioner/${state.defaultUser}`;
@@ -62,12 +115,7 @@ const TasksSection = props => {
       task.owner = {
         reference: user
       };
-      if (task.for) {
-        // reset 'for' element before updating
-        task.for = {
-          reference: `${task.for.resourceType}/${task.for.id}`
-        };
-      }
+
       props.client.update(task).then(e => {
         fetchTasks();
       });
@@ -75,17 +123,10 @@ const TasksSection = props => {
   };
   const assignTaskToPatient = task => {
     if (task) {
-      let patientId = task.for.id;
-      let user = `Patient/${patientId}`;
+      task = washTask(task);
       task.owner = {
-        reference: user
+        reference: task.for.reference
       };
-      if (task.for) {
-        // reset 'for' element before updating
-        task.for = {
-          reference: `${task.for.resourceType}/${task.for.id}`
-        };
-      }
       props.client.update(task).then(e => {
         fetchTasks();
       });
@@ -122,6 +163,75 @@ const TasksSection = props => {
   useEffect(() => {
     fetchTasks();
   }, [state.patient]);
+
+  const updateTaskStatus = (task, status) => {
+    task.status = status;
+    const updatedTask = structuredClone(task); // structured clone may not work on older browsers
+    props.client.update(washTask(updatedTask)).then(e => {
+      fetchTasks();
+    });
+  };
+  const launchTask = lTask => {
+    let link = '';
+    let appContext = '';
+    lTask.input.forEach(input => {
+      const code = input?.type?.coding?.[0]?.code;
+      if (code && code.toLowerCase() === 'smartonfhir-application') {
+        link = input.valueUrl;
+      } else if (code && code.toLowerCase() === 'smartonfhir-appcontext') {
+        appContext = input.valueString;
+      }
+    });
+    const smartLink = {
+      appContext: encodeURIComponent(appContext),
+      type: 'smart',
+      url: link
+    };
+    const patient = lTask.for.id;
+    retrieveLaunchContext(smartLink, patient, props.client.state).then(result => {
+      updateTaskStatus(lTask, 'in-progress');
+      lTask.status = 'in-progress';
+      props.client.update(washTask(lTask)).then(_e => {
+        fetchTasks();
+      });
+      window.open(result.url, '_blank');
+    });
+  };
+  const renderStatusMenu = () => {
+    return (
+      <Menu anchorEl={anchorStatus?.anchor} open={menuOpen} onClose={handleMenuClose}>
+        {Object.keys(taskStatus).map(op => {
+          return (
+            <MenuItem
+              key={op}
+              onClick={() => {
+                handleTaskStatusOptionSelect(anchorStatus.task, taskStatus[op]);
+              }}
+            >
+              {taskStatus[op]}
+            </MenuItem>
+          );
+        })}
+      </Menu>
+    );
+  };
+  const renderAssignMenu = () => {
+    const assignOptions = ['me', 'patient'];
+    return (
+      <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
+        {assignOptions.map(op => {
+          return (
+            <MenuItem
+              key={op}
+              onClick={() => {
+                handleChangeAssign(anchorAssign?.task, op);
+              }}
+            >{`Assign to ${op}`}</MenuItem>
+          );
+        })}
+      </Menu>
+    );
+  };
   const renderTasks = taskSubset => {
     if (taskSubset.length > 0) {
       return (
@@ -135,8 +245,13 @@ const TasksSection = props => {
   };
   const renderTask = task => {
     let statusColor = '#555';
-    if (task.status.toLowerCase() === 'ready') {
+    const tStatus = task.status.toLowerCase();
+    if (tStatus === taskStatus.ready) {
       statusColor = '#198754';
+    } else if (tStatus === taskStatus.inProgress) {
+      statusColor = '#fd7e14';
+    } else if (tStatus === taskStatus.completed) {
+      statusColor = '#0d6efd';
     }
 
     let taskForName = 'N/A';
@@ -205,32 +320,31 @@ const TasksSection = props => {
               {ownerText}
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <Button variant="outlined" startIcon={<Info />}>
-                View Resource
+              <Button
+                variant="outlined"
+                onClick={event => {
+                  handleMenuClick(event, task);
+                }}
+                endIcon={<ExpandMoreIcon />}
+              >
+                Status
               </Button>
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={3}>
-              <FormControl 
-                variant="filled"
-                sx={{ marginTop: 0, marginBottom: 0, minWidth: 120}}
-                size="small"
+            <Grid className={classes.taskTabButton} item xs={2}>
+              <Button
+                variant="outlined"
+                onClick={event => {
+                  handleAssignMenuClick(event, task);
+                }}
+                endIcon={<ExpandMoreIcon />}
               >
-                <InputLabel id="demo-simple-select-label">Assign</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  onChange={e => handleChangeAssign(e, task)}
-                  defaultValue={''}
-                >
-                  <MenuItem value="me">Assign to me</MenuItem>
-                  <MenuItem value="patient">Assign to patient</MenuItem>
-                </Select>
-              </FormControl>
+                Assign
+              </Button>
             </Grid>
             <Grid item xs={1}>
               {/*spacer*/}
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={2}>
+            <Grid className={classes.taskTabButton} item xs={3}>
               <Button
                 variant="contained"
                 color="error"
@@ -243,8 +357,14 @@ const TasksSection = props => {
               </Button>
             </Grid>
             <Grid className={classes.taskTabButton} item xs={3}>
-              <Button variant="contained" endIcon={<ArrowForwardIcon />}>
-                Process Task
+              <Button
+                variant="contained"
+                onClick={() => {
+                  launchTask(task);
+                }}
+                endIcon={<ArrowForwardIcon />}
+              >
+                Launch
               </Button>
             </Grid>
           </Grid>
@@ -253,42 +373,10 @@ const TasksSection = props => {
     );
   };
 
-  const unassignedTasks = tasks.filter(t => !t.owner);
-  const assignedTasks = tasks.filter(t => t.owner?.id === state.defaultUser); // should check current user, not default
-  return (
-    <>
-      <Modal open={open} onClose={handleClose}>
-        <Box className={classes.taskDeleteModal}>
-          <Grid container>
-            <Grid className={classes.taskDeleteHeader} item xs={12}>
-              {taskToDelete ? `Are you sure you want to delete Task ${taskToDelete.id}` : ''}
-            </Grid>
-            <Grid item xs={7}>
-              {/*spacer*/}
-            </Grid>
-            <Grid item xs={3}>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                No
-              </Button>
-            </Grid>
-            <Grid item xs={2}>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  deleteTask();
-                }}
-              >
-                Yes
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Modal>
+  const renderMainView = () => {
+    const unassignedTasks = tasks.filter(t => !t.owner);
+    const assignedTasks = tasks.filter(t => t.owner?.id === state.defaultUser); // should check current user, not default
+    return (
       <div>
         <Grid container>
           <Grid item xs={10}>
@@ -323,6 +411,51 @@ const TasksSection = props => {
           {renderTasks(unassignedTasks)}
         </MemoizedTabPanel>
       </div>
+    );
+  };
+
+  const renderPortalView = () => {
+    const patientTasks = tasks.filter(t => t.owner?.id === state.patient?.id);
+    return renderTasks(patientTasks);
+  };
+
+  return (
+    <>
+      <Modal open={open} onClose={handleClose}>
+        <Box className={classes.taskDeleteModal}>
+          <Grid container>
+            <Grid className={classes.taskDeleteHeader} item xs={12}>
+              {taskToDelete ? `Are you sure you want to delete Task ${taskToDelete.id}` : ''}
+            </Grid>
+            <Grid item xs={7}>
+              {/*spacer*/}
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                No
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  deleteTask();
+                }}
+              >
+                Yes
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
+      {renderStatusMenu()}
+      {renderAssignMenu()}
+      {props.portalView ? renderPortalView() : renderMainView()}
     </>
   );
 };

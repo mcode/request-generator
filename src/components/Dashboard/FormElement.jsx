@@ -1,13 +1,12 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { retrieveLaunchContext } from '../../util/util';
-import { headers } from '../../util/data.js';
 import { Paper } from '@mui/material';
-import useStyles from './styles';
+import useStyles from './styles.jsx';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import env from 'env-var';
 
-const DashboardElement = props => {
+const FormElement = props => {
   const classes = useStyles();
   const resource = props.resource;
   const clientState = props.client.state;
@@ -24,7 +23,7 @@ const DashboardElement = props => {
     const link = {
       appContext: encodeURIComponent(`response=QuestionnaireResponse/${resource.id}`),
       type: 'smart',
-      url: env.get('REACT_APP_LAUNCH_URL').asString()
+      url: env.get('VITE_LAUNCH_URL').asString()
     };
     retrieveLaunchContext(link, clientState.tokenResponse.patient, clientState).then(e => {
       window.open(e.url, '_blank');
@@ -56,4 +55,4 @@ const DashboardElement = props => {
   );
 };
 
-export default memo(DashboardElement);
+export default memo(FormElement);

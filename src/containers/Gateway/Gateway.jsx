@@ -1,24 +1,17 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState } from 'react';
 import FHIR from 'fhirclient';
 import env from 'env-var';
-import {
-  Button,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  TextField,
-  Accordion,
-  AccordionDetails
-} from '@mui/material';
+import { Button, FormControl, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import useStyles from './styles';
 
 const Gateway = props => {
   const classes = useStyles();
-  const envFhir = env.get('REACT_APP_EHR_SERVER').asString();
-  const envClient = env.get('REACT_APP_CLIENT').asString();
-  const envScope = env.get('REACT_APP_CLIENT_SCOPES').asString().split(' ');
+  const envFhir = env.get('VITE_EHR_SERVER').asString();
+  const envClient = env.get('VITE_CLIENT').asString();
+  console.log(env.get('VITE_EHR_SERVER').asString());
+  const envScope = env.get('VITE_CLIENT_SCOPES').asString().split(' ');
   const [clientId, setClientId] = useState(envClient || '');
   const [fhirUrl, setFhirUrl] = useState(envFhir || '');
   const [scope, _setScope] = useState(envScope || []);

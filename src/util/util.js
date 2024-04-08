@@ -66,4 +66,55 @@ function retrieveLaunchContext(link, patientId, clientState) {
   });
 }
 
-export { retrieveLaunchContext };
+function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
+  axios({
+    method: 'post',
+    url: etasuUrl,
+    data: body
+  }).then(response => {
+      // Sorting an array mutates the data in place.
+      const remsMetRes = response.data;
+      if (remsMetRes?.parameter[0]?.resource?.contained) {
+        remsMetRes.parameter[0].resource.contained[0].parameter.sort((first, second) => {
+          // Keep the other forms unsorted.
+          if (second.name.includes('Patient Status Update')) {
+            // Sort the Patient Status Update forms in descending order of timestamp.
+            return second.name.localeCompare(first.name);
+          }
+          return 0;
+        });
+      }
+      responseCallback(response.data.parameter[0].resource, body);
+    }, error => {
+      console.log('error -- > ', error);
+    }
+  )
+}
+
+const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
+  const display = request.medicationCodeableConcept?.coding?.[0]?.display;
+  const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
+
+  if (!rxnorm) {
+    console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
+    return undefined;
+  }
+
+  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select')) {
+    console.log(`ERROR: unknown hook type: ${hook}`);
+    return undefined;
+  }
+
+  const cdsUrl = Object.values(globalState.medicationRequestToRemsAdmins).find(
+    value => Number(value.rxnorm) === Number(rxnorm) && value.hook === hook
+  )?.remsAdmin;
+
+  if (!cdsUrl) {
+    console.log(`Medication ${display} is not a REMS medication`);
+    return undefined;
+  }
+
+  return cdsUrl;
+};
+
+export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl };
