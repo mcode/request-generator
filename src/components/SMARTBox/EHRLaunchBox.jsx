@@ -1,4 +1,3 @@
-import React from 'react';
 import './smart.css';
 import env from 'env-var';
 

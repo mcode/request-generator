@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { retrieveLaunchContext } from '../../util/util';
 import { Paper } from '@mui/material';
 import useStyles from './styles.jsx';

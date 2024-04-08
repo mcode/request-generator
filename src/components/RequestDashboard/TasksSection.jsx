@@ -40,7 +40,7 @@ const taskStatus = Object.freeze({
 const TasksSection = props => {
   const classes = useStyles();
   const [tasks, setTasks] = useState([]);
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [state] = React.useContext(SettingsContext);
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState('');
@@ -191,7 +191,7 @@ const TasksSection = props => {
     retrieveLaunchContext(smartLink, patient, props.client.state).then(result => {
       updateTaskStatus(lTask, 'in-progress');
       lTask.status = 'in-progress';
-      props.client.update(washTask(lTask)).then(e => {
+      props.client.update(washTask(lTask)).then(_e => {
         fetchTasks();
       });
       window.open(result.url, '_blank');
@@ -416,8 +416,7 @@ const TasksSection = props => {
 
   const renderPortalView = () => {
     const patientTasks = tasks.filter(t => t.owner?.id === state.patient?.id);
-
-    return <>{renderTasks(patientTasks)}</>;
+    return renderTasks(patientTasks);
   };
 
   return (

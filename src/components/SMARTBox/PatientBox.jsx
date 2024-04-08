@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAge, getDrugCodeFromMedicationRequest } from '../../util/fhir';
 import './smart.css';
 import { Button } from '@mui/material';
@@ -30,7 +30,7 @@ const PatientBox = props => {
     numInProgressForms: 0,
     name: 'N/A',
     fullName: 'N/A',
-    formatBirthdate: '',
+    formatBirthDate: '',
     options: [],
     responseOptions: []
   });
@@ -495,12 +495,12 @@ const PatientBox = props => {
     );
   };
 
-  const makeQuestionnaireTable = (columns, options, type, patient) => {
+  const makeQuestionnaireTable = (columns, options, type, _patient) => {
     return (
       <TableContainer
         key={type}
         component={Paper}
-        sx={{ blackgroundColor: '#ddd', border: '1px solid #535353' }}
+        sx={{ backgroundColor: '#ddd', border: '1px solid #535353' }}
       >
         <Table sx={{ maxHeight: 440, justifyContent: 'center' }} stickyHeader>
           <TableHead sx={{ borderBottom: '1px solid #535353' }}>
@@ -548,7 +548,7 @@ const PatientBox = props => {
     if (patient.birthDate) {
       setState(prevState => ({
         ...prevState,
-        formatBirthdate: new Date(patient.birthDate).toDateString()
+        formatBirthDate: new Date(patient.birthDate).toDateString()
       }));
     }
   };
@@ -568,7 +568,7 @@ const PatientBox = props => {
             {patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}
           </div>
           <div>
-            <span style={{ fontWeight: 'bold' }}>DoB/Age</span>: {state.formatBirthdate} (
+            <span style={{ fontWeight: 'bold' }}>DoB/Age</span>: {state.formatBirthDate} (
             {getAge(patient.birthDate)} years old)
           </div>
         </div>

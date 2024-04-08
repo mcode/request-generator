@@ -14,7 +14,7 @@ const isGhPages = process.env.VITE_GH_PAGES === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
 const redirect = isGhPages ? '/request-generator/#/index' : '/index';
 const App = () => {
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [, dispatch] = React.useContext(SettingsContext);
   useEffect(() => {
     dispatch({
       type: actionTypes.updateSetting,

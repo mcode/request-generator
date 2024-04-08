@@ -1,15 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState } from 'react';
 import FHIR from 'fhirclient';
 import env from 'env-var';
-import {
-  Button,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  TextField,
-  Accordion,
-  AccordionDetails
-} from '@mui/material';
+import { Button, FormControl, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import useStyles from './styles';

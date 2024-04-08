@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Button, Box, Grid, IconButton } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -24,7 +24,7 @@ import { SettingsContext } from './ContextProvider/SettingsProvider.jsx';
 
 const RequestBuilder = props => {
   const { client } = props;
-  const [globalState, dispatch] = React.useContext(SettingsContext);
+  const [globalState, dispatch] = useContext(SettingsContext);
   const [state, setState] = useState({
     loading: false,
     patient: {},
@@ -40,14 +40,13 @@ const RequestBuilder = props => {
     token: null,
     client: client,
     medicationDispense: null,
-    lastCheckedMedicationTime: null,
+    lastCheckedMedicationTime: null
   });
   const displayRequestBox = !!globalState.patient?.id;
 
   const isOrderNotSelected = () => {
     return Object.keys(state.request).length === 0;
   };
-
 
   const disableGetMedicationStatus = isOrderNotSelected() || state.loading;
   const disableGetEtasu = isOrderNotSelected() || state.loading;
@@ -70,8 +69,6 @@ const RequestBuilder = props => {
       }
     );
   };
-
-
 
   useEffect(() => {
     if (state.client) {
@@ -304,10 +301,7 @@ const RequestBuilder = props => {
           <Grid item container justifyContent="center" textAlign="center" spacing={2}>
             {!disableGetEtasu && (
               <Grid item>
-                <EtasuStatus 
-                  code={state.code}
-                  request={state.request}
-                />
+                <EtasuStatus code={state.code} request={state.request} />
               </Grid>
             )}
             {!disableGetMedicationStatus && (

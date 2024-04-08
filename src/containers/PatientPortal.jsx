@@ -16,7 +16,7 @@ const PatientPortal = () => {
   const [token, setToken] = useState(null);
   const [client, setClient] = useState(null);
   const [patientName, setPatientName] = useState(null);
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [, dispatch] = React.useContext(SettingsContext);
 
   useEffect(() => {
     if (token) {

@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -54,7 +54,7 @@ const RequestBox = props => {
     submitInfo(prepPrefetch(), null, patient, 'patient-view');
   };
 
-  const submitOrderSelect = () => {
+  const _submitOrderSelect = () => {
     if (!_.isEmpty(request)) {
       submitInfo(prepPrefetch(), request, patient, 'order-select');
     }
@@ -240,7 +240,7 @@ const RequestBox = props => {
       },
       body: serializer.serializeToString(newRx)
     })
-      .then(response => {
+      .then(() => {
         console.log('Successfully sent NewRx to PIMS');
 
         // create the MedicationDispense
