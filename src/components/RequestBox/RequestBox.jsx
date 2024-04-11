@@ -6,14 +6,15 @@ import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { shortNameMap } from '../../util/data.js';
 import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
-import { retrieveLaunchContext } from '../../util/util.js';
+import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
 import './request.css';
 
 const RequestBox = props => {
   const [state, setState] = useState({
     gatherCount: 0,
     response: {},
-    submittedRx: false
+    submittedRx: false,
+    prefetchCompleted: false
   });
 
   const {
@@ -29,52 +30,36 @@ const RequestBox = props => {
     smartAppUrl,
     client,
     pimsUrl,
+    prefetchCompleted,
     getRemsAdminUrl
   } = props;
   const emptyField = <span className="empty-field">empty</span>;
 
-  const prepPrefetch = () => {
-    const preppedResources = new Map();
-    Object.keys(prefetchedResources).forEach(resourceKey => {
-      let resourceList = [];
-      if (Array.isArray(prefetchedResources[resourceKey])) {
-        resourceList = prefetchedResources[resourceKey].map(resource => {
-          return resource;
-        });
-      } else {
-        resourceList = prefetchedResources[resourceKey];
-      }
-
-      preppedResources.set(resourceKey, resourceList);
-    });
-    return preppedResources;
-  };
-
   const submitPatientView = () => {
-    submitInfo(prepPrefetch(), null, patient, 'patient-view');
+    submitInfo(prepPrefetch(prefetchedResources), null, patient, 'patient-view');
   };
 
   const _submitOrderSelect = () => {
     if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(), request, patient, 'order-select');
+      submitInfo(prepPrefetch(prefetchedResources), request, patient, 'order-select');
     }
   };
 
   const submitOrderSign = request => {
     if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(), request, patient, 'order-sign');
+      submitInfo(prepPrefetch(prefetchedResources), request, patient, 'order-sign');
     }
   };
 
   useEffect(() => {
     // if prefetch completed
-    if (state.prefetchCompleted) {
+    if (props.prefetchCompleted) {
       // if the prefetch contains a medicationRequests bundle
       if (prefetchedResources.medicationRequests) {
         submitPatientView();
       }
     }
-  }, [state.prefetchCompleted]);
+  }, [props.prefetchCompleted]);
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {

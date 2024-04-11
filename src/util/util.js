@@ -92,6 +92,10 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
 }
 
 const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
+  // if empty request, just return
+  if (Object.keys(request).length === 0) {
+    return undefined;
+  }
   const display = request.medicationCodeableConcept?.coding?.[0]?.display;
   const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
 
@@ -117,4 +121,21 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   return cdsUrl;
 };
 
-export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl };
+const prepPrefetch = (prefetchedResources) => {
+  const preppedResources = new Map();
+  Object.keys(prefetchedResources).forEach(resourceKey => {
+    let resourceList = [];
+    if (Array.isArray(prefetchedResources[resourceKey])) {
+      resourceList = prefetchedResources[resourceKey].map(resource => {
+        return resource;
+      });
+    } else {
+      resourceList = prefetchedResources[resourceKey];
+    }
+
+    preppedResources.set(resourceKey, resourceList);
+  });
+  return preppedResources;
+};
+
+export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl, prepPrefetch };
