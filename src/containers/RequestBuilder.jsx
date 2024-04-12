@@ -8,7 +8,7 @@ import RequestBox from '../components/RequestBox/RequestBox.jsx';
 import buildRequest from '../util/buildRequest.js';
 import { types } from '../util/data.js';
 import { createJwt } from '../util/auth.js';
-import { getMedicationSpecificRemsAdminUrl } from '../util/util.js';
+import { getMedicationSpecificRemsAdminUrl, prepPrefetch } from '../util/util.js';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -40,7 +40,9 @@ const RequestBuilder = props => {
     token: null,
     client: client,
     medicationDispense: null,
-    lastCheckedMedicationTime: null
+    lastCheckedMedicationTime: null,
+    prefetchCompleted: false,
+    medicationRequests: {}
   });
   const displayRequestBox = !!globalState.patient?.id;
 
@@ -101,9 +103,56 @@ const RequestBuilder = props => {
     }
   };
 
+  const getMedicationRequests = patientId => {
+    client
+      .request(`MedicationRequest?subject=Patient/${patientId}`, {
+        resolveReferences: ['subject', 'performer', 'medicationReference'],
+        graph: false,
+        flat: true
+      })
+      .then(result => {
+        setState(prevState => ({ ...prevState, medicationRequests: result }));
+      });
+  };
+
+
+  useEffect(() => {
+    const hook = 'patient-view';
+
+    let remsAdminUrls = [];
+    // get all the remsAdminUrl for each MedicationRequest
+    state.medicationRequests?.data?.forEach(request => {
+      const code = request?.medicationCodeableConcept?.coding[0]?.code;
+      const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+      if (remsAdminUrl) {
+        remsAdminUrls.push(remsAdminUrl);
+      }
+      //sendHook(prefetch, request, patient, hook, remsAdminUrl);
+    });
+    const uniqueUrls = [... new Set(remsAdminUrls.map(item => item))];
+
+    uniqueUrls?.forEach(url => {
+      sendHook(prepPrefetch(state.prefetchedResources), null, globalState.patient, hook, url);
+      //TODO: still need to handle multiple sends and multiple cards coming back
+    });
+
+  }, [state.medicationRequests]);
+
   const submitInfo = (prefetch, request, patient, hook) => {
     console.log('Initiating form submission ', types.info);
-    const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+    let remsAdminUrl = null;
+    if (request) {
+      remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+      sendHook(prefetch, request, patient, hook, remsAdminUrl);
+    } else {
+      // grab all of the REMS admins for the medications for this patient
+
+      // get all MedicationRequests for the patient, then continue
+      getMedicationRequests(patient.id);
+    }
+  };
+
+  const sendHook = (prefetch, request, patient, hook, remsAdminUrl) => {
 
     setState(prevState => ({
       ...prevState,
@@ -292,6 +341,7 @@ const RequestBuilder = props => {
                 defaultUser={globalState.defaultUser}
                 loading={state.loading}
                 patientFhirQuery={globalState.patientFhirQuery}
+                prefetchCompleted={state.prefetchCompleted}
                 getRemsAdminUrl={(request, hook) =>
                   getMedicationSpecificRemsAdminUrl(request, globalState, hook)
                 }
