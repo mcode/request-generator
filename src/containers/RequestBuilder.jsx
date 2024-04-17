@@ -117,7 +117,7 @@ const RequestBuilder = props => {
 
 
   useEffect(() => {
-    const hook = 'patient-view';
+    const hook = globalState.hookToSend;
 
     let remsAdminUrls = [];
     // get all the remsAdminUrl for each MedicationRequest

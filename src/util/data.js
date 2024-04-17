@@ -75,6 +75,11 @@ const headerDefinitions = {
     display: 'REMS Admin Server',
     type: 'input',
     default: env.get('VITE_SERVER').asString()
+  },
+  hookToSend: {
+    display: 'Send hook on patient select',
+    type: 'toggle',
+    default: env.get('VITE_HOOK_TO_SEND').asString()
   }
 };
 
@@ -85,7 +90,8 @@ const medicationRequestToRemsAdmins = Object.freeze([
     hookEndpoints: [
       { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
       { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: 'encounter-start', remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   },
   {
@@ -94,7 +100,8 @@ const medicationRequestToRemsAdmins = Object.freeze([
     hookEndpoints: [
       { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
       { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: 'encounter-start', remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   },
   {
@@ -103,7 +110,8 @@ const medicationRequestToRemsAdmins = Object.freeze([
     hookEndpoints: [
       { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
       { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: 'encounter-start', remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   },
   {
@@ -112,7 +120,8 @@ const medicationRequestToRemsAdmins = Object.freeze([
     hookEndpoints: [
       { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
       { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: 'encounter-start', remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   }
 ]);

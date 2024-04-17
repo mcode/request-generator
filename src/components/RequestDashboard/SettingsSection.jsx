@@ -15,6 +15,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   TextField
 } from '@mui/material';
@@ -28,7 +30,7 @@ import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/dat
 import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
-const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view'];
+const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view', 'encounter-start'];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
@@ -251,6 +253,25 @@ const SettingsSection = props => {
                   </Grid>
                 </React.Fragment>
               );
+            case 'toggle':
+              return (
+                <React.Fragment key={key}>
+                    <Grid key={key} item xs={6} sx={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                      <p>Hook to send when selecting a patient: </p>
+                      <ToggleButtonGroup
+                        color="primary"
+                        value={state[key]}
+                        exclusive
+                        onChange={event => updateSetting(key, event.target.value)}
+                        aria-label="hook"
+                      >
+                        <ToggleButton value="patient-view">patient-view</ToggleButton>
+                        <ToggleButton value="encounter-start">encounter-start</ToggleButton>
+                      </ToggleButtonGroup>
+                    </Grid>
+                </React.Fragment>
+                
+              )
             default:
               return (
                 <div key={key}>
