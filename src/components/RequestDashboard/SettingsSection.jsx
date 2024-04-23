@@ -1,11 +1,12 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import {
-  Box,
   Button,
   Checkbox,
   FormControlLabel,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
   Paper,
   Select,
   MenuItem,
@@ -15,8 +16,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  ToggleButton,
-  ToggleButtonGroup,
   Tooltip,
   TextField
 } from '@mui/material';
@@ -253,22 +252,29 @@ const SettingsSection = props => {
                   </Grid>
                 </React.Fragment>
               );
-            case 'toggle':
+            case 'dropdown':
               return (
                 <React.Fragment key={key}>
-                    <Grid key={key} item xs={6} sx={{display: 'flex', alignItems: 'center', gap: '5px'}}>
-                      <p>Hook to send when selecting a patient: </p>
-                      <ToggleButtonGroup
-                        color="primary"
-                        value={state[key]}
-                        exclusive
-                        onChange={event => updateSetting(key, event.target.value)}
-                        aria-label="hook"
-                      >
-                        <ToggleButton value="patient-view">patient-view</ToggleButton>
-                        <ToggleButton value="encounter-start">encounter-start</ToggleButton>
-                      </ToggleButtonGroup>
-                    </Grid>
+                    <Grid key={key} item xs={6}>
+                      <FormControl fullWidth>
+                        <InputLabel id="dropdown-label">Hook to send when selecting a patient</InputLabel>
+                        <Select
+                            labelId="dropdown-label"
+                            id="dropdown"
+                            value={state[key]}
+                            onChange={event => updateSetting(key, event.target.value)}
+                            sx={{ width: '100%' }}
+                          >
+                            <MenuItem key='paitent-view' value='patient-view'>
+                              patient-view
+                            </MenuItem>
+                            <MenuItem key='encounter-start' value='encounter-start'>
+                              encounter-start
+                            </MenuItem>
+                        </Select>
+                      </FormControl>
+                      
+                    </Grid> 
                 </React.Fragment>
                 
               )

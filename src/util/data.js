@@ -78,7 +78,7 @@ const headerDefinitions = {
   },
   hookToSend: {
     display: 'Send hook on patient select',
-    type: 'toggle',
+    type: 'dropdown',
     default: env.get('VITE_HOOK_TO_SEND').asString()
   }
 };
