@@ -262,6 +262,7 @@ const SettingsSection = props => {
                             labelId="dropdown-label"
                             id="dropdown"
                             value={state[key]}
+                            label="Hook to send when selecting a patient"
                             onChange={event => updateSetting(key, event.target.value)}
                             sx={{ width: '100%' }}
                           >
