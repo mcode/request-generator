@@ -104,7 +104,7 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
     return undefined;
   }
 
-  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select')) {
+  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select'  || hook === 'encounter-start')) {
     console.log(`ERROR: unknown hook type: ${hook}`);
     return undefined;
   }

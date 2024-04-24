@@ -1,11 +1,12 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import {
-  Box,
   Button,
   Checkbox,
   FormControlLabel,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
   Paper,
   Select,
   MenuItem,
@@ -28,7 +29,7 @@ import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/dat
 import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
-const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view'];
+const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view', 'encounter-start'];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
@@ -251,6 +252,33 @@ const SettingsSection = props => {
                   </Grid>
                 </React.Fragment>
               );
+            case 'dropdown':
+              return (
+                <React.Fragment key={key}>
+                    <Grid key={key} item xs={6}>
+                      <FormControl fullWidth>
+                        <InputLabel id="dropdown-label">Hook to send when selecting a patient</InputLabel>
+                        <Select
+                            labelId="dropdown-label"
+                            id="dropdown"
+                            value={state[key]}
+                            label="Hook to send when selecting a patient"
+                            onChange={event => updateSetting(key, event.target.value)}
+                            sx={{ width: '100%' }}
+                          >
+                            <MenuItem key='paitent-view' value='patient-view'>
+                              patient-view
+                            </MenuItem>
+                            <MenuItem key='encounter-start' value='encounter-start'>
+                              encounter-start
+                            </MenuItem>
+                        </Select>
+                      </FormControl>
+                      
+                    </Grid> 
+                </React.Fragment>
+                
+              )
             default:
               return (
                 <div key={key}>
