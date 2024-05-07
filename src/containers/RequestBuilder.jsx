@@ -115,7 +115,6 @@ const RequestBuilder = props => {
       });
   };
 
-
   useEffect(() => {
     const hook = 'patient-view';
 
@@ -129,13 +128,12 @@ const RequestBuilder = props => {
       }
       //sendHook(prefetch, request, patient, hook, remsAdminUrl);
     });
-    const uniqueUrls = [... new Set(remsAdminUrls.map(item => item))];
+    const uniqueUrls = [...new Set(remsAdminUrls.map(item => item))];
 
     uniqueUrls?.forEach(url => {
       sendHook(prepPrefetch(state.prefetchedResources), null, globalState.patient, hook, url);
       //TODO: still need to handle multiple sends and multiple cards coming back
     });
-
   }, [state.medicationRequests]);
 
   const submitInfo = (prefetch, request, patient, hook) => {
@@ -153,7 +151,6 @@ const RequestBuilder = props => {
   };
 
   const sendHook = (prefetch, request, patient, hook, remsAdminUrl) => {
-
     setState(prevState => ({
       ...prevState,
       loading: !!remsAdminUrl,

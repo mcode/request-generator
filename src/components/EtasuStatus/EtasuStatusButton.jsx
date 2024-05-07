@@ -3,8 +3,7 @@ import ListIcon from '@mui/icons-material/List';
 import './EtasuStatusButton.css';
 
 export const EtasuStatusButton = props => {
-  const { baseColor, remsAdminResponse, handleOpenEtasuStatus, lastCheckedEtasuTime } =
-    props;
+  const { baseColor, remsAdminResponse, handleOpenEtasuStatus, lastCheckedEtasuTime } = props;
   return (
     <Grid item container flexDirection="column" alignItems="center">
       <Button sx={buttonSx(baseColor)} variant="contained" onClick={handleOpenEtasuStatus}>
@@ -71,4 +70,4 @@ export const convertStatus = status => {
   } else {
     return 'Not Started';
   }
-}
+};
