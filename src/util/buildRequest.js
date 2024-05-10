@@ -1,3 +1,5 @@
+import { ORDER_SIGN, ORDER_SELECT } from "./data";
+
 export default function buildRequest(
   request,
   user,
@@ -43,7 +45,7 @@ export default function buildRequest(
     r4json.extension = extension;
   }
 
-  if (hook === 'order-select') {
+  if (hook === ORDER_SELECT) {
     r4json.context.draftOrders = {
       resourceType: 'Bundle',
       entry: [
@@ -53,7 +55,7 @@ export default function buildRequest(
       ]
     };
     r4json.context.selections = [request.resourceType + '/' + request.id];
-  } else if (hook === 'order-sign') {
+  } else if (hook === ORDER_SIGN) {
     r4json.context.draftOrders = {
       resourceType: 'Bundle',
       entry: [
@@ -62,7 +64,7 @@ export default function buildRequest(
         }
       ]
     };
-    //} else if (hook === "patient-view") {
+    //} else if ((hook === PATIENT_VIEW) || (hook === ENCOUNTER_START)) {
   }
 
   if (includePrefetch) {

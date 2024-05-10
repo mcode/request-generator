@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { shortNameMap } from '../../util/data.js';
+import { shortNameMap, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW } from '../../util/data.js';
 import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
 import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
 import './request.css';
@@ -36,18 +36,18 @@ const RequestBox = props => {
   const emptyField = <span className="empty-field">empty</span>;
 
   const submitPatientView = () => {
-    submitInfo(prepPrefetch(prefetchedResources), null, patient, 'patient-view');
+    submitInfo(prepPrefetch(prefetchedResources), null, patient, PATIENT_VIEW);
   };
 
   const _submitOrderSelect = () => {
     if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(prefetchedResources), request, patient, 'order-select');
+      submitInfo(prepPrefetch(prefetchedResources), request, patient, ORDER_SELECT);
     }
   };
 
   const submitOrderSign = request => {
     if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(prefetchedResources), request, patient, 'order-sign');
+      submitInfo(prepPrefetch(prefetchedResources), request, patient, ORDER_SIGN);
     }
   };
 
@@ -264,7 +264,7 @@ const RequestBox = props => {
   const disableSendToCRD = isOrderNotSelected() || loading;
   const disableSendRx = isOrderNotSelected() || loading;
   const disableLaunchSmartOnFhir = isPatientNotSelected();
-  const orderSignRemsAdmin = getRemsAdminUrl(request, 'order-sign');
+  const orderSignRemsAdmin = getRemsAdminUrl(request, ORDER_SIGN);
 
   return (
     <>
