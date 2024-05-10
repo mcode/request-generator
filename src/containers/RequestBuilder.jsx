@@ -31,7 +31,6 @@ const RequestBuilder = props => {
     expanded: true,
     patientList: [],
     response: {},
-    rUrl: null,
     code: null,
     codeSystem: null,
     display: null,
@@ -198,8 +197,6 @@ const RequestBuilder = props => {
         body: JSON.stringify(json_request)
       })
         .then(response => {
-          let responseUrl = response?.url;
-          setState(prevState => ({ ...prevState, rUrl: responseUrl }));
           response.json().then(fhirResponse => {
             console.log(fhirResponse);
             if (fhirResponse?.status) {

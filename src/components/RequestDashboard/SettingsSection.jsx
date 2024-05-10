@@ -29,7 +29,7 @@ import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN, ORDER_SEL
 import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
-const CDS_HOOKS = [ORDER_SELECT, ORDER_SIGN, PATIENT_VIEW, ENCOUNTER_START];
+const CDS_HOOKS = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
