@@ -122,7 +122,6 @@ const RequestBuilder = props => {
     let remsAdminUrls = [];
     // get all the remsAdminUrl for each MedicationRequest
     state.medicationRequests?.data?.forEach(request => {
-      const code = request?.medicationCodeableConcept?.coding[0]?.code;
       const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
       if (remsAdminUrl) {
         remsAdminUrls.push(remsAdminUrl);

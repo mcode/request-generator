@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
@@ -96,8 +97,10 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   if (Object.keys(request).length === 0) {
     return undefined;
   }
-  const display = request.medicationCodeableConcept?.coding?.[0]?.display;
-  const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
+
+  const codeableConcept = getDrugCodeableConceptFromMedicationRequest(request);
+  const display = codeableConcept?.coding?.[0]?.display;
+  const rxnorm = codeableConcept?.coding?.[0]?.code;
 
   if (!rxnorm) {
     console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
