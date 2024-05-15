@@ -25,11 +25,11 @@ import AddIcon from '@mui/icons-material/Add';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
-import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
+import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from '../../util/data';
 import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
-const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view', 'encounter-start'];
+const CDS_HOOKS = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
@@ -266,11 +266,11 @@ const SettingsSection = props => {
                             onChange={event => updateSetting(key, event.target.value)}
                             sx={{ width: '100%' }}
                           >
-                            <MenuItem key='paitent-view' value='patient-view'>
-                              patient-view
+                            <MenuItem key={PATIENT_VIEW} value={PATIENT_VIEW}>
+                              {PATIENT_VIEW}
                             </MenuItem>
-                            <MenuItem key='encounter-start' value='encounter-start'>
-                              encounter-start
+                            <MenuItem key={ENCOUNTER_START} value={ENCOUNTER_START}>
+                              {ENCOUNTER_START}
                             </MenuItem>
                         </Select>
                       </FormControl>

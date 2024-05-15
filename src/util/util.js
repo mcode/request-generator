@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from './data';
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
  * This applies mainly if a SMART app link on a card is to be launched. The link needs a "launch" query param with some opaque value from the SMART server entity.
@@ -104,7 +104,7 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
     return undefined;
   }
 
-  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select'  || hook === 'encounter-start')) {
+  if (!(hook === PATIENT_VIEW || hook === ORDER_SIGN || hook === ORDER_SELECT  || hook === ENCOUNTER_START)) {
     console.log(`ERROR: unknown hook type: ${hook}`);
     return undefined;
   }
