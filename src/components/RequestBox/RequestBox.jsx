@@ -1,12 +1,13 @@
 import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
+import { useEffect, useState, useContext } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { shortNameMap, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW } from '../../util/data.js';
-import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
-import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
+import { getAge, createMedicationDispenseFromMedicationRequest, createMedicationFromMedicationRequest } from '../../util/fhir.js';
+import { retrieveLaunchContext, prepPrefetch, standardsBasedGetEtasu } from '../../util/util.js';
 import './request.css';
 
 const RequestBox = props => {
@@ -14,8 +15,10 @@ const RequestBox = props => {
     gatherCount: 0,
     response: {},
     submittedRx: false,
-    prefetchCompleted: false
+    prefetchCompleted: false,
+    authNumber: ''
   });
+  const [globalState,] = useContext(SettingsContext);
 
   const {
     prefetchedResources,
@@ -60,6 +63,10 @@ const RequestBox = props => {
       }
     }
   }, [props.prefetchCompleted]);
+
+  useEffect(() => {
+    getEtasu();
+  }, [request])
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
@@ -197,6 +204,39 @@ const RequestBox = props => {
     });
   };
 
+  const makeBody = medication => {
+    return {
+      resourceType: 'Parameters',
+      parameter: [
+        {
+          name: 'patient',
+          resource: patient
+        },
+        {
+          name: 'medication',
+          resource: medication
+        }
+      ]
+    };
+  };
+
+  const getEtasu = () => {
+    const medication = createMedicationFromMedicationRequest(request);
+    const body = makeBody(medication);
+    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    standardsBasedGetEtasu(standardEtasuUrl, body, getAuthNumberFromEtasu);
+  }
+
+  const getAuthNumberFromEtasu = (resp) => {
+    if (resp && resp.contained) {
+      resp?.contained[0]?.parameter.map(metRequirements => {
+        if (metRequirements.name === 'auth_number') {
+          setState(prevState => ({ ...prevState, authNumber: metRequirements.valueString }));
+        }
+      });
+    }
+  }
+
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
@@ -207,7 +247,8 @@ const RequestBox = props => {
     var newRx = buildNewRxRequest(
       prefetchedResources.patient,
       prefetchedResources.practitioner,
-      request
+      request,
+      state.authNumber
     );
 
     console.log('Prepared NewRx:');
