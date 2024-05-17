@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { retrieveLaunchContext } from '../../util/util';
 import './displayBox.css';
-import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -64,7 +64,7 @@ const DisplayBox = props => {
         const element = document.getElementById(buttonId);
         element.setAttribute('disabled', 'true');
         element.setAttribute('style', 'background-color:#4BB543;');
-        element.setAttribute('style', );
+        element.setAttribute('style',);
 
       }
 
@@ -260,7 +260,7 @@ const DisplayBox = props => {
               buttonList.push(buttonId);
               suggestionsSection.push(
                 <ListItem key={ind} sx={{ marginLeft: '-12px' }}>
-                  <Button fullWidth={true} sx={{textAlign:'left'}}
+                  <Button fullWidth={true} sx={{ textAlign: 'left' }}
                     onClick={() =>
                       takeSuggestion(
                         item,
@@ -272,8 +272,7 @@ const DisplayBox = props => {
                       )
                     }
                     variant="contained"
-                  
-                    id={buttonId} endIcon={<AddCircleOutlineRoundedIcon/>}
+                    id={buttonId} endIcon={<AddCircleOutlineRoundedIcon />}
                   >
                     {item.label}
                   </Button>
@@ -283,12 +282,12 @@ const DisplayBox = props => {
           }
 
           // -- Links --
-          let linksSection;
+          let linksSection = [];
           if (card.links) {
             card.links = modifySmartLaunchUrls(card) || card.links;
-            linksSection = card.links.map((link, ind) => {
+            card.links.map((link, ind) => {
               if (link.type === 'smart') {
-                return (
+                linksSection.push(
                   <ListItem sx={{ marginLeft: '-12px' }}>
                     <Button key={ind} variant="outlined" sx={{
                       display: 'flex',
@@ -297,7 +296,7 @@ const DisplayBox = props => {
                       textAlign: 'left',
                       width: '100%',
                       marginBottom: '5px'
-                    }} ÍclassName="myButton" onClick={e => launchLink(e, link)} endIcon={<ArrowForwardIosRoundedIcon />}>
+                    }} ÍclassName="myButton" onClick={e => launchLink(e, link)} endIcon={<ArrowForwardRoundedIcon />}>
                       {link.label}
                     </Button>
                   </ListItem>
@@ -331,31 +330,49 @@ const DisplayBox = props => {
           const cardSectionHeaderStyle = { marginBottom: '2px', color: 'black' };
 
           const builtCard = (
-            <Card sx={{ alignItems: 'left', maxWidth:'560px'}} variant="outlined" key={cardInd} className="decision-card alert-info">
-              <Box sx={{margin:'0 auto 0', width:'90%' }}>
+            <Card sx={{ alignItems: 'left', maxWidth: '560px', minWidth:'560px' }} variant="outlined" key={cardInd} className="decision-card alert-info">
+              <Box sx={{ margin: '0 auto 0', width: '90%' }}>
                 <React.Fragment>
                   <CardContent>
                     <Typography variant="h5" component="div">
                       {summarySection}
                     </Typography>
-                    <Typography  color="text.secondary" >
-                      Required Forms
-                    </Typography>
-                    <Typography variant="div">{detailSection}</Typography>
-                    <List className={'links-section'}>{linksSection}</List>
-                    <Typography sx={{ marginTop: '10px' }} color="text.secondary" >
-                      Add To Task List
-                    </Typography>
-                    <List>{suggestionsSection}</List>
-          
-                      <Accordion sx={{ display: 'block', marginLeft: '0', marginTop:'10px', width: '95%', backgroundColor: '#F3F6F9' }}>
-                        <AccordionSummary expandIcon={<KeyboardArrowDownRoundedIcon />} >
-                          <Typography sx={{ fontSize: 14 }} color="text.secondary">View documentation and guides</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <List> {documentationSection}</List>
-                        </AccordionDetails>
-                      </Accordion>
+
+
+                    {/* Forms */}
+                    {linksSection.length !== 0 ?
+                      <div>
+                        <Typography color="text.secondary" >
+                          Required Forms
+                        </Typography>
+                        <Typography variant="div">{detailSection}</Typography>
+                        <List className={'links-section'}>{linksSection}</List>
+                      </div>
+                      :
+                      <></>
+                    }
+
+                    {/* Suggestions */}
+                    {suggestionsSection.length !== 0 ?
+                      <div>
+                        <Typography sx={{ marginTop: '10px' }} color="text.secondary" >
+                          Suggestions
+                        </Typography>
+                        <List>{suggestionsSection}</List>
+                      </div>
+                      :
+                      <></>
+                    }
+
+                    {/* Documentation and Guides */}
+                    <Accordion sx={{ display: 'block', marginLeft: '0', marginTop: '10px', width: '94%', backgroundColor: '#F3F6F9' }}>
+                      <AccordionSummary expandIcon={<KeyboardArrowDownRoundedIcon />} >
+                        <Typography sx={{ fontSize: 14 }} color="text.secondary">View documentation and guides</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <List> {documentationSection}</List>
+                      </AccordionDetails>
+                    </Accordion>
                     <Typography sx={{ display: 'block' }} variant="div" gutterBottom>
                       {sourceSection}
                     </Typography>
