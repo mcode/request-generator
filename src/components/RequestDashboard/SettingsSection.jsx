@@ -1,11 +1,12 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import {
-  Box,
   Button,
   Checkbox,
   FormControlLabel,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
   Paper,
   Select,
   MenuItem,
@@ -24,11 +25,11 @@ import AddIcon from '@mui/icons-material/Add';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
-import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
+import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from '../../util/data';
 import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
-const CDS_HOOKS = ['order-sign', 'order-select', 'patient-view'];
+const CDS_HOOKS = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
@@ -251,6 +252,33 @@ const SettingsSection = props => {
                   </Grid>
                 </React.Fragment>
               );
+            case 'dropdown':
+              return (
+                <React.Fragment key={key}>
+                    <Grid key={key} item xs={6}>
+                      <FormControl fullWidth>
+                        <InputLabel id="dropdown-label">Hook to send when selecting a patient</InputLabel>
+                        <Select
+                            labelId="dropdown-label"
+                            id="dropdown"
+                            value={state[key]}
+                            label="Hook to send when selecting a patient"
+                            onChange={event => updateSetting(key, event.target.value)}
+                            sx={{ width: '100%' }}
+                          >
+                            <MenuItem key={PATIENT_VIEW} value={PATIENT_VIEW}>
+                              {PATIENT_VIEW}
+                            </MenuItem>
+                            <MenuItem key={ENCOUNTER_START} value={ENCOUNTER_START}>
+                              {ENCOUNTER_START}
+                            </MenuItem>
+                        </Select>
+                      </FormControl>
+                      
+                    </Grid> 
+                </React.Fragment>
+                
+              )
             default:
               return (
                 <div key={key}>

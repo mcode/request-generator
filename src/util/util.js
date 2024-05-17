@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from './data';
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
  * This applies mainly if a SMART app link on a card is to be launched. The link needs a "launch" query param with some opaque value from the SMART server entity.
@@ -92,6 +92,10 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
 }
 
 const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
+  // if empty request, just return
+  if (Object.keys(request).length === 0) {
+    return undefined;
+  }
   const display = request.medicationCodeableConcept?.coding?.[0]?.display;
   const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
 
@@ -100,7 +104,7 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
     return undefined;
   }
 
-  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select')) {
+  if (!(hook === PATIENT_VIEW || hook === ORDER_SIGN || hook === ORDER_SELECT  || hook === ENCOUNTER_START)) {
     console.log(`ERROR: unknown hook type: ${hook}`);
     return undefined;
   }
@@ -117,4 +121,21 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   return cdsUrl;
 };
 
-export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl };
+const prepPrefetch = (prefetchedResources) => {
+  const preppedResources = new Map();
+  Object.keys(prefetchedResources).forEach(resourceKey => {
+    let resourceList = [];
+    if (Array.isArray(prefetchedResources[resourceKey])) {
+      resourceList = prefetchedResources[resourceKey].map(resource => {
+        return resource;
+      });
+    } else {
+      resourceList = prefetchedResources[resourceKey];
+    }
+
+    preppedResources.set(resourceKey, resourceList);
+  });
+  return preppedResources;
+};
+
+export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl, prepPrefetch };
