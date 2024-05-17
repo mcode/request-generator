@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 import { ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from './data';
+
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
  * This applies mainly if a SMART app link on a card is to be launched. The link needs a "launch" query param with some opaque value from the SMART server entity.
@@ -96,8 +98,10 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   if (Object.keys(request).length === 0) {
     return undefined;
   }
-  const display = request.medicationCodeableConcept?.coding?.[0]?.display;
-  const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
+
+  const codeableConcept = getDrugCodeableConceptFromMedicationRequest(request);
+  const display = codeableConcept?.coding?.[0]?.display;
+  const rxnorm = codeableConcept?.coding?.[0]?.code;
 
   if (!rxnorm) {
     console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
