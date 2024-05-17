@@ -73,7 +73,8 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
     method: 'post',
     url: etasuUrl,
     data: body
-  }).then(response => {
+  }).then(
+    response => {
       // Sorting an array mutates the data in place.
       const remsMetRes = response.data;
       if (remsMetRes?.parameter[0]?.resource?.contained) {
@@ -87,10 +88,11 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
         });
       }
       responseCallback(response.data.parameter[0].resource, body);
-    }, error => {
+    },
+    error => {
       console.log('error -- > ', error);
     }
-  )
+  );
 }
 
 const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
@@ -125,7 +127,7 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   return cdsUrl;
 };
 
-const prepPrefetch = (prefetchedResources) => {
+const prepPrefetch = prefetchedResources => {
   const preppedResources = new Map();
   Object.keys(prefetchedResources).forEach(resourceKey => {
     let resourceList = [];
@@ -142,4 +144,9 @@ const prepPrefetch = (prefetchedResources) => {
   return preppedResources;
 };
 
-export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl, prepPrefetch };
+export {
+  retrieveLaunchContext,
+  standardsBasedGetEtasu,
+  getMedicationSpecificRemsAdminUrl,
+  prepPrefetch
+};
