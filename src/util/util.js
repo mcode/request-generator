@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 import { ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from './data';
+
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
  * This applies mainly if a SMART app link on a card is to be launched. The link needs a "launch" query param with some opaque value from the SMART server entity.
@@ -71,7 +73,8 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
     method: 'post',
     url: etasuUrl,
     data: body
-  }).then(response => {
+  }).then(
+    response => {
       // Sorting an array mutates the data in place.
       const remsMetRes = response.data;
       if (remsMetRes?.parameter[0]?.resource?.contained) {
@@ -85,10 +88,11 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
         });
       }
       responseCallback(response.data.parameter[0].resource, body);
-    }, error => {
+    },
+    error => {
       console.log('error -- > ', error);
     }
-  )
+  );
 }
 
 const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
@@ -96,8 +100,10 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   if (Object.keys(request).length === 0) {
     return undefined;
   }
-  const display = request.medicationCodeableConcept?.coding?.[0]?.display;
-  const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
+
+  const codeableConcept = getDrugCodeableConceptFromMedicationRequest(request);
+  const display = codeableConcept?.coding?.[0]?.display;
+  const rxnorm = codeableConcept?.coding?.[0]?.code;
 
   if (!rxnorm) {
     console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
@@ -121,7 +127,7 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   return cdsUrl;
 };
 
-const prepPrefetch = (prefetchedResources) => {
+const prepPrefetch = prefetchedResources => {
   const preppedResources = new Map();
   Object.keys(prefetchedResources).forEach(resourceKey => {
     let resourceList = [];
@@ -138,4 +144,9 @@ const prepPrefetch = (prefetchedResources) => {
   return preppedResources;
 };
 
-export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl, prepPrefetch };
+export {
+  retrieveLaunchContext,
+  standardsBasedGetEtasu,
+  getMedicationSpecificRemsAdminUrl,
+  prepPrefetch
+};

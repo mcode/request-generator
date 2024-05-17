@@ -115,26 +115,23 @@ const RequestBuilder = props => {
       });
   };
 
-
   useEffect(() => {
     const hook = globalState.hookToSend;
 
     let remsAdminUrls = [];
     // get all the remsAdminUrl for each MedicationRequest
     state.medicationRequests?.data?.forEach(request => {
-      const code = request?.medicationCodeableConcept?.coding[0]?.code;
       const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
       if (remsAdminUrl) {
         remsAdminUrls.push(remsAdminUrl);
       }
       //sendHook(prefetch, request, patient, hook, remsAdminUrl);
     });
-    const uniqueUrls = [... new Set(remsAdminUrls.map(item => item))];
+    const uniqueUrls = [...new Set(remsAdminUrls.map(item => item))];
 
     uniqueUrls?.forEach(url => {
       sendHook(prepPrefetch(state.prefetchedResources), null, globalState.patient, hook, url);
     });
-
   }, [state.medicationRequests]);
 
   const submitInfo = (prefetch, request, patient, hook) => {
@@ -152,7 +149,6 @@ const RequestBuilder = props => {
   };
 
   const sendHook = (prefetch, request, patient, hook, remsAdminUrl) => {
-
     setState(prevState => ({
       ...prevState,
       loading: !!remsAdminUrl,

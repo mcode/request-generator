@@ -81,7 +81,7 @@ const Dashboard = props => {
       case Section.MEDICATIONS:
         return <MedicationsSection client={props.client} />;
       case Section.NOTIFICATIONS:
-        return <NotificationsSection />
+        return <NotificationsSection />;
       default:
         return <EmptySection />;
     }
