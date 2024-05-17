@@ -1,4 +1,4 @@
-import { headerDefinitions, medicationRequestToRemsAdmins } from '../../util/data';
+import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN } from '../../util/data';
 import { v4 as uuidv4 } from 'uuid';
 
 export const actionTypes = Object.freeze({
@@ -43,7 +43,7 @@ const getNewStateWithNewCdsHookSetting = (state, settingId) => {
   newState.medicationRequestToRemsAdmins[uuidv4()] = {
     rxnorm: 'Fill out Medication RxNorm Code',
     display: 'Fill out Medication Display Name',
-    hook: 'order-sign',
+    hook: ORDER_SIGN,
     remsAdmin: 'REMS Admin URL for CDS Hook'
   };
 

@@ -6,7 +6,7 @@ import DisplayBox from '../components/DisplayBox/DisplayBox.jsx';
 import '../index.css';
 import RequestBox from '../components/RequestBox/RequestBox.jsx';
 import buildRequest from '../util/buildRequest.js';
-import { types } from '../util/data.js';
+import { types, PATIENT_VIEW } from '../util/data.js';
 import { createJwt } from '../util/auth.js';
 import { getMedicationSpecificRemsAdminUrl, prepPrefetch } from '../util/util.js';
 
@@ -116,7 +116,7 @@ const RequestBuilder = props => {
   };
 
   useEffect(() => {
-    const hook = 'patient-view';
+    const hook = globalState.hookToSend;
 
     let remsAdminUrls = [];
     // get all the remsAdminUrl for each MedicationRequest
@@ -132,7 +132,6 @@ const RequestBuilder = props => {
 
     uniqueUrls?.forEach(url => {
       sendHook(prepPrefetch(state.prefetchedResources), null, globalState.patient, hook, url);
-      //TODO: still need to handle multiple sends and multiple cards coming back
     });
   }, [state.medicationRequests]);
 
@@ -203,7 +202,14 @@ const RequestBuilder = props => {
               );
               console.log(fhirResponse.message);
             } else {
-              setState(prevState => ({ ...prevState, response: fhirResponse }));
+              if (response?.url?.includes(PATIENT_VIEW)) {
+                // copy the cards from the old response into the new
+                setState(prevState => ({
+                  ...prevState, response: { cards: [...(prevState.response.cards || []), ...fhirResponse.cards] } 
+                  }));
+              } else {
+                setState(prevState => ({ ...prevState, response: fhirResponse }));
+              }
             }
             setState(prevState => ({ ...prevState, loading: false }));
           });
