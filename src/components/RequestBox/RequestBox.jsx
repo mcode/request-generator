@@ -16,8 +16,7 @@ const RequestBox = props => {
     gatherCount: 0,
     response: {},
     submittedRx: false,
-    prefetchCompleted: false,
-    remsAdminResponse: ''
+    prefetchCompleted: false
   });
   const [globalState,] = useContext(SettingsContext);
 
