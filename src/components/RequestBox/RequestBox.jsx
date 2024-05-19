@@ -7,8 +7,9 @@ import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { shortNameMap, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW } from '../../util/data.js';
 import { getAge, createMedicationDispenseFromMedicationRequest, createMedicationFromMedicationRequest } from '../../util/fhir.js';
-import { retrieveLaunchContext, prepPrefetch, standardsBasedGetEtasu } from '../../util/util.js';
+import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
 import './request.css';
+import axios from 'axios';
 
 const RequestBox = props => {
   const [state, setState] = useState({
@@ -16,7 +17,7 @@ const RequestBox = props => {
     response: {},
     submittedRx: false,
     prefetchCompleted: false,
-    authNumber: ''
+    remsAdminResponse: ''
   });
   const [globalState,] = useContext(SettingsContext);
 
@@ -64,9 +65,6 @@ const RequestBox = props => {
     }
   }, [props.prefetchCompleted]);
 
-  useEffect(() => {
-    getEtasu();
-  }, [request])
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
@@ -220,35 +218,38 @@ const RequestBox = props => {
     };
   };
 
-  const getEtasu = () => {
-    const medication = createMedicationFromMedicationRequest(request);
-    const body = makeBody(medication);
-    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
-    standardsBasedGetEtasu(standardEtasuUrl, body, getAuthNumberFromEtasu);
-  }
-
-  const getAuthNumberFromEtasu = (resp) => {
-    if (resp && resp.contained) {
-      resp?.contained[0]?.parameter.map(metRequirements => {
-        if (metRequirements.name === 'auth_number') {
-          setState(prevState => ({ ...prevState, authNumber: metRequirements.valueString }));
-        }
-      });
-    }
-  }
-
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
-  const sendRx = () => {
+  const sendRx = async () => {
     console.log('Sending NewRx to: ' + pimsUrl);
+    console.log('Getting auth number ')
+    const medication = createMedicationFromMedicationRequest(request);
+    const body = makeBody(medication);
+    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    let authNumber = '';
+    await axios({
+      method: 'post',
+      url: standardEtasuUrl,
+      data: body
+    }).then(
+      response => {
+       if (response.data.parameter[0].resource && response.data.parameter[0].resource.contained) {
+        response.data.parameter[0].resource?.contained[0]?.parameter.map(metRequirements => {
+          if (metRequirements.name === 'auth_number') {
+            authNumber = metRequirements.valueString;
+          }
+        });
+        }
+      }
+    );
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
       prefetchedResources.patient,
       prefetchedResources.practitioner,
       request,
-      state.authNumber
+      authNumber
     );
 
     console.log('Prepared NewRx:');
