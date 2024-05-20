@@ -15,8 +15,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
-
-
 const DisplayBox = props => {
   const [state, setState] = useState({ smartLink: '', response: {} });
   const { isDemoCard, fhirAccessToken, ehrLaunch, patientId, client, response } = props;
@@ -64,8 +62,7 @@ const DisplayBox = props => {
         const element = document.getElementById(buttonId);
         element.setAttribute('disabled', 'true');
         element.setAttribute('style', 'background-color:#4BB543;');
-        element.setAttribute('style',);
-
+        element.setAttribute('style');
       }
 
       if (suggestion.label) {
@@ -260,7 +257,9 @@ const DisplayBox = props => {
               buttonList.push(buttonId);
               suggestionsSection.push(
                 <ListItem key={ind} sx={{ marginLeft: '-12px' }}>
-                  <Button fullWidth={true} sx={{ textAlign: 'left' }}
+                  <Button
+                    fullWidth={true}
+                    sx={{ textAlign: 'left' }}
                     onClick={() =>
                       takeSuggestion(
                         item,
@@ -272,7 +271,8 @@ const DisplayBox = props => {
                       )
                     }
                     variant="contained"
-                    id={buttonId} endIcon={<AddCircleOutlineRoundedIcon />}
+                    id={buttonId}
+                    endIcon={<AddCircleOutlineRoundedIcon />}
                   >
                     {item.label}
                   </Button>
@@ -289,14 +289,21 @@ const DisplayBox = props => {
               if (link.type === 'smart') {
                 linksSection.push(
                   <ListItem sx={{ marginLeft: '-12px' }}>
-                    <Button key={ind} variant="outlined" sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      textAlign: 'left',
-                      width: '100%',
-                      marginBottom: '5px'
-                    }} ÍclassName="myButton" onClick={e => launchLink(e, link)} endIcon={<ArrowForwardRoundedIcon />}>
+                    <Button
+                      key={ind}
+                      variant="outlined"
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        textAlign: 'left',
+                        width: '100%',
+                        marginBottom: '5px'
+                      }}
+                      ÍclassName="myButton"
+                      onClick={e => launchLink(e, link)}
+                      endIcon={<ArrowForwardRoundedIcon />}
+                    >
                       {link.label}
                     </Button>
                   </ListItem>
@@ -313,11 +320,17 @@ const DisplayBox = props => {
               if (link.type === 'absolute') {
                 return (
                   <ListItem>
-                    <Box key={ind} >
-                      <Button variant='text' sx={{
-                        alignItems: 'center',
-                        textAlign: 'left',
-                      }} fullWidth={true} onClick={e => launchLink(e, link)} endIcon={pdfIcon}>
+                    <Box key={ind}>
+                      <Button
+                        variant="text"
+                        sx={{
+                          alignItems: 'center',
+                          textAlign: 'left'
+                        }}
+                        fullWidth={true}
+                        onClick={e => launchLink(e, link)}
+                        endIcon={pdfIcon}
+                      >
                         {link.label}
                       </Button>
                     </Box>
@@ -330,7 +343,12 @@ const DisplayBox = props => {
           const cardSectionHeaderStyle = { marginBottom: '2px', color: 'black' };
 
           const builtCard = (
-            <Card sx={{ alignItems: 'left', maxWidth: '560px', minWidth:'560px' }} variant="outlined" key={cardInd} className="decision-card alert-info">
+            <Card
+              sx={{ alignItems: 'left', maxWidth: '560px', minWidth: '560px' }}
+              variant="outlined"
+              key={cardInd}
+              className="decision-card alert-info"
+            >
               <Box sx={{ margin: '0 auto 0', width: '90%' }}>
                 <React.Fragment>
                   <CardContent>
@@ -338,41 +356,53 @@ const DisplayBox = props => {
                       {summarySection}
                     </Typography>
 
-
                     {/* Forms */}
-                    {linksSection.length !== 0 ?
+                    {linksSection.length !== 0 ? (
                       <div>
-                        <Typography color="text.secondary" >
-                          Required Forms
-                        </Typography>
+                        <Typography color="text.secondary">Required Forms</Typography>
                         <Typography variant="div">{detailSection}</Typography>
                         <List className={'links-section'}>{linksSection}</List>
                       </div>
-                      :
+                    ) : (
                       <></>
-                    }
+                    )}
 
                     {/* Suggestions */}
-                    {suggestionsSection.length !== 0 ?
+                    {suggestionsSection.length !== 0 ? (
                       <div>
-                        <Typography sx={{ marginTop: '10px' }} color="text.secondary" >
+                        <Typography sx={{ marginTop: '10px' }} color="text.secondary">
                           Suggestions
                         </Typography>
                         <List>{suggestionsSection}</List>
                       </div>
-                      :
+                    ) : (
                       <></>
-                    }
+                    )}
 
                     {/* Documentation and Guides */}
-                    <Accordion sx={{ display: 'block', marginLeft: '0', marginTop: '10px', width: '94%', backgroundColor: '#F3F6F9' }}>
-                      <AccordionSummary expandIcon={<KeyboardArrowDownRoundedIcon />} >
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary">View documentation and guides</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <List> {documentationSection}</List>
-                      </AccordionDetails>
-                    </Accordion>
+                    {documentationSection.length !== 0 ? (
+                      <Accordion
+                        sx={{
+                          display: 'block',
+                          marginLeft: '0',
+                          marginTop: '10px',
+                          width: '94%',
+                          backgroundColor: '#F3F6F9'
+                        }}
+                      >
+                        <AccordionSummary expandIcon={<KeyboardArrowDownRoundedIcon />}>
+                          <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                            View documentation and guides
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <List> {documentationSection}</List>
+                        </AccordionDetails>
+                      </Accordion>
+                    ) : (
+                      <></>
+                    )}
+
                     <Typography sx={{ display: 'block' }} variant="div" gutterBottom>
                       {sourceSection}
                     </Typography>
