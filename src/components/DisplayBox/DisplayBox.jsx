@@ -312,13 +312,13 @@ const DisplayBox = props => {
             });
           }
 
-          let documentationSection;
+          let documentationSection = [];
+          const pdfIcon = <PictureAsPdfIcon />;
           if (card.links) {
             card.links = modifySmartLaunchUrls(card) || card.links;
-            documentationSection = card.links.map((link, ind) => {
-              const pdfIcon = <PictureAsPdfIcon />;
+            card.links.map((link, ind) => {
               if (link.type === 'absolute') {
-                return (
+                documentationSection.push(
                   <ListItem>
                     <Box key={ind}>
                       <Button
