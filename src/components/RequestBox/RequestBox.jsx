@@ -1,13 +1,15 @@
 import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
+import { useEffect, useState, useContext } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { shortNameMap, ORDER_SIGN, PATIENT_VIEW } from '../../util/data.js';
-import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
+import { getAge, createMedicationDispenseFromMedicationRequest, createMedicationFromMedicationRequest } from '../../util/fhir.js';
 import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
 import './request.css';
+import axios from 'axios';
 
 const RequestBox = props => {
   const [state, setState] = useState({
@@ -15,6 +17,7 @@ const RequestBox = props => {
     response: {},
     submittedRx: false
   });
+  const [globalState,] = useContext(SettingsContext);
 
   const {
     prefetchedResources,
@@ -52,6 +55,7 @@ const RequestBox = props => {
       }
     }
   }, [prefetchCompleted]);
+
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
@@ -189,17 +193,54 @@ const RequestBox = props => {
     });
   };
 
+  const makeBody = medication => {
+    return {
+      resourceType: 'Parameters',
+      parameter: [
+        {
+          name: 'patient',
+          resource: patient
+        },
+        {
+          name: 'medication',
+          resource: medication
+        }
+      ]
+    };
+  };
+
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
-  const sendRx = () => {
+  const sendRx = async () => {
     console.log('Sending NewRx to: ' + pimsUrl);
+    console.log('Getting auth number ')
+    const medication = createMedicationFromMedicationRequest(request);
+    const body = makeBody(medication);
+    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    let authNumber = '';
+    await axios({
+      method: 'post',
+      url: standardEtasuUrl,
+      data: body
+    }).then(
+      response => {
+       if (response.data.parameter[0].resource && response.data.parameter[0].resource.contained) {
+        response.data.parameter[0].resource?.contained[0]?.parameter.map(metRequirements => {
+          if (metRequirements.name === 'auth_number') {
+            authNumber = metRequirements.valueString;
+          }
+        });
+        }
+      }
+    );
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
       prefetchedResources.patient,
       prefetchedResources.practitioner,
-      request
+      request,
+      authNumber
     );
 
     console.log('Prepared NewRx:');
