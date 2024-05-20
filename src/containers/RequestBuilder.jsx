@@ -141,8 +141,6 @@ const RequestBuilder = props => {
       remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
       sendHook(prefetch, request, patient, hook, remsAdminUrl);
     } else {
-      // grab all of the REMS admins for the medications for this patient
-
       // get all MedicationRequests for the patient, then continue
       getMedicationRequests(patient.id);
     }
@@ -204,8 +202,9 @@ const RequestBuilder = props => {
               if (response?.url?.includes(PATIENT_VIEW)) {
                 // copy the cards from the old response into the new
                 setState(prevState => ({
-                  ...prevState, response: { cards: [...(prevState.response.cards || []), ...fhirResponse.cards] } 
-                  }));
+                  ...prevState,
+                  response: { cards: [...(prevState.response.cards || []), ...fhirResponse.cards] }
+                }));
               } else {
                 setState(prevState => ({ ...prevState, response: fhirResponse }));
               }
@@ -344,9 +343,6 @@ const RequestBuilder = props => {
                 loading={state.loading}
                 patientFhirQuery={globalState.patientFhirQuery}
                 prefetchCompleted={state.prefetchCompleted}
-                getRemsAdminUrl={(request, hook) =>
-                  getMedicationSpecificRemsAdminUrl(request, globalState, hook)
-                }
               />
             </Grid>
           )}

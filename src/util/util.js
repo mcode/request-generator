@@ -110,6 +110,7 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
     return undefined;
   }
 
+  // This function never gets called with the PATIENT_VIEW hook, however.
   if (!(hook === PATIENT_VIEW || hook === ORDER_SIGN || hook === ORDER_SELECT  || hook === ENCOUNTER_START)) {
     console.log(`ERROR: unknown hook type: ${hook}`);
     return undefined;

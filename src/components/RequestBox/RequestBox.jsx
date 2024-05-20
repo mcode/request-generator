@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { shortNameMap, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW } from '../../util/data.js';
+import { shortNameMap, ORDER_SIGN, PATIENT_VIEW } from '../../util/data.js';
 import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
 import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
 import './request.css';
@@ -13,8 +13,7 @@ const RequestBox = props => {
   const [state, setState] = useState({
     gatherCount: 0,
     response: {},
-    submittedRx: false,
-    prefetchCompleted: false
+    submittedRx: false
   });
 
   const {
@@ -30,19 +29,12 @@ const RequestBox = props => {
     smartAppUrl,
     client,
     pimsUrl,
-    prefetchCompleted,
-    getRemsAdminUrl
+    prefetchCompleted
   } = props;
   const emptyField = <span className="empty-field">empty</span>;
 
   const submitPatientView = () => {
     submitInfo(prepPrefetch(prefetchedResources), null, patient, PATIENT_VIEW);
-  };
-
-  const _submitOrderSelect = () => {
-    if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(prefetchedResources), request, patient, ORDER_SELECT);
-    }
   };
 
   const submitOrderSign = request => {
@@ -53,13 +45,13 @@ const RequestBox = props => {
 
   useEffect(() => {
     // if prefetch completed
-    if (props.prefetchCompleted) {
+    if (prefetchCompleted) {
       // if the prefetch contains a medicationRequests bundle
       if (prefetchedResources.medicationRequests) {
         submitPatientView();
       }
     }
-  }, [props.prefetchCompleted]);
+  }, [prefetchCompleted]);
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
@@ -264,7 +256,6 @@ const RequestBox = props => {
   const disableSendToCRD = isOrderNotSelected() || loading;
   const disableSendRx = isOrderNotSelected() || loading;
   const disableLaunchSmartOnFhir = isPatientNotSelected();
-  const orderSignRemsAdmin = getRemsAdminUrl(request, ORDER_SIGN);
 
   return (
     <>
