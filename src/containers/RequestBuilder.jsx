@@ -141,8 +141,6 @@ const RequestBuilder = props => {
       remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
       sendHook(prefetch, request, patient, hook, remsAdminUrl);
     } else {
-      // grab all of the REMS admins for the medications for this patient
-
       // get all MedicationRequests for the patient, then continue
       getMedicationRequests(patient.id);
     }
