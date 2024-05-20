@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './card-list.css';
-import { Button, Card, CardActions, CardContent, Typography } from '@mui/material';
+import { Button, Box, Card, CardActions, CardContent, Typography } from '@mui/material';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { retrieveLaunchContext } from '../../util/util';
 import './displayBox.css';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
 const DisplayBox = props => {
   const [state, setState] = useState({ smartLink: '', response: {} });
@@ -54,6 +62,7 @@ const DisplayBox = props => {
         const element = document.getElementById(buttonId);
         element.setAttribute('disabled', 'true');
         element.setAttribute('style', 'background-color:#4BB543;');
+        element.setAttribute('style');
       }
 
       if (suggestion.label) {
@@ -182,7 +191,7 @@ const DisplayBox = props => {
     }
     if (!isDemoCard) {
       return (
-        <div className="card-source">
+        <div style={{ marginTop: '15px', textAlign: 'right' }} className="card-source">
           Source:{' '}
           <a
             className="source-link"
@@ -246,75 +255,160 @@ const DisplayBox = props => {
             card.suggestions.forEach((item, ind) => {
               var buttonId = 'suggestion_button-' + cardInd + '-' + ind;
               buttonList.push(buttonId);
-
               suggestionsSection.push(
-                <Button
-                  key={ind}
-                  onClick={() =>
-                    takeSuggestion(
-                      item,
-                      card.serviceUrl,
-                      buttonId,
-                      card.suggestions.length,
-                      cardInd,
-                      card.selectionBehavior
-                    )
-                  }
-                  variant="contained"
-                  id={buttonId}
-                >
-                  {item.label}
-                </Button>
+                <ListItem key={ind} sx={{ marginLeft: '-12px' }}>
+                  <Button
+                    fullWidth={true}
+                    sx={{ textAlign: 'left' }}
+                    onClick={() =>
+                      takeSuggestion(
+                        item,
+                        card.serviceUrl,
+                        buttonId,
+                        card.suggestions.length,
+                        cardInd,
+                        card.selectionBehavior
+                      )
+                    }
+                    variant="contained"
+                    id={buttonId}
+                    endIcon={<AddCircleOutlineRoundedIcon />}
+                  >
+                    {item.label}
+                  </Button>
+                </ListItem>
               );
             });
           }
 
           // -- Links --
-          let linksSection;
+          let linksSection = [];
           if (card.links) {
             card.links = modifySmartLaunchUrls(card) || card.links;
-            linksSection = card.links.map((link, ind) => {
+            card.links.map((link, ind) => {
               if (link.type === 'smart') {
-                return (
-                  <Button key={ind} variant="outlined" onClick={e => launchLink(e, link)}>
-                    {link.label}
-                  </Button>
+                linksSection.push(
+                  <ListItem sx={{ marginLeft: '-12px' }}>
+                    <Button
+                      key={ind}
+                      variant="outlined"
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        textAlign: 'left',
+                        width: '100%',
+                        marginBottom: '5px'
+                      }}
+                      ÍclassName="myButton"
+                      onClick={e => launchLink(e, link)}
+                      endIcon={<ArrowForwardRoundedIcon />}
+                    >
+                      {link.label}
+                    </Button>
+                  </ListItem>
                 );
               }
-              const pdfIcon = <PictureAsPdfIcon />;
-              return (
-                <Button key={ind} onClick={e => launchLink(e, link)} endIcon={pdfIcon}>
-                  {link.label}
-                </Button>
-              );
+            });
+          }
+
+          let documentationSection = [];
+          const pdfIcon = <PictureAsPdfIcon />;
+          if (card.links) {
+            card.links = modifySmartLaunchUrls(card) || card.links;
+            card.links.map((link, ind) => {
+              if (link.type === 'absolute') {
+                documentationSection.push(
+                  <ListItem>
+                    <Box key={ind}>
+                      <Button
+                        variant="text"
+                        sx={{
+                          alignItems: 'center',
+                          textAlign: 'left'
+                        }}
+                        fullWidth={true}
+                        onClick={e => launchLink(e, link)}
+                        endIcon={pdfIcon}
+                      >
+                        {link.label}
+                      </Button>
+                    </Box>
+                  </ListItem>
+                );
+              }
             });
           }
 
           const cardSectionHeaderStyle = { marginBottom: '2px', color: 'black' };
 
           const builtCard = (
-            <Card variant="outlined" key={cardInd} className="decision-card alert-info">
-              <React.Fragment>
-                <CardContent>
-                  <Typography style={cardSectionHeaderStyle} gutterBottom>
-                    Summary
-                  </Typography>
-                  <Typography variant="h5" component="div">
-                    {summarySection}
-                  </Typography>
-                  <br />
-                  <Typography style={cardSectionHeaderStyle} gutterBottom>
-                    Details
-                  </Typography>
-                  <Typography variant="div">{detailSection}</Typography>
-                  <br />
-                  <Typography variant="div" gutterBottom>
-                    {sourceSection}
-                  </Typography>
-                </CardContent>
-                <CardActions className={'links-section'}>{linksSection}</CardActions>
-                <CardActions>{suggestionsSection}</CardActions>
-              </React.Fragment>
+            <Card
+              sx={{ alignItems: 'left', maxWidth: '560px', minWidth: '560px' }}
+              variant="outlined"
+              key={cardInd}
+              className="decision-card alert-info"
+            >
+              <Box sx={{ margin: '0 auto 0', width: '90%' }}>
+                <React.Fragment>
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {summarySection}
+                    </Typography>
+
+                    {/* Forms */}
+                    {linksSection.length !== 0 ? (
+                      <div>
+                        <Typography color="text.secondary">Required Forms</Typography>
+                        <Typography variant="div">{detailSection}</Typography>
+                        <List className={'links-section'}>{linksSection}</List>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+
+                    {/* Suggestions */}
+                    {suggestionsSection.length !== 0 ? (
+                      <div>
+                        <Typography sx={{ marginTop: '10px' }} color="text.secondary">
+                          Suggestions
+                        </Typography>
+                        <List>{suggestionsSection}</List>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+
+                    {/* Documentation and Guides */}
+                    {documentationSection.length !== 0 ? (
+                      <Accordion
+                        sx={{
+                          display: 'block',
+                          marginLeft: '0',
+                          marginTop: '10px',
+                          width: '94%',
+                          backgroundColor: '#F3F6F9'
+                        }}
+                      >
+                        <AccordionSummary expandIcon={<KeyboardArrowDownRoundedIcon />}>
+                          <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                            View documentation and guides
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <List> {documentationSection}</List>
+                        </AccordionDetails>
+                      </Accordion>
+                    ) : (
+                      <></>
+                    )}
+
+                    <Typography sx={{ display: 'block' }} variant="div" gutterBottom>
+                      {sourceSection}
+                    </Typography>
+                  </CardContent>
+                </React.Fragment>
+              </Box>
             </Card>
           );
 
