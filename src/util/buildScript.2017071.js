@@ -298,7 +298,8 @@ function buildNewRxMedication(doc, medicationRequestResource) {
 export default function buildNewRxRequest(
   patientResource,
   practitionerResource,
-  medicationRequestResource
+  medicationRequestResource,
+  authNumber
 ) {
   var doc = document.implementation.createDocument('', '', null);
   var message = doc.createElement('Message');
@@ -318,6 +319,8 @@ export default function buildNewRxRequest(
   const d1 = new Date();
   const messageIdValue = d1.getTime();
   xmlAddTextNode(doc, header, 'MessageID', messageIdValue);
+  // Add in auth number here
+  xmlAddTextNode(doc, header, 'AuthorizationNumber', authNumber);
 
   // SentTime
   xmlAddTextNode(doc, header, 'SentTime', d1.toISOString());

@@ -1,13 +1,15 @@
 import { Button, ButtonGroup, Grid } from '@mui/material';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
+import { useEffect, useState, useContext } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { shortNameMap } from '../../util/data.js';
-import { getAge, createMedicationDispenseFromMedicationRequest } from '../../util/fhir.js';
-import { retrieveLaunchContext } from '../../util/util.js';
+import { shortNameMap, ORDER_SIGN, PATIENT_VIEW } from '../../util/data.js';
+import { getAge, createMedicationDispenseFromMedicationRequest, createMedicationFromMedicationRequest } from '../../util/fhir.js';
+import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
 import './request.css';
+import axios from 'axios';
 
 const RequestBox = props => {
   const [state, setState] = useState({
@@ -15,6 +17,7 @@ const RequestBox = props => {
     response: {},
     submittedRx: false
   });
+  const [globalState,] = useContext(SettingsContext);
 
   const {
     prefetchedResources,
@@ -29,52 +32,30 @@ const RequestBox = props => {
     smartAppUrl,
     client,
     pimsUrl,
-    getRemsAdminUrl
+    prefetchCompleted
   } = props;
   const emptyField = <span className="empty-field">empty</span>;
 
-  const prepPrefetch = () => {
-    const preppedResources = new Map();
-    Object.keys(prefetchedResources).forEach(resourceKey => {
-      let resourceList = [];
-      if (Array.isArray(prefetchedResources[resourceKey])) {
-        resourceList = prefetchedResources[resourceKey].map(resource => {
-          return resource;
-        });
-      } else {
-        resourceList = prefetchedResources[resourceKey];
-      }
-
-      preppedResources.set(resourceKey, resourceList);
-    });
-    return preppedResources;
-  };
-
   const submitPatientView = () => {
-    submitInfo(prepPrefetch(), null, patient, 'patient-view');
-  };
-
-  const _submitOrderSelect = () => {
-    if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(), request, patient, 'order-select');
-    }
+    submitInfo(prepPrefetch(prefetchedResources), null, patient, PATIENT_VIEW);
   };
 
   const submitOrderSign = request => {
     if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(), request, patient, 'order-sign');
+      submitInfo(prepPrefetch(prefetchedResources), request, patient, ORDER_SIGN);
     }
   };
 
   useEffect(() => {
     // if prefetch completed
-    if (state.prefetchCompleted) {
+    if (prefetchCompleted) {
       // if the prefetch contains a medicationRequests bundle
       if (prefetchedResources.medicationRequests) {
         submitPatientView();
       }
     }
-  }, [state.prefetchCompleted]);
+  }, [prefetchCompleted]);
+
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
@@ -212,17 +193,54 @@ const RequestBox = props => {
     });
   };
 
+  const makeBody = medication => {
+    return {
+      resourceType: 'Parameters',
+      parameter: [
+        {
+          name: 'patient',
+          resource: patient
+        },
+        {
+          name: 'medication',
+          resource: medication
+        }
+      ]
+    };
+  };
+
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
-  const sendRx = () => {
+  const sendRx = async () => {
     console.log('Sending NewRx to: ' + pimsUrl);
+    console.log('Getting auth number ')
+    const medication = createMedicationFromMedicationRequest(request);
+    const body = makeBody(medication);
+    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    let authNumber = '';
+    await axios({
+      method: 'post',
+      url: standardEtasuUrl,
+      data: body
+    }).then(
+      response => {
+       if (response.data.parameter[0].resource && response.data.parameter[0].resource.contained) {
+        response.data.parameter[0].resource?.contained[0]?.parameter.map(metRequirements => {
+          if (metRequirements.name === 'auth_number') {
+            authNumber = metRequirements.valueString;
+          }
+        });
+        }
+      }
+    );
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
       prefetchedResources.patient,
       prefetchedResources.practitioner,
-      request
+      request,
+      authNumber
     );
 
     console.log('Prepared NewRx:');
@@ -279,7 +297,6 @@ const RequestBox = props => {
   const disableSendToCRD = isOrderNotSelected() || loading;
   const disableSendRx = isOrderNotSelected() || loading;
   const disableLaunchSmartOnFhir = isPatientNotSelected();
-  const orderSignRemsAdmin = getRemsAdminUrl(request, 'order-sign');
 
   return (
     <>

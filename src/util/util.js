@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
+import { ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from './data';
 
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
@@ -71,7 +73,8 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
     method: 'post',
     url: etasuUrl,
     data: body
-  }).then(response => {
+  }).then(
+    response => {
       // Sorting an array mutates the data in place.
       const remsMetRes = response.data;
       if (remsMetRes?.parameter[0]?.resource?.contained) {
@@ -85,22 +88,30 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
         });
       }
       responseCallback(response.data.parameter[0].resource, body);
-    }, error => {
+    },
+    error => {
       console.log('error -- > ', error);
     }
-  )
+  );
 }
 
 const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
-  const display = request.medicationCodeableConcept?.coding?.[0]?.display;
-  const rxnorm = request.medicationCodeableConcept?.coding?.[0]?.code;
+  // if empty request, just return
+  if (Object.keys(request).length === 0) {
+    return undefined;
+  }
+
+  const codeableConcept = getDrugCodeableConceptFromMedicationRequest(request);
+  const display = codeableConcept?.coding?.[0]?.display;
+  const rxnorm = codeableConcept?.coding?.[0]?.code;
 
   if (!rxnorm) {
     console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
     return undefined;
   }
 
-  if (!(hook === 'patient-view' || hook === 'order-sign' || hook === 'order-select')) {
+  // This function never gets called with the PATIENT_VIEW hook, however.
+  if (!(hook === PATIENT_VIEW || hook === ORDER_SIGN || hook === ORDER_SELECT  || hook === ENCOUNTER_START)) {
     console.log(`ERROR: unknown hook type: ${hook}`);
     return undefined;
   }
@@ -117,4 +128,26 @@ const getMedicationSpecificRemsAdminUrl = (request, globalState, hook) => {
   return cdsUrl;
 };
 
-export { retrieveLaunchContext, standardsBasedGetEtasu, getMedicationSpecificRemsAdminUrl };
+const prepPrefetch = prefetchedResources => {
+  const preppedResources = new Map();
+  Object.keys(prefetchedResources).forEach(resourceKey => {
+    let resourceList = [];
+    if (Array.isArray(prefetchedResources[resourceKey])) {
+      resourceList = prefetchedResources[resourceKey].map(resource => {
+        return resource;
+      });
+    } else {
+      resourceList = prefetchedResources[resourceKey];
+    }
+
+    preppedResources.set(resourceKey, resourceList);
+  });
+  return preppedResources;
+};
+
+export {
+  retrieveLaunchContext,
+  standardsBasedGetEtasu,
+  getMedicationSpecificRemsAdminUrl,
+  prepPrefetch
+};

@@ -278,6 +278,7 @@ const PatientBox = props => {
         response: ''
       }));
       callback('response', '');
+      clearCallback();
       // update prefetch request for the medication
       const request = JSON.parse(data);
       if (

@@ -1,4 +1,14 @@
-import { Box, Grid, IconButton, Modal, Tooltip, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Modal,
+  Tooltip,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText
+} from '@mui/material';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import { useState, useEffect } from 'react';
 import { getStatusColor } from './EtasuStatusComponent';
@@ -23,61 +33,65 @@ export const EtasuStatusModal = props => {
     <Modal open={update} onClose={onClose}>
       <Box sx={modalStyle}>
         <div>
-            <h1>REMS Status</h1>
-            <div className="status-icon" style={{ backgroundColor: color }}></div>
-            <Grid container columns={12}>
-                <Grid item xs={10}>
-                    <div className="bundle-entry">Status: {convertStatus(remsAdminResponse.status)}</div>
-                </Grid>
-                <Grid item xs={2}>
-                    <div className="bundle-entry">
-                        <Tooltip title="Refresh">
-                        <IconButton onClick={callback} data-testid="refresh">
-                            <AutorenewIcon
-                            data-testid="icon"
-                            className={spin === true ? 'refresh' : 'renew-icon'}
-                            onAnimationEnd={() => setSpin(false)}
-                            />
-                        </IconButton>
-                        </Tooltip>
-                    </div>
-                </Grid>
+          <h1>REMS Status</h1>
+          <div className="status-icon" style={{ backgroundColor: color }}></div>
+          <Grid container columns={12}>
+            <Grid item xs={10}>
+              <div className="bundle-entry">Status: {convertStatus(remsAdminResponse.status)}</div>
             </Grid>
-            <div>
-                <br></br>
-                <h3>ETASU</h3>
-                <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {remsAdminResponse && remsAdminResponse.contained ? (
-                        <List>
-                        {remsAdminResponse?.contained[0]?.parameter.map((metRequirements) => (
-                            <ListItem
-                                disablePadding
-                                key={metRequirements.name}
-                                data-testid="etasu-item"
-                            >
-                            <ListItemIcon>
-                                {metRequirements.resource.status === 'success' ? (
-                                <CheckCircle color="success" />
-                                ) : (
-                                <Close color="warning" />
-                                )}
-                            </ListItemIcon>
-                            {metRequirements.resource.status === 'success' ? (
-                                <ListItemText primary={metRequirements.name} />
+            <Grid item xs={2}>
+              <div className="bundle-entry">
+                <Tooltip title="Refresh">
+                  <IconButton onClick={callback} data-testid="refresh">
+                    <AutorenewIcon
+                      data-testid="icon"
+                      className={spin === true ? 'refresh' : 'renew-icon'}
+                      onAnimationEnd={() => setSpin(false)}
+                    />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </Grid>
+          </Grid>
+          <div>
+            <br></br>
+            <h3>ETASU</h3>
+            <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              {remsAdminResponse && remsAdminResponse.contained ? (
+                <List>
+                  {remsAdminResponse?.contained[0]?.parameter.map(metRequirements => {
+                    if (metRequirements.resource) {
+                      return (
+                        <ListItem
+                          disablePadding
+                          key={metRequirements.name}
+                          data-testid="etasu-item"
+                        >
+                          <ListItemIcon>
+                            {metRequirements.resource?.status === 'success' ? (
+                              <CheckCircle color="success" />
                             ) : (
-                                <ListItemText
-                                primary={metRequirements.name}
-                                secondary={metRequirements.requirementDescription}
-                                />
+                              <Close color="warning" />
                             )}
-                            </ListItem>
-                        ))}
-                        </List>
-                    ) : (
-                        'Not Available'
-                    )}
-                </Box>
-            </div>
+                          </ListItemIcon>
+                          {metRequirements.resource?.status === 'success' ? (
+                            <ListItemText primary={metRequirements.name} />
+                          ) : (
+                            <ListItemText
+                              primary={metRequirements.name}
+                              secondary={metRequirements.requirementDescription}
+                            />
+                          )}
+                        </ListItem>
+                      );
+                    }
+                  })}
+                </List>
+              ) : (
+                'Not Available'
+              )}
+            </Box>
+          </div>
         </div>
       </Box>
     </Modal>

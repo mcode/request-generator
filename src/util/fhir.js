@@ -68,6 +68,17 @@ function createMedicationFromMedicationRequest(medicationRequest) {
   medication.id = medicationRequest?.id + '-med';
   if (medicationRequest.medicationCodeableConcept) {
     medication.code = medicationRequest.medicationCodeableConcept;
+  }  else if (medicationRequest.medicationReference) {
+    const reference = medicationRequest?.medicationReference;
+    medication.code = undefined;
+    medicationRequest?.contained?.every(e => {
+      if (e.resourceType + '/' + e.id === reference.reference) {
+        if (e.resourceType === 'Medication') {
+          console.log('Get Medication code from contained resource');
+          medication.code = e.code;
+        }
+      }
+    });
   }
   return medication;
 }

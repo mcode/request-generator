@@ -8,8 +8,7 @@ import { standardsBasedGetEtasu } from '../../util/util.js';
 export const EtasuStatusComponent = props => {
   const [globalState, _] = useContext(SettingsContext);
 
-  const { remsAdminResponseInit, data, display } =
-    props;
+  const { remsAdminResponseInit, data, display } = props;
 
   const [remsAdminResponse, setRemsAdminResponse] = useState(remsAdminResponseInit);
   const [lastCheckedEtasuTime, setLastCheckedEtasuTime] = useState(0);
@@ -18,7 +17,7 @@ export const EtasuStatusComponent = props => {
 
   useEffect(() => {
     setLastCheckedEtasuTime(Date.now());
-  }, []); 
+  }, []);
   const handleCloseEtasuStatus = () => {
     setShowEtasuStatus(false);
   };
@@ -28,12 +27,12 @@ export const EtasuStatusComponent = props => {
   };
 
   const refreshEtasu = () => {
-    if(remsAdminResponse) {
-        const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
-        standardsBasedGetEtasu(standardEtasuUrl, data, setRemsAdminResponse);
-        setLastCheckedEtasuTime(Date.now());
+    if (remsAdminResponse) {
+      const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+      standardsBasedGetEtasu(standardEtasuUrl, data, setRemsAdminResponse);
+      setLastCheckedEtasuTime(Date.now());
     }
-  }
+  };
   return (
     <Card variant="outlined" sx={{ padding: 2 }}>
       <Typography variant="h6" align="center" mb={2}>
@@ -58,9 +57,9 @@ export const EtasuStatusComponent = props => {
 export const getStatusColor = status => {
   switch (status) {
     case 'success':
-        return 'green';
+      return 'green';
     case 'data-required':
-        return '#f0ad4e';
+      return '#f0ad4e';
     default:
       return '#0c0c0c';
   }

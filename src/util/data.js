@@ -75,44 +75,58 @@ const headerDefinitions = {
     display: 'REMS Admin Server',
     type: 'input',
     default: env.get('VITE_SERVER').asString()
+  },
+  hookToSend: {
+    display: 'Send hook on patient select',
+    type: 'dropdown',
+    default: env.get('VITE_HOOK_TO_SEND').asString()
   }
 };
+
+const ORDER_SIGN = 'order-sign';
+const ORDER_SELECT = 'order-select';
+const PATIENT_VIEW = 'patient-view';
+const ENCOUNTER_START = 'encounter-start';
 
 const medicationRequestToRemsAdmins = Object.freeze([
   {
     rxnorm: 2183126,
     display: 'Turalio 200 MG Oral Capsule',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   },
   {
     rxnorm: 6064,
     display: 'Isotretinoin 20 MG Oral Capsule',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   },
   {
     rxnorm: 1237051,
     display: 'TIRF 200 UG Oral Transmucosal Lozenge',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   },
   {
     rxnorm: 1666386,
     display: 'Addyi 100 MG Oral Tablet',
     hookEndpoints: [
-      { hook: 'order-sign', remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: 'order-select', remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: 'patient-view', remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' }
+      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
     ]
   }
 ]);
@@ -249,5 +263,9 @@ export {
   shortNameMap,
   stateOptions,
   types,
-  medicationRequestToRemsAdmins
+  medicationRequestToRemsAdmins,
+  ORDER_SIGN,
+  ORDER_SELECT,
+  PATIENT_VIEW,
+  ENCOUNTER_START
 };
