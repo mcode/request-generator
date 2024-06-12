@@ -1,6 +1,6 @@
 # Request Generator
 
-This project provides a small web application that is capable of generating requests and displaying the CDS Hooks cards that are provided as a response. This app functionally serves as the frontend of the EHR it connects to, and is treated as part of the EHR system rather than a third party app. Typically, functionality provided by the Request Generator would be handled by the EHR in a production environment. The Request Generator makes it easy and simple to add CDS Hooks capability to SMART on FHIR compliant EHRs. 
+This project provides a testing tool for the REMS workflow that is capable of generating CDS Hooks requests and displaying the CDS Hooks cards that are provided as a response. The Request Generator also handles various other tasks like patient selection, sending medication requests to the pharmacy system, managing in-progress Questionnaire forms, and launching SMART apps. Typically, capabilities provided by the Request Generator would be handled by an EHR in a production environment.
 
 This project is written in JavaScript with React and runs in [node.js](https://nodejs.org/en/).
 
@@ -43,7 +43,7 @@ To use the app, first you must launch it.  The Request Generator is a SMART on F
 
 ### Using a SMART App Launcher
 
-1. Go to a SMART app launcher, such as `http://moonshot-dev.mitre.org:4001/index.html` (MITRE) or `https://launch.smarthealthit.org/` (open to public).
+1. Go to a SMART app launcher, such as `https://launch.smarthealthit.org/`.
 2. For the App Launch URL, provide `http://localhost:3000/launch`.
 
 ### Using Meld or a real EHR
@@ -61,11 +61,16 @@ To use the app, first you must launch it.  The Request Generator is a SMART on F
 
 ### Workflow
 
-The Request Generator's main purpose is to provide the capability to send CDS hooks to and receive/display cards from a CDS service like the [REMS Admin](https://github.com/mcode/rems-admin). After launching the app, the main workflow consists of selecting a patient, selecting a medication for that patient, and then submitting the medication request to the REMS admin.  The REMS admin will respond with a set of cards indicating whether the selected medication has a REMS program, with links to fill out necessary forms if it does have one. The workflow then continues from the request generator to the [REMS SMART on FHIR app](https://github.com/mcode/rems-smart-on-fhir), which handles filling out forms and fulfilling requirements.
+The Request Generator's main purpose is to provide the capability to send CDS hooks to and receive/display cards from a CDS service like the [REMS Admin](https://github.com/mcode/rems-admin). After launching the app, the main workflow consists of selecting a patient and then selecting a medication for that patient. The selected medication can be sent to the [pharmacy system](https://github.com/mcode/pims) to kick off the REMS workflow, though it is not necessary if you just want to explore.
+
+The next step is to submit the patient and medication information to the REMS Admin.  The REMS admin will respond with a set of cards indicating whether the selected medication has a REMS program, with links to fill out necessary forms if it does have one. The workflow then continues from the request generator to the [REMS SMART on FHIR app](https://github.com/mcode/rems-smart-on-fhir), which handles filling out forms and fulfilling requirements. 
 
 The Request Generator also manages tasks, which can be used to defer forms to be completed later, or to assign forms to specific parties. Tasks can be handled in the `tasks` tab and can be created from cards that are returned from the REMS Admin. Some cards will have a suggestion to create a task for completing a form, and clicking on the suggestion button will automatically create a task resource.
 
 For patients, the Reqest Generator has a patient portal which allows users to view their in progress medications, tasks that are assigned to them, and information about their prescriptions. The patient portal is mainly used to allow patients to fill out required forms by launching them from a task or in-progress form into the REMS SMART on FHIR app. 
+
+Information about the status of the prescription and the status of the REMS approval can be viewed directly in the Request Generator. Panels with the status information can be viewed in both the main app and the patient portal.
+
 
 ## Routes
 
@@ -98,8 +103,9 @@ See the [following guide](./How-To-Launch-SMART-on-FHIR-Apps.md) for more inform
 
 ### Environment Variables
 
-The .env file contains the default URI paths, which can be overwritten from the start command as follows:
-a) `VITE_LAUNCH_URL=http://example.com PORT=6000 npm start` or b) by specifying the environment variables and desired values in a `.env.local`.
+The .env file contains the default URI paths, which can be overwritten from the start command in one of the following ways:
+* By starting the app with the following comamand: `VITE_LAUNCH_URL=http://example.com PORT=6000 npm start`
+* By specifying the environment variables and desired values in a `.env.local` file.
 
 Following are a list of modifiable paths:
 
