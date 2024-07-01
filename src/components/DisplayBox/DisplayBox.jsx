@@ -62,7 +62,6 @@ const DisplayBox = props => {
         const element = document.getElementById(buttonId);
         element.setAttribute('disabled', 'true');
         element.setAttribute('style', 'background-color:#4BB543;');
-        element.setAttribute('style');
       }
 
       if (suggestion.label) {
@@ -300,7 +299,7 @@ const DisplayBox = props => {
                         width: '100%',
                         marginBottom: '5px'
                       }}
-                      ÍclassName="myButton"
+                      className="myButton"
                       onClick={e => launchLink(e, link)}
                       endIcon={<ArrowForwardRoundedIcon />}
                     >
