@@ -287,7 +287,7 @@ const DisplayBox = props => {
             card.links.map((link, ind) => {
               if (link.type === 'smart') {
                 linksSection.push(
-                  <ListItem sx={{ marginLeft: '-12px' }}>
+                  <ListItem key={ind} sx={{ marginLeft: '-12px' }}>
                     <Button
                       key={ind}
                       variant="outlined"
@@ -318,7 +318,7 @@ const DisplayBox = props => {
             card.links.map((link, ind) => {
               if (link.type === 'absolute') {
                 documentationSection.push(
-                  <ListItem>
+                  <ListItem key={ind}>
                     <Box key={ind}>
                       <Button
                         variant="text"

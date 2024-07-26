@@ -1,6 +1,11 @@
 import env from 'env-var';
 
 const headerDefinitions = {
+  useIntermediary: {
+    display: 'Use Intermediary',
+    type: 'check',
+    default: env.get('VITE_USE_INTERMEDIARY').asBool()
+  },
   alternativeTherapy: {
     display: 'Alternative Therapy Cards Allowed',
     type: 'check',
@@ -71,10 +76,10 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('VITE_SMART_LAUNCH_URL').asString()
   },
-  remsAdminServer: {
-    display: 'REMS Admin Server',
+  intermediaryUrl: {
+    display: 'REMS Intermediary URL',
     type: 'input',
-    default: env.get('VITE_SERVER').asString()
+    default: env.get('VITE_INTERMEDIARY').asString()
   },
   hookToSend: {
     display: 'Send hook on patient select',
@@ -87,46 +92,63 @@ const ORDER_SIGN = 'order-sign';
 const ORDER_SELECT = 'order-select';
 const PATIENT_VIEW = 'patient-view';
 const ENCOUNTER_START = 'encounter-start';
+const REMS_ETASU = '$rems-etasu';
+
+const CDS_SERVICE = 'cds-services';
+const ETASU_ENDPOINT = 'GuidanceResponse/$rems-etasu';
+
+const serviceEndpoints = {
+  'order-sign': CDS_SERVICE+'/rems-'+ORDER_SIGN,
+  'order-select': CDS_SERVICE+'/rems-'+ORDER_SELECT,
+  'patient-view': CDS_SERVICE+'/rems-'+PATIENT_VIEW,
+  'encounter-start': CDS_SERVICE+'/rems-'+ENCOUNTER_START,
+  '$rems-etasu': '4_0_0/'+ETASU_ENDPOINT
+};
+
 
 const medicationRequestToRemsAdmins = Object.freeze([
   {
     rxnorm: 2183126,
     display: 'Turalio 200 MG Oral Capsule',
-    hookEndpoints: [
-      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
     ]
   },
   {
     rxnorm: 6064,
     display: 'Isotretinoin 20 MG Oral Capsule',
-    hookEndpoints: [
-      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
     ]
   },
   {
     rxnorm: 1237051,
     display: 'TIRF 200 UG Oral Transmucosal Lozenge',
-    hookEndpoints: [
-      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
     ]
   },
   {
     rxnorm: 1666386,
     display: 'Addyi 100 MG Oral Tablet',
-    hookEndpoints: [
-      { hook: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { hook: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { hook: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { hook: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' }
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
     ]
   }
 ]);
@@ -267,5 +289,8 @@ export {
   ORDER_SIGN,
   ORDER_SELECT,
   PATIENT_VIEW,
-  ENCOUNTER_START
+  ENCOUNTER_START,
+  REMS_ETASU,
+  CDS_SERVICE,
+  serviceEndpoints
 };

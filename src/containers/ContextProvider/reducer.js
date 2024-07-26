@@ -43,7 +43,7 @@ const getNewStateWithNewCdsHookSetting = (state, settingId) => {
   newState.medicationRequestToRemsAdmins[uuidv4()] = {
     rxnorm: 'Fill out Medication RxNorm Code',
     display: 'Fill out Medication Display Name',
-    hook: ORDER_SIGN,
+    endpointType: ORDER_SIGN,
     remsAdmin: 'REMS Admin URL for CDS Hook'
   };
 
@@ -108,10 +108,10 @@ export const initialState = (() => {
   });
 
   medicationRequestToRemsAdmins.forEach(row => {
-    const { rxnorm, display, hookEndpoints } = row;
-    hookEndpoints.forEach(({ hook, remsAdmin }) => {
-      const key = `${rxnorm}_${hook}`;
-      state.medicationRequestToRemsAdmins[key] = { rxnorm, display, hook, remsAdmin };
+    const { rxnorm, display, endpoints } = row;
+    endpoints.forEach(({ endpointType, remsAdmin }) => {
+      const key = `${rxnorm}_${endpointType}`;
+      state.medicationRequestToRemsAdmins[key] = { rxnorm, display, endpointType, remsAdmin };
     });
   });
   return state;
