@@ -25,11 +25,11 @@ import AddIcon from '@mui/icons-material/Add';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
-import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START } from '../../util/data';
+import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU } from '../../util/data';
 import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
-const CDS_HOOKS = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START];
+const ENDPOINT = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU];
 
 const SettingsSection = props => {
   const [state, dispatch] = React.useContext(SettingsContext);
@@ -299,13 +299,14 @@ const SettingsSection = props => {
             maxHeight: 440
           }}
         >
+          {!state['useIntermediary'] && (
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow sx={{ th: { fontWeight: 'bold' } }}>
                 <TableCell width={500}>Medication Display</TableCell>
                 <TableCell width={200}>Medication RxNorm Code</TableCell>
-                <TableCell width={200}>CDS Hook</TableCell>
-                <TableCell width={500}>REMS Admin Endpoint</TableCell>
+                <TableCell width={200}>Hook / Endpoint</TableCell>
+                <TableCell width={500}>REMS Admin URL</TableCell>
                 {/* This empty TableCell corresponds to the add and delete 
                 buttons. It is used to fill up the sticky header which 
                 will appear over the gray/white table rows. */}
@@ -348,19 +349,19 @@ const SettingsSection = props => {
                       <Select
                         labelId="dropdown-label"
                         id="dropdown"
-                        value={row.hook}
+                        value={row.endpointType}
                         onChange={event =>
                           dispatch({
                             type: actionTypes.updateCdsHookSetting,
                             settingId: key,
-                            value: { hook: event.target.value }
+                            value: { endpointType: event.target.value }
                           })
                         }
                         sx={{ width: '100%' }}
                       >
-                        {CDS_HOOKS.map(hook => (
-                          <MenuItem key={hook} value={hook}>
-                            {hook}
+                        {ENDPOINT.map(endpointType => (
+                          <MenuItem key={endpointType} value={endpointType}>
+                            {endpointType}
                           </MenuItem>
                         ))}
                       </Select>
@@ -408,6 +409,7 @@ const SettingsSection = props => {
               })}
             </TableBody>
           </Table>
+          )}
         </TableContainer>
       </Grid>
 

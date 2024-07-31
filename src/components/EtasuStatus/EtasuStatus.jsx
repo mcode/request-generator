@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
 import { EtasuStatusComponent } from './EtasuStatusComponent.jsx';
-import { standardsBasedGetEtasu } from '../../util/util.js';
+import { standardsBasedGetEtasu, getMedicationSpecificEtasuUrl } from '../../util/util.js';
 import { createMedicationFromMedicationRequest, getDrugCodeableConceptFromMedicationRequest } from '../../util/fhir.js';
 
 // converts code into etasu for the component to render
@@ -12,6 +12,7 @@ export const EtasuStatus = props => {
   const { code, request } = props;
   const [remsAdminResponse, setRemsAdminResponse] = useState({});
   const [etasuData, setEtasuData] = useState({});
+  const [medication, setMedication] = useState({});
   const [display, setDisplay] = useState('');
 
   useEffect(() => {
@@ -22,9 +23,10 @@ export const EtasuStatus = props => {
   const getEtasuStatus = medication => {
     const body = makeBody(medication);
     setEtasuData(body);
+    setMedication(medication);
     const display = body.parameter[1]?.resource.code?.coding[0].display;
     setDisplay(display);
-    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    const standardEtasuUrl = getMedicationSpecificEtasuUrl(medication?.code, globalState);
     standardsBasedGetEtasu(standardEtasuUrl, body, setRemsAdminResponse);
   };
 
@@ -52,6 +54,7 @@ export const EtasuStatus = props => {
           remsAdminResponseInit={remsAdminResponse}
           data={etasuData}
           display={display}
+          medication={medication}
         />
       ) : (
         ''
