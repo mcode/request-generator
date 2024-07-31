@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
-import { ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, CDS_SERVICE, serviceEndpoints, REMS_ETASU } from './data';
+import {
+  ORDER_SIGN,
+  ORDER_SELECT,
+  PATIENT_VIEW,
+  ENCOUNTER_START,
+  serviceEndpoints,
+  REMS_ETASU
+} from './data';
 
 /**
  * Retrieves a SMART launch context from an endpoint to append as a "launch" query parameter to a SMART app launch URL (see SMART docs for more about launch context).
@@ -96,7 +103,6 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
 }
 
 const getMedicationSpecificRemsAdminUrl = (codeableConcept, globalState, endpointType) => {
-
   var serverUrl = null;
   if (globalState.useIntermediary) {
     serverUrl = `${globalState.intermediaryUrl}/${serviceEndpoints[endpointType]}`;
@@ -110,7 +116,15 @@ const getMedicationSpecificRemsAdminUrl = (codeableConcept, globalState, endpoin
     }
 
     // This function never gets called with the PATIENT_VIEW hook, however.
-    if (!(endpointType === PATIENT_VIEW || endpointType === ORDER_SIGN || endpointType === ORDER_SELECT  || endpointType === ENCOUNTER_START || endpointType === REMS_ETASU)) {
+    if (
+      !(
+        endpointType === PATIENT_VIEW ||
+        endpointType === ORDER_SIGN ||
+        endpointType === ORDER_SELECT ||
+        endpointType === ENCOUNTER_START ||
+        endpointType === REMS_ETASU
+      )
+    ) {
       console.log(`ERROR: unknown hook/endpoint type: ${endpointType}`);
       return undefined;
     }
@@ -125,17 +139,16 @@ const getMedicationSpecificRemsAdminUrl = (codeableConcept, globalState, endpoin
     }
   }
   return serverUrl;
-}
+};
 
 const getMedicationSpecificEtasuUrl = (codeableConcept, globalState) => {
-
   var serverUrl = getMedicationSpecificRemsAdminUrl(codeableConcept, globalState, REMS_ETASU);
   if (serverUrl != undefined) {
     return serverUrl;
   } else {
     return undefined;
   }
-}
+};
 
 const getMedicationSpecificCdsHooksUrl = (request, globalState, hook) => {
   // if empty request, just return
