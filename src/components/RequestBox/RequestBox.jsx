@@ -7,7 +7,7 @@ import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { shortNameMap, ORDER_SIGN, PATIENT_VIEW } from '../../util/data.js';
 import { getAge, createMedicationDispenseFromMedicationRequest, createMedicationFromMedicationRequest, getDrugCodeableConceptFromMedicationRequest } from '../../util/fhir.js';
-import { retrieveLaunchContext, prepPrefetch, getMedicationSpecificCdsHooksUrl } from '../../util/util.js';
+import { retrieveLaunchContext, prepPrefetch, getMedicationSpecificEtasuUrl } from '../../util/util.js';
 import './request.css';
 import axios from 'axios';
 
@@ -225,8 +225,8 @@ const RequestBox = props => {
       data: body
     }).then(
       response => {
-       if (response.data.parameter[0].resource && response.data.parameter[0].resource.contained) {
-        response.data.parameter[0].resource?.contained[0]?.parameter.map(metRequirements => {
+       if (response.data.parameter[0].resource && response.data.parameter?.[0].resource.contained) {
+        response.data.parameter?.[0].resource?.contained[0]?.parameter.map(metRequirements => {
           if (metRequirements.name === 'auth_number') {
             authNumber = metRequirements.valueString;
           }

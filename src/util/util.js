@@ -77,8 +77,8 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
     response => {
       // Sorting an array mutates the data in place.
       const remsMetRes = response.data;
-      if (remsMetRes?.parameter[0]?.resource?.contained) {
-        remsMetRes.parameter[0].resource.contained[0].parameter.sort((first, second) => {
+      if (remsMetRes?.parameter?.[0]?.resource?.contained) {
+        remsMetRes.parameter?.[0].resource.contained[0].parameter.sort((first, second) => {
           // Keep the other forms unsorted.
           if (second.name.includes('Patient Status Update')) {
             // Sort the Patient Status Update forms in descending order of timestamp.
