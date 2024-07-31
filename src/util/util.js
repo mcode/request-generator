@@ -87,7 +87,7 @@ function standardsBasedGetEtasu(etasuUrl, body, responseCallback) {
           return 0;
         });
       }
-      responseCallback(response.data.parameter[0].resource, body);
+      responseCallback(response.data.parameter?.[0].resource, body);
     },
     error => {
       console.log('error -- > ', error);

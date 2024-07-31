@@ -49,7 +49,7 @@ export const EtasuStatus = props => {
 
   return (
     <>
-      {remsAdminResponse.contained ? (
+      {remsAdminResponse?.contained ? (
         <EtasuStatusComponent
           remsAdminResponseInit={remsAdminResponse}
           data={etasuData}

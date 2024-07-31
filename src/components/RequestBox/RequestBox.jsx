@@ -225,7 +225,7 @@ const RequestBox = props => {
       data: body
     }).then(
       response => {
-       if (response.data.parameter[0].resource && response.data.parameter?.[0].resource.contained) {
+       if (response.data.parameter?.[0].resource && response.data.parameter?.[0].resource.contained) {
         response.data.parameter?.[0].resource?.contained[0]?.parameter.map(metRequirements => {
           if (metRequirements.name === 'auth_number') {
             authNumber = metRequirements.valueString;
