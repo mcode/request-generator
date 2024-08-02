@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
 import { EtasuStatusComponent } from './EtasuStatusComponent.jsx';
 import { standardsBasedGetEtasu, getMedicationSpecificEtasuUrl } from '../../util/util.js';
-import { createMedicationFromMedicationRequest, getDrugCodeableConceptFromMedicationRequest } from '../../util/fhir.js';
+import { createMedicationFromMedicationRequest } from '../../util/fhir.js';
 
 // converts code into etasu for the component to render
 // simplifies usage for applications that only know the code, not the case they want to display
@@ -49,7 +49,7 @@ export const EtasuStatus = props => {
 
   return (
     <>
-      {remsAdminResponse.contained ? (
+      {remsAdminResponse?.contained ? (
         <EtasuStatusComponent
           remsAdminResponseInit={remsAdminResponse}
           data={etasuData}
