@@ -6,8 +6,17 @@ import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { shortNameMap, ORDER_SIGN, PATIENT_VIEW } from '../../util/data.js';
-import { getAge, createMedicationDispenseFromMedicationRequest, createMedicationFromMedicationRequest } from '../../util/fhir.js';
-import { retrieveLaunchContext, prepPrefetch } from '../../util/util.js';
+import {
+  getAge,
+  createMedicationDispenseFromMedicationRequest,
+  createMedicationFromMedicationRequest,
+  getDrugCodeableConceptFromMedicationRequest
+} from '../../util/fhir.js';
+import {
+  retrieveLaunchContext,
+  prepPrefetch,
+  getMedicationSpecificEtasuUrl
+} from '../../util/util.js';
 import './request.css';
 import axios from 'axios';
 
@@ -17,7 +26,7 @@ const RequestBox = props => {
     response: {},
     submittedRx: false
   });
-  const [globalState,] = useContext(SettingsContext);
+  const [globalState] = useContext(SettingsContext);
 
   const {
     prefetchedResources,
@@ -55,7 +64,6 @@ const RequestBox = props => {
       }
     }
   }, [prefetchCompleted]);
-
 
   const renderPatientInfo = () => {
     if (Object.keys(patient).length === 0) {
@@ -214,26 +222,30 @@ const RequestBox = props => {
    */
   const sendRx = async () => {
     console.log('Sending NewRx to: ' + pimsUrl);
-    console.log('Getting auth number ')
+    console.log('Getting auth number ');
     const medication = createMedicationFromMedicationRequest(request);
     const body = makeBody(medication);
-    const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+    const standardEtasuUrl = getMedicationSpecificEtasuUrl(
+      getDrugCodeableConceptFromMedicationRequest(request),
+      globalState
+    );
     let authNumber = '';
     await axios({
       method: 'post',
       url: standardEtasuUrl,
       data: body
-    }).then(
-      response => {
-       if (response.data.parameter[0].resource && response.data.parameter[0].resource.contained) {
-        response.data.parameter[0].resource?.contained[0]?.parameter.map(metRequirements => {
+    }).then(response => {
+      if (
+        response.data.parameter?.[0].resource &&
+        response.data.parameter?.[0].resource.contained
+      ) {
+        response.data.parameter?.[0].resource?.contained[0]?.parameter.map(metRequirements => {
           if (metRequirements.name === 'auth_number') {
             authNumber = metRequirements.valueString;
           }
         });
-        }
       }
-    );
+    });
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(

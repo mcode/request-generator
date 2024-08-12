@@ -4,7 +4,7 @@ import { SettingsContext } from '../../../containers/ContextProvider/SettingsPro
 import { EtasuStatusComponent } from '../../EtasuStatus/EtasuStatusComponent';
 import axios from 'axios';
 import { createMedicationFromMedicationRequest } from '../../../util/fhir';
-import { standardsBasedGetEtasu } from '../../../util/util';
+import { standardsBasedGetEtasu, getMedicationSpecificEtasuUrl } from '../../../util/util';
 
 const NotificationsSection = () => {
   const [globalState, _] = useContext(SettingsContext);
@@ -49,7 +49,7 @@ const NotificationsSection = () => {
   const getAllEtasu = () => {
     medications.forEach(medication => {
       const body = makeBody(medication);
-      const standardEtasuUrl = `${globalState.remsAdminServer}/4_0_0/GuidanceResponse/$rems-etasu`;
+      const standardEtasuUrl = getMedicationSpecificEtasuUrl(medication?.code, globalState);
       standardsBasedGetEtasu(standardEtasuUrl, body, compileResponses);
     });
   };
@@ -81,6 +81,7 @@ const NotificationsSection = () => {
             display={display}
             remsAdminResponseInit={remsCase}
             data={remsCase.body}
+            medication={remsCase.body.parameter[1]?.resource}
           />
         );
       })}

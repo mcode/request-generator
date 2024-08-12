@@ -8,7 +8,7 @@ import RequestBox from '../components/RequestBox/RequestBox.jsx';
 import buildRequest from '../util/buildRequest.js';
 import { types, PATIENT_VIEW } from '../util/data.js';
 import { createJwt } from '../util/auth.js';
-import { getMedicationSpecificRemsAdminUrl, prepPrefetch } from '../util/util.js';
+import { getMedicationSpecificCdsHooksUrl, prepPrefetch } from '../util/util.js';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -121,7 +121,7 @@ const RequestBuilder = props => {
     let remsAdminUrls = [];
     // get all the remsAdminUrl for each MedicationRequest
     state.medicationRequests?.data?.forEach(request => {
-      const remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+      const remsAdminUrl = getMedicationSpecificCdsHooksUrl(request, globalState, hook);
       if (remsAdminUrl) {
         remsAdminUrls.push(remsAdminUrl);
       }
@@ -138,7 +138,7 @@ const RequestBuilder = props => {
     console.log('Initiating form submission ', types.info);
     let remsAdminUrl = null;
     if (request) {
-      remsAdminUrl = getMedicationSpecificRemsAdminUrl(request, globalState, hook);
+      remsAdminUrl = getMedicationSpecificCdsHooksUrl(request, globalState, hook);
       sendHook(prefetch, request, patient, hook, remsAdminUrl);
     } else {
       // get all MedicationRequests for the patient, then continue
