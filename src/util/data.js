@@ -1,73 +1,157 @@
+import env from 'env-var';
+
 const headerDefinitions = {
+  useIntermediary: {
+    display: 'Use Intermediary',
+    type: 'check',
+    default: env.get('VITE_USE_INTERMEDIARY').asBool()
+  },
   alternativeTherapy: {
     display: 'Alternative Therapy Cards Allowed',
-    type: 'check'
+    type: 'check',
+    default: env.get('VITE_ALT_DRUG').asBool()
   },
   baseUrl: {
     display: 'Base Server',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_EHR_BASE').asString()
   },
   cdsUrl: {
-    display: 'REMS Admin',
-    type: 'input'
+    display: 'REMS Admin Reset Url',
+    type: 'input',
+    default: env.get('VITE_CDS_SERVICE').asString()
   },
   defaultUser: {
     display: 'Default User',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_DEFAULT_USER').asString()
   },
   ehrUrl: {
     display: 'EHR Server',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_EHR_SERVER').asString()
   },
   ehrUrlSentToRemsAdminForPreFetch: {
     display: 'EHR Server Sent to REMS Admin for Prefetch',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_EHR_SERVER_TO_BE_SENT_TO_REMS_ADMIN_FOR_PREFETCH').asString()
   },
   generateJsonToken: {
     display: 'Generate JSON Web Token',
-    type: 'check'
+    type: 'check',
+    default: env.get('VITE_GENERATE_JWT').asBool()
   },
   includeConfig: {
     display: 'Include Configuration in CRD Request',
-    type: 'check'
+    type: 'check',
+    default: true
   },
   launchUrl: {
     display: 'DTR Launch URL (QuestionnaireForm)',
-    type: 'input'
-  },
-  orderSelect: {
-    display: 'Order Select Rest End Point',
-    type: 'input'
-  },
-  orderSign: {
-    display: 'Order Sign Rest End Point',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_LAUNCH_URL').asString()
   },
   patientFhirQuery: {
     display: 'Patient FHIR Query',
-    type: 'input'
-  },
-  patientView: {
-    display: 'Patient View Rest End Point',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_PATIENT_FHIR_QUERY').asString()
   },
   pimsUrl: {
     display: 'PIMS Server',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_PIMS_SERVER').asString()
   },
   responseExpirationDays: {
     display: 'In Progress Form Expiration Days',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_RESPONSE_EXPIRATION_DAYS').asInt()
   },
   sendPrefetch: {
     display: 'Send Prefetch',
-    type: 'check'
+    type: 'check',
+    default: true
   },
   smartAppUrl: {
     display: 'SMART App',
-    type: 'input'
+    type: 'input',
+    default: env.get('VITE_SMART_LAUNCH_URL').asString()
+  },
+  intermediaryUrl: {
+    display: 'REMS Intermediary URL',
+    type: 'input',
+    default: env.get('VITE_INTERMEDIARY').asString()
+  },
+  hookToSend: {
+    display: 'Send hook on patient select',
+    type: 'dropdown',
+    default: env.get('VITE_HOOK_TO_SEND').asString()
   }
 };
+
+const ORDER_SIGN = 'order-sign';
+const ORDER_SELECT = 'order-select';
+const PATIENT_VIEW = 'patient-view';
+const ENCOUNTER_START = 'encounter-start';
+const REMS_ETASU = '$rems-etasu';
+
+const CDS_SERVICE = 'cds-services';
+const ETASU_ENDPOINT = 'GuidanceResponse/$rems-etasu';
+
+const serviceEndpoints = {
+  'order-sign': CDS_SERVICE+'/rems-'+ORDER_SIGN,
+  'order-select': CDS_SERVICE+'/rems-'+ORDER_SELECT,
+  'patient-view': CDS_SERVICE+'/rems-'+PATIENT_VIEW,
+  'encounter-start': CDS_SERVICE+'/rems-'+ENCOUNTER_START,
+  '$rems-etasu': '4_0_0/'+ETASU_ENDPOINT
+};
+
+
+const medicationRequestToRemsAdmins = Object.freeze([
+  {
+    rxnorm: 2183126,
+    display: 'Turalio 200 MG Oral Capsule',
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+    ]
+  },
+  {
+    rxnorm: 6064,
+    display: 'Isotretinoin 20 MG Oral Capsule',
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+    ]
+  },
+  {
+    rxnorm: 1237051,
+    display: 'TIRF 200 UG Oral Transmucosal Lozenge',
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+    ]
+  },
+  {
+    rxnorm: 1666386,
+    display: 'Addyi 100 MG Oral Tablet',
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
+      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
+      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
+      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+    ]
+  }
+]);
 
 const types = {
   error: 'errorClass',
@@ -194,4 +278,19 @@ const shortNameMap = {
   'http://hl7.org/fhir/sid/ndc': 'NDC'
 };
 
-export { defaultValues, genderOptions, headerDefinitions, shortNameMap, stateOptions, types };
+export {
+  defaultValues,
+  genderOptions,
+  headerDefinitions,
+  shortNameMap,
+  stateOptions,
+  types,
+  medicationRequestToRemsAdmins,
+  ORDER_SIGN,
+  ORDER_SELECT,
+  PATIENT_VIEW,
+  ENCOUNTER_START,
+  REMS_ETASU,
+  CDS_SERVICE,
+  serviceEndpoints
+};

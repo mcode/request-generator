@@ -3,10 +3,8 @@
 }
 
 .search-box {
-    top: -10;
-    width: 100%;
-    margin: 10px auto;
-    margin-bottom: 50px;
+    width: 75%;
+    margin: 0px 10px 25px 20px;
 }
 
 .search-box-container {
@@ -15,4 +13,10 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly
+}
+
+.search-header {
+    display: flex;
+    padding: 12px;
+    align-items: center;
 }

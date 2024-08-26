@@ -12,10 +12,9 @@
 
 .request {
     border: 1px solid black;
-    height:530px;
     padding: 10px;
     border-radius: 5px;
-    background-color: rgb(248, 248, 248)
+    background-color: rgb(248, 248, 248);
 }
 
 .select-button{
@@ -32,8 +31,6 @@
 }
 
 .demographics {
-    width: 50%;
-    float: left;
     padding:10px 10px 10px 0px;
 }
 
@@ -54,8 +51,6 @@
 }
 
 .prefetched {
-    width: 50%;
-    float:left;
     padding:10px 10px 10px 0px;
     margin-top: 5px;
 }
@@ -123,4 +118,8 @@
 .empty-field {
     color: dimgrey;
     font-style: italic;
+}
+
+.patient-info {
+    margin: 5px;
 }

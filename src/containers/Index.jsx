@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FHIR from 'fhirclient';
-import env from 'env-var';
-import RequestBuilder from '../containers/RequestBuilder';
+import Home from '../components/RequestDashboard/Home';
 
-const Index = props => {
+const Index = () => {
   const [client, setClient] = useState(null);
 
   useEffect(() => {
@@ -12,13 +11,17 @@ const Index = props => {
     });
   }, []);
 
-  return <div>
-    { client ? <RequestBuilder client={client} /> : 
-      <div className='loading'>
-        <h1>Getting Client...</h1>
-      </div>
-    }
-    </div>;
+  return (
+    <div>
+      {client ? (
+        <Home client={client} />
+      ) : (
+        <div className="loading">
+          <h1>Getting Client...</h1>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Index;

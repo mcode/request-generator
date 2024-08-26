@@ -11,9 +11,28 @@ html{
     padding:10px 10px 15px 10px;
     flex:1;
     background-color: #ddd;
-    display: grid;
-    grid-template-columns: 15% 35% 35% 10%;
-    column-gap: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+.button-options {
+    display: flex;
+    column-gap: 12px;
+}
+
+.patient-table-info {
+    /* display: flex; */
+    margin-bottom: 10px;
+}
+tr:nth-child(odd) { 
+    background-color: #ddd !important; 
+} 
+.hover-row:hover {
+    background-color: #E7F1FF !important;
+}
+
+.big-button {
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .patient-box{
@@ -63,12 +82,9 @@ html{
     float:right;
 }
 
-.patient-info {
-    display:inline-block;
-}
-
 .request-info {
-    display: inherit;
+    display: flex;
+    flex-direction: column;
 
 }
 
@@ -84,8 +100,7 @@ html{
 }
 
 .select-btn {
-    height: 40px;
-    align-self: center;
+    height: 52px;
 }
 
 .emptyForm {

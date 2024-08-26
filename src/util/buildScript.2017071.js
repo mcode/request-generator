@@ -2,8 +2,18 @@
 
 import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 
+var SCRIPT_VERSION = '20170715';
+
 function xmlAddTextNode(xmlDoc, parent, sectionName, value) {
   var section = xmlDoc.createElement(sectionName);
+  var textNode = xmlDoc.createTextNode(value);
+  section.appendChild(textNode);
+  parent.appendChild(section);
+}
+
+function xmlAddTextNodeWithAttribute(xmlDoc, parent, sectionName, value, attrName, attrValue) {
+  var section = xmlDoc.createElement(sectionName);
+  section.setAttribute(attrName, attrValue);
   var textNode = xmlDoc.createTextNode(value);
   section.appendChild(textNode);
   parent.appendChild(section);
@@ -59,18 +69,25 @@ function buildNewRxPatient(doc, patientResource) {
   return patient;
 }
 
-function buildNewRxPrescriber(doc, practitionerResource) {
-  var prescriber = doc.createElement('Prescriber');
-  var nonVeterinarian = doc.createElement('NonVeterinarian');
-
-  //     Prescriber Identifier
+function getPractitionerNpi(practitionerResource) {
   for (let i = 0; i < practitionerResource.identifier.length; i++) {
     let id = practitionerResource.identifier[i];
     if (id.system && id.system.includes('us-npi')) {
-      var identification = doc.createElement('Identification');
-      xmlAddTextNode(doc, identification, 'NPI', id.value);
-      nonVeterinarian.appendChild(identification);
+      return id.value;
     }
+  }
+  return null;
+}
+
+function buildNewRxPrescriber(doc, practitionerResource, npi) {
+  const prescriber = doc.createElement('Prescriber');
+  const nonVeterinarian = doc.createElement('NonVeterinarian');
+
+  //     Prescriber Identifier
+  if (npi) {
+    const identification = doc.createElement('Identification');
+    xmlAddTextNode(doc, identification, 'NPI', npi);
+    nonVeterinarian.appendChild(identification);
   }
 
   //     Prescriber Name
@@ -82,11 +99,11 @@ function buildNewRxPrescriber(doc, practitionerResource) {
   nonVeterinarian.appendChild(buildNewRxAddress(doc, practitionerAddressResource));
 
   //     Prescriber Phone Number and Email
-  var communicationNumbers = doc.createElement('CommunicationNumbers');
+  const communicationNumbers = doc.createElement('CommunicationNumbers');
   for (let i = 0; i < practitionerResource.telecom.length; i++) {
     const telecom = practitionerResource.telecom[i];
     if (telecom.system === 'phone') {
-      var primaryTelephone = doc.createElement('PrimaryTelephone');
+      const primaryTelephone = doc.createElement('PrimaryTelephone');
       xmlAddTextNode(doc, primaryTelephone, 'Number', telecom.value);
       communicationNumbers.appendChild(primaryTelephone);
     } else if (telecom.system === 'email') {
@@ -208,7 +225,8 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   var drugCoded = doc.createElement('DrugCoded');
 
   // loop through the coding values and find the ndc code and the rxnorm code
-  let medicationCodingList = getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
+  let medicationCodingList =
+    getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
@@ -216,6 +234,11 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     if (system.endsWith('rxnorm')) {
       //     Medication Drug Description
       xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
+      //     Medication Drug Code
+      var drugDbCode = doc.createElement('DrugDBCode');
+      xmlAddTextNode(doc, drugDbCode, 'Code', coding.code);
+      xmlAddTextNode(doc, drugDbCode, 'Qualifier', 'BPK'); // Branded Package BPCK (BPK)
+      drugCoded.appendChild(drugDbCode);
     } else if (system.endsWith('ndc')) {
       //     Medication Drug Code
       var productCode = doc.createElement('ProductCode');
@@ -275,10 +298,20 @@ function buildNewRxMedication(doc, medicationRequestResource) {
 export default function buildNewRxRequest(
   patientResource,
   practitionerResource,
-  medicationRequestResource
+  medicationRequestResource,
+  authNumber
 ) {
   var doc = document.implementation.createDocument('', '', null);
   var message = doc.createElement('Message');
+  // set the message attributes
+  message.setAttribute('DatatypesVersion', SCRIPT_VERSION);
+  message.setAttribute('TransportVersion', SCRIPT_VERSION);
+  message.setAttribute('TransactionDomain', 'SCRIPT');
+  message.setAttribute('TransactionVersion', SCRIPT_VERSION);
+  message.setAttribute('StructuresVersion', SCRIPT_VERSION);
+  message.setAttribute('ECLVersion', SCRIPT_VERSION);
+  message.setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+  message.setAttribute('xsi:noNamespaceSchemaLocation', 'transport.xsd');
 
   // Header
   var header = doc.createElement('Header');
@@ -286,6 +319,18 @@ export default function buildNewRxRequest(
   const d1 = new Date();
   const messageIdValue = d1.getTime();
   xmlAddTextNode(doc, header, 'MessageID', messageIdValue);
+  // Add in auth number here
+  xmlAddTextNode(doc, header, 'AuthorizationNumber', authNumber);
+
+  // SentTime
+  xmlAddTextNode(doc, header, 'SentTime', d1.toISOString());
+
+  // PrescriberOrderNumber
+  xmlAddTextNode(doc, header, 'PrescriberOrderNumber', medicationRequestResource?.id);
+
+  // To
+  xmlAddTextNodeWithAttribute(doc, header, 'To', 'Pharmacy 123', 'Qualifier', 'P');
+
   message.appendChild(header);
 
   // Body
@@ -296,7 +341,16 @@ export default function buildNewRxRequest(
   newRx.appendChild(buildNewRxPatient(doc, patientResource));
 
   //   Prescriber
-  newRx.appendChild(buildNewRxPrescriber(doc, practitionerResource));
+  const npi = getPractitionerNpi(practitionerResource);
+  const prescriber = buildNewRxPrescriber(doc, practitionerResource, npi);
+  newRx.appendChild(prescriber);
+  if (npi) {
+    // set the prescriber NPI in the header.from
+    xmlAddTextNodeWithAttribute(doc, header, 'From', npi, 'Qualifier', 'C');
+  } else {
+    // just set it to the request generator
+    xmlAddTextNodeWithAttribute(doc, header, 'From', 'Request Generator', 'Qualifier', 'C');
+  }
 
   //   Medication
   newRx.appendChild(buildNewRxMedication(doc, medicationRequestResource));
