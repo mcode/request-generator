@@ -7,11 +7,8 @@ WORKDIR /home/node/app/request-generator
 COPY --chown=node:node . .
 RUN npm install
 EXPOSE 3000
-RUN apk update 
-RUN apk upgrade
-RUN apk search curl 
-RUN apk add curl
-HEALTHCHECK --interval=60s --timeout=10m --retries=10 CMD curl --fail $VITE_URL || exit 1
+
+HEALTHCHECK --interval=30s --start-period=15s --timeout=10m --retries=10 CMD wget --no-verbose --tries=1 --spider ${VITE_URL} || exit 1
 COPY --chown=node:node . .
 
 CMD npm run start
