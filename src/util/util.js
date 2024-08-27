@@ -184,12 +184,12 @@ const prepPrefetch = prefetchedResources => {
 
 // FHIR R4 Patient
 export const getPatientFirstAndLastName = patient => {
-  return `${patient.name[0].given[0]} ${patient.name[0].family}`;
+  return patient ? `${patient.name[0].given[0]} ${patient.name[0].family}` : '';
 };
 
 // FHIR R4 Patient
 export const getPatientFullName = patient => {
-  return `${patient.name[0].given.join(' ')} ${patient.name[0].family}`;
+  return patient ? `${patient.name[0].given.join(' ')} ${patient.name[0].family}` : '';
 };
 
 export {
