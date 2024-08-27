@@ -11,7 +11,11 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { retrieveLaunchContext } from '../../util/util';
+import {
+  getPatientFirstAndLastName,
+  getPatientFullName,
+  retrieveLaunchContext
+} from '../../util/util';
 
 const PatientBox = props => {
   const [state, setState] = useState({
@@ -539,11 +543,11 @@ const PatientBox = props => {
     if (patient.name) {
       setState(prevState => ({
         ...prevState,
-        name: `${patient.name[0].given[0]} ${patient.name[0].family}`
+        name: getPatientFirstAndLastName(patient)
       }));
       setState(prevState => ({
         ...prevState,
-        fullName: `${patient.name[0].given.join(' ')} ${patient.name[0].family}`
+        fullName: getPatientFullName(patient)
       }));
     }
     if (patient.birthDate) {

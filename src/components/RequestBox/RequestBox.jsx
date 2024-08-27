@@ -15,7 +15,8 @@ import {
 import {
   retrieveLaunchContext,
   prepPrefetch,
-  getMedicationSpecificEtasuUrl
+  getMedicationSpecificEtasuUrl,
+  getPatientFirstAndLastName
 } from '../../util/util.js';
 import './request.css';
 import axios from 'axios';
@@ -71,7 +72,7 @@ const RequestBox = props => {
     }
     let name;
     if (patient.name) {
-      name = <span> {`${patient.name[0].given[0]} ${patient.name[0].family}`} </span>;
+      name = <span>{getPatientFirstAndLastName(patient)}</span>;
     } else {
       name = emptyField;
     }

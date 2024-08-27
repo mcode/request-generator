@@ -28,7 +28,11 @@ import useStyles from './styles';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import { MemoizedTabPanel } from './TabPanel';
 import { Info, Refresh } from '@mui/icons-material';
-import { retrieveLaunchContext } from '../../util/util';
+import {
+  getPatientFirstAndLastName,
+  getPatientFullName,
+  retrieveLaunchContext
+} from '../../util/util';
 
 const taskStatus = Object.freeze({
   inProgress: 'in-progress',
@@ -216,7 +220,10 @@ const TasksSection = props => {
     );
   };
   const renderAssignMenu = () => {
-    const assignOptions = ['me', 'patient'];
+    const assignOptions = [
+      `provider (${state.defaultUser})`,
+      `patient (${getPatientFullName(state.patient)})`
+    ];
     return (
       <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
         {assignOptions.map(op => {
@@ -259,7 +266,7 @@ const TasksSection = props => {
     if (task.for?.resourceType?.toLowerCase() === 'patient') {
       const patient = task.for;
       if (patient.name) {
-        taskForName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
+        taskForName = getPatientFirstAndLastName(patient);
       }
     }
     if (task.owner && task.owner?.resourceType?.toLowerCase() === 'practitioner') {
@@ -273,7 +280,7 @@ const TasksSection = props => {
     if (task.owner && task.owner?.resourceType?.toLowerCase() === 'patient') {
       const patient = task.owner;
       if (patient.name) {
-        taskOwnerName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
+        taskOwnerName = getPatientFirstAndLastName(patient);
       } else {
         taskOwnerName = task.owner.id;
       }
