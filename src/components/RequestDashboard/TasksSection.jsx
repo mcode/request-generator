@@ -1,18 +1,5 @@
 import React, { memo, useState, useEffect, Fragment } from 'react';
-import {
-  Button,
-  Box,
-  Modal,
-  Grid,
-  Tabs,
-  Tab,
-  Stack,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Menu
-} from '@mui/material';
+import { Button, Box, Modal, Grid, Tabs, Tab, Stack, MenuItem, Menu } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,14 +7,12 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CheckIcon from '@mui/icons-material/Check';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import useStyles from './styles';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import { MemoizedTabPanel } from './TabPanel';
-import { Info, Refresh } from '@mui/icons-material';
+import { Refresh } from '@mui/icons-material';
 import {
   getPatientFirstAndLastName,
   getPatientFullName,
