@@ -16,6 +16,7 @@ import { Refresh } from '@mui/icons-material';
 import {
   getPatientFirstAndLastName,
   getPatientFullName,
+  getPractitionerFirstAndLastName,
   retrieveLaunchContext
 } from '../../util/util';
 
@@ -34,7 +35,7 @@ const TasksSection = props => {
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState('');
   const [anchorStatus, setAnchorStatus] = useState(null);
-  const [anchorAssign, setAnchorAssign] = useState(null);
+  const [anchorAssign, setAnchorAssign] = useState(null); // R4 Task
 
   const menuOpen = Boolean(anchorStatus);
   const assignMenuOpen = Boolean(anchorAssign);
@@ -205,25 +206,34 @@ const TasksSection = props => {
     );
   };
   const renderAssignMenu = () => {
+    const practitioner = anchorAssign?.task?.requester;
+    const patient = anchorAssign?.task?.for;
     const assignOptions = [
-      `provider (${state.defaultUser})`,
-      `patient (${getPatientFullName(state.patient)})`
+      {
+        id: 'me',
+        display: `provider${practitioner ? ' (' + getPractitionerFirstAndLastName(practitioner) + ')' : ''}`
+      },
+      {
+        id: 'patient',
+        display: `patient${patient ? ' (' + getPatientFullName(patient) + ')' : ''}`
+      }
     ];
     return (
       <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
-        {assignOptions.map(op => {
+        {assignOptions.map(({ id, display }) => {
           return (
             <MenuItem
-              key={op}
+              key={id}
               onClick={() => {
-                handleChangeAssign(anchorAssign?.task, op);
+                handleChangeAssign(anchorAssign?.task, id);
               }}
-            >{`Assign to ${op}`}</MenuItem>
+            >{`Assign to ${display}`}</MenuItem>
           );
         })}
       </Menu>
     );
   };
+
   const renderTasks = taskSubset => {
     if (taskSubset.length > 0) {
       return (
@@ -257,7 +267,7 @@ const TasksSection = props => {
     if (task.owner && task.owner?.resourceType?.toLowerCase() === 'practitioner') {
       const practitioner = task.owner;
       if (practitioner.name) {
-        taskOwnerName = `${practitioner.name[0].given[0]} ${practitioner.name[0].family}`;
+        taskOwnerName = getPractitionerFirstAndLastName(practitioner);
       } else {
         taskOwnerName = task.owner.id;
       }
@@ -446,6 +456,7 @@ const TasksSection = props => {
         </Box>
       </Modal>
       {renderStatusMenu()}
+      {/* edit this function so it is like renderPortalView or renderMainView where it refers to each and every task */}
       {renderAssignMenu()}
       {props.portalView ? renderPortalView() : renderMainView()}
     </>
