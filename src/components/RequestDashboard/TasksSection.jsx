@@ -107,7 +107,7 @@ const TasksSection = props => {
         reference: user
       };
 
-      props.client.update(task).then(e => {
+      props.client.update(task).then(() => {
         fetchTasks();
       });
     }
@@ -118,14 +118,14 @@ const TasksSection = props => {
       task.owner = {
         reference: task.for.reference
       };
-      props.client.update(task).then(e => {
+      props.client.update(task).then(() => {
         fetchTasks();
       });
     }
   };
   const deleteTask = () => {
     if (taskToDelete) {
-      props.client.delete(`${taskToDelete.resourceType}/${taskToDelete.id}`).then(e => {
+      props.client.delete(`${taskToDelete.resourceType}/${taskToDelete.id}`).then(() => {
         console.log('Deleted Task');
         fetchTasks();
       });
@@ -166,7 +166,7 @@ const TasksSection = props => {
   const updateTaskStatus = (task, status) => {
     task.status = status;
     const updatedTask = structuredClone(task); // structured clone may not work on older browsers
-    props.client.update(washTask(updatedTask)).then(e => {
+    props.client.update(washTask(updatedTask)).then(() => {
       fetchTasks();
     });
   };
@@ -190,7 +190,7 @@ const TasksSection = props => {
     retrieveLaunchContext(smartLink, patient, props.client.state).then(result => {
       updateTaskStatus(lTask, 'in-progress');
       lTask.status = 'in-progress';
-      props.client.update(washTask(lTask)).then(_e => {
+      props.client.update(washTask(lTask)).then(() => {
         fetchTasks();
       });
       window.open(result.url, '_blank');
