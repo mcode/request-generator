@@ -36,6 +36,7 @@ const TasksSection = props => {
   const [taskToDelete, setTaskToDelete] = useState('');
   const [anchorStatus, setAnchorStatus] = useState(null);
   const [anchorAssign, setAnchorAssign] = useState(null); // R4 Task
+  const [practitioner, setPractitioner] = useState(null); // R4 Practitioner
 
   const menuOpen = Boolean(anchorStatus);
   const assignMenuOpen = Boolean(anchorAssign);
@@ -151,6 +152,14 @@ const TasksSection = props => {
   }, []);
 
   useEffect(() => {
+    props.client.request(`Practitioner/${state.defaultUser}`).then(practitioner => {
+      if (practitioner) {
+        setPractitioner(practitioner);
+      }
+    });
+  }, [state.defaultUser]);
+
+  useEffect(() => {
     fetchTasks();
   }, [state.patient]);
 
@@ -206,7 +215,6 @@ const TasksSection = props => {
     );
   };
   const renderAssignMenu = () => {
-    const practitioner = anchorAssign?.task?.requester;
     const patient = anchorAssign?.task?.for;
     const assignOptions = [
       {
