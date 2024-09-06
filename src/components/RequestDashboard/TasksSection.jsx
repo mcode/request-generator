@@ -1,18 +1,5 @@
 import React, { memo, useState, useEffect, Fragment } from 'react';
-import {
-  Button,
-  Box,
-  Modal,
-  Grid,
-  Tabs,
-  Tab,
-  Stack,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Menu
-} from '@mui/material';
+import { Button, Box, Modal, Grid, Tabs, Tab, Stack, MenuItem, Menu } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,15 +7,18 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CheckIcon from '@mui/icons-material/Check';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import useStyles from './styles';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import { MemoizedTabPanel } from './TabPanel';
-import { Info, Refresh } from '@mui/icons-material';
-import { retrieveLaunchContext } from '../../util/util';
+import { Refresh } from '@mui/icons-material';
+import {
+  getPatientFirstAndLastName,
+  getPatientFullName,
+  getPractitionerFirstAndLastName,
+  retrieveLaunchContext
+} from '../../util/util';
 
 const taskStatus = Object.freeze({
   inProgress: 'in-progress',
@@ -45,7 +35,8 @@ const TasksSection = props => {
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState('');
   const [anchorStatus, setAnchorStatus] = useState(null);
-  const [anchorAssign, setAnchorAssign] = useState(null);
+  const [anchorAssign, setAnchorAssign] = useState(null); // R4 Task
+  const [practitioner, setPractitioner] = useState(null); // R4 Practitioner
 
   const menuOpen = Boolean(anchorStatus);
   const assignMenuOpen = Boolean(anchorAssign);
@@ -116,7 +107,7 @@ const TasksSection = props => {
         reference: user
       };
 
-      props.client.update(task).then(e => {
+      props.client.update(task).then(() => {
         fetchTasks();
       });
     }
@@ -127,14 +118,14 @@ const TasksSection = props => {
       task.owner = {
         reference: task.for.reference
       };
-      props.client.update(task).then(e => {
+      props.client.update(task).then(() => {
         fetchTasks();
       });
     }
   };
   const deleteTask = () => {
     if (taskToDelete) {
-      props.client.delete(`${taskToDelete.resourceType}/${taskToDelete.id}`).then(e => {
+      props.client.delete(`${taskToDelete.resourceType}/${taskToDelete.id}`).then(() => {
         console.log('Deleted Task');
         fetchTasks();
       });
@@ -161,13 +152,21 @@ const TasksSection = props => {
   }, []);
 
   useEffect(() => {
+    props.client.request(`Practitioner/${state.defaultUser}`).then(practitioner => {
+      if (practitioner) {
+        setPractitioner(practitioner);
+      }
+    });
+  }, [state.defaultUser]);
+
+  useEffect(() => {
     fetchTasks();
   }, [state.patient]);
 
   const updateTaskStatus = (task, status) => {
     task.status = status;
     const updatedTask = structuredClone(task); // structured clone may not work on older browsers
-    props.client.update(washTask(updatedTask)).then(e => {
+    props.client.update(washTask(updatedTask)).then(() => {
       fetchTasks();
     });
   };
@@ -191,7 +190,7 @@ const TasksSection = props => {
     retrieveLaunchContext(smartLink, patient, props.client.state).then(result => {
       updateTaskStatus(lTask, 'in-progress');
       lTask.status = 'in-progress';
-      props.client.update(washTask(lTask)).then(_e => {
+      props.client.update(washTask(lTask)).then(() => {
         fetchTasks();
       });
       window.open(result.url, '_blank');
@@ -216,22 +215,33 @@ const TasksSection = props => {
     );
   };
   const renderAssignMenu = () => {
-    const assignOptions = ['me', 'patient'];
+    const patient = anchorAssign?.task?.for;
+    const assignOptions = [
+      {
+        id: 'me',
+        display: `provider${practitioner ? ' (' + getPractitionerFirstAndLastName(practitioner) + ')' : ''}`
+      },
+      {
+        id: 'patient',
+        display: `patient${patient ? ' (' + getPatientFullName(patient) + ')' : ''}`
+      }
+    ];
     return (
       <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
-        {assignOptions.map(op => {
+        {assignOptions.map(({ id, display }) => {
           return (
             <MenuItem
-              key={op}
+              key={id}
               onClick={() => {
-                handleChangeAssign(anchorAssign?.task, op);
+                handleChangeAssign(anchorAssign?.task, id);
               }}
-            >{`Assign to ${op}`}</MenuItem>
+            >{`Assign to ${display}`}</MenuItem>
           );
         })}
       </Menu>
     );
   };
+
   const renderTasks = taskSubset => {
     if (taskSubset.length > 0) {
       return (
@@ -259,13 +269,13 @@ const TasksSection = props => {
     if (task.for?.resourceType?.toLowerCase() === 'patient') {
       const patient = task.for;
       if (patient.name) {
-        taskForName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
+        taskForName = getPatientFirstAndLastName(patient);
       }
     }
     if (task.owner && task.owner?.resourceType?.toLowerCase() === 'practitioner') {
       const practitioner = task.owner;
       if (practitioner.name) {
-        taskOwnerName = `${practitioner.name[0].given[0]} ${practitioner.name[0].family}`;
+        taskOwnerName = getPractitionerFirstAndLastName(practitioner);
       } else {
         taskOwnerName = task.owner.id;
       }
@@ -273,7 +283,7 @@ const TasksSection = props => {
     if (task.owner && task.owner?.resourceType?.toLowerCase() === 'patient') {
       const patient = task.owner;
       if (patient.name) {
-        taskOwnerName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
+        taskOwnerName = getPatientFirstAndLastName(patient);
       } else {
         taskOwnerName = task.owner.id;
       }
@@ -454,6 +464,7 @@ const TasksSection = props => {
         </Box>
       </Modal>
       {renderStatusMenu()}
+      {/* edit this function so it is like renderPortalView or renderMainView where it refers to each and every task */}
       {renderAssignMenu()}
       {props.portalView ? renderPortalView() : renderMainView()}
     </>

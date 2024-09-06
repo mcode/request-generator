@@ -182,6 +182,21 @@ const prepPrefetch = prefetchedResources => {
   return preppedResources;
 };
 
+// FHIR R4 Patient
+export const getPatientFirstAndLastName = patient => {
+  return patient ? `${patient.name[0].given[0]} ${patient.name[0].family}` : '';
+};
+
+// FHIR R4 Patient
+export const getPatientFullName = patient => {
+  return patient ? `${patient.name[0].given.join(' ')} ${patient.name[0].family}` : '';
+};
+
+// FHIR R4 Practitioner
+export const getPractitionerFirstAndLastName = practitioner => {
+  return practitioner ? `${practitioner.name[0].given[0]} ${practitioner.name[0].family}` : '';
+};
+
 export {
   retrieveLaunchContext,
   standardsBasedGetEtasu,
