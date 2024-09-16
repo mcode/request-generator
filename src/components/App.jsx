@@ -1,4 +1,5 @@
-import { ThemeProvider } from '@mui/styles';
+import { ThemeProvider } from '@mui/material';
+
 import React, { useEffect } from 'react';
 import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom';
 import Gateway from '../containers/Gateway/Gateway';
@@ -26,8 +27,10 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/launch" element={<Launch redirect={redirect} />} />
-        <Route path="/index" element={<Index />} />
+        <Route path="/index" element={<ThemeProvider theme={theme}><Index/></ThemeProvider>} />
         <Route path="/register" element={<RegisterPage />} />
+        {/* forcibly enter backoffice workflow */}
+        <Route path="/index/backoffice" element={<ThemeProvider theme={theme}><Index backoffice={true}/></ThemeProvider> } />
         <Route
           path="/patient-portal"
           element={

@@ -46,6 +46,9 @@ const RequestBuilder = props => {
   });
   const displayRequestBox = !!globalState.patient?.id;
 
+  useEffect(() => {
+    console.log(state.prefetchedResources);
+  }, [state.prefetchedResources]);
   const isOrderNotSelected = () => {
     return Object.keys(state.request).length === 0;
   };

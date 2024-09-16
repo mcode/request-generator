@@ -12,6 +12,9 @@ export default defineConfig({
     define: {
         'process.env': process.env
     },
+    optimizeDeps: {
+        include: ['@mui/material/Tooltip', '@emotion/styled'],
+    },
     server: {    
         // this sets a default port to 3000  
         port: 3000, 

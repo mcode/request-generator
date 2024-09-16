@@ -22,7 +22,7 @@ const Login = props => {
       params.append('client_id', env.get('VITE_CLIENT').asString());
       axios
         .post(
-          `${env.get('VITE_AUTH').asString()}/realms/${env
+          `${env.get('VITE_AUTH').asString()}/auth/realms/${env
             .get('VITE_REALM')
             .asString()}/protocol/openid-connect/token`,
           params,
