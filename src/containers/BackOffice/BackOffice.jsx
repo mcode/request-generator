@@ -1,41 +1,35 @@
-import React, { memo, useState, useEffect } from 'react';
-import FHIR from 'fhirclient';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import env from 'env-var';
+import React, { memo, useEffect, useContext } from 'react';
+import BusinessIcon from '@mui/icons-material/Business';
+import Box from '@mui/material/Box';
+import { Container } from '@mui/system';
 import { SettingsContext } from '../ContextProvider/SettingsProvider';
 import Dashboard from './Dashboard';
 
 const BackOffice = (props) => {
   const { client } = props;
-  const [, dispatch] = React.useContext(SettingsContext);
+  const [, dispatch] = useContext(SettingsContext);
 
   useEffect(() => {
       document.title = 'EHR | Back Office';
   }, []);
 
-  const logout = () => {
-    setClient(null);
-    setPatientName(null);
-  };
-
-  const getName = patient => {
-    const name = [];
-    if (patient.name) {
-      if (patient.name[0].given) {
-        name.push(patient.name[0].given[0]);
-      }
-      if (patient.name[0].family) {
-        name.push(patient.name[0].family);
-      }
-    }
-    return name.join(' ');
-  };
   return (
-    <div>
-        <Dashboard client = {client}/>
-    </div>
+    <Box>
+      <div className='backoffice-app'>
+      <Container maxWidth="false">
+          <div className="containerg">
+            <div className="logo">
+              <BusinessIcon
+                sx={{ color: 'white', fontSize: 60, paddingTop: 2.5, paddingRight: 2.5 }}
+              />
+              <h1>Back Office </h1>
+            </div>
+          </div>
+        </Container>
+      </div>
+      <Dashboard client={client}/>
+    </Box>
+   
   );
 };
 

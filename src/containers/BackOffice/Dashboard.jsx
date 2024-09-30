@@ -1,17 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
-import Toolbar from '@mui/material/Toolbar';
+import { Box, Tab, Tabs, Button } from '@mui/material';
+import { Container } from '@mui/system';
+import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import HomeIcon from '@mui/icons-material/Home';
 import { StyledAppBarAlt, StyledStack } from './styles';
 import SettingsSection from '../../components/RequestDashboard/SettingsSection';
@@ -20,73 +15,20 @@ import { SettingsContext } from '../ContextProvider/SettingsProvider';
 import SimplePatientSelect from './SimplePatientSelect';
 import SimplePatientDetails from './SimplePatientDetails';
 import BackOfficeHome from './BackOfficeHome';
-import { Person, Settings } from '@mui/icons-material';
 
-
-const drawerWidth = 400;
-
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        flexGrow: 1,
-        padding: theme.spacing(3),
-        transition: theme.transitions.create('margin', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        marginRight: -drawerWidth,
-        ...(open && {
-            transition: theme.transitions.create('margin', {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.enteringScreen,
-            }),
-            marginRight: 0,
-        }),
-        position: 'relative',
-    }),
-);
-
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-start',
-}));
+function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`
+    };
+  }
 
 export default function Dashboard(props) {
     const { client } = props;
     const [headerStyle, setHeaderStyle] = useState(undefined);
     const [globalState, dispatch] = useContext(SettingsContext);
-    console.log(globalState.patient);
-    const tabs = {
-        homeTab: {
-            id: 'home',
-            label: 'Home',
-            icon: <HomeIcon />,
-            content: <div key={"home"}><BackOfficeHome client = {client}></BackOfficeHome></div>
-        },
-        selectTab: {
-            id: 'select',
-            label: 'Select Patients',
-            icon: <Person />,
-            content: <div key={"select"}><SimplePatientSelect client = {client}></SimplePatientSelect></div>
-        },
-        tasksTab: {
-            id: 'task',
-            label: 'View Tasks',
-            icon: <LibraryBooksIcon />,
-            content: <div key={"tasks"}><TasksSection client = {client}></TasksSection></div>
-        },
-        settingsTab: {
-            id: 'settings',
-            label: 'Settings',
-            icon: <Settings />,
-            content: <div key={"settings"}><SettingsSection client = {client} ></SettingsSection></div>
-        }
-    };
-    const [selected, setSelected] = useState(tabs.homeTab);
+    console.log('global state patient -- > ',  globalState.patient);
+
     const [glossaryOpen, setGlossaryOpen] = useState(false);
 
 
@@ -103,8 +45,6 @@ export default function Dashboard(props) {
         document.addEventListener("scroll", updateScrollState);
         return () => document.removeEventListener("scroll", updateScrollState);
     }, []);
-
-    const theme = useTheme();
 
     const handleDrawerOpen = () => {
         setGlossaryOpen(true);
@@ -133,66 +73,73 @@ export default function Dashboard(props) {
                 console.log(result);
             });
     }
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Box position="fixed" sx={{width: '100%', height: '60px', zIndex:2, backgroundColor: '#f2f2f2'}}>
 
-            </Box>
-            <StyledAppBarAlt position="fixed" isscrolled={headerStyle} open={glossaryOpen} drawerwidth={drawerWidth}>
-            <Toolbar>
-                {Object.values(tabs).map((tab) => {
-                    return (<StyledStack onClick={() => setSelected(tab)}
-                                         isscrolled={headerStyle}
-                                         direction="row"
-                                         alignItems="center"
-                                         gap={2}
-                                         key={tab.id}
-                                         selected={selected?.id === tab.id}
-                                         >
-                                {tab.icon}
-                                <Typography variant="p" noWrap>
-                                    {tab.label}
-                                </Typography>
-                            </StyledStack>)
-                })}
-            <StyledStack onClick={handleDrawerOpen} isscrolled={headerStyle} direction="row" alignItems="center" gap={2} sx={{ ...(glossaryOpen && { display: 'none' }), marginLeft: 'auto', border: '1px solid black' }}>
-                <LibraryBooksIcon />                  
-                <Typography variant="p" noWrap>
-                    View Patient
-                </Typography>
-                  
-            </StyledStack>
-            </Toolbar>
-            </StyledAppBarAlt>
-            <Main open={glossaryOpen}>
-                <DrawerHeader />
-                {Object.values(tabs).map((tab) => {
-                    if(tab.id === selected?.id){
-                        return tab.content;
-                    }
-                })}
-            </Main>
-            <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: drawerWidth,
-                    },
-                }}
-                variant="persistent"
-                anchor="right"
-                open={glossaryOpen}
-            >
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <div><SimplePatientDetails client = {client}></SimplePatientDetails></div>
-            </Drawer>
-        </Box>
+    const [tabIndex, setValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    };
+
+    return (
+
+        <div>
+            <Container maxWidth="xl">
+                <Button variant="outlined" onClick={handleDrawerOpen}>View Patient</Button>
+                <Box
+                    sx={{
+                    width: '100%',
+                    border: 1,
+                    borderRadius: '5px',
+                    borderWidth: 4,
+                    borderColor: '#F1F3F4',
+                    backgroundColor: '#E7EBEF'
+                    }}
+                >
+                    <Box sx={{ backgroundColor: '#F1F3F4', borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example" centered>
+                        <Tab label="Home" {...a11yProps(0)} />
+                        <Tab label="Select Patients" {...a11yProps(1)} />
+                        <Tab label="View Tasks" {...a11yProps(2)} />
+                        <Tab label="Settings" {...a11yProps(3)} />
+                    </Tabs>
+                    </Box>
+
+                    <Box>
+                    <Box sx={{ padding: 2 }}>
+                        {tabIndex === 0 && (
+                        <Box>
+                            <BackOfficeHome client={client}></BackOfficeHome>
+                        </Box>
+                        )}
+                        {tabIndex === 1 && (
+                        <Box>
+                            <SimplePatientSelect client={client}></SimplePatientSelect>
+                        </Box>
+                        )}
+                        {tabIndex === 2 && (
+                        <Box>
+                            <TasksSection client={client}></TasksSection>
+                        </Box>
+                        )}
+                        {tabIndex === 3 && (
+                        <Box>
+                            <SettingsSection client={client}></SettingsSection>
+                        </Box>
+                        )}
+                    </Box>
+                    </Box>
+                </Box>
+                <Dialog
+                    open={glossaryOpen}
+                    onClose={handleDrawerClose}
+                    fullWidth={true}
+                    maxWidth='md'
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                    >
+                        <div><SimplePatientDetails client={client}></SimplePatientDetails></div>
+                </Dialog>
+            </Container>
+        </div>
     );
 }
