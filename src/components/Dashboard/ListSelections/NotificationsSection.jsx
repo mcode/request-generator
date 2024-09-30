@@ -7,7 +7,7 @@ import { createMedicationFromMedicationRequest } from '../../../util/fhir';
 import { standardsBasedGetEtasu, getMedicationSpecificEtasuUrl } from '../../../util/util';
 
 const NotificationsSection = () => {
-  const [globalState, _] = useContext(SettingsContext);
+  const [globalState] = useContext(SettingsContext);
   const classes = useStyles();
   const [etasu, setEtasu] = useState([]);
   const [medications, setMedications] = useState([]);

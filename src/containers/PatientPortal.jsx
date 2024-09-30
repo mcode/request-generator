@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import env from 'env-var';
 import { actionTypes } from './ContextProvider/reducer';
 import { SettingsContext } from './ContextProvider/SettingsProvider';
+import { getPatientFirstAndLastName } from '../util/util';
 
 const PatientPortal = () => {
   const classes = useStyles();
@@ -30,7 +31,7 @@ const PatientPortal = () => {
         }
       });
       client.request(`Patient/${client.patient.id}`).then(patient => {
-        setPatientName(getName(patient));
+        setPatientName(getPatientFirstAndLastName(patient));
         dispatch({
           type: actionTypes.updatePatient,
           value: patient
@@ -46,18 +47,6 @@ const PatientPortal = () => {
     setPatientName(null);
   };
 
-  const getName = patient => {
-    const name = [];
-    if (patient.name) {
-      if (patient.name[0].given) {
-        name.push(patient.name[0].given[0]);
-      }
-      if (patient.name[0].family) {
-        name.push(patient.name[0].family);
-      }
-    }
-    return name.join(' ');
-  };
   return (
     <div className={classes.background}>
       <AppBar position="fixed" sx={{ zIndex: 1300, backgroundColor: '#bb3551', height: '95px' }}>
