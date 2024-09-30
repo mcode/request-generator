@@ -6,7 +6,7 @@ import { SettingsContext } from '../../containers/ContextProvider/SettingsProvid
 import { standardsBasedGetEtasu, getMedicationSpecificEtasuUrl } from '../../util/util.js';
 
 export const EtasuStatusComponent = props => {
-  const [globalState, _] = useContext(SettingsContext);
+  const [globalState] = useContext(SettingsContext);
 
   const { remsAdminResponseInit, data, display, medication } = props;
 

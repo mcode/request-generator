@@ -7,7 +7,7 @@ import { createMedicationFromMedicationRequest } from '../../util/fhir.js';
 // converts code into etasu for the component to render
 // simplifies usage for applications that only know the code, not the case they want to display
 export const EtasuStatus = props => {
-  const [globalState, _] = useContext(SettingsContext);
+  const [globalState] = useContext(SettingsContext);
 
   const { code, request } = props;
   const [remsAdminResponse, setRemsAdminResponse] = useState({});

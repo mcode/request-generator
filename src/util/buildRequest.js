@@ -1,4 +1,4 @@
-import { ORDER_SIGN, ORDER_SELECT } from "./data";
+import { ORDER_SIGN, ORDER_SELECT } from './data';
 
 export default function buildRequest(
   request,

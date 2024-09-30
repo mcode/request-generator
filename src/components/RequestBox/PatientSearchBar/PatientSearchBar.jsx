@@ -5,6 +5,7 @@ import { defaultValues } from '../../../util/data';
 
 import PatientBox from '../../SMARTBox/PatientBox';
 import './PatientSearchBarStyle.css';
+import { getPatientFirstAndLastName } from '../../../util/util';
 
 const PatientSearchBar = props => {
   const [options] = useState(defaultValues);
@@ -14,17 +15,10 @@ const PatientSearchBar = props => {
   useEffect(() => {
     const newList = props.searchablePatients.map(patient => ({
       id: patient.id,
-      name: getName(patient)
+      name: getPatientFirstAndLastName(patient)
     }));
     setListOfPatients([newList]);
   }, [props.searchablePatients]);
-
-  function getName(patient) {
-    if (patient.name) {
-      return patient.name[0].given[0] + ' ' + patient.name[0].family;
-    }
-    return '';
-  }
 
   function getFilteredLength(searchString, listOfPatients) {
     const filteredListOfPatients = listOfPatients[0].filter(element => {

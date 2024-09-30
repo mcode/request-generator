@@ -25,8 +25,15 @@ import AddIcon from '@mui/icons-material/Add';
 import env from 'env-var';
 import FHIR from 'fhirclient';
 
-import { headerDefinitions, medicationRequestToRemsAdmins, ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU } from '../../util/data';
-import { actionTypes, initialState } from '../../containers/ContextProvider/reducer';
+import {
+  headerDefinitions,
+  ORDER_SIGN,
+  ORDER_SELECT,
+  PATIENT_VIEW,
+  ENCOUNTER_START,
+  REMS_ETASU
+} from '../../util/data';
+import { actionTypes } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
 const ENDPOINT = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU];
@@ -255,30 +262,30 @@ const SettingsSection = props => {
             case 'dropdown':
               return (
                 <React.Fragment key={key}>
-                    <Grid key={key} item xs={6}>
-                      <FormControl fullWidth>
-                        <InputLabel id="dropdown-label">Hook to send when selecting a patient</InputLabel>
-                        <Select
-                            labelId="dropdown-label"
-                            id="dropdown"
-                            value={state[key]}
-                            label="Hook to send when selecting a patient"
-                            onChange={event => updateSetting(key, event.target.value)}
-                            sx={{ width: '100%' }}
-                          >
-                            <MenuItem key={PATIENT_VIEW} value={PATIENT_VIEW}>
-                              {PATIENT_VIEW}
-                            </MenuItem>
-                            <MenuItem key={ENCOUNTER_START} value={ENCOUNTER_START}>
-                              {ENCOUNTER_START}
-                            </MenuItem>
-                        </Select>
-                      </FormControl>
-                      
-                    </Grid> 
+                  <Grid key={key} item xs={6}>
+                    <FormControl fullWidth>
+                      <InputLabel id="dropdown-label">
+                        Hook to send when selecting a patient
+                      </InputLabel>
+                      <Select
+                        labelId="dropdown-label"
+                        id="dropdown"
+                        value={state[key]}
+                        label="Hook to send when selecting a patient"
+                        onChange={event => updateSetting(key, event.target.value)}
+                        sx={{ width: '100%' }}
+                      >
+                        <MenuItem key={PATIENT_VIEW} value={PATIENT_VIEW}>
+                          {PATIENT_VIEW}
+                        </MenuItem>
+                        <MenuItem key={ENCOUNTER_START} value={ENCOUNTER_START}>
+                          {ENCOUNTER_START}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
                 </React.Fragment>
-                
-              )
+              );
             default:
               return (
                 <div key={key}>
@@ -300,115 +307,115 @@ const SettingsSection = props => {
           }}
         >
           {!state['useIntermediary'] && (
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow sx={{ th: { fontWeight: 'bold' } }}>
-                <TableCell width={500}>Medication Display</TableCell>
-                <TableCell width={200}>Medication RxNorm Code</TableCell>
-                <TableCell width={200}>Hook / Endpoint</TableCell>
-                <TableCell width={500}>REMS Admin URL</TableCell>
-                {/* This empty TableCell corresponds to the add and delete 
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow sx={{ th: { fontWeight: 'bold' } }}>
+                  <TableCell width={500}>Medication Display</TableCell>
+                  <TableCell width={200}>Medication RxNorm Code</TableCell>
+                  <TableCell width={200}>Hook / Endpoint</TableCell>
+                  <TableCell width={500}>REMS Admin URL</TableCell>
+                  {/* This empty TableCell corresponds to the add and delete 
                 buttons. It is used to fill up the sticky header which 
                 will appear over the gray/white table rows. */}
-                <TableCell width={150} />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {Object.entries(state.medicationRequestToRemsAdmins).map(([key, row]) => {
-                return (
-                  <TableRow key={key}>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        value={row.display}
-                        onChange={event =>
-                          dispatch({
-                            type: actionTypes.updateCdsHookSetting,
-                            settingId: key,
-                            value: { display: event.target.value }
-                          })
-                        }
-                        sx={{ width: '100%' }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        value={row.rxnorm}
-                        onChange={event =>
-                          dispatch({
-                            type: actionTypes.updateCdsHookSetting,
-                            settingId: key,
-                            value: { rxnorm: event.target.value }
-                          })
-                        }
-                        sx={{ width: '100%' }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        labelId="dropdown-label"
-                        id="dropdown"
-                        value={row.endpointType}
-                        onChange={event =>
-                          dispatch({
-                            type: actionTypes.updateCdsHookSetting,
-                            settingId: key,
-                            value: { endpointType: event.target.value }
-                          })
-                        }
-                        sx={{ width: '100%' }}
-                      >
-                        {ENDPOINT.map(endpointType => (
-                          <MenuItem key={endpointType} value={endpointType}>
-                            {endpointType}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        value={row.remsAdmin}
-                        onChange={event =>
-                          dispatch({
-                            type: actionTypes.updateCdsHookSetting,
-                            settingId: key,
-                            value: { remsAdmin: event.target.value }
-                          })
-                        }
-                        sx={{ width: '100%' }}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Add a new row below">
-                        <IconButton
-                          color="primary"
-                          onClick={() =>
-                            dispatch({ type: actionTypes.addCdsHookSetting, settingId: key })
+                  <TableCell width={150} />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(state.medicationRequestToRemsAdmins).map(([key, row]) => {
+                  return (
+                    <TableRow key={key}>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={row.display}
+                          onChange={event =>
+                            dispatch({
+                              type: actionTypes.updateCdsHookSetting,
+                              settingId: key,
+                              value: { display: event.target.value }
+                            })
                           }
-                          size="large"
-                        >
-                          <AddIcon fontSize="large" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete this row">
-                        <IconButton
-                          color="primary"
-                          onClick={() =>
-                            dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key })
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={row.rxnorm}
+                          onChange={event =>
+                            dispatch({
+                              type: actionTypes.updateCdsHookSetting,
+                              settingId: key,
+                              value: { rxnorm: event.target.value }
+                            })
                           }
-                          size="large"
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          labelId="dropdown-label"
+                          id="dropdown"
+                          value={row.endpointType}
+                          onChange={event =>
+                            dispatch({
+                              type: actionTypes.updateCdsHookSetting,
+                              settingId: key,
+                              value: { endpointType: event.target.value }
+                            })
+                          }
+                          sx={{ width: '100%' }}
                         >
-                          <DeleteIcon fontSize="large" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                          {ENDPOINT.map(endpointType => (
+                            <MenuItem key={endpointType} value={endpointType}>
+                              {endpointType}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={row.remsAdmin}
+                          onChange={event =>
+                            dispatch({
+                              type: actionTypes.updateCdsHookSetting,
+                              settingId: key,
+                              value: { remsAdmin: event.target.value }
+                            })
+                          }
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Add a new row below">
+                          <IconButton
+                            color="primary"
+                            onClick={() =>
+                              dispatch({ type: actionTypes.addCdsHookSetting, settingId: key })
+                            }
+                            size="large"
+                          >
+                            <AddIcon fontSize="large" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete this row">
+                          <IconButton
+                            color="primary"
+                            onClick={() =>
+                              dispatch({ type: actionTypes.deleteCdsHookSetting, settingId: key })
+                            }
+                            size="large"
+                          >
+                            <DeleteIcon fontSize="large" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           )}
         </TableContainer>
       </Grid>
