@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
 import FHIR from 'fhirclient';
 import env from 'env-var';
-import { Button, FormControl, TextField } from '@mui/material';
+import { Button, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import useStyles from './styles';
@@ -14,6 +14,8 @@ const Gateway = props => {
   const envScope = env.get('VITE_CLIENT_SCOPES').asString().split(' ');
   const [clientId, setClientId] = useState(envClient || '');
   const [fhirUrl, setFhirUrl] = useState(envFhir || '');
+  const [backOffice, setBackOffice] = useState(false);
+
   const [scope, _setScope] = useState(envScope || []);
   const setScope = value => {
     // split by space to facilitate copy/pasting strings of scopes into the input
@@ -29,7 +31,7 @@ const Gateway = props => {
     FHIR.oauth2.authorize({
       clientId: clientId,
       scope: scope.join(' '),
-      redirectUri: props.redirect,
+      redirectUri: props.redirect + (backOffice ? "/backoffice": ""),
       iss: fhirUrl
     });
   };
@@ -99,6 +101,9 @@ const Gateway = props => {
                 <TextField {...params} label="Scope" placeholder="Enter Scope" />
               )}
             />
+            <Stack direction="row">
+            <FormControlLabel control={<Checkbox value={backOffice} onChange={()=>{setBackOffice(!backOffice)}} />} label="Back Office" />
+            </Stack>
             <Button type="submit" variant="outlined" disabled={clientId === '' || fhirUrl === ''}>
               Launch
             </Button>

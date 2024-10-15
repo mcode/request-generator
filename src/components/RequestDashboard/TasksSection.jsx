@@ -29,6 +29,7 @@ const taskStatus = Object.freeze({
 });
 const TasksSection = props => {
   const classes = useStyles();
+  const {client, userName, userId} = props;
   const [tasks, setTasks] = useState([]);
   const [state] = React.useContext(SettingsContext);
   const [value, setValue] = useState(0);
@@ -36,7 +37,7 @@ const TasksSection = props => {
   const [taskToDelete, setTaskToDelete] = useState('');
   const [anchorStatus, setAnchorStatus] = useState(null);
   const [anchorAssign, setAnchorAssign] = useState(null); // R4 Task
-  const [practitioner, setPractitioner] = useState(null); // R4 Practitioner
+  const [practitionerDefault, setPractitionerDefault] = useState(null); // R4 Practitioner
 
   const menuOpen = Boolean(anchorStatus);
   const assignMenuOpen = Boolean(anchorAssign);
@@ -58,8 +59,14 @@ const TasksSection = props => {
     const taskClone = structuredClone(task);
     if (val === 'me') {
       assignTaskToMe(taskClone);
-    } else {
+    } else if (val === 'requester') {
+      assignTaskToRequester(taskClone);
+    } else if (val === 'defaultPractitioner') {
+      assignTaskToDefaultPractitioner(taskClone);
+    } else if (val === 'patient') {
       assignTaskToPatient(taskClone);
+    } else { //'unassign'
+      unassignTask(taskClone);
     }
     handleAssignMenuClose();
   };
@@ -94,20 +101,56 @@ const TasksSection = props => {
         reference: `${task.for.resourceType}/${task.for.id}`
       };
     }
+    if (task.requester && task.requester.id) {
+      task.requester = {
+        reference: `${task.requester.resourceType}/${task.requester.id}`
+      };
+    }
     return task;
   };
   const assignTaskToMe = task => {
     if (task) {
       task = washTask(task);
-      let user = props.client.user.id;
-      if (!user) {
-        user = `Practitioner/${state.defaultUser}`;
+      let user = `Practitioner/${userId}`;
+      console.log(user);
+      task.owner = {
+        reference: user
+      };
+
+      client.update(task).then(() => {
+        fetchTasks();
+      });
+    }
+  }
+  const assignTaskToRequester = task => {
+    if (task) {
+      task = washTask(task);
+      // default to logged in user
+      let user = client.user.id;
+
+      // assign to requester if available
+      if (task?.requester) {
+        user = task.requester?.reference
       }
       task.owner = {
         reference: user
       };
 
-      props.client.update(task).then(() => {
+      client.update(task).then(() => {
+        fetchTasks();
+      });
+    }
+  };;
+  const assignTaskToDefaultPractitioner = task => {
+    if (task) {
+      task = washTask(task);
+      // assign to default user if none set yet
+      let user = `Practitioner/${state.defaultUser}`;
+      task.owner = {
+        reference: user
+      };
+
+      client.update(task).then(() => {
         fetchTasks();
       });
     }
@@ -115,17 +158,27 @@ const TasksSection = props => {
   const assignTaskToPatient = task => {
     if (task) {
       task = washTask(task);
+      console.log(task.for.reference);
       task.owner = {
         reference: task.for.reference
       };
-      props.client.update(task).then(() => {
+      client.update(task).then(() => {
+        fetchTasks();
+      });
+    }
+  };
+  const unassignTask = task => {
+    if (task) {
+      task = washTask(task);
+      delete task.owner;
+      client.update(task).then(() => {
         fetchTasks();
       });
     }
   };
   const deleteTask = () => {
     if (taskToDelete) {
-      props.client.delete(`${taskToDelete.resourceType}/${taskToDelete.id}`).then(() => {
+      client.delete(`${taskToDelete.resourceType}/${taskToDelete.id}`).then(() => {
         console.log('Deleted Task');
         fetchTasks();
       });
@@ -138,7 +191,7 @@ const TasksSection = props => {
     if (state.patient && state.patient.id) {
       identifier = `Task?patient=${state.patient.id}`;
     }
-    props.client.request(identifier, { resolveReferences: ['for', 'owner'] }).then(request => {
+    client.request(identifier, { resolveReferences: ['for', 'owner', 'requester'] }).then(request => {
       console.log(request);
       if (request && request.entry) {
         setTasks(request.entry.map(e => e.resource));
@@ -152,9 +205,9 @@ const TasksSection = props => {
   }, []);
 
   useEffect(() => {
-    props.client.request(`Practitioner/${state.defaultUser}`).then(practitioner => {
+    client.request(`Practitioner/${state.defaultUser}`).then(practitioner => {
       if (practitioner) {
-        setPractitioner(practitioner);
+        setPractitionerDefault(practitioner);
       }
     });
   }, [state.defaultUser]);
@@ -166,7 +219,7 @@ const TasksSection = props => {
   const updateTaskStatus = (task, status) => {
     task.status = status;
     const updatedTask = structuredClone(task); // structured clone may not work on older browsers
-    props.client.update(washTask(updatedTask)).then(() => {
+    client.update(washTask(updatedTask)).then(() => {
       fetchTasks();
     });
   };
@@ -187,12 +240,8 @@ const TasksSection = props => {
       url: link
     };
     const patient = lTask.for.id;
-    retrieveLaunchContext(smartLink, patient, props.client.state).then(result => {
+    retrieveLaunchContext(smartLink, patient, client.state).then(result => {
       updateTaskStatus(lTask, 'in-progress');
-      lTask.status = 'in-progress';
-      props.client.update(washTask(lTask)).then(() => {
-        fetchTasks();
-      });
       window.open(result.url, '_blank');
     });
   };
@@ -216,27 +265,46 @@ const TasksSection = props => {
   };
   const renderAssignMenu = () => {
     const patient = anchorAssign?.task?.for;
+    const requester = anchorAssign?.task?.requester;
     const assignOptions = [
       {
         id: 'me',
-        display: `provider${practitioner ? ' (' + getPractitionerFirstAndLastName(practitioner) + ')' : ''}`
+        display: 'Assign to me (' + userName + ')'
+      },
+      {
+        id: 'requester',
+        display: `Assign to requester${requester ? ' (' + getPractitionerFirstAndLastName(requester) + ')' : ''}`
+      },
+      {
+        id: 'defaultPractitioner',
+        display: `Assign to practitioner${practitionerDefault ? ' (' + getPractitionerFirstAndLastName(practitionerDefault) + ')' : ''}`
       },
       {
         id: 'patient',
-        display: `patient${patient ? ' (' + getPatientFullName(patient) + ')' : ''}`
+        display: `Assign to patient${patient ? ' (' + getPatientFullName(patient) + ')' : ''}`
+      },
+      {
+        id: 'unassign',
+        display: 'Unassign'
       }
     ];
     return (
       <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
         {assignOptions.map(({ id, display }) => {
+          // only give the 'Assign to requester if the requester is available'
+          if (((id === 'me') && userId && userName) 
+            || ((id === 'requester') && (anchorAssign?.task?.requester)) 
+            || ((id === 'defaultPractitioner') && (!anchorAssign?.task?.requester))
+            || (id != 'me') && (id != 'requester') && (id != 'defaultPractitioner')) {
           return (
             <MenuItem
               key={id}
               onClick={() => {
                 handleChangeAssign(anchorAssign?.task, id);
               }}
-            >{`Assign to ${display}`}</MenuItem>
+            >{`${display}`}</MenuItem>
           );
+          }
         })}
       </Menu>
     );
@@ -384,16 +452,21 @@ const TasksSection = props => {
   };
 
   const renderMainView = () => {
+    // only use the defaultUser if configured to, otherwise use the one passed in
+    let user = state.defaultUser;
+    if (!state.useDefaultUser && userId) {
+      user = userId;
+    }
     const unassignedTasks = tasks.filter(t => !t.owner);
-    const assignedTasks = tasks.filter(t => t.owner?.id === state.defaultUser); // should check current user, not default
+    const assignedTasks = tasks.filter(t => t.owner?.id === user); // should check current user, not default
     return (
       <div>
         <Grid container>
           <Grid item xs={10}>
             <Tabs className={classes.taskHeaderTabs} value={value} onChange={handleChange}>
-              <Tab icon={<AssignmentIcon />} label={`ALL TASKS (${tasks.length})`} />
               <Tab icon={<PersonIcon />} label={`MY TASKS (${assignedTasks.length})`} />
               <Tab icon={<EditNoteIcon />} label={`UNASSIGNED TASKS (${unassignedTasks.length})`} />
+              <Tab icon={<AssignmentIcon />} label={`ALL TASKS (${tasks.length})`} />
             </Tabs>
           </Grid>
           <Grid className={classes.taskRefreshButton} item xs={2}>
@@ -409,16 +482,16 @@ const TasksSection = props => {
           </Grid>
         </Grid>
         <MemoizedTabPanel value={value} index={0}>
-          {/* all tasks */}
-          {renderTasks(tasks)}
-        </MemoizedTabPanel>
-        <MemoizedTabPanel value={value} index={1}>
           {/* my tasks */}
           {renderTasks(assignedTasks)}
         </MemoizedTabPanel>
-        <MemoizedTabPanel value={value} index={2}>
+        <MemoizedTabPanel value={value} index={1}>
           {/* unassigned tasks */}
           {renderTasks(unassignedTasks)}
+        </MemoizedTabPanel>
+        <MemoizedTabPanel value={value} index={2}>
+          {/* all tasks */}
+          {renderTasks(tasks)}
         </MemoizedTabPanel>
       </div>
     );

@@ -3,14 +3,19 @@ import { Button, Grid, Tooltip } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 
 import useStyles from './styles';
 import PatientSection from './PatientSection';
 import SettingsSection from './SettingsSection';
 import TasksSection from './TasksSection';
 
+import { logout } from '../../util/auth';
+
 const Home = props => {
   const classes = useStyles();
+  const { client, token } = props;
   const patientButton = 'Select a Patient';
   const taskButton = 'View Tasks';
   const settingsButton = 'Settings';
@@ -58,6 +63,7 @@ const Home = props => {
       gridClass = `${classes.mainDiv} ${classes.tabDivView}`;
     }
     return (
+      <div>
       <Grid className={gridClass} item container justifyContent={'center'} alignItems={'center'}>
         {section ? '' : <Grid item xs={3}></Grid>} {/* spacer */}
         {renderMainButton(patientButton, <PersonIcon className={classes.mainIcon} />)}
@@ -65,13 +71,30 @@ const Home = props => {
         {renderMainButton(settingsButton, <SettingsIcon className={classes.mainIcon} />)}
         {section ? (
           <Grid className={classes.spacer} item xs={0}>
-            <div></div>
+            <span className={classes.titleIcon}>
+              <MedicalServicesIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} />&nbsp;&nbsp;<strong>EHR</strong> Request Generator
+            </span>
           </Grid>
         ) : (
           <Grid item xs={3}></Grid>
         )}
         {/* spacer */}
+        {/** */}
+        {section ? (
+          <Grid className={classes.spacer} item xs={4}>
+            <span className={classes.loginIcon}>
+              <AccountBoxIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} /> {token.name}
+              <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
+                Logout
+              </Button>
+            </span>
+          </Grid>
+        ) : (
+          <Grid item xs={3}></Grid>
+        )}
+        {/**/}
       </Grid>
+      </div>
     );
   };
 
@@ -85,10 +108,10 @@ const Home = props => {
       return (
         <div className={classes.mainSectionView}>
           <div className={patientRenderClass}>
-            <PatientSection client={props.client} />
+            <PatientSection client={props.client} userId={token.userId} />
           </div>
           <div className={taskRenderClass}>
-            <TasksSection client={props.client} />
+            <TasksSection client={props.client} userName={token.name} userId={token.userId} />
           </div>
           <div className={settingsRenderClass}>
             <SettingsSection client={props.client} />

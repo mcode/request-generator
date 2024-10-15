@@ -102,7 +102,7 @@ const Dashboard = props => {
           }}
         >
           <Toolbar />
-          <Box sx={{ overflow: 'auto', marginTop: '31px' }}>
+          <Box sx={{ overflow: 'auto', marginTop: '51px' }}>
             <List>
               {createIcons().map((option, index) => (
                 <div key={`icon-${index}`}>

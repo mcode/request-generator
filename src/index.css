@@ -278,3 +278,30 @@ input:not(:focus):not([value='']):valid ~ .floating-label {
   overflow-y: auto;
   box-shadow: 10px 10px 20px black;
 }
+
+.backoffice-app {
+  text-align: center;
+  background-color: #A2025C;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+
+.backoffice-app  h1 {
+  color: white;
+  line-height: 1.3;
+  letter-spacing: 0.00938em;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+.containerg {
+  display: grid;
+  grid-template-areas: ' main right';
+}
+
+.logo {
+  grid-area: main;
+  text-align: left;
+  margin-right: auto;
+  display: inline-flex;
+  box-sizing: unset;
+}

@@ -135,6 +135,30 @@ export default makeStyles(
     },
     taskTabOwner: {
       color: '#777'
+    },
+    titleIcon: {
+      color: 'white',
+      fontSize: '19px',
+      marginLeft: 'auto',
+      fontFamily: 'Verdana',
+      float: 'left',
+      marginLeft: '20px',
+      verticalAlign: 'middle'
+    },
+    loginIcon: {
+      color: 'white',
+      fontSize: '19px',
+      marginLeft: 'auto',
+      fontFamily: 'Verdana',
+      float: 'right',
+      marginRight: '20px',
+      verticalAlign: 'middle'
+    },
+    whiteButton: {
+      color: 'white !important',
+      borderColor: 'white !important',
+      marginRight: '5px !important',
+      marginLeft: '20px !important',
     }
   }),
 
