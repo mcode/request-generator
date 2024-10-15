@@ -1,4 +1,7 @@
-import { Autocomplete, Box, TextField, IconButton } from '@mui/material';
+import { Autocomplete, Box, TextField } from '@mui/material';
+import { Grid, Button } from '@mui/material';
+import PeopleIcon from '@mui/icons-material/People';
+
 import { useEffect, useState } from 'react';
 import { PrefetchTemplate } from '../../../PrefetchTemplate';
 import { defaultValues } from '../../../util/data';
@@ -32,9 +35,16 @@ const PatientSearchBar = props => {
     return filteredListOfPatients.length;
   }
 
+  const showAllPatients = () => {
+    props.callback('patient', {});
+    props.callback('expanded', false);
+  };
+
   function patientSearchBar() {
     return (
       <Box className="search-box-container">
+        <Grid container>
+          <Grid item xs={9}>
         <span className="search-header">
           <p>Filter patient list</p>
           <Autocomplete
@@ -52,6 +62,13 @@ const PatientSearchBar = props => {
             records
           </p>
         </span>
+          </Grid>
+          <Grid item xs={3}>
+            <Button variant="contained" startIcon={<PeopleIcon />} onClick={() => { showAllPatients(); }} style={{padding:'10px','paddingLeft':'20px', 'paddingRight':'20px'}}>
+              Select all Patients
+            </Button>
+          </Grid>
+        </Grid>
         {displayFilteredPatientList(input, listOfPatients[0])}
       </Box>
     );
@@ -82,7 +99,8 @@ const PatientSearchBar = props => {
                 clearCallback={props.clearCallback}
                 options={options}
                 responseExpirationDays={props.responseExpirationDays}
-                defaultUser={props.defaultUser}
+                user={props.user}
+                showButtons={props.showButtons}
               />
             </span>
           );

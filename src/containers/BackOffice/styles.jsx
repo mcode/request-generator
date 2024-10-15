@@ -1,5 +1,32 @@
 import {styled} from '@mui/system';
 import { AppBar, Stack } from '@mui/material'
+import { makeStyles } from '@mui/styles';
+
+export default makeStyles(
+    theme => ({
+        loginIcon: {
+            color: theme.palette.common.white,
+            fontSize: '19px',
+            marginLeft: 'auto',
+            fontFamily: 'Verdana',
+            float: 'right',
+            marginRight: '20px',
+            verticalAlign: 'middle'
+        },
+        whiteButton: {
+            color: 'white !important',
+            borderColor: 'white !important',
+            marginRight: '5px !important',
+            marginLeft: '20px !important',
+        },
+        patientButton: {
+            padding: '10px',
+            'padding-left': '20px',
+            'padding-right': '20px'
+        }
+    })
+);
+
 
 export const StyledStack = styled(Stack)(({ theme, selected, disabled, isscrolled, highlight }) => ({
     position: 'relative', 

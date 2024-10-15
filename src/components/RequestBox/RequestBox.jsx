@@ -38,7 +38,7 @@ const RequestBox = props => {
     code,
     codeSystem,
     display,
-    defaultUser,
+    user,
     smartAppUrl,
     client,
     pimsUrl,
@@ -183,9 +183,9 @@ const RequestBox = props => {
     let userId = prefetchedResources?.practitioner?.id;
     if (!userId) {
       console.log(
-        'Practitioner not populated from prefetch, using default from config: ' + defaultUser
+        'Practitioner not populated from prefetch, using user: ' + user
       );
-      userId = defaultUser;
+      userId = user;
     }
 
     let link = {

@@ -28,6 +28,7 @@ const RequestBuilder = props => {
   const [state, setState] = useState({
     loading: false,
     patient: {},
+    user: null,
     expanded: true,
     patientList: [],
     response: {},
@@ -37,7 +38,7 @@ const RequestBuilder = props => {
     prefetchedResources: new Map(),
     request: {},
     showSettings: false,
-    token: null,
+    token: props.token,
     client: client,
     medicationDispense: null,
     lastCheckedMedicationTime: null,
@@ -49,6 +50,7 @@ const RequestBuilder = props => {
   useEffect(() => {
     console.log(state.prefetchedResources);
   }, [state.prefetchedResources]);
+
   const isOrderNotSelected = () => {
     return Object.keys(state.request).length === 0;
   };
@@ -90,10 +92,15 @@ const RequestBuilder = props => {
         value: state.client.state.serverUrl
       });
     }
+
+    // if use default user is set, use default user otherwise use logged in user if set
+    let currentUser = globalState.useDefaultUser ? globalState.defaultUser : (state.userId ? state.userId : globalState.defaultUser);
+    setState(prevState => ({...prevState, user: currentUser}));
   }, []);
 
   const updateStateElement = (elementName, text) => {
     if (elementName === 'patient') {
+      setState(prevState => ({ ...prevState, patient: text }));
       dispatch({
         type: actionTypes.updatePatient,
         value: text
@@ -164,7 +171,7 @@ const RequestBuilder = props => {
       includeConfig: globalState.includeConfig,
       alternativeTherapy: globalState.alternativeTherapy
     };
-    let user = globalState.defaultUser;
+    let user = state.user;
     let json_request = buildRequest(
       request,
       user,
@@ -284,11 +291,17 @@ const RequestBuilder = props => {
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
-              style={{ marginLeft: '45%' }}
             >
-              <Button variant="contained" startIcon={<PersonIcon />}>
+              <Button variant="contained" startIcon={<PersonIcon />} style={{padding:'10px',paddingLeft:'20px', paddingRight:'20px'}}>
                 Select a patient
               </Button>
+              <span style={{ width: '30px'}}></span>
+              {state.patient?.name ? (
+                // Display the first name
+                <span><h4>{state.patient?.name?.[0]?.given?.[0] + ' ' + state.patient?.name?.[0]?.family}</h4></span>
+              ) : (
+                <span><h4>All Patients</h4></span>
+              )}
             </AccordionSummary>
             <AccordionDetails>
               {state.patientList.length > 0 && state.expanded && (
@@ -306,7 +319,8 @@ const RequestBuilder = props => {
                       callbackMap={updateStateMap}
                       clearCallback={clearState}
                       responseExpirationDays={globalState.responseExpirationDays}
-                      defaultUser={globalState.defaultUser}
+                      user={state.user}
+                      showButtons={true}
                     />
                   )}
                 </Box>
@@ -342,7 +356,7 @@ const RequestBuilder = props => {
                 responseExpirationDays={globalState.responseExpirationDays}
                 pimsUrl={globalState.pimsUrl}
                 smartAppUrl={globalState.smartAppUrl}
-                defaultUser={globalState.defaultUser}
+                user={state.user}
                 loading={state.loading}
                 patientFhirQuery={globalState.patientFhirQuery}
                 prefetchCompleted={state.prefetchCompleted}

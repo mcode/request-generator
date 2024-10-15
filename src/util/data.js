@@ -26,6 +26,11 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('VITE_DEFAULT_USER').asString()
   },
+  useDefaultUser: {
+    display: 'Use Default User',
+    type: 'check',
+    default: env.get('VITE_USE_DEFAULT_USER').asBool()
+  },
   ehrUrl: {
     display: 'EHR Server',
     type: 'input',
@@ -81,6 +86,7 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('VITE_INTERMEDIARY').asString()
   },
+
   hookToSend: {
     display: 'Send hook on patient select',
     type: 'dropdown',

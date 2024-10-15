@@ -1,34 +1,56 @@
 import React, { memo, useEffect, useContext } from 'react';
 import BusinessIcon from '@mui/icons-material/Business';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Box from '@mui/material/Box';
+import { Button } from '@mui/material';
 import { Container } from '@mui/system';
-import { SettingsContext } from '../ContextProvider/SettingsProvider';
 import Dashboard from './Dashboard';
+import Index from '../Index';
+import useStyles from './styles';
+
+import { logout } from '../../util/auth';
 
 const BackOffice = (props) => {
-  const { client } = props;
-  const [, dispatch] = useContext(SettingsContext);
+  const classes = useStyles();
+  const { client, token } = props;
 
   useEffect(() => {
-      document.title = 'EHR | Back Office';
+    document.title = 'EHR | Back Office';
   }, []);
 
   return (
+
     <Box>
-      <div className='backoffice-app'>
-      <Container maxWidth="false">
-          <div className="containerg">
-            <div className="logo">
-              <BusinessIcon
-                sx={{ color: 'white', fontSize: 60, paddingTop: 2.5, paddingRight: 2.5 }}
-              />
-              <h1>Back Office </h1>
+      { token && client ? (
+      <Box>
+
+        <div className='backoffice-app'>
+        <Container maxWidth="false">
+            <div className="containerg">
+              <div className="logo">
+                <BusinessIcon
+                  sx={{ color: 'white', fontSize: 60, paddingTop: 2.5, paddingRight: 2.5 }}
+                />
+                <h1><strong>EHR</strong> Back Office </h1>
+              </div>
+              <span className={classes.loginIcon}>
+                <AccountBoxIcon sx={{ fontSize: 60, verticalAlign: 'middle' }} /> {token.name}
+                <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
+                  Logout
+                </Button>
+              </span>
             </div>
-          </div>
         </Container>
-      </div>
-      <Dashboard client={client}/>
+        </div>
+        <Dashboard client={client} token={token} />
+    
+      </Box>
+      ) : (
+        <Index></Index>
+      ) }
+
     </Box>
+
    
   );
 };

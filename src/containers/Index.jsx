@@ -7,6 +7,7 @@ import BackOffice from './BackOffice/BackOffice';
 const Index = (props) => {
   const {backoffice} =  props 
   const [client, setClient] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
   console.log(backoffice);
   const [isBackOffice, setBackOffice] = useState(backoffice || null);
   const parseJwt = (token) => {
@@ -17,6 +18,7 @@ const Index = (props) => {
     }).join(''));
   
     const jsonToken = JSON.parse(jsonPayload);
+    setAuthToken(jsonToken);
     if (jsonToken.realm_access) {
       const roles = jsonToken.realm_access.roles;
       console.log(roles);
@@ -39,8 +41,8 @@ const Index = (props) => {
   return (
     <div>
       {client && (isBackOffice !== null) ? (
-        isBackOffice ? <BackOffice client = {client}/>  :
-        <Home client={client} />
+        isBackOffice ? <BackOffice client = {client} token = {authToken} />  :
+        <Home client={client} token = {authToken} />
       ) : (
         <div className="loading">
           <h1>Getting Client...</h1>
