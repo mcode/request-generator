@@ -139,7 +139,6 @@ export default makeStyles(
     titleIcon: {
       color: 'white',
       fontSize: '19px',
-      marginLeft: 'auto',
       fontFamily: 'Verdana',
       float: 'left',
       marginLeft: '20px',
