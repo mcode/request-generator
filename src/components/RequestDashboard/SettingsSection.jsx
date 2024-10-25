@@ -84,30 +84,6 @@ const SettingsSection = props => {
     dispatch({ type: actionTypes.resetSettings });
   };
 
-  const clearQuestionnaireResponses =
-    ({ defaultUser }) =>
-    () => {
-      props.client
-        .request('QuestionnaireResponse?author=' + defaultUser, { flat: true })
-        .then(result => {
-          result.forEach(resource => {
-            props.client
-              .delete('QuestionnaireResponse/' + resource.id)
-              .then(result => {
-                console.log(result);
-              })
-              .catch(e => {
-                console.log('Failed to delete QuestionnaireResponse ' + resource.id);
-                console.log(e);
-              });
-          });
-        })
-        .catch(e => {
-          console.log('Failed to retrieve list of QuestionnaireResponses');
-          console.log(e);
-        });
-    };
-
   const resetPims =
     ({ pimsUrl }) =>
     () => {
@@ -144,33 +120,33 @@ const SettingsSection = props => {
         });
     };
 
-  const clearMedicationDispenses =
-    ({ ehrUrl, access_token }) =>
+  const clearResource = 
+    ({ ehrUrl, access_token }, type) =>
     () => {
-      console.log('Clear MedicationDispenses from the EHR: ' + ehrUrl);
+      console.log('Clear ' + type + 's from the EHR: ' + ehrUrl);
       const client = FHIR.client({
         serverUrl: ehrUrl,
         ...(access_token ? { tokenResponse: access_token } : {})
       });
       client
-        .request('MedicationDispense', { flat: true })
+        .request(type, { flat: true })
         .then(result => {
           console.log(result);
           result.forEach(resource => {
-            console.log(resource.id);
+            console.log('Delete ' + type + ': ' + resource.id);
             client
-              .delete('MedicationDispense/' + resource.id)
+              .delete(type + '/' + resource.id)
               .then(result => {
                 console.log(result);
               })
               .catch(e => {
-                console.log('Failed to delete MedicationDispense ' + resource.id);
+                console.log('Failed to delete ' + type + ' ' + resource.id);
                 console.log(e);
               });
           });
         })
         .catch(e => {
-          console.log('Failed to retrieve list of MedicationDispense');
+          console.log('Failed to retrieve list of ' + type + 's');
           console.log(e);
         });
     };
@@ -193,19 +169,27 @@ const SettingsSection = props => {
       reset: resetPims
     },
     {
-      display: 'Clear In-Progress Forms',
-      key: 'clearQuestionnaireResponses',
-      reset: clearQuestionnaireResponses
-    },
-    {
       display: 'Reset REMS-Admin Database',
       key: 'resetRemsAdmin',
       reset: resetRemsAdmin
     },
     {
-      display: 'Clear EHR MedicationDispenses',
+      display: 'Clear EHR In-Progress Forms',
+      key: 'clearQuestionnaireResponses',
+      reset: clearResource,
+      parameter: 'QuestionnaireResponse' 
+    },
+    {
+      display: 'Clear EHR Dispense Statuses',
       key: 'clearMedicationDispenses',
-      reset: clearMedicationDispenses
+      reset: clearResource,
+      parameter: 'MedicationDispense' 
+    },
+    {
+      display: 'Clear EHR Tasks',
+      key: 'clearTasks',
+      reset: clearResource,
+      parameter: 'Task' 
     },
     {
       display: 'Reconnect EHR',
@@ -428,10 +412,10 @@ const SettingsSection = props => {
       />
 
       <Grid container item xs={6} justifyContent="flex-start" direction="row" spacing={2}>
-        {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
+        {resetHeaderDefinitions.map(({ key, display, reset, variant, parameter }) => {
           return (
             <Grid item key={key}>
-              <Button variant={variant ? variant : 'outlined'} onClick={reset(state)}>
+              <Button variant={variant ? variant : 'outlined'} onClick={reset(state, parameter)}>
                 {display}
               </Button>
             </Grid>
