@@ -39,7 +39,7 @@ import { SettingsContext } from '../../containers/ContextProvider/SettingsProvid
 const ENDPOINT = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU];
 
 const SettingsSection = props => {
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [state, dispatch, updateSetting, readSettings, saveSettings] = React.useContext(SettingsContext);
 
   const fieldHeaders = Object.keys(headerDefinitions)
     .map(key => ({ ...headerDefinitions[key], key }))
@@ -51,34 +51,8 @@ const SettingsSection = props => {
     );
 
   useEffect(() => {
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(([key, value]) => {
-      try {
-        updateSetting(key, value);
-      } catch {
-        if (!key) {
-          console.log('Could not load setting:' + key);
-        }
-      }
-    });
-
-    // indicate to the rest of the app that the settings have been loaded
-    dispatch({
-      type: actionTypes.flagStartup
-    });
+    readSettings();
   }, []);
-
-  const updateSetting = (key, value) => {
-    dispatch({
-      type: actionTypes.updateSetting,
-      settingId: key,
-      value: value
-    });
-  };
-
-  const saveSettings = () => {
-    const headers = Object.keys(state).map(key => [key, state[key]]);
-    localStorage.setItem('reqgenSettings', JSON.stringify(headers));
-  };
 
   const resetSettings = () => {
     dispatch({ type: actionTypes.resetSettings });
@@ -201,6 +175,7 @@ const SettingsSection = props => {
 
   let firstCheckbox = true;
   let showBreak = true;
+
   return (
     <Grid container spacing={2} sx={{ padding: '20px' }}>
       <Grid container item xs={12} direction="row" spacing={2}>
@@ -209,6 +184,7 @@ const SettingsSection = props => {
             case 'input':
               return (
                 <Grid key={key} item xs={6}>
+                  { ( (state['useDefaultUser'] && key === 'defaultUser') || key != 'defaultUser' ) ? (
                   <div>
                     <TextField
                       label={display}
@@ -218,6 +194,7 @@ const SettingsSection = props => {
                       sx={{ width: '100%' }}
                     />
                   </div>
+                  ) : ('') }
                 </Grid>
               );
             case 'check':

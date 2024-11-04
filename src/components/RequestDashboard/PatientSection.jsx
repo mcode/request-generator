@@ -8,7 +8,7 @@ const PatientSection = props => {
   return (
     <div>
       {state.startup ? (
-        <RequestBuilder globalState={state} dispatch={dispatch} client={props.client} />
+        <RequestBuilder globalState={state} dispatch={dispatch} client={props.client} userId={props.userId} />
       ) : (
         <>Loading...</>
       )}
