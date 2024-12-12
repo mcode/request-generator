@@ -27,7 +27,11 @@ const Index = (props) => {
       } else {
         setBackOffice(false);
       }
+    } else {
+      // if no realm_access set, default to not using the back office
+      setBackOffice(false);
     }
+    console.log('isBackOffice: ' + isBackOffice);
   }
   useEffect(() => {
     FHIR.oauth2.ready().then(client => {
