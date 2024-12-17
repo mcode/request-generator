@@ -25,7 +25,14 @@ const Launch = props => {
         localStorage.setItem('clients', JSON.stringify(clients));
       }
     }
-    const params = queryString.parse((window.location.hash || '').replace(/\/?#\/?launch\?/, ''));
+
+    let params = queryString.parse((window.location.hash || '').replace(/\/?#\/?launch\?/, ''));
+
+    // if no hash # value, pull the parameters out of the search
+    if (!params.iss) {
+      params = queryString.parse((window.location.search || '').replace(/\/?#?\/?[launch]?\?/, ''));
+    }
+
     const iss = params.iss;
     console.log('iss: ' + iss);
     const launch = params.launch;
