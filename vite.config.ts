@@ -21,4 +21,8 @@ export default defineConfig({
         open: false,
         host: true
     },
+    build: {
+        outDir: 'build',
+        emptyOutDir: true, // also necessary
+    },
 })

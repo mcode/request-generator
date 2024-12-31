@@ -31,7 +31,7 @@
   "scripts": {
     "start": "vite",
     "production": "json-server --watch src/db.json -p 3000 --host 0.0.0.0 --static build",
-    "build": "node build",
+    "build": "vite build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint \"**/*.{js,jsx}\"",
