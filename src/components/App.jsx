@@ -11,9 +11,10 @@ import theme from '../containers/styles/theme';
 import { SettingsContext } from '../containers/ContextProvider/SettingsProvider';
 import { actionTypes } from '../containers/ContextProvider/reducer';
 
-const isGhPages = process.env.VITE_GH_PAGES === 'true';
+const isGhPages = process.env.VITE_GH_PAGES.trim() === 'true';
 const Router = isGhPages ? HashRouter : BrowserRouter;
 const redirect = isGhPages ? '/request-generator/#/index' : '/index';
+console.log('redirect: ' + redirect);
 const App = () => {
   const [, dispatch] = React.useContext(SettingsContext);
   useEffect(() => {
