@@ -43,13 +43,14 @@ const PatientBox = props => {
     patient,
     callback,
     clearCallback,
-    defaultUser,
+    user,
     client,
     callbackMap,
     updatePrefetchCallback,
     responseExpirationDays,
     request,
-    launchUrl
+    launchUrl,
+    showButtons,
   } = props;
 
   const medicationColumns = [
@@ -69,8 +70,10 @@ const PatientBox = props => {
 
   useEffect(() => {
     // get requests and responses on open of patients
-    getRequests();
-    getResponses(); // TODO: PatientBox should not be rendering itself, needs to receive its state from parent
+    if (props.showButtons) {
+      getRequests();
+      getResponses(); // TODO: PatientBox should not be rendering itself, needs to receive its state from parent
+    }
     getPatientInfo();
   }, []);
 
@@ -135,12 +138,12 @@ const PatientBox = props => {
         request.resourceType === 'MedicationRequest' ||
         request.resourceType === 'MedicationDispense'
       ) {
-        updatePrefetchRequest(request, patient, defaultUser);
+        updatePrefetchRequest(request, patient, user);
       } else {
         clearCallback();
       }
     } else {
-      updatePrefetchRequest(null, patient, defaultUser);
+      updatePrefetchRequest(null, patient, user);
       callback('request', {});
       callback('code', null);
       callback('codeSystem', null);
@@ -291,7 +294,7 @@ const PatientBox = props => {
         request.resourceType === 'MedicationRequest' ||
         request.resourceType === 'MedicationDispense'
       ) {
-        updatePrefetchRequest(request, patient, defaultUser);
+        updatePrefetchRequest(request, patient, user);
       } else {
         clearCallback();
       }
@@ -578,68 +581,72 @@ const PatientBox = props => {
           </div>
         </div>
         <div className="button-options">
-          {state.showMedications ? (
-            <Button
-              variant="contained"
-              className="big-button"
-              startIcon={<MedicationIcon />}
-              onClick={() => setState(prevState => ({ ...prevState, showMedications: false }))}
-            >
-              Close Medications
-            </Button>
-          ) : (
-            <Tooltip title={medicationTooltip} placement="top">
-              <span>
-                <Button
-                  variant="contained"
-                  className="big-button"
-                  startIcon={<MedicationIcon />}
-                  disabled={state.options.length === 0}
-                  onClick={() => {
-                    updatePatient(patient);
-                    setState(prevState => ({
-                      ...prevState,
-                      showMedications: true,
-                      showQuestionnaires: false
-                    }));
-                  }}
-                >
-                  Request New Medication
-                </Button>
-              </span>
-            </Tooltip>
-          )}
-          {state.showQuestionnaires ? (
-            <Button
-              variant="contained"
-              className="big-button"
-              startIcon={<MedicationIcon />}
-              onClick={() => setState(prevState => ({ ...prevState, showQuestionnaires: false }))}
-            >
-              Close In Progress Forms
-            </Button>
-          ) : (
-            <Tooltip title={formTooltip} placement="top">
-              <span>
-                <Button
-                  variant="contained"
-                  className="big-button"
-                  startIcon={<MedicationIcon />}
-                  disabled={state.numInProgressForms === 0}
-                  onClick={() => {
-                    updatePatient(patient);
-                    setState(prevState => ({
-                      ...prevState,
-                      showQuestionnaires: true,
-                      showMedications: false
-                    }));
-                  }}
-                >
-                  {state.numInProgressForms} Form(s) In Progress
-                </Button>
-              </span>
-            </Tooltip>
-          )}
+          {props.showButtons ? (
+            state.showMedications ? (
+              <Button
+                variant="contained"
+                className="big-button"
+                startIcon={<MedicationIcon />}
+                onClick={() => setState(prevState => ({ ...prevState, showMedications: false }))}
+              >
+                Close Medications
+              </Button>
+            ) : (
+              <Tooltip title={medicationTooltip} placement="top">
+                <span>
+                  <Button
+                    variant="contained"
+                    className="big-button"
+                    startIcon={<MedicationIcon />}
+                    disabled={state.options.length === 0}
+                    onClick={() => {
+                      updatePatient(patient);
+                      setState(prevState => ({
+                        ...prevState,
+                        showMedications: true,
+                        showQuestionnaires: false
+                      }));
+                    }}
+                  >
+                    Request New Medication
+                  </Button>
+                </span>
+              </Tooltip>
+            )
+          ) : ""}
+          {props.showButtons ? (
+            state.showQuestionnaires ? (
+              <Button
+                variant="contained"
+                className="big-button"
+                startIcon={<MedicationIcon />}
+                onClick={() => setState(prevState => ({ ...prevState, showQuestionnaires: false }))}
+              >
+                Close In Progress Forms
+              </Button>
+            ) : (
+              <Tooltip title={formTooltip} placement="top">
+                <span>
+                  <Button
+                    variant="contained"
+                    className="big-button"
+                    startIcon={<MedicationIcon />}
+                    disabled={state.numInProgressForms === 0}
+                    onClick={() => {
+                      updatePatient(patient);
+                      setState(prevState => ({
+                        ...prevState,
+                        showQuestionnaires: true,
+                        showMedications: false
+                      }));
+                    }}
+                  >
+                    {state.numInProgressForms} Form(s) In Progress
+                  </Button>
+                </span>
+              </Tooltip>
+            )
+          ) : ""}
           <Button variant="contained" className="select-btn" onClick={() => updateValues(patient)}>
             Select Patient
           </Button>

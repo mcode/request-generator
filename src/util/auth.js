@@ -33,6 +33,12 @@ function login() {
   });
 }
 
+function logout() {
+  window.location.replace(`${env.get('VITE_AUTH').asString()}/realms/${env
+  .get('VITE_REALM')
+  .asString()}/protocol/openid-connect/logout`);
+}
+
 /**
  * Generates a JWT for a CDS service call, given the audience (the URL endpoint). The JWT is signed using a private key stored on the repository.
  *
@@ -59,4 +65,4 @@ function createJwt(baseUrl, audience) {
   return KJUR.jws.JWS.sign(null, jwtHeader, jwtPayload, privKey);
 }
 
-export { createJwt, login };
+export { createJwt, login, logout };

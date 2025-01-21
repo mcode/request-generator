@@ -242,7 +242,7 @@ const DisplayBox = props => {
           // -- Detail (ReactMarkdown supports Github-flavored markdown) --
           const detailSection = card.detail ? (
             <div>
-              <ReactMarkdown source={card.detail} />
+              <ReactMarkdown source={card.detail}>{card.detail}</ReactMarkdown>
             </div>
           ) : (
             <p style={{ color: 'grey' }}>None</p>
@@ -358,8 +358,8 @@ const DisplayBox = props => {
                     {/* Forms */}
                     {linksSection.length !== 0 ? (
                       <div>
-                        <Typography color="text.secondary">Required Forms</Typography>
                         <Typography variant="div">{detailSection}</Typography>
+                        <Typography color="text.secondary">Required Forms</Typography>
                         <List className={'links-section'}>{linksSection}</List>
                       </div>
                     ) : (

@@ -39,7 +39,7 @@ import { SettingsContext } from '../../containers/ContextProvider/SettingsProvid
 const ENDPOINT = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU];
 
 const SettingsSection = props => {
-  const [state, dispatch] = React.useContext(SettingsContext);
+  const [state, dispatch, updateSetting, readSettings, saveSettings] = React.useContext(SettingsContext);
 
   const fieldHeaders = Object.keys(headerDefinitions)
     .map(key => ({ ...headerDefinitions[key], key }))
@@ -51,62 +51,12 @@ const SettingsSection = props => {
     );
 
   useEffect(() => {
-    JSON.parse(localStorage.getItem('reqgenSettings') || '[]').forEach(([key, value]) => {
-      try {
-        updateSetting(key, value);
-      } catch {
-        if (!key) {
-          console.log('Could not load setting:' + key);
-        }
-      }
-    });
-
-    // indicate to the rest of the app that the settings have been loaded
-    dispatch({
-      type: actionTypes.flagStartup
-    });
+    readSettings();
   }, []);
-
-  const updateSetting = (key, value) => {
-    dispatch({
-      type: actionTypes.updateSetting,
-      settingId: key,
-      value: value
-    });
-  };
-
-  const saveSettings = () => {
-    const headers = Object.keys(state).map(key => [key, state[key]]);
-    localStorage.setItem('reqgenSettings', JSON.stringify(headers));
-  };
 
   const resetSettings = () => {
     dispatch({ type: actionTypes.resetSettings });
   };
-
-  const clearQuestionnaireResponses =
-    ({ defaultUser }) =>
-    () => {
-      props.client
-        .request('QuestionnaireResponse?author=' + defaultUser, { flat: true })
-        .then(result => {
-          result.forEach(resource => {
-            props.client
-              .delete('QuestionnaireResponse/' + resource.id)
-              .then(result => {
-                console.log(result);
-              })
-              .catch(e => {
-                console.log('Failed to delete QuestionnaireResponse ' + resource.id);
-                console.log(e);
-              });
-          });
-        })
-        .catch(e => {
-          console.log('Failed to retrieve list of QuestionnaireResponses');
-          console.log(e);
-        });
-    };
 
   const resetPims =
     ({ pimsUrl }) =>
@@ -144,33 +94,33 @@ const SettingsSection = props => {
         });
     };
 
-  const clearMedicationDispenses =
-    ({ ehrUrl, access_token }) =>
+  const clearResource = 
+    ({ ehrUrl, access_token }, type) =>
     () => {
-      console.log('Clear MedicationDispenses from the EHR: ' + ehrUrl);
+      console.log('Clear ' + type + 's from the EHR: ' + ehrUrl);
       const client = FHIR.client({
         serverUrl: ehrUrl,
         ...(access_token ? { tokenResponse: access_token } : {})
       });
       client
-        .request('MedicationDispense', { flat: true })
+        .request(type, { flat: true })
         .then(result => {
           console.log(result);
           result.forEach(resource => {
-            console.log(resource.id);
+            console.log('Delete ' + type + ': ' + resource.id);
             client
-              .delete('MedicationDispense/' + resource.id)
+              .delete(type + '/' + resource.id)
               .then(result => {
                 console.log(result);
               })
               .catch(e => {
-                console.log('Failed to delete MedicationDispense ' + resource.id);
+                console.log('Failed to delete ' + type + ' ' + resource.id);
                 console.log(e);
               });
           });
         })
         .catch(e => {
-          console.log('Failed to retrieve list of MedicationDispense');
+          console.log('Failed to retrieve list of ' + type + 's');
           console.log(e);
         });
     };
@@ -193,19 +143,27 @@ const SettingsSection = props => {
       reset: resetPims
     },
     {
-      display: 'Clear In-Progress Forms',
-      key: 'clearQuestionnaireResponses',
-      reset: clearQuestionnaireResponses
-    },
-    {
       display: 'Reset REMS-Admin Database',
       key: 'resetRemsAdmin',
       reset: resetRemsAdmin
     },
     {
-      display: 'Clear EHR MedicationDispenses',
+      display: 'Clear EHR In-Progress Forms',
+      key: 'clearQuestionnaireResponses',
+      reset: clearResource,
+      parameter: 'QuestionnaireResponse' 
+    },
+    {
+      display: 'Clear EHR Dispense Statuses',
       key: 'clearMedicationDispenses',
-      reset: clearMedicationDispenses
+      reset: clearResource,
+      parameter: 'MedicationDispense' 
+    },
+    {
+      display: 'Clear EHR Tasks',
+      key: 'clearTasks',
+      reset: clearResource,
+      parameter: 'Task' 
     },
     {
       display: 'Reconnect EHR',
@@ -217,6 +175,7 @@ const SettingsSection = props => {
 
   let firstCheckbox = true;
   let showBreak = true;
+
   return (
     <Grid container spacing={2} sx={{ padding: '20px' }}>
       <Grid container item xs={12} direction="row" spacing={2}>
@@ -225,6 +184,7 @@ const SettingsSection = props => {
             case 'input':
               return (
                 <Grid key={key} item xs={6}>
+                  { ( (state['useDefaultUser'] && key === 'defaultUser') || key != 'defaultUser' ) ? (
                   <div>
                     <TextField
                       label={display}
@@ -234,6 +194,7 @@ const SettingsSection = props => {
                       sx={{ width: '100%' }}
                     />
                   </div>
+                  ) : ('') }
                 </Grid>
               );
             case 'check':
@@ -428,10 +389,10 @@ const SettingsSection = props => {
       />
 
       <Grid container item xs={6} justifyContent="flex-start" direction="row" spacing={2}>
-        {resetHeaderDefinitions.map(({ key, display, reset, variant }) => {
+        {resetHeaderDefinitions.map(({ key, display, reset, variant, parameter }) => {
           return (
             <Grid item key={key}>
-              <Button variant={variant ? variant : 'outlined'} onClick={reset(state)}>
+              <Button variant={variant ? variant : 'outlined'} onClick={reset(state, parameter)}>
                 {display}
               </Button>
             </Grid>
