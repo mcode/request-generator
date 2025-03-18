@@ -15,7 +15,6 @@ import { MemoizedTabPanel } from './TabPanel';
 import { Refresh } from '@mui/icons-material';
 import {
   getPatientFirstAndLastName,
-  getPatientFullName,
   getPractitionerFirstAndLastName,
   retrieveLaunchContext
 } from '../../util/util';
@@ -281,7 +280,7 @@ const TasksSection = props => {
       },
       {
         id: 'patient',
-        display: `Assign to patient${patient ? ' (' + getPatientFullName(patient) + ')' : ''}`
+        display: `Assign to patient${patient ? ' (' + getPatientFirstAndLastName(patient) + ')' : ''}`
       },
       {
         id: 'unassign',
