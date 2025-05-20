@@ -10,7 +10,7 @@ export default defineConfig({
     base: '',
     plugins: [react(), viteTsconfigPaths(), nodePolyfills()],
     preview: {
-      allowedHosts: [".mitre.org", ".us-east-1.elb.amazonaws.com"],
+      allowedHosts: ['.mitre.org', '.us-east-1.elb.amazonaws.com'],
     },
     define: {
         'process.env': process.env
