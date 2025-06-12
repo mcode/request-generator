@@ -231,16 +231,9 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
 
-    if (system.endsWith('rxnorm')) {
-      //     Medication Drug Description
+    if (system.endsWith('ndc')) {
+      //     Medication Drug Code
       xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
-      //     Medication Drug Code
-      var drugDbCode = doc.createElement('DrugDBCode');
-      xmlAddTextNode(doc, drugDbCode, 'Code', coding.code);
-      xmlAddTextNode(doc, drugDbCode, 'Qualifier', 'BPK'); // Branded Package BPCK (BPK)
-      drugCoded.appendChild(drugDbCode);
-    } else if (system.endsWith('ndc')) {
-      //     Medication Drug Code
       var productCode = doc.createElement('ProductCode');
       xmlAddTextNode(doc, productCode, 'Code', coding.code);
       xmlAddTextNode(doc, productCode, 'Qualifier', 'ND'); // National Drug Code (NDC)

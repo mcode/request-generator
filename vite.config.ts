@@ -9,6 +9,9 @@ export default defineConfig({
     // depending on your application, base can also be "/"
     base: '',
     plugins: [react(), viteTsconfigPaths(), nodePolyfills()],
+    preview: {
+      allowedHosts: ['.mitre.org', '.us-east-1.elb.amazonaws.com'],
+    },
     define: {
         'process.env': process.env
     },
