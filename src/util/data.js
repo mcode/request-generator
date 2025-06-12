@@ -86,6 +86,11 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('VITE_INTERMEDIARY').asString()
   },
+  disableMedicationStatus: {
+    display: 'Disable Medication Status',
+    type: 'check',
+    default: false
+  },
 
   hookToSend: {
     display: 'Send hook on patient select',
