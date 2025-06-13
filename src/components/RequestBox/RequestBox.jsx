@@ -223,14 +223,14 @@ const RequestBox = props => {
    */
   const sendRx = async () => {
     console.log('Sending NewRx to: ' + pimsUrl);
-    console.log('Getting auth number ');
+    console.log('Getting case number ');
     const medication = createMedicationFromMedicationRequest(request);
     const body = makeBody(medication);
     const standardEtasuUrl = getMedicationSpecificEtasuUrl(
       getDrugCodeableConceptFromMedicationRequest(request),
       globalState
     );
-    let authNumber = '';
+    let caseNumber = '';
     await axios({
       method: 'post',
       url: standardEtasuUrl,
@@ -241,8 +241,8 @@ const RequestBox = props => {
         response.data.parameter?.[0].resource.contained
       ) {
         response.data.parameter?.[0].resource?.contained[0]?.parameter.map(metRequirements => {
-          if (metRequirements.name === 'auth_number') {
-            authNumber = metRequirements.valueString;
+          if (metRequirements.name === 'case_number') {
+            caseNumber = metRequirements.valueString;
           }
         });
       }
@@ -253,7 +253,7 @@ const RequestBox = props => {
       prefetchedResources.patient,
       prefetchedResources.practitioner,
       request,
-      authNumber
+      caseNumber
     );
 
     console.log('Prepared NewRx:');
