@@ -10,7 +10,7 @@ export default defineConfig({
     base: '',
     plugins: [react(), viteTsconfigPaths(), nodePolyfills()],
     preview: {
-      allowedHosts: ['.mitre.org', '.us-east-1.elb.amazonaws.com'],
+      allowedHosts: ['.mitre.org', '.us-east-1.elb.amazonaws.com']
     },
     define: {
         'process.env': process.env
@@ -22,7 +22,9 @@ export default defineConfig({
         // this sets a default port to 3000  
         port: 3000, 
         open: false,
-        host: true
+        host: true,
+        allowedHosts: ['.mitre.org', '.us-east-1.elb.amazonaws.com']
+
     },
     build: {
         outDir: 'build',
