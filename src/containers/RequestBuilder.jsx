@@ -55,7 +55,7 @@ const RequestBuilder = props => {
     return Object.keys(state.request).length === 0;
   };
 
-  const disableGetMedicationStatus = isOrderNotSelected() || state.loading;
+  const disableGetMedicationStatus = isOrderNotSelected() || state.loading || globalState.disableMedicationStatus;
   const disableGetEtasu = isOrderNotSelected() || state.loading;
   const getMedicationStatus = () => {
     setState(prevState => ({

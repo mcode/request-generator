@@ -231,16 +231,9 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
 
-    if (system.endsWith('rxnorm')) {
-      //     Medication Drug Description
+    if (system.endsWith('ndc')) {
+      //     Medication Drug Code
       xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
-      //     Medication Drug Code
-      var drugDbCode = doc.createElement('DrugDBCode');
-      xmlAddTextNode(doc, drugDbCode, 'Code', coding.code);
-      xmlAddTextNode(doc, drugDbCode, 'Qualifier', 'BPK'); // Branded Package BPCK (BPK)
-      drugCoded.appendChild(drugDbCode);
-    } else if (system.endsWith('ndc')) {
-      //     Medication Drug Code
       var productCode = doc.createElement('ProductCode');
       xmlAddTextNode(doc, productCode, 'Code', coding.code);
       xmlAddTextNode(doc, productCode, 'Qualifier', 'ND'); // National Drug Code (NDC)
@@ -299,7 +292,7 @@ export default function buildNewRxRequest(
   patientResource,
   practitionerResource,
   medicationRequestResource,
-  authNumber
+  caseNumber
 ) {
   var doc = document.implementation.createDocument('', '', null);
   var message = doc.createElement('Message');
@@ -319,8 +312,8 @@ export default function buildNewRxRequest(
   const d1 = new Date();
   const messageIdValue = d1.getTime();
   xmlAddTextNode(doc, header, 'MessageID', messageIdValue);
-  // Add in auth number here
-  xmlAddTextNode(doc, header, 'AuthorizationNumber', authNumber);
+  // Add in case number here
+  xmlAddTextNode(doc, header, 'AuthorizationNumber', caseNumber);
 
   // SentTime
   xmlAddTextNode(doc, header, 'SentTime', d1.toISOString());
