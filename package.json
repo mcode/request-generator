@@ -9,7 +9,7 @@
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.10",
     "@mui/styles": "^5.14.10",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.5.2",
     "axios": "^0.30.0",
     "base64url": "^3.0.0",
     "classnames": "^2.2.6",
@@ -25,7 +25,7 @@
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.17.0",
     "uuid": "^9.0.1",
-    "vite": "^5.4.19",
+    "vite": "^6.3.5",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "scripts": {
@@ -53,7 +53,7 @@
     "jju": "^1.4.0",
     "prettier": "^3.0.3",
     "rewire": "^7.0.0",
-    "vite-plugin-node-polyfills": "^0.21.0"
+    "vite-plugin-node-polyfills": "^0.23.0"
   },
   "browserslist": {
     "production": [
