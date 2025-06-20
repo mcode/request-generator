@@ -227,19 +227,28 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   // loop through the coding values and find the ndc code and the rxnorm code
   let medicationCodingList =
     getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
+
+  var drugDisplay = 'undefined';
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
 
+    // get the display from first drug coding that contains a display value
+    if (coding.display && drugDisplay == 'undefined') {
+      drugDisplay = coding.display;
+    }
+
     if (system.endsWith('ndc')) {
       //     Medication Drug Code
-      xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
       var productCode = doc.createElement('ProductCode');
       xmlAddTextNode(doc, productCode, 'Code', coding.code);
       xmlAddTextNode(doc, productCode, 'Qualifier', 'ND'); // National Drug Code (NDC)
       drugCoded.appendChild(productCode);
     }
   }
+
+  // set the drug description
+  xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', drugDisplay);
 
   medicationPrescribed.appendChild(drugCoded);
 
