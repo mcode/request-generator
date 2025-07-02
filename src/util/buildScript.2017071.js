@@ -227,19 +227,18 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   // loop through the coding values and find the ndc code and the rxnorm code
   let medicationCodingList =
     getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
+
+  var drugDisplay = 'undefined';
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
 
-    if (system.endsWith('rxnorm')) {
-      //     Medication Drug Description
-      xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
-      //     Medication Drug Code
-      var drugDbCode = doc.createElement('DrugDBCode');
-      xmlAddTextNode(doc, drugDbCode, 'Code', coding.code);
-      xmlAddTextNode(doc, drugDbCode, 'Qualifier', 'BPK'); // Branded Package BPCK (BPK)
-      drugCoded.appendChild(drugDbCode);
-    } else if (system.endsWith('ndc')) {
+    // get the display from first drug coding that contains a display value
+    if (coding.display && drugDisplay == 'undefined') {
+      drugDisplay = coding.display;
+    }
+
+    if (system.endsWith('ndc')) {
       //     Medication Drug Code
       var productCode = doc.createElement('ProductCode');
       xmlAddTextNode(doc, productCode, 'Code', coding.code);
@@ -247,6 +246,9 @@ function buildNewRxMedication(doc, medicationRequestResource) {
       drugCoded.appendChild(productCode);
     }
   }
+
+  // set the drug description
+  xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', drugDisplay);
 
   medicationPrescribed.appendChild(drugCoded);
 
@@ -299,7 +301,7 @@ export default function buildNewRxRequest(
   patientResource,
   practitionerResource,
   medicationRequestResource,
-  authNumber
+  caseNumber
 ) {
   var doc = document.implementation.createDocument('', '', null);
   var message = doc.createElement('Message');
@@ -319,8 +321,8 @@ export default function buildNewRxRequest(
   const d1 = new Date();
   const messageIdValue = d1.getTime();
   xmlAddTextNode(doc, header, 'MessageID', messageIdValue);
-  // Add in auth number here
-  xmlAddTextNode(doc, header, 'AuthorizationNumber', authNumber);
+  // Add in case number here
+  xmlAddTextNode(doc, header, 'AuthorizationNumber', caseNumber);
 
   // SentTime
   xmlAddTextNode(doc, header, 'SentTime', d1.toISOString());

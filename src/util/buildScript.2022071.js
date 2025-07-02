@@ -223,17 +223,9 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     const coding = medicationCodingList[i];
     const system = coding.system.toLowerCase();
 
-    if (system.endsWith('rxnorm')) {
-      //     Medication Drug Description
-      xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
-
-      //     Medication Drug Code
-      var productCode = doc.createElement('ProductCode');
-      xmlAddTextNode(doc, productCode, 'Code', coding.code);
-      xmlAddTextNode(doc, productCode, 'Qualifier', 'SBD'); // RxNorm Semantic Branded Drug
-      drugCoded.appendChild(productCode);
-    } else if (system.endsWith('ndc')) {
+    if (system.endsWith('ndc')) {
       //     Medication NDC
+      xmlAddTextNode(doc, medicationPrescribed, 'DrugDescription', coding.display);
       xmlAddTextNode(doc, drugCoded, 'NDC', coding.code); // 10-digit number
     }
   }
