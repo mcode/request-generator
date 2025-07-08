@@ -17,6 +17,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PatientSearchBar from '../components/RequestBox/PatientSearchBar/PatientSearchBar.jsx';
 import { MedicationStatus } from '../components/MedicationStatus/MedicationStatus.jsx';
 import { actionTypes } from './ContextProvider/reducer.js';
+import env from 'env-var';
 
 import axios from 'axios';
 import { EtasuStatus } from '../components/EtasuStatus/EtasuStatus';
@@ -57,24 +58,74 @@ const RequestBuilder = props => {
 
   const disableGetMedicationStatus = isOrderNotSelected() || state.loading || globalState.disableMedicationStatus;
   const disableGetEtasu = isOrderNotSelected() || state.loading;
+
   const getMedicationStatus = () => {
     setState(prevState => ({
       ...prevState,
       lastCheckedMedicationTime: Date.now()
     }));
 
-    axios.get(`${globalState.ehrUrl}/MedicationDispense?prescription=${state.request.id}`).then(
-      response => {
-        const bundle = response.data;
-        setState(prevState => ({
-          ...prevState,
-          medicationDispense: bundle.entry?.[0].resource
-        }));
-      },
-      error => {
-        console.log('Was not able to get medication status', error);
-      }
-    );
+    // Check for RxFill EHR override
+    const rxFillEhrUrl = env.get('VITE_RXFILL_EHR_URL').asString();
+
+    if (rxFillEhrUrl) {
+      // Use env RxFill EHR
+      console.log('Fetching medication status from env RxFill EHR:', rxFillEhrUrl);
+      axios.get(
+        `${rxFillEhrUrl}/MedicationDispense?prescription=${state.request.id}`,
+        {
+          headers: {
+            'Accept': 'application/fhir+json',
+            'Content-Type': 'application/fhir+json'
+          }
+        }
+      ).then(
+        response => {
+          if (response.data) {
+            const bundle = response.data;
+            setState(prevState => ({
+              ...prevState,
+              medicationDispense: bundle.entry?.[0].resource
+            }));
+            console.log('Updated medication status from env RxFill EHR:', bundle);
+          }
+        },
+        error => {
+          console.error('Error fetching medication status from RxFill EHR:', error);
+          console.error('URL used:', `${rxFillEhrUrl}/MedicationDispense?prescription=${state.request.id}`);
+          // Fallback to main EHR if env fails
+          axios.get(`${globalState.ehrUrl}/MedicationDispense?prescription=${state.request.id}`).then(
+          response => {
+            const bundle = response.data;
+            setState(prevState => ({
+              ...prevState,
+              medicationDispense: bundle.entry?.[0].resource
+            }));
+            console.log('Fallback - Updated medication status from main EHR:', bundle);
+          },
+          error => {
+            console.log('Was not able to get medication status', error);
+          }
+        );
+        }
+      );
+    } else {
+      // Use main EHR 
+      console.log('Fetching medication status from main EHR');
+      axios.get(`${globalState.ehrUrl}/MedicationDispense?prescription=${state.request.id}`).then(
+          response => {
+            const bundle = response.data;
+            setState(prevState => ({
+              ...prevState,
+              medicationDispense: bundle.entry?.[0].resource
+            }));
+            console.log('Updated medication status from main EHR:', bundle);
+          },
+          error => {
+            console.log('Was not able to get medication status', error);
+          }
+        );
+    }
   };
 
   useEffect(() => {

@@ -20,6 +20,8 @@ import {
 } from '../../util/util.js';
 import './request.css';
 import axios from 'axios';
+import env from 'env-var';
+
 
 const RequestBox = props => {
   const [state, setState] = useState({
@@ -279,12 +281,38 @@ const RequestBox = props => {
         console.log('Create MedicationDispense:');
         console.log(medicationDispense);
 
-        // store the MedicationDispense in the EHR
-        console.log(medicationDispense);
-        client.update(medicationDispense).then(result => {
-          console.log('Update MedicationDispense result:');
-          console.log(result);
-        });
+        // Check if we should use env for RxFill demo
+        const rxFillEhrUrl = env.get('VITE_RXFILL_EHR_URL').asString();
+        
+        if (rxFillEhrUrl) {
+          console.log('Creating MedicationDispense in env EHR:', rxFillEhrUrl);
+          axios({
+            method: 'PUT',
+            url: `${rxFillEhrUrl}/MedicationDispense/${medicationDispense.id}`,
+            headers: {
+              'Accept': 'application/fhir+json',
+              'Content-Type': 'application/fhir+json'
+            },
+            data: medicationDispense
+          }).then(result => {
+            console.log('Created MedicationDispense in env EHR result:');
+            console.log(result.data);
+          }).catch(error => {
+            console.error('Error creating MedicationDispense in env EHR:', error);
+            // Fallback to main EHR if local fails
+            client.update(medicationDispense).then(result => {
+              console.log('Fallback - Update MedicationDispense result in main EHR:');
+              console.log(result);
+            });
+          });
+        } else {
+          // store the MedicationDispense in the main EHR
+          console.log('Creating MedicationDispense in main EHR');
+          client.update(medicationDispense).then(result => {
+            console.log('Update MedicationDispense result:');
+            console.log(result);
+          });
+        }
 
         handleRxResponse();
       })
