@@ -355,10 +355,13 @@ const DisplayBox = props => {
                       {summarySection}
                     </Typography>
 
+                    <div>
+                      <Typography variant="div">{detailSection}</Typography>
+                    </div>
+
                     {/* Forms */}
                     {linksSection.length !== 0 ? (
                       <div>
-                        <Typography variant="div">{detailSection}</Typography>
                         <Typography color="text.secondary">Required Forms</Typography>
                         <List className={'links-section'}>{linksSection}</List>
                       </div>
