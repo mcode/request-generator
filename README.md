@@ -137,6 +137,7 @@ Following are a list of modifiable paths:
 | VITE_INTERMEDIARY                                     | `http://localhost:3030`                                                                              | The base url of the intermediary.                      |
 
 # Data Rights
+This repository has been forked from the [HL7-DaVinci/crd-request-generator](https://github.com/HL7-DaVinci/crd-request-generator) repository. As such, the following data rights apply to all changes made on this fork of the repository, starting with release 0.1 and onward.
 
 <div style="text-align:center">
 <b>NOTICE</b>
