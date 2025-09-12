@@ -11,6 +11,8 @@ export class PrefetchTemplate {
     );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
+    const PHARMACY_PREFETCH = new PrefetchTemplate('Organization/pharm0111');
+
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
       'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
     );
@@ -19,6 +21,7 @@ export class PrefetchTemplate {
     prefetchMap.set('request', REQUEST_PREFETCH);
     prefetchMap.set('practitioner', PRACTITIONER_PREFETCH);
     prefetchMap.set('patient', PATIENT_PREFETCH);
+    prefetchMap.set('pharmacy', PHARMACY_PREFETCH);
     prefetchMap.set('medicationRequests', ALL_REQUESTS_PREFETCH);
     // prefetchMap.set("ServiceRequest", SERVICE_REQUEST_BUNDLE);
     // prefetchMap.set("Encounter", ENCOUNTER_BUNDLE);
@@ -44,6 +47,8 @@ export class PrefetchTemplate {
     paramElementMap.set('context.draftOrders.context.appointments.Appointment.id', ['id']);
     paramElementMap.set('context.draftOrders.context.encounterId', ['id']);
     paramElementMap.set('context.patientId', ['subject', 'reference']);
+    paramElementMap.set('context.pharmacyId', ['id']); 
+
     return paramElementMap;
   }
 
