@@ -167,17 +167,27 @@ const PatientBox = props => {
   const fetchResources = queries => {
     let requests = [];
     callback('prefetchCompleted', false);
+    console.log('🔍 PHARMACY DEBUG - All queries to fetch:', queries); // ADD THIS
+    
     queries.forEach((query, queryKey) => {
+      console.log(`🔍 PHARMACY DEBUG - Processing ${queryKey}: ${query}`); // ADD THIS
       const urlQuery = '/' + query;
       requests.push(
         client
           .request(urlQuery)
           .then(response => {
-            console.log(response);
+            console.log(`🔍 PHARMACY DEBUG - SUCCESS for ${queryKey}:`, response); // ADD THIS
             return response;
           })
+          .catch(error => {
+            console.log(`🔍 PHARMACY DEBUG - FAILED for ${queryKey}:`, error); // ADD THIS
+            return null; // Return null so Promise.all doesn't fail completely
+          })
           .then(resource => {
-            callbackMap('prefetchedResources', queryKey, resource);
+            if (resource) {
+              console.log(`🔍 PHARMACY DEBUG - Calling callbackMap for ${queryKey}`); // ADD THIS
+              callbackMap('prefetchedResources', queryKey, resource);
+            }
           })
       );
     });
@@ -202,9 +212,11 @@ const PatientBox = props => {
         request,
         patientReference,
         userReference,
+        'pharm0111',
         'request',
         'patient',
-        'practitioner'
+        'practitioner',
+        'pharmacy'
       );
       fetchResources(queries);
 
@@ -218,9 +230,11 @@ const PatientBox = props => {
         request,
         patientReference,
         userReference,
+        'pharm0111',
         'patient',
         'practitioner',
-        'medicationRequests'
+        'medicationRequests',
+        'pharmacy'
       );
       fetchResources(queries);
     }

@@ -9,7 +9,9 @@ export default function buildRequest(
   prefetch,
   includePrefetch,
   hook,
-  hookConfig
+  hookConfig,
+  pharmacyId = 'pharm0111'
+
 ) {
   // Use the provided user if there is no request for this hook
   let userId = 'Practitioner/' + user;
@@ -31,7 +33,8 @@ export default function buildRequest(
     context: {
       userId: userId,
       patientId: patient.id,
-      encounterId: 'enc89284'
+      encounterId: 'enc89284',
+      pharmacyId: pharmacyId 
     }
   };
 

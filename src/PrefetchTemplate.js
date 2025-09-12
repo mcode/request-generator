@@ -11,7 +11,7 @@ export class PrefetchTemplate {
     );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
-    const PHARMACY_PREFETCH = new PrefetchTemplate('Organization/pharm0111');
+    const PHARMACY_PREFETCH = new PrefetchTemplate('Organization/{{context.pharmacyId}}');
 
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
       'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
@@ -52,32 +52,38 @@ export class PrefetchTemplate {
     return paramElementMap;
   }
 
-  static generateQueries(requestBundle, patientReference, userReference, ...prefetchKeys) {
-    var resolvedQueries = new Map();
-    for (var i = 0; i < prefetchKeys.length; i++) {
-      var prefetchKey = prefetchKeys[i];
-      var query = prefetchMap.get(prefetchKey).getQuery();
+  static generateQueries(requestBundle, patientReference, userReference, pharmacyId, ...prefetchKeys) {
+  var resolvedQueries = new Map();
+  for (var i = 0; i < prefetchKeys.length; i++) {
+    var prefetchKey = prefetchKeys[i];
+    var query = prefetchMap.get(prefetchKey).getQuery();
       // Regex source: https://regexland.com/all-between-specified-characters/
-      var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
-      var resolvedQuery = query.slice();
+    var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
+    var resolvedQuery = query.slice();
       for (var j = 0; j < parametersToFill.length; j++) {
         var unresolvedParameter = parametersToFill[j];
         var resolvedParameter;
         if (requestBundle) {
-          resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
+          if (unresolvedParameter === 'context.pharmacyId') {
+            resolvedParameter = pharmacyId; 
+          } else {
+            resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
+          }
         } else {
           if (unresolvedParameter === 'context.patientId') {
             resolvedParameter = patientReference;
           } else if (unresolvedParameter === 'context.userId') {
             resolvedParameter = userReference;
+          } else if (unresolvedParameter === 'context.pharmacyId') {
+            resolvedParameter = pharmacyId; 
           }
         }
         resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
       }
-      resolvedQueries.set(prefetchKey, resolvedQuery);
-    }
-    return resolvedQueries;
+    resolvedQueries.set(prefetchKey, resolvedQuery);
   }
+  return resolvedQueries;
+}
 
   // Source: https://www.tutorialspoint.com/accessing-nested-javascript-objects-with-string-key
   static getProp(object, path) {

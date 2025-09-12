@@ -48,6 +48,7 @@ const RequestBuilder = props => {
   const displayRequestBox = !!globalState.patient?.id;
 
   useEffect(() => {
+    console.log('Prefetched Resources updated:');
     console.log(state.prefetchedResources);
   }, [state.prefetchedResources]);
 
@@ -181,7 +182,8 @@ const RequestBuilder = props => {
       prefetch,
       globalState.sendPrefetch,
       hook,
-      hookConfig
+      hookConfig,
+      'pharm0111'
     );
 
     let baseUrl = globalState.baseUrl;
