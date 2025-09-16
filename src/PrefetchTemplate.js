@@ -11,7 +11,7 @@ export class PrefetchTemplate {
     );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
-    const PHARMACY_PREFETCH = new PrefetchTemplate('Organization/{{context.pharmacyId}}');
+    const PHARMACY_PREFETCH = new PrefetchTemplate('HealthcareService/{{context.pharmacyId}}');
 
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
       'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
