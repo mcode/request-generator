@@ -55,7 +55,6 @@ export class PrefetchTemplate {
     requestBundle,
     patientReference,
     userReference,
-    pharmacyId,
     ...prefetchKeys
   ) {
     var resolvedQueries = new Map();
