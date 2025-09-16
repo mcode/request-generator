@@ -56,7 +56,8 @@ const RequestBuilder = props => {
     return Object.keys(state.request).length === 0;
   };
 
-  const disableGetMedicationStatus = isOrderNotSelected() || state.loading || globalState.disableMedicationStatus;
+  const disableGetMedicationStatus =
+    isOrderNotSelected() || state.loading || globalState.disableMedicationStatus;
   const disableGetEtasu = isOrderNotSelected() || state.loading;
   const getMedicationStatus = () => {
     setState(prevState => ({
@@ -95,8 +96,12 @@ const RequestBuilder = props => {
     }
 
     // if use default user is set, use default user otherwise use logged in user if set
-    let currentUser = globalState.useDefaultUser ? globalState.defaultUser : (state.userId ? state.userId : globalState.defaultUser);
-    setState(prevState => ({...prevState, user: currentUser}));
+    let currentUser = globalState.useDefaultUser
+      ? globalState.defaultUser
+      : state.userId
+        ? state.userId
+        : globalState.defaultUser;
+    setState(prevState => ({ ...prevState, user: currentUser }));
   }, []);
 
   const updateStateElement = (elementName, text) => {
@@ -293,15 +298,25 @@ const RequestBuilder = props => {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Button variant="contained" startIcon={<PersonIcon />} style={{padding:'10px',paddingLeft:'20px', paddingRight:'20px'}}>
+              <Button
+                variant="contained"
+                startIcon={<PersonIcon />}
+                style={{ padding: '10px', paddingLeft: '20px', paddingRight: '20px' }}
+              >
                 Select a patient
               </Button>
-              <span style={{ width: '30px'}}></span>
+              <span style={{ width: '30px' }}></span>
               {state.patient?.name ? (
                 // Display the first name
-                <span><h4>{state.patient?.name?.[0]?.given?.[0] + ' ' + state.patient?.name?.[0]?.family}</h4></span>
+                <span>
+                  <h4>
+                    {state.patient?.name?.[0]?.given?.[0] + ' ' + state.patient?.name?.[0]?.family}
+                  </h4>
+                </span>
               ) : (
-                <span><h4>All Patients</h4></span>
+                <span>
+                  <h4>All Patients</h4>
+                </span>
               )}
             </AccordionSummary>
             <AccordionDetails>

@@ -28,7 +28,7 @@ const taskStatus = Object.freeze({
 });
 const TasksSection = props => {
   const classes = useStyles();
-  const {client, userName, userId} = props;
+  const { client, userName, userId } = props;
   const [tasks, setTasks] = useState([]);
   const [state] = React.useContext(SettingsContext);
   const [value, setValue] = useState(0);
@@ -64,7 +64,8 @@ const TasksSection = props => {
       assignTaskToDefaultPractitioner(taskClone);
     } else if (val === 'patient') {
       assignTaskToPatient(taskClone);
-    } else { //'unassign'
+    } else {
+      //'unassign'
       unassignTask(taskClone);
     }
     handleAssignMenuClose();
@@ -120,7 +121,7 @@ const TasksSection = props => {
         fetchTasks();
       });
     }
-  }
+  };
   const assignTaskToRequester = task => {
     if (task) {
       task = washTask(task);
@@ -129,7 +130,7 @@ const TasksSection = props => {
 
       // assign to requester if available
       if (task?.requester) {
-        user = task.requester?.reference
+        user = task.requester?.reference;
       }
       task.owner = {
         reference: user
@@ -139,7 +140,7 @@ const TasksSection = props => {
         fetchTasks();
       });
     }
-  };;
+  };
   const assignTaskToDefaultPractitioner = task => {
     if (task) {
       task = washTask(task);
@@ -190,14 +191,16 @@ const TasksSection = props => {
     if (state.patient && state.patient.id) {
       identifier = `Task?patient=${state.patient.id}`;
     }
-    client.request(identifier, { resolveReferences: ['for', 'owner', 'requester'] }).then(request => {
-      console.log(request);
-      if (request && request.entry) {
-        setTasks(request.entry.map(e => e.resource));
-      } else {
-        setTasks([]);
-      }
-    });
+    client
+      .request(identifier, { resolveReferences: ['for', 'owner', 'requester'] })
+      .then(request => {
+        console.log(request);
+        if (request && request.entry) {
+          setTasks(request.entry.map(e => e.resource));
+        } else {
+          setTasks([]);
+        }
+      });
   };
   useEffect(() => {
     fetchTasks();
@@ -291,18 +294,20 @@ const TasksSection = props => {
       <Menu anchorEl={anchorAssign?.anchor} open={assignMenuOpen} onClose={handleAssignMenuClose}>
         {assignOptions.map(({ id, display }) => {
           // only give the 'Assign to requester if the requester is available'
-          if (((id === 'me') && userId && userName) 
-            || ((id === 'requester') && (anchorAssign?.task?.requester)) 
-            || ((id === 'defaultPractitioner') && (!anchorAssign?.task?.requester))
-            || (id != 'me') && (id != 'requester') && (id != 'defaultPractitioner')) {
-          return (
-            <MenuItem
-              key={id}
-              onClick={() => {
-                handleChangeAssign(anchorAssign?.task, id);
-              }}
-            >{`${display}`}</MenuItem>
-          );
+          if (
+            (id === 'me' && userId && userName) ||
+            (id === 'requester' && anchorAssign?.task?.requester) ||
+            (id === 'defaultPractitioner' && !anchorAssign?.task?.requester) ||
+            (id != 'me' && id != 'requester' && id != 'defaultPractitioner')
+          ) {
+            return (
+              <MenuItem
+                key={id}
+                onClick={() => {
+                  handleChangeAssign(anchorAssign?.task, id);
+                }}
+              >{`${display}`}</MenuItem>
+            );
           }
         })}
       </Menu>

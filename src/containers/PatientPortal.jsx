@@ -60,7 +60,13 @@ const PatientPortal = () => {
         <Toolbar>
           <Typography variant="h4" noWrap component="div" sx={{ lineHeight: '120px' }}>
             <PersonIcon
-              sx={{ color: 'white', fontSize: 60, paddingTop: 0, paddingRight: 2.5, verticalAlign: 'middle' }}
+              sx={{
+                color: 'white',
+                fontSize: 60,
+                paddingTop: 0,
+                paddingRight: 2.5,
+                verticalAlign: 'middle'
+              }}
             />
             <strong>EHR</strong> Patient Portal
           </Typography>
@@ -75,19 +81,21 @@ const PatientPortal = () => {
         <Dashboard client={client} logout={logout}></Dashboard>
       ) : (
         <div>
-          { patientName ? ( '' ) : (
+          {patientName ? (
+            ''
+          ) : (
             <Snackbar
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left'
               }}
-              open={(patientName == null) && (client != null)}
+              open={patientName == null && client != null}
             >
               <MuiAlert severity="error" elevation={6} variant="filled">
                 Error! {data?.name} is not a Patient
               </MuiAlert>
             </Snackbar>
-          ) }
+          )}
           <Login tokenCallback={setToken}></Login>
         </div>
       )}

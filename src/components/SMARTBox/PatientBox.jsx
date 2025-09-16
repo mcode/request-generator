@@ -50,7 +50,7 @@ const PatientBox = props => {
     responseExpirationDays,
     request,
     launchUrl,
-    showButtons,
+    showButtons
   } = props;
 
   const medicationColumns = [
@@ -168,7 +168,7 @@ const PatientBox = props => {
     let requests = [];
     callback('prefetchCompleted', false);
     console.log('🔍 PHARMACY DEBUG - All queries to fetch:', queries); // ADD THIS
-    
+
     queries.forEach((query, queryKey) => {
       console.log(`🔍 PHARMACY DEBUG - Processing ${queryKey}: ${query}`); // ADD THIS
       const urlQuery = '/' + query;
@@ -627,7 +627,9 @@ const PatientBox = props => {
                 </span>
               </Tooltip>
             )
-          ) : ""}
+          ) : (
+            ''
+          )}
           {props.showButtons ? (
             state.showQuestionnaires ? (
               <Button
@@ -660,7 +662,9 @@ const PatientBox = props => {
                 </span>
               </Tooltip>
             )
-          ) : ""}
+          ) : (
+            ''
+          )}
           <Button variant="contained" className="select-btn" onClick={() => updateValues(patient)}>
             Select Patient
           </Button>

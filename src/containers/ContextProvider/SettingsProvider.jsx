@@ -7,9 +7,8 @@ export const SettingsContext = React.createContext({
   dispatch: () => null,
   updateSetting: () => null,
   readSettings: () => null,
-  saveSettings: () => null,
+  saveSettings: () => null
 });
-
 
 export const SettingsProvider = ({ children }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
@@ -44,5 +43,9 @@ export const SettingsProvider = ({ children }) => {
     localStorage.setItem('reqgenSettings', JSON.stringify(headers));
   };
 
-  return <SettingsContext.Provider value={[state, dispatch, updateSetting, readSettings, saveSettings]}>{children}</SettingsContext.Provider>;
+  return (
+    <SettingsContext.Provider value={[state, dispatch, updateSetting, readSettings, saveSettings]}>
+      {children}
+    </SettingsContext.Provider>
+  );
 };

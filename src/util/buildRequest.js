@@ -10,7 +10,7 @@ export default function buildRequest(
   includePrefetch,
   hook,
   hookConfig
-  ) {
+) {
   // Use the provided user if there is no request for this hook
   let userId = 'Practitioner/' + user;
   if (request) {

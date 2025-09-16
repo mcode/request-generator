@@ -157,7 +157,7 @@ export default makeStyles(
       color: 'white !important',
       borderColor: 'white !important',
       marginRight: '5px !important',
-      marginLeft: '20px !important',
+      marginLeft: '20px !important'
     }
   }),
 

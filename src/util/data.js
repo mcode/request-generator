@@ -114,13 +114,12 @@ const CDS_SERVICE = 'cds-services';
 const ETASU_ENDPOINT = 'GuidanceResponse/$rems-etasu';
 
 const serviceEndpoints = {
-  'order-sign': CDS_SERVICE+'/rems-'+ORDER_SIGN,
-  'order-select': CDS_SERVICE+'/rems-'+ORDER_SELECT,
-  'patient-view': CDS_SERVICE+'/rems-'+PATIENT_VIEW,
-  'encounter-start': CDS_SERVICE+'/rems-'+ENCOUNTER_START,
-  '$rems-etasu': '4_0_0/'+ETASU_ENDPOINT
+  'order-sign': CDS_SERVICE + '/rems-' + ORDER_SIGN,
+  'order-select': CDS_SERVICE + '/rems-' + ORDER_SELECT,
+  'patient-view': CDS_SERVICE + '/rems-' + PATIENT_VIEW,
+  'encounter-start': CDS_SERVICE + '/rems-' + ENCOUNTER_START,
+  '$rems-etasu': '4_0_0/' + ETASU_ENDPOINT
 };
-
 
 const medicationRequestToRemsAdmins = Object.freeze([
   {
@@ -128,10 +127,19 @@ const medicationRequestToRemsAdmins = Object.freeze([
     display: 'Turalio 200 MG Oral Capsule',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
-      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+      {
+        endpointType: ORDER_SELECT,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-order-select'
+      },
+      {
+        endpointType: PATIENT_VIEW,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view'
+      },
+      {
+        endpointType: ENCOUNTER_START,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start'
+      },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/' + ETASU_ENDPOINT }
     ]
   },
   {
@@ -139,10 +147,19 @@ const medicationRequestToRemsAdmins = Object.freeze([
     display: 'Isotretinoin 20 MG Oral Capsule',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
-      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+      {
+        endpointType: ORDER_SELECT,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-order-select'
+      },
+      {
+        endpointType: PATIENT_VIEW,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view'
+      },
+      {
+        endpointType: ENCOUNTER_START,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start'
+      },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/' + ETASU_ENDPOINT }
     ]
   },
   {
@@ -150,10 +167,19 @@ const medicationRequestToRemsAdmins = Object.freeze([
     display: 'TIRF 200 UG Oral Transmucosal Lozenge',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
-      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+      {
+        endpointType: ORDER_SELECT,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-order-select'
+      },
+      {
+        endpointType: PATIENT_VIEW,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view'
+      },
+      {
+        endpointType: ENCOUNTER_START,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start'
+      },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/' + ETASU_ENDPOINT }
     ]
   },
   {
@@ -161,10 +187,19 @@ const medicationRequestToRemsAdmins = Object.freeze([
     display: 'Addyi 100 MG Oral Tablet',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
-      { endpointType: ORDER_SELECT, remsAdmin: 'http://localhost:8090/cds-services/rems-order-select' },
-      { endpointType: PATIENT_VIEW, remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view' },
-      { endpointType: ENCOUNTER_START, remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start' },
-      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/'+ETASU_ENDPOINT }
+      {
+        endpointType: ORDER_SELECT,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-order-select'
+      },
+      {
+        endpointType: PATIENT_VIEW,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-patient-view'
+      },
+      {
+        endpointType: ENCOUNTER_START,
+        remsAdmin: 'http://localhost:8090/cds-services/rems-encounter-start'
+      },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8090/4_0_0/' + ETASU_ENDPOINT }
     ]
   }
 ]);

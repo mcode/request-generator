@@ -1,7 +1,7 @@
 // Prefetch Template Source:
 // https://build.fhir.org/ig/HL7/davinci-crd/hooks.html#prefetch
 export class PrefetchTemplate {
-static generatePrefetchMap(includePharmacy = true, pharmacyId = 'pharm0111') {
+  static generatePrefetchMap(includePharmacy = true, pharmacyId = 'pharm0111') {
     const prefetchMap = new Map();
 
     const PRACTITIONER_PREFETCH = new PrefetchTemplate('{{context.userId}}');
@@ -51,36 +51,48 @@ static generatePrefetchMap(includePharmacy = true, pharmacyId = 'pharm0111') {
     return paramElementMap;
   }
 
-  static generateQueries(requestBundle, patientReference, userReference, pharmacyId, ...prefetchKeys) {
-  var resolvedQueries = new Map();
-  for (var i = 0; i < prefetchKeys.length; i++) {
-    var prefetchKey = prefetchKeys[i];
-    var query = prefetchMap.get(prefetchKey).getQuery();
+  static generateQueries(
+    requestBundle,
+    patientReference,
+    userReference,
+    pharmacyId,
+    ...prefetchKeys
+  ) {
+    var resolvedQueries = new Map();
+    for (var i = 0; i < prefetchKeys.length; i++) {
+      var prefetchKey = prefetchKeys[i];
+      var query = prefetchMap.get(prefetchKey).getQuery();
       // Regex source: https://regexland.com/all-between-specified-characters/
-    var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
-    var resolvedQuery = query.slice();
-    if (parametersToFill) {
-      for (var j = 0; j < parametersToFill.length; j++) {
-        var unresolvedParameter = parametersToFill[j];
-        var resolvedParameter;
-        if (requestBundle) {
-            resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
-        } else {
-          if (unresolvedParameter === 'context.patientId') {
-            resolvedParameter = patientReference;
-          } else if (unresolvedParameter === 'context.userId') {
-            resolvedParameter = userReference;
-          } 
-        }
-        if (resolvedParameter) {
-          resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
+      var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
+      var resolvedQuery = query.slice();
+      if (parametersToFill) {
+        for (var j = 0; j < parametersToFill.length; j++) {
+          var unresolvedParameter = parametersToFill[j];
+          var resolvedParameter;
+          if (requestBundle) {
+            resolvedParameter = PrefetchTemplate.resolveParameter(
+              unresolvedParameter,
+              requestBundle
+            );
+          } else {
+            if (unresolvedParameter === 'context.patientId') {
+              resolvedParameter = patientReference;
+            } else if (unresolvedParameter === 'context.userId') {
+              resolvedParameter = userReference;
+            }
+          }
+          if (resolvedParameter) {
+            resolvedQuery = resolvedQuery.replace(
+              '{{' + unresolvedParameter + '}}',
+              resolvedParameter
+            );
+          }
         }
       }
+      resolvedQueries.set(prefetchKey, resolvedQuery);
     }
-    resolvedQueries.set(prefetchKey, resolvedQuery);
+    return resolvedQueries;
   }
-  return resolvedQueries;
-}
 
   // Source: https://www.tutorialspoint.com/accessing-nested-javascript-objects-with-string-key
   static getProp(object, path) {

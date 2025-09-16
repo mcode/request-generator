@@ -31,7 +31,7 @@ const Gateway = props => {
     FHIR.oauth2.authorize({
       clientId: clientId,
       scope: scope.join(' '),
-      redirectUri: props.redirect + (backOffice ? "/backoffice": ""),
+      redirectUri: props.redirect + (backOffice ? '/backoffice' : ''),
       iss: fhirUrl
     });
   };
@@ -102,7 +102,17 @@ const Gateway = props => {
               )}
             />
             <Stack direction="row">
-            <FormControlLabel control={<Checkbox value={backOffice} onChange={()=>{setBackOffice(!backOffice)}} />} label="Back Office" />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    value={backOffice}
+                    onChange={() => {
+                      setBackOffice(!backOffice);
+                    }}
+                  />
+                }
+                label="Back Office"
+              />
             </Stack>
             <Button type="submit" variant="outlined" disabled={clientId === '' || fhirUrl === ''}>
               Launch
