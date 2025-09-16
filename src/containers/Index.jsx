@@ -3,20 +3,24 @@ import FHIR from 'fhirclient';
 import Home from '../components/RequestDashboard/Home';
 import BackOffice from './BackOffice/BackOffice';
 
-
-const Index = (props) => {
-  const {backoffice} =  props 
+const Index = props => {
+  const { backoffice } = props;
   const [client, setClient] = useState(null);
   const [authToken, setAuthToken] = useState(null);
   console.log(backoffice);
   const [isBackOffice, setBackOffice] = useState(backoffice || null);
-  const parseJwt = (token) => {
+  const parseJwt = token => {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-  
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+
     const jsonToken = JSON.parse(jsonPayload);
     setAuthToken(jsonToken);
     if (jsonToken.realm_access) {
@@ -32,11 +36,11 @@ const Index = (props) => {
       setBackOffice(false);
     }
     console.log('isBackOffice: ' + isBackOffice);
-  }
+  };
   useEffect(() => {
     FHIR.oauth2.ready().then(client => {
-      if(!isBackOffice) {
-        parseJwt(client.state.tokenResponse.access_token)
+      if (!isBackOffice) {
+        parseJwt(client.state.tokenResponse.access_token);
       }
       setClient(client);
     });
@@ -44,9 +48,12 @@ const Index = (props) => {
 
   return (
     <div>
-      {client && (isBackOffice !== null) ? (
-        isBackOffice ? <BackOffice client = {client} token = {authToken} />  :
-        <Home client={client} token = {authToken} />
+      {client && isBackOffice !== null ? (
+        isBackOffice ? (
+          <BackOffice client={client} token={authToken} />
+        ) : (
+          <Home client={client} token={authToken} />
+        )
       ) : (
         <div className="loading">
           <h1>Getting Client...</h1>

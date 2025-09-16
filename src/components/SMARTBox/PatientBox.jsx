@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { getAge, getDrugCodeFromMedicationRequest } from '../../util/fhir';
+import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import './smart.css';
 import { Button } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
@@ -18,6 +19,8 @@ import {
 } from '../../util/util';
 
 const PatientBox = props => {
+  const [globalState] = useContext(SettingsContext);
+  
   const [state, setState] = useState({
     request: '',
     deviceRequests: {},
@@ -50,7 +53,7 @@ const PatientBox = props => {
     responseExpirationDays,
     request,
     launchUrl,
-    showButtons,
+    showButtons
   } = props;
 
   const medicationColumns = [
@@ -173,7 +176,6 @@ const PatientBox = props => {
         client
           .request(urlQuery)
           .then(response => {
-            console.log(response);
             return response;
           })
           .then(resource => {
@@ -202,9 +204,11 @@ const PatientBox = props => {
         request,
         patientReference,
         userReference,
+        globalState,
         'request',
         'patient',
-        'practitioner'
+        'practitioner',
+        globalState.includePharmacyInPreFetch ? 'pharmacy' : undefined
       );
       fetchResources(queries);
 
@@ -218,9 +222,11 @@ const PatientBox = props => {
         request,
         patientReference,
         userReference,
+        globalState,
         'patient',
         'practitioner',
-        'medicationRequests'
+        'medicationRequests',
+        globalState.includePharmacyInPreFetch ? 'pharmacy' : undefined
       );
       fetchResources(queries);
     }
@@ -613,7 +619,9 @@ const PatientBox = props => {
                 </span>
               </Tooltip>
             )
-          ) : ""}
+          ) : (
+            ''
+          )}
           {props.showButtons ? (
             state.showQuestionnaires ? (
               <Button
@@ -646,7 +654,9 @@ const PatientBox = props => {
                 </span>
               </Tooltip>
             )
-          ) : ""}
+          ) : (
+            ''
+          )}
           <Button variant="contained" className="select-btn" onClick={() => updateValues(patient)}>
             Select Patient
           </Button>

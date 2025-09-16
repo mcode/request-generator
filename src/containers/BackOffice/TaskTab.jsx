@@ -60,10 +60,14 @@ const TaskTab = props => {
       getPatients();
     }
     // if use default user is set, use default user otherwise use logged in user if set
-    let currentUser = globalState.useDefaultUser ? globalState.defaultUser : (token.userId ? token.userId : globalState.defaultUser);
-    setState(prevState => ({...prevState, user: currentUser}));
+    let currentUser = globalState.useDefaultUser
+      ? globalState.defaultUser
+      : token.userId
+        ? token.userId
+        : globalState.defaultUser;
+    setState(prevState => ({ ...prevState, user: currentUser }));
   }, []);
-  
+
   const updateStateElement = (elementName, text) => {
     if (elementName === 'patient') {
       setState(prevState => ({ ...prevState, patient: text }));
@@ -78,47 +82,57 @@ const TaskTab = props => {
       }));
     }
   };
-  
+
   const updateStateMap = (elementName, key, text) => {
     setState(prevState => ({
       ...prevState,
       [elementName]: { ...prevState[elementName], [key]: text }
     }));
   };
-  
+
   const clearState = () => {
     setState(prevState => ({
       ...prevState,
       response: {}
     }));
   };
-  
+
   const handleChange = () => (event, isExpanded) => {
     setState(prevState => ({
       ...prevState,
       expanded: isExpanded ? true : false
     }));
   };
-  
+
   return (
     <Container maxWidth="lg">
-          <Grid container spacing={2} padding={2}>
-            <Grid item xs={11}>
+      <Grid container spacing={2} padding={2}>
+        <Grid item xs={11}>
           <Accordion expanded={state.expanded} onChange={handleChange()}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Button variant="contained" startIcon={<PersonIcon />} style={{padding:'10px',paddingLeft:'20px', paddingRight:'20px'}}>
+              <Button
+                variant="contained"
+                startIcon={<PersonIcon />}
+                style={{ padding: '10px', paddingLeft: '20px', paddingRight: '20px' }}
+              >
                 Select a patient
               </Button>
-              <span style={{ width: '30px'}}></span>
+              <span style={{ width: '30px' }}></span>
               {state.patient?.name ? (
                 // Display the first name
-                <span><h4>{state.patient?.name?.[0]?.given?.[0] + ' ' + state.patient?.name?.[0]?.family}</h4></span>
+                <span>
+                  <h4>
+                    {state.patient?.name?.[0]?.given?.[0] + ' ' + state.patient?.name?.[0]?.family}
+                  </h4>
+                </span>
               ) : (
-                <span><h4>All Patients</h4></span>
+                <span>
+                  <h4>All Patients</h4>
+                </span>
               )}
             </AccordionSummary>
             <AccordionDetails>
@@ -147,18 +161,17 @@ const TaskTab = props => {
               )}
             </AccordionDetails>
           </Accordion>
-            </Grid>
-            <Grid item xs={1} alignContent="center" justifyContent="center">
-              <IconButton color="primary" onClick={() => getPatients()} size="large">
-                <RefreshIcon fontSize="large" />
-              </IconButton>
-            </Grid>
-          </Grid>
+        </Grid>
+        <Grid item xs={1} alignContent="center" justifyContent="center">
+          <IconButton color="primary" onClick={() => getPatients()} size="large">
+            <RefreshIcon fontSize="large" />
+          </IconButton>
+        </Grid>
+      </Grid>
 
-          <TasksSection client={client} userName={token.name} userId={token.userId}></TasksSection>
-
+      <TasksSection client={client} userName={token.name} userId={token.userId}></TasksSection>
     </Container>
   );
-}
+};
 
 export default TaskTab;

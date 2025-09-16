@@ -64,36 +64,37 @@ const Home = props => {
     }
     return (
       <div>
-      <Grid className={gridClass} item container justifyContent={'center'} alignItems={'center'}>
-        {section ? '' : <Grid item xs={3}></Grid>} {/* spacer */}
-        {renderMainButton(patientButton, <PersonIcon className={classes.mainIcon} />)}
-        {renderMainButton(taskButton, <AssignmentIcon className={classes.mainIcon} />)}
-        {renderMainButton(settingsButton, <SettingsIcon className={classes.mainIcon} />)}
-        {section ? (
-          <Grid className={classes.spacer} item xs={0}>
-            <span className={classes.titleIcon}>
-              <MedicalServicesIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} />&nbsp;&nbsp;<strong>EHR</strong> Request Generator
-            </span>
-          </Grid>
-        ) : (
-          <Grid item xs={3}></Grid>
-        )}
-        {/* spacer */}
-        {/** */}
-        {section ? (
-          <Grid className={classes.spacer} item xs={4}>
-            <span className={classes.loginIcon}>
-              <AccountBoxIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} /> {token.name}
-              <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
-                Logout
-              </Button>
-            </span>
-          </Grid>
-        ) : (
-          <Grid item xs={3}></Grid>
-        )}
-        {/**/}
-      </Grid>
+        <Grid className={gridClass} item container justifyContent={'center'} alignItems={'center'}>
+          {section ? '' : <Grid item xs={3}></Grid>} {/* spacer */}
+          {renderMainButton(patientButton, <PersonIcon className={classes.mainIcon} />)}
+          {renderMainButton(taskButton, <AssignmentIcon className={classes.mainIcon} />)}
+          {renderMainButton(settingsButton, <SettingsIcon className={classes.mainIcon} />)}
+          {section ? (
+            <Grid className={classes.spacer} item xs={0}>
+              <span className={classes.titleIcon}>
+                <MedicalServicesIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} />
+                &nbsp;&nbsp;<strong>EHR</strong> Request Generator
+              </span>
+            </Grid>
+          ) : (
+            <Grid item xs={3}></Grid>
+          )}
+          {/* spacer */}
+          {/** */}
+          {section ? (
+            <Grid className={classes.spacer} item xs={4}>
+              <span className={classes.loginIcon}>
+                <AccountBoxIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} /> {token.name}
+                <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
+                  Logout
+                </Button>
+              </span>
+            </Grid>
+          ) : (
+            <Grid item xs={3}></Grid>
+          )}
+          {/**/}
+        </Grid>
       </div>
     );
   };

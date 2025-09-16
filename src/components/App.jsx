@@ -28,10 +28,24 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/launch" element={<Launch redirect={redirect} />} />
-        <Route path="/index" element={<ThemeProvider theme={theme}><Index/></ThemeProvider>} />
+        <Route
+          path="/index"
+          element={
+            <ThemeProvider theme={theme}>
+              <Index />
+            </ThemeProvider>
+          }
+        />
         <Route path="/register" element={<RegisterPage />} />
         {/* forcibly enter backoffice workflow */}
-        <Route path="/index/backoffice" element={<ThemeProvider theme={theme}><Index backoffice={true}/></ThemeProvider> } />
+        <Route
+          path="/index/backoffice"
+          element={
+            <ThemeProvider theme={theme}>
+              <Index backoffice={true} />
+            </ThemeProvider>
+          }
+        />
         <Route
           path="/patient-portal"
           element={

@@ -45,26 +45,33 @@ const PatientSearchBar = props => {
       <Box className="search-box-container">
         <Grid container>
           <Grid item xs={9}>
-        <span className="search-header">
-          <p>Filter patient list</p>
-          <Autocomplete
-            className="search-box"
-            disablePortal
-            id="search-box"
-            onInputChange={(event, newInputValue) => {
-              setInput(newInputValue.toLowerCase());
-            }}
-            options={listOfPatients[0].map(item => item.name)}
-            renderInput={params => <TextField {...params} label="Search" />}
-          />
-          <p>
-            Showing {getFilteredLength(input, listOfPatients)} of {props.searchablePatients.length}{' '}
-            records
-          </p>
-        </span>
+            <span className="search-header">
+              <p>Filter patient list</p>
+              <Autocomplete
+                className="search-box"
+                disablePortal
+                id="search-box"
+                onInputChange={(event, newInputValue) => {
+                  setInput(newInputValue.toLowerCase());
+                }}
+                options={listOfPatients[0].map(item => item.name)}
+                renderInput={params => <TextField {...params} label="Search" />}
+              />
+              <p>
+                Showing {getFilteredLength(input, listOfPatients)} of{' '}
+                {props.searchablePatients.length} records
+              </p>
+            </span>
           </Grid>
           <Grid item xs={3}>
-            <Button variant="contained" startIcon={<PeopleIcon />} onClick={() => { showAllPatients(); }} style={{padding:'10px','paddingLeft':'20px', 'paddingRight':'20px'}}>
+            <Button
+              variant="contained"
+              startIcon={<PeopleIcon />}
+              onClick={() => {
+                showAllPatients();
+              }}
+              style={{ padding: '10px', paddingLeft: '20px', paddingRight: '20px' }}
+            >
               Select all Patients
             </Button>
           </Grid>

@@ -34,9 +34,11 @@ function login() {
 }
 
 function logout() {
-  window.location.replace(`${env.get('VITE_AUTH').asString()}/realms/${env
-  .get('VITE_REALM')
-  .asString()}/protocol/openid-connect/logout`);
+  window.location.replace(
+    `${env.get('VITE_AUTH').asString()}/realms/${env
+      .get('VITE_REALM')
+      .asString()}/protocol/openid-connect/logout`
+  );
 }
 
 /**
