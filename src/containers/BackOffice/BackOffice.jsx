@@ -10,7 +10,7 @@ import useStyles from './styles';
 
 import { logout } from '../../util/auth';
 
-const BackOffice = (props) => {
+const BackOffice = props => {
   const classes = useStyles();
   const { client, token } = props;
 
@@ -19,39 +19,35 @@ const BackOffice = (props) => {
   }, []);
 
   return (
-
     <Box>
-      { token && client ? (
-      <Box>
-
-        <div className='backoffice-app'>
-        <Container maxWidth="false">
-            <div className="containerg">
-              <div className="logo">
-                <BusinessIcon
-                  sx={{ color: 'white', fontSize: 60, paddingTop: 2.5, paddingRight: 2.5 }}
-                />
-                <h1><strong>EHR</strong> Back Office </h1>
+      {token && client ? (
+        <Box>
+          <div className="backoffice-app">
+            <Container maxWidth="false">
+              <div className="containerg">
+                <div className="logo">
+                  <BusinessIcon
+                    sx={{ color: 'white', fontSize: 60, paddingTop: 2.5, paddingRight: 2.5 }}
+                  />
+                  <h1>
+                    <strong>EHR</strong> Back Office{' '}
+                  </h1>
+                </div>
+                <span className={classes.loginIcon}>
+                  <AccountBoxIcon sx={{ fontSize: 60, verticalAlign: 'middle' }} /> {token.name}
+                  <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
+                    Logout
+                  </Button>
+                </span>
               </div>
-              <span className={classes.loginIcon}>
-                <AccountBoxIcon sx={{ fontSize: 60, verticalAlign: 'middle' }} /> {token.name}
-                <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
-                  Logout
-                </Button>
-              </span>
-            </div>
-        </Container>
-        </div>
-        <Dashboard client={client} token={token} />
-    
-      </Box>
+            </Container>
+          </div>
+          <Dashboard client={client} token={token} />
+        </Box>
       ) : (
         <Index></Index>
-      ) }
-
+      )}
     </Box>
-
-   
   );
 };
 

@@ -1,27 +1,35 @@
 // Prefetch Template Source:
 // https://build.fhir.org/ig/HL7/davinci-crd/hooks.html#prefetch
 export class PrefetchTemplate {
-  static generatePrefetchMap() {
+  static generatePrefetchMap(settings = null) {
+    // If no settings provided, use defaults from data.js
+    const includePharmacy = settings?.includePharmacyInPreFetch ?? 
+                           headerDefinitions.includePharmacyInPreFetch.default;
+    const pharmacyId = settings?.pharmacyId ?? 
+                      headerDefinitions.pharmacyId.default;
+
     const prefetchMap = new Map();
 
     const PRACTITIONER_PREFETCH = new PrefetchTemplate('{{context.userId}}');
-
     const REQUEST_PREFETCH = new PrefetchTemplate(
       'MedicationRequest/{{context.medications.MedicationRequest.id}}'
     );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
-
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
       'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
     );
 
-    // prefetchMap.set("Coverage", COVERAGE_PREFETCH_QUERY);
+    // Core prefetch items (always included)
     prefetchMap.set('request', REQUEST_PREFETCH);
     prefetchMap.set('practitioner', PRACTITIONER_PREFETCH);
     prefetchMap.set('patient', PATIENT_PREFETCH);
     prefetchMap.set('medicationRequests', ALL_REQUESTS_PREFETCH);
-    // prefetchMap.set("ServiceRequest", SERVICE_REQUEST_BUNDLE);
-    // prefetchMap.set("Encounter", ENCOUNTER_BUNDLE);
+
+    // Optional pharmacy prefetch based on settings
+    if (includePharmacy && pharmacyId) {
+      const PHARMACY_PREFETCH = new PrefetchTemplate(`HealthcareService/${pharmacyId}`);
+      prefetchMap.set('pharmacy', PHARMACY_PREFETCH);
+    }
 
     return prefetchMap;
   }
@@ -47,27 +55,49 @@ export class PrefetchTemplate {
     return paramElementMap;
   }
 
-  static generateQueries(requestBundle, patientReference, userReference, ...prefetchKeys) {
+  static generateQueries(
+    requestBundle,
+    patientReference,
+    userReference,
+    settings = null,
+    ...prefetchKeys
+  ) {
+    const prefetchMap = PrefetchTemplate.generatePrefetchMap(settings);
+    const paramElementMap = PrefetchTemplate.generateParamElementMap();
+    
     var resolvedQueries = new Map();
     for (var i = 0; i < prefetchKeys.length; i++) {
       var prefetchKey = prefetchKeys[i];
+      if (!prefetchKey || !prefetchMap.has(prefetchKey)) continue;
       var query = prefetchMap.get(prefetchKey).getQuery();
       // Regex source: https://regexland.com/all-between-specified-characters/
       var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
       var resolvedQuery = query.slice();
-      for (var j = 0; j < parametersToFill.length; j++) {
-        var unresolvedParameter = parametersToFill[j];
-        var resolvedParameter;
-        if (requestBundle) {
-          resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
-        } else {
-          if (unresolvedParameter === 'context.patientId') {
-            resolvedParameter = patientReference;
-          } else if (unresolvedParameter === 'context.userId') {
-            resolvedParameter = userReference;
+      
+      if (parametersToFill) {
+        for (var j = 0; j < parametersToFill.length; j++) {
+          var unresolvedParameter = parametersToFill[j];
+          var resolvedParameter;
+          if (requestBundle) {
+            resolvedParameter = PrefetchTemplate.resolveParameter(
+              unresolvedParameter,
+              requestBundle,
+              paramElementMap
+            );
+          } else {
+            if (unresolvedParameter === 'context.patientId') {
+              resolvedParameter = patientReference;
+            } else if (unresolvedParameter === 'context.userId') {
+              resolvedParameter = userReference;
+            }
+          }
+          if (resolvedParameter) {
+            resolvedQuery = resolvedQuery.replace(
+              '{{' + unresolvedParameter + '}}',
+              resolvedParameter
+            );
           }
         }
-        resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
       }
       resolvedQueries.set(prefetchKey, resolvedQuery);
     }
@@ -89,8 +119,9 @@ export class PrefetchTemplate {
     }
   }
 
-  static resolveParameter(unresolvedParameter, requestBundle) {
+  static resolveParameter(unresolvedParameter, requestBundle, paramElementMap) {
     const paramField = paramElementMap.get(unresolvedParameter);
+    if (!paramField) return null;
     const resolvedParameter = PrefetchTemplate.getProp(requestBundle, paramField);
     return resolvedParameter;
   }
@@ -105,6 +136,3 @@ export class PrefetchTemplate {
     return this.query;
   }
 }
-
-const prefetchMap = PrefetchTemplate.generatePrefetchMap();
-const paramElementMap = PrefetchTemplate.generateParamElementMap();

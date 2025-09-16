@@ -39,7 +39,8 @@ import { SettingsContext } from '../../containers/ContextProvider/SettingsProvid
 const ENDPOINT = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU];
 
 const SettingsSection = props => {
-  const [state, dispatch, updateSetting, readSettings, saveSettings] = React.useContext(SettingsContext);
+  const [state, dispatch, updateSetting, readSettings, saveSettings] =
+    React.useContext(SettingsContext);
 
   const fieldHeaders = Object.keys(headerDefinitions)
     .map(key => ({ ...headerDefinitions[key], key }))
@@ -94,7 +95,7 @@ const SettingsSection = props => {
         });
     };
 
-  const clearResource = 
+  const clearResource =
     ({ ehrUrl, access_token }, type) =>
     () => {
       console.log('Clear ' + type + 's from the EHR: ' + ehrUrl);
@@ -151,19 +152,19 @@ const SettingsSection = props => {
       display: 'Clear EHR In-Progress Forms',
       key: 'clearQuestionnaireResponses',
       reset: clearResource,
-      parameter: 'QuestionnaireResponse' 
+      parameter: 'QuestionnaireResponse'
     },
     {
       display: 'Clear EHR Dispense Statuses',
       key: 'clearMedicationDispenses',
       reset: clearResource,
-      parameter: 'MedicationDispense' 
+      parameter: 'MedicationDispense'
     },
     {
       display: 'Clear EHR Tasks',
       key: 'clearTasks',
       reset: clearResource,
-      parameter: 'Task' 
+      parameter: 'Task'
     },
     {
       display: 'Reconnect EHR',
@@ -184,17 +185,19 @@ const SettingsSection = props => {
             case 'input':
               return (
                 <Grid key={key} item xs={6}>
-                  { ( (state['useDefaultUser'] && key === 'defaultUser') || key != 'defaultUser' ) ? (
-                  <div>
-                    <TextField
-                      label={display}
-                      variant="outlined"
-                      value={state[key]}
-                      onChange={event => updateSetting(key, event.target.value)}
-                      sx={{ width: '100%' }}
-                    />
-                  </div>
-                  ) : ('') }
+                  {(state['useDefaultUser'] && key === 'defaultUser') || key != 'defaultUser' ? (
+                    <div>
+                      <TextField
+                        label={display}
+                        variant="outlined"
+                        value={state[key]}
+                        onChange={event => updateSetting(key, event.target.value)}
+                        sx={{ width: '100%' }}
+                      />
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </Grid>
               );
             case 'check':

@@ -68,7 +68,7 @@ function createMedicationFromMedicationRequest(medicationRequest) {
   medication.id = medicationRequest?.id + '-med';
   if (medicationRequest.medicationCodeableConcept) {
     medication.code = medicationRequest.medicationCodeableConcept;
-  }  else if (medicationRequest.medicationReference) {
+  } else if (medicationRequest.medicationReference) {
     const reference = medicationRequest?.medicationReference;
     medication.code = undefined;
     medicationRequest?.contained?.every(e => {
