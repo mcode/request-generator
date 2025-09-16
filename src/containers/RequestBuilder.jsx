@@ -182,8 +182,7 @@ const RequestBuilder = props => {
       prefetch,
       globalState.sendPrefetch,
       hook,
-      hookConfig,
-      'pharm0111'
+      hookConfig
     );
 
     let baseUrl = globalState.baseUrl;
