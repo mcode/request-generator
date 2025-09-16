@@ -1,7 +1,7 @@
 // Prefetch Template Source:
 // https://build.fhir.org/ig/HL7/davinci-crd/hooks.html#prefetch
 export class PrefetchTemplate {
-  static generatePrefetchMap() {
+static generatePrefetchMap(includePharmacy = true, pharmacyId = 'pharm0111') {
     const prefetchMap = new Map();
 
     const PRACTITIONER_PREFETCH = new PrefetchTemplate('{{context.userId}}');
@@ -11,20 +11,21 @@ export class PrefetchTemplate {
     );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
 
-    const PHARMACY_PREFETCH = new PrefetchTemplate('HealthcareService/{{context.pharmacyId}}');
-
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
       'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
     );
 
-    // prefetchMap.set("Coverage", COVERAGE_PREFETCH_QUERY);
+    // Core prefetch items (always included)
     prefetchMap.set('request', REQUEST_PREFETCH);
     prefetchMap.set('practitioner', PRACTITIONER_PREFETCH);
     prefetchMap.set('patient', PATIENT_PREFETCH);
-    prefetchMap.set('pharmacy', PHARMACY_PREFETCH);
     prefetchMap.set('medicationRequests', ALL_REQUESTS_PREFETCH);
-    // prefetchMap.set("ServiceRequest", SERVICE_REQUEST_BUNDLE);
-    // prefetchMap.set("Encounter", ENCOUNTER_BUNDLE);
+
+    // Optional pharmacy prefetch (only if explicitly requested and pharmacyId provided)
+    if (includePharmacy && pharmacyId) {
+      const PHARMACY_PREFETCH = new PrefetchTemplate(`HealthcareService/${pharmacyId}`);
+      prefetchMap.set('pharmacy', PHARMACY_PREFETCH);
+    }
 
     return prefetchMap;
   }
@@ -47,8 +48,6 @@ export class PrefetchTemplate {
     paramElementMap.set('context.draftOrders.context.appointments.Appointment.id', ['id']);
     paramElementMap.set('context.draftOrders.context.encounterId', ['id']);
     paramElementMap.set('context.patientId', ['subject', 'reference']);
-    paramElementMap.set('context.pharmacyId', ['id']); 
-
     return paramElementMap;
   }
 
@@ -60,26 +59,24 @@ export class PrefetchTemplate {
       // Regex source: https://regexland.com/all-between-specified-characters/
     var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
     var resolvedQuery = query.slice();
+    if (parametersToFill) {
       for (var j = 0; j < parametersToFill.length; j++) {
         var unresolvedParameter = parametersToFill[j];
         var resolvedParameter;
         if (requestBundle) {
-          if (unresolvedParameter === 'context.pharmacyId') {
-            resolvedParameter = pharmacyId; 
-          } else {
             resolvedParameter = PrefetchTemplate.resolveParameter(unresolvedParameter, requestBundle);
-          }
         } else {
           if (unresolvedParameter === 'context.patientId') {
             resolvedParameter = patientReference;
           } else if (unresolvedParameter === 'context.userId') {
             resolvedParameter = userReference;
-          } else if (unresolvedParameter === 'context.pharmacyId') {
-            resolvedParameter = pharmacyId; 
-          }
+          } 
         }
-        resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
+        if (resolvedParameter) {
+          resolvedQuery = resolvedQuery.replace('{{' + unresolvedParameter + '}}', resolvedParameter);
+        }
       }
+    }
     resolvedQueries.set(prefetchKey, resolvedQuery);
   }
   return resolvedQueries;

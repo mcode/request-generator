@@ -134,6 +134,7 @@ Following are a list of modifiable paths:
 | VITE_URL                                              | `http://localhost:3000`                                                                              | The base url of this app.  Should be modified if the port or domain change.                     |
 | VITE_USER                                             | `alice`                                                                                              | The default user to login as when opening the app.                      |
 | VITE_USE_INTERMEDIARY                                 | false                                                                                                | When true, the app will send all CDS Hooks and REMS ETASU check calls to the intermediary defined in VITE_INTERMEDIARY.                      |
+| VITE_USE_PHARMACY_IN_PREFETCH                         | true                                                                                                 | When true, the app will send pharmacy information to the rems admin in the CDS Hooks prefetch                     |
 | VITE_INTERMEDIARY                                     | `http://localhost:3030`                                                                              | The base url of the intermediary.                      |
 
 # Data Rights

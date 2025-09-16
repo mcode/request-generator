@@ -1,6 +1,11 @@
 import env from 'env-var';
 
 const headerDefinitions = {
+  includePharmacyInPreFetch: {
+    display: 'Include Pharmacy in Prefetch',
+    type: 'check',
+    default: env.get('VITE_USE_PHARMACY_IN_PREFETCH').asBool()
+  },
   useIntermediary: {
     display: 'Use Intermediary',
     type: 'check',
