@@ -134,8 +134,9 @@ Following are a list of modifiable paths:
 | VITE_URL                                              | `http://localhost:3000`                                                                              | The base url of this app.  Should be modified if the port or domain change.                     |
 | VITE_USER                                             | `alice`                                                                                              | The default user to login as when opening the app.                      |
 | VITE_USE_INTERMEDIARY                                 | false                                                                                                | When true, the app will send all CDS Hooks and REMS ETASU check calls to the intermediary defined in VITE_INTERMEDIARY.                      |
+| VITE_INTERMEDIARY                                     | `http:/localhost:3030`                                                                              | The base url of the intermediary.                      |
 | VITE_USE_PHARMACY_IN_PREFETCH                         | true                                                                                                 | When true, the app will send pharmacy information to the rems admin in the CDS Hooks prefetch                     |
-| VITE_INTERMEDIARY                                     | `http://localhost:3030`                                                                              | The base url of the intermediary.                      |
+| VITE_PHARMACY_ID                                     | `pharm0111`                                                                              | The pharmacy ID to use in the CDS Hooks Prefetch                      | 
 
 # Data Rights
 This repository has been forked from the [HL7-DaVinci/crd-request-generator](https://github.com/HL7-DaVinci/crd-request-generator) repository. As such, the following data rights apply to all changes made on this fork of the repository, starting with release 0.1 and onward.

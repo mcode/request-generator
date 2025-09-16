@@ -5,7 +5,8 @@ export class PrefetchTemplate {
     // If no settings provided, use defaults from data.js
     const includePharmacy = settings?.includePharmacyInPreFetch ?? 
                            headerDefinitions.includePharmacyInPreFetch.default;
-    const pharmacyId = 'pharm0111';
+    const pharmacyId = settings?.pharmacyId ?? 
+                      headerDefinitions.pharmacyId.default;
 
     const prefetchMap = new Map();
 

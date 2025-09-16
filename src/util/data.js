@@ -6,6 +6,11 @@ const headerDefinitions = {
     type: 'check',
     default: env.get('VITE_USE_PHARMACY_IN_PREFETCH').asBool()
   },
+  pharmacyId: {
+    display: 'Pharmacy ID',
+    type: 'input',
+    default: env.get('VITE_PHARMACY_ID').asString() || 'pharm0111'
+  },
   useIntermediary: {
     display: 'Use Intermediary',
     type: 'check',
