@@ -1,16 +1,19 @@
 // Prefetch Template Source:
 // https://build.fhir.org/ig/HL7/davinci-crd/hooks.html#prefetch
 export class PrefetchTemplate {
-  static generatePrefetchMap(includePharmacy = true, pharmacyId = 'pharm0111') {
+  static generatePrefetchMap(settings = null) {
+    // If no settings provided, use defaults from data.js
+    const includePharmacy = settings?.includePharmacyInPreFetch ?? 
+                           headerDefinitions.includePharmacyInPreFetch.default;
+    const pharmacyId = 'pharm0111';
+
     const prefetchMap = new Map();
 
     const PRACTITIONER_PREFETCH = new PrefetchTemplate('{{context.userId}}');
-
     const REQUEST_PREFETCH = new PrefetchTemplate(
       'MedicationRequest/{{context.medications.MedicationRequest.id}}'
     );
     const PATIENT_PREFETCH = new PrefetchTemplate('{{context.patientId}}');
-
     const ALL_REQUESTS_PREFETCH = new PrefetchTemplate(
       'MedicationRequest?subject={{context.patientId}}&_include=MedicationRequest:medication'
     );
@@ -21,7 +24,7 @@ export class PrefetchTemplate {
     prefetchMap.set('patient', PATIENT_PREFETCH);
     prefetchMap.set('medicationRequests', ALL_REQUESTS_PREFETCH);
 
-    // Optional pharmacy prefetch (only if explicitly requested and pharmacyId provided)
+    // Optional pharmacy prefetch based on settings
     if (includePharmacy && pharmacyId) {
       const PHARMACY_PREFETCH = new PrefetchTemplate(`HealthcareService/${pharmacyId}`);
       prefetchMap.set('pharmacy', PHARMACY_PREFETCH);
@@ -55,15 +58,21 @@ export class PrefetchTemplate {
     requestBundle,
     patientReference,
     userReference,
+    settings = null,
     ...prefetchKeys
   ) {
+    const prefetchMap = PrefetchTemplate.generatePrefetchMap(settings);
+    const paramElementMap = PrefetchTemplate.generateParamElementMap();
+    
     var resolvedQueries = new Map();
     for (var i = 0; i < prefetchKeys.length; i++) {
       var prefetchKey = prefetchKeys[i];
+      if (!prefetchKey || !prefetchMap.has(prefetchKey)) continue;
       var query = prefetchMap.get(prefetchKey).getQuery();
       // Regex source: https://regexland.com/all-between-specified-characters/
       var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
       var resolvedQuery = query.slice();
+      
       if (parametersToFill) {
         for (var j = 0; j < parametersToFill.length; j++) {
           var unresolvedParameter = parametersToFill[j];
@@ -71,7 +80,8 @@ export class PrefetchTemplate {
           if (requestBundle) {
             resolvedParameter = PrefetchTemplate.resolveParameter(
               unresolvedParameter,
-              requestBundle
+              requestBundle,
+              paramElementMap
             );
           } else {
             if (unresolvedParameter === 'context.patientId') {
@@ -108,8 +118,9 @@ export class PrefetchTemplate {
     }
   }
 
-  static resolveParameter(unresolvedParameter, requestBundle) {
+  static resolveParameter(unresolvedParameter, requestBundle, paramElementMap) {
     const paramField = paramElementMap.get(unresolvedParameter);
+    if (!paramField) return null;
     const resolvedParameter = PrefetchTemplate.getProp(requestBundle, paramField);
     return resolvedParameter;
   }
@@ -124,6 +135,3 @@ export class PrefetchTemplate {
     return this.query;
   }
 }
-
-const prefetchMap = PrefetchTemplate.generatePrefetchMap();
-const paramElementMap = PrefetchTemplate.generateParamElementMap();

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { getAge, getDrugCodeFromMedicationRequest } from '../../util/fhir';
+import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 import './smart.css';
 import { Button } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
@@ -18,6 +19,8 @@ import {
 } from '../../util/util';
 
 const PatientBox = props => {
+  const [globalState] = useContext(SettingsContext);
+  
   const [state, setState] = useState({
     request: '',
     deviceRequests: {},
@@ -167,27 +170,16 @@ const PatientBox = props => {
   const fetchResources = queries => {
     let requests = [];
     callback('prefetchCompleted', false);
-    console.log('🔍 PHARMACY DEBUG - All queries to fetch:', queries); // ADD THIS
-
     queries.forEach((query, queryKey) => {
-      console.log(`🔍 PHARMACY DEBUG - Processing ${queryKey}: ${query}`); // ADD THIS
       const urlQuery = '/' + query;
       requests.push(
         client
           .request(urlQuery)
           .then(response => {
-            console.log(`🔍 PHARMACY DEBUG - SUCCESS for ${queryKey}:`, response); // ADD THIS
             return response;
           })
-          .catch(error => {
-            console.log(`🔍 PHARMACY DEBUG - FAILED for ${queryKey}:`, error); // ADD THIS
-            return null; // Return null so Promise.all doesn't fail completely
-          })
           .then(resource => {
-            if (resource) {
-              console.log(`🔍 PHARMACY DEBUG - Calling callbackMap for ${queryKey}`); // ADD THIS
-              callbackMap('prefetchedResources', queryKey, resource);
-            }
+            callbackMap('prefetchedResources', queryKey, resource);
           })
       );
     });
@@ -212,11 +204,11 @@ const PatientBox = props => {
         request,
         patientReference,
         userReference,
-        'pharm0111',
+        globalState,
         'request',
         'patient',
         'practitioner',
-        'pharmacy'
+        globalState.includePharmacyInPreFetch ? 'pharmacy' : undefined
       );
       fetchResources(queries);
 
@@ -230,11 +222,11 @@ const PatientBox = props => {
         request,
         patientReference,
         userReference,
-        'pharm0111',
+        globalState,
         'patient',
         'practitioner',
         'medicationRequests',
-        'pharmacy'
+        globalState.includePharmacyInPreFetch ? 'pharmacy' : undefined
       );
       fetchResources(queries);
     }
