@@ -33,7 +33,7 @@ VITE_SMART_LAUNCH_URL = https://smartlauncher.interop.community/sample-app/launc
 1. Start request-generator normally and go to `http://localhost:3000/`. Click the "Authorize" button.
 2. Start rems-admin normally.
 3. In request-generator, click the "Select a Patient" button.
-4. Select Jon Snow (id: 130803).
+4. Select John Snow (id: 130803).
 5. Click the "Launch SMART on FHIR app" button. This opens the SMART on FHIR app launch page provided as values to the `VITE_SMART_LAUNCH_URL` and `SMART_ENDPOINT` environment variables.
 6. Click the "Authorize" button.
 7. You should see the expected SMART on FHIR app launch properly.
