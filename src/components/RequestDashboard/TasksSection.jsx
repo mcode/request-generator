@@ -377,7 +377,7 @@ const TasksSection = props => {
     return (
       <Fragment key={task.id}>
         <Grid item xs={12} lg={6}>
-          <Grid className={classes.taskTabMain} item container xs={12}>
+          <Grid className={classes.taskTabMain} item container xs={12} spacing={2}>
             <Grid className={classes.taskTabHeader} item xs={2}>
               {`Task ID: ${task.id}`}
             </Grid>
@@ -401,8 +401,9 @@ const TasksSection = props => {
             <Grid className={classes.taskTabOwner} item xs={6}>
               {ownerText}
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={3}>
+            <Grid className={classes.taskTabButton} item xs={12} sm={6} md={3}>
               <Button
+                fullWidth
                 variant="outlined"
                 onClick={event => {
                   handleMenuClick(event, task);
@@ -412,8 +413,9 @@ const TasksSection = props => {
                 Status
               </Button>
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={2}>
+            <Grid className={classes.taskTabButton} item xs={12} sm={6} md={2}>
               <Button
+                fullWidth
                 variant="outlined"
                 onClick={event => {
                   handleAssignMenuClick(event, task);
@@ -423,11 +425,9 @@ const TasksSection = props => {
                 Assign
               </Button>
             </Grid>
-            <Grid item xs={1}>
-              {/*spacer*/}
-            </Grid>
-            <Grid className={classes.taskTabButton} item xs={3}>
+            <Grid className={classes.taskTabButton} item xs={12} sm={6} md={3}>
               <Button
+                fullWidth
                 variant="contained"
                 color="error"
                 startIcon={<DeleteIcon />}
@@ -438,8 +438,9 @@ const TasksSection = props => {
                 Delete
               </Button>
             </Grid>
-            <Grid className={classes.taskTabButton} item xs={3}>
+            <Grid className={classes.taskTabButton} item xs={12} sm={6} md={4}>
               <Button
+                fullWidth
                 variant="contained"
                 onClick={() => {
                   launchTask(task);
