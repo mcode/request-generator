@@ -6,10 +6,12 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 
+import CommunicationsDialog from './CommunicationsDialog';
 import useStyles from './styles';
 import PatientSection from './PatientSection';
 import SettingsSection from './SettingsSection';
 import TasksSection from './TasksSection';
+
 
 import { logout } from '../../util/auth';
 
@@ -82,8 +84,12 @@ const Home = props => {
           {/* spacer */}
           {/** */}
           {section ? (
-            <Grid className={classes.spacer} item xs={4}>
+            <Grid className={classes.spacer} item xs={5}>
               <span className={classes.loginIcon}>
+                <CommunicationsDialog 
+                  client={props.client} token={token}
+                />
+                &nbsp;&nbsp;
                 <AccountBoxIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} /> {token.name}
                 <Button variant="outlined" className={classes.whiteButton} onClick={logout}>
                   Logout
