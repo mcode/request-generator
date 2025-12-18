@@ -63,6 +63,7 @@ const CommunicationsDialog = props => {
     if (id) {
       state.client.delete(`Communication/${id}`).then(() => {
         debugLog(`Deleted communication: ${id}`);
+        getCommunications();
       });
     }
   }
