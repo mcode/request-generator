@@ -225,7 +225,7 @@ const SettingsSection = props => {
       })
   };
 
-  const parsePacioToc = (pacioToc) => {
+  const parsePacioToc = async (pacioToc) => {
     console.log('    Parse PACIO TOC');
     let medicationStatementList = [];
     let patient = null;
@@ -258,85 +258,162 @@ const SettingsSection = props => {
 
     if (!patient) {
       console.log('PACIO TOC missing Patient');
-      console.log(tocResource);
       return;
     }
 
-    // Get the new prescriber ID from settings
+    // Get settings
     const newPrescriberId = state.pacioNewPrescriberId;
+    const configuredPatientId = state.pacioPatientId;
+    const configuredCoverageId = state.pacioCoverageId;
+    
     console.log(`    Converting MedicationStatements to MedicationRequests with prescriber: ${newPrescriberId}`);
 
-    // add the Patient to the EHR
-    client.create(patient)
-      .then(patientResult => {
-        let newPatientId = patientResult?.id;
-        console.log(`    Added new patient (${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
-        addCommunication(newPatientId, `Added new patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
+    // Determine which patient to use
+    let targetPatient = null;
+    
+    if (configuredPatientId) {
+      // Use configured patient ID
+      console.log(`    Using configured patient ID: ${configuredPatientId}`);
+      try {
+        targetPatient = await client.request(`Patient/${configuredPatientId}`);
+        console.log(`    Found patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`);
+      } catch (e) {
+        console.log(`    Error fetching configured patient ${configuredPatientId}:`, e);
+      }
+    }
+    
+    if (!targetPatient) {
+      // Create new patient from TOC bundle
+      console.log('    Creating new patient from TOC bundle');
+      try {
+        targetPatient = await client.create(patient);
+        console.log(`    Created new patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`);
+        addCommunication(targetPatient.id, `Added new patient (${getPatientFirstAndLastName(targetPatient)}) from transfer of care`);
+      } catch (e) {
+        console.log('    Failed to create patient:', e);
+        return;
+      }
+    } else {
+      addCommunication(targetPatient.id, `Received transfer of care notification for patient (${getPatientFirstAndLastName(targetPatient)})`);
+    }
 
-        // Convert MedicationStatements to MedicationRequests and add to EHR
-        medicationStatementList.forEach(medicationStatement => {
-          // Create a new MedicationRequest from the MedicationStatement
-          const medicationRequest = {
-            resourceType: 'MedicationRequest',
-            meta: {
-              profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest']
-            },
-            status: 'active',
-            intent: 'order',
-            subject: {
-              reference: `Patient/${newPatientId}`,
-              display: getPatientFirstAndLastName(patientResult)
-            },
-            authoredOn: new Date().toISOString().split('T')[0],
-            requester: {
-              reference: `Practitioner/${newPrescriberId}`,
-              display: 'Transfer Prescriber'
-            }
-          };
-
-          // Copy medication information
-          if (medicationStatement.medicationCodeableConcept) {
-            medicationRequest.medicationCodeableConcept = medicationStatement.medicationCodeableConcept;
-          } else if (medicationStatement.medicationReference) {
-            medicationRequest.medicationReference = medicationStatement.medicationReference;
-          }
-
-          // Copy dosage if available
-          if (medicationStatement.dosage && medicationStatement.dosage.length > 0) {
-            medicationRequest.dosageInstruction = medicationStatement.dosage.map((dosage, index) => ({
-              sequence: index + 1,
-              text: dosage.text,
-              timing: dosage.timing,
-              route: dosage.route,
-              doseAndRate: dosage.doseAndRate
-            }));
-          }
-
-          // Add note about transfer
-          medicationRequest.note = [
+    // Determine which coverage to use
+    let coverageId = null;
+    
+    if (configuredCoverageId) {
+      // Use configured coverage ID
+      console.log(`    Using configured coverage ID: ${configuredCoverageId}`);
+      try {
+        const coverageResult = await client.request(`Coverage/${configuredCoverageId}`);
+        if (coverageResult) {
+          coverageId = configuredCoverageId;
+          console.log(`    Found coverage: ${coverageId}`);
+        }
+      } catch (e) {
+        console.log(`    Error fetching configured coverage ${configuredCoverageId}:`, e);
+      }
+    }
+    
+    if (!coverageId) {
+      // Create new proper coverage
+      console.log('    Creating new coverage');
+      try {
+        const coverage = {
+          resourceType: 'Coverage',
+          status: 'active',
+          beneficiary: {
+            reference: `Patient/${targetPatient.id}`
+          },
+          subscriberId: '1EG4TE5MK73',
+          class: [
             {
-              text: `Continued from previous care. Original medication statement: ${medicationStatement.id || 'unknown'}`
+              type: {
+                system: 'http://hl7.org/fhir/coverage-class',
+                code: 'plan'
+              },
+              value: 'Medicare Part A'
             }
-          ];
+          ],
+          payor: [{
+            reference: 'Organization/org1234'
+          }]
+        };
+        
+        const coverageResult = await client.create(coverage);
+        coverageId = coverageResult.id;
+        console.log(`    Created new coverage: ${coverageId}`);
+      } catch (e) {
+        console.log('    Warning: Could not create coverage:', e);
+      }
+    }
 
-          const medName = medicationRequest.medicationCodeableConcept?.coding?.[0]?.display || 'Unknown medication';
-          
-          client.create(medicationRequest)
-            .then(medicationRequestResult => {
-              console.log(`    Added new MedicationRequest for ${medName} (for ${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
-              addCommunication(newPatientId, `Added new MedicationRequest from MedicationStatement ${medName} - patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
-            })
-            .catch(e => {
-              console.log(`Failed to add MedicationRequest to EHR`);
-              console.log(e);
-            });
-        });
+    // Convert MedicationStatements to MedicationRequests
+    const patientId = targetPatient.id;
+    const patientName = getPatientFirstAndLastName(targetPatient);
+    console.log(`    Creating MedicationRequests for patient ${patientName} (${patientId})`);
 
-      })
-      .catch(e => {
-        console.log(`Failed to add Patient to EHR`);
-        console.log(e);
-      })
+    for (const medicationStatement of medicationStatementList) {
+      // Create a new MedicationRequest from the MedicationStatement
+      const medicationRequest = {
+        resourceType: 'MedicationRequest',
+        meta: {
+          profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest']
+        },
+        status: 'active',
+        intent: 'order',
+        subject: {
+          reference: `Patient/${patientId}`,
+          display: patientName
+        },
+        authoredOn: new Date().toISOString().split('T')[0],
+        requester: {
+          reference: `Practitioner/${newPrescriberId}`,
+          display: 'Transfer Prescriber'
+        }
+      };
+
+      // Add insurance/coverage reference if available
+      if (coverageId) {
+        medicationRequest.insurance = [{
+          reference: `Coverage/${coverageId}`
+        }];
+      }
+
+      // Copy medication information
+      if (medicationStatement.medicationCodeableConcept) {
+        medicationRequest.medicationCodeableConcept = medicationStatement.medicationCodeableConcept;
+      } else if (medicationStatement.medicationReference) {
+        medicationRequest.medicationReference = medicationStatement.medicationReference;
+      }
+
+      // Copy dosage if available
+      if (medicationStatement.dosage && medicationStatement.dosage.length > 0) {
+        medicationRequest.dosageInstruction = medicationStatement.dosage.map((dosage, index) => ({
+          sequence: index + 1,
+          text: dosage.text,
+          timing: dosage.timing,
+          route: dosage.route,
+          doseAndRate: dosage.doseAndRate
+        }));
+      }
+
+      // Add note about transfer
+      medicationRequest.note = [
+        {
+          text: `Continued from previous care. Original medication statement: ${medicationStatement.id || 'unknown'}`
+        }
+      ];
+
+      const medName = medicationRequest.medicationCodeableConcept?.coding?.[0]?.display || 'Unknown medication';
+      
+      try {
+        const medicationRequestResult = await client.create(medicationRequest);
+        console.log(`    Added new MedicationRequest for ${medName} (ID: ${medicationRequestResult.id})`);
+        addCommunication(patientId, `Added new MedicationRequest for ${medName} from transfer of care`);
+      } catch (e) {
+        console.log(`    Failed to add MedicationRequest for ${medName}:`, e);
+      }
+    }
   };
 
   const pollPacio = 

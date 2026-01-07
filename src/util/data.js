@@ -120,6 +120,16 @@ const headerDefinitions = {
     display: 'Patient ID (for Clear)',
     type: 'input'
   },
+  pacioPatientId: {
+    display: 'PACIO Patient ID',
+    type: 'input',
+    default: env.get('VITE_PACIO_PATIENT_ID').asString()
+  },
+  pacioCoverageId: {
+    display: 'PACIO Coverage ID',
+    type: 'input',
+    default: env.get('VITE_PACIO_COVERAGE_ID').asString()
+  },
   pacioNewPrescriberId: {
     display: 'PACIO New Prescriber ID',
     type: 'input',
