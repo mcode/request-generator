@@ -101,7 +101,25 @@ const headerDefinitions = {
     type: 'check',
     default: false
   },
-
+  pacioEhrComparisonUrl: {
+    display: 'PACIO EHR Comparision URL',
+    type: 'input',
+    default: env.get('VITE_PACIO_EHR_COMPARISON_URL').asString()
+  },
+  pacioEhrUrl: {
+    display: 'PACIO EHR URL',
+    type: 'input',
+    default: env.get('VITE_PACIO_EHR_URL').asString()
+  },
+  pacioEhrUrlQuery: {
+    display: 'PACIO EHR URL Query',
+    type: 'input',
+    default: env.get('VITE_PACIO_EHR_URL_QUERY').asString()
+  },
+  patientOfInterest: {
+    display: 'Patient ID (for Clear)',
+    type: 'input'
+  },
   hookToSend: {
     display: 'Send hook on patient select',
     type: 'dropdown',

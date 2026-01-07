@@ -121,7 +121,7 @@ const Home = props => {
             <TasksSection client={props.client} userName={token.name} userId={token.userId} />
           </div>
           <div className={settingsRenderClass}>
-            <SettingsSection client={props.client} />
+            <SettingsSection client={props.client} userId={token.userId} />
           </div>
         </div>
       );

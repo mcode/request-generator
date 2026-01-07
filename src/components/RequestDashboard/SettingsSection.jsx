@@ -33,12 +33,15 @@ import {
   ENCOUNTER_START,
   REMS_ETASU
 } from '../../util/data';
+import { getPatientFirstAndLastName } from '../../util/util';
 import { actionTypes } from '../../containers/ContextProvider/reducer';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider';
 
 const ENDPOINT = [ORDER_SIGN, ORDER_SELECT, PATIENT_VIEW, ENCOUNTER_START, REMS_ETASU];
 
 const SettingsSection = props => {
+  const { client, userId } = props;
+
   const [state, dispatch, updateSetting, readSettings, saveSettings] =
     React.useContext(SettingsContext);
 
@@ -95,16 +98,16 @@ const SettingsSection = props => {
         });
     };
 
-  const clearResource =
-    ({ ehrUrl, access_token }, type) =>
-    () => {
-      console.log('Clear ' + type + 's from the EHR: ' + ehrUrl);
-      const client = FHIR.client({
-        serverUrl: ehrUrl,
-        ...(access_token ? { tokenResponse: access_token } : {})
-      });
+  const clearResourceWithParams = 
+    (type, params) => {
+      console.log('Clear ' + type + 's from the EHR');
+      let query = type;
+      if (params != '') {
+        query = type+params;
+        console.log('    -> with params ' + params);
+      }
       client
-        .request(type, { flat: true })
+        .request(query, { flat: true })
         .then(result => {
           console.log(result);
           result.forEach(resource => {
@@ -123,6 +126,36 @@ const SettingsSection = props => {
         .catch(e => {
           console.log('Failed to retrieve list of ' + type + 's');
           console.log(e);
+        }); 
+    };
+
+  const clearResource =
+    ( {}, type ) =>
+    () => {
+      // Delete all resources of type type
+      clearResourceWithParams(type, '');
+    };
+
+  const clearPatient = 
+    ({ patientOfInterest }) =>
+    () => {
+      console.log(`clear patient ${patientOfInterest}`)
+
+      // Delete the MedicationRequests for the Patient
+      clearResourceWithParams('MedicationRequest', `?subject=${patientOfInterest}`);
+
+      // Delete the Communications for the Patient
+      clearResourceWithParams('Communication', `?subject=${patientOfInterest}`);
+
+      // Delete the Patient
+      let query = `Patient/${patientOfInterest}`;
+      client.delete(query)
+        .then(result => {
+          console.log(result);
+        })
+        .catch(e => {
+          console.log('Failed to delete ' + query);
+          console.log(e);
         });
     };
 
@@ -135,6 +168,185 @@ const SettingsSection = props => {
         redirectUri: redirect,
         scope: env.get('VITE_CLIENT_SCOPES').asString()
       });
+    };
+
+  const createCommunication = (patientId, practitionerId, message) => {
+    const ts = Date.now();
+    const currentDate = new Date(ts);
+
+    const communication = {
+      resourceType: "Communication",
+      status: "in-progress",
+      category: [
+        {
+          coding: [
+            {
+              system: "http://acme.org/messagetypes",
+              code: "Alert"
+            }
+          ],
+          text: "Alert"
+        }
+      ],
+      subject: {
+        reference: "Patient/" + patientId
+      },
+      sent: currentDate.toISOString(),
+      received: currentDate.toISOString(),
+      recipient: [
+        {
+          reference: "Practitioner/" + practitionerId
+        }
+      ],
+      sender: {
+        reference: "Device/f001"
+      },
+      payload: [
+        {
+          contentString: message
+        }
+      ]
+    }
+
+    return communication;
+  }
+
+  const addCommunication = (patientId, message) => {
+    // add a communication notifying the practitioner that the resources were created
+    const communication = createCommunication(patientId, userId, message);
+
+    client.create(communication)
+      .then(result => {
+        //console.log(result);
+      })
+      .catch(e => {
+        console.log('Failed to add Communication to EHR');
+        console.log(e);
+      })
+  };
+
+  const parsePacioToc = (pacioToc) => {
+    console.log('    Parse PACIO TOC');
+    let medicationRequestList = [];
+    let patient = null;
+
+    pacioToc?.entry.forEach(tocEntry => {
+      const tocResource = tocEntry?.resource;
+
+      switch (tocResource?.resourceType) {
+        case 'Patient':
+          // find the patient
+          console.log('      Found Patient');
+          patient = tocResource;
+          break;
+        case 'Bundle':
+          console.log('      Process TOC Bundle');
+          tocResource?.entry.forEach(bundleEntry => {
+            const bundleEntryResource = bundleEntry?.resource;
+            switch (bundleEntryResource?.resourceType) {
+              case 'MedicationRequest':
+                // find the MedicationRequests
+                console.log('        Found MedicationRequst');
+                medicationRequestList.push(bundleEntryResource);
+                break;
+            }
+          });
+
+          break;
+      }
+    });
+
+    if (!patient) {
+      console.log('PACIO TOC missing Patient');
+      console.log(tocResource);
+      return;
+    }
+
+    // add the Patient to the EHR
+    client.create(patient)
+      .then(patientResult => {
+        let newPatientId = patientResult?.id;
+        console.log(`    Added new patient (${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
+        addCommunication(newPatientId, `Added new patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
+
+        // add the MedicationRequests to the EHR
+        medicationRequestList.forEach(medicationRequest => {
+          medicationRequest.subject.reference = `Patient/${newPatientId}`;
+          
+          client.create(medicationRequest)
+            .then(medicationRequestResult => {
+              console.log(`    Added new MedicationRequest (for ${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
+              addCommunication(newPatientId, `Added new MedicationRequest for patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
+            })
+            .catch(e => {
+              console.log(`Failed to add MedicationRequest to EHR`);
+              console.log(e);
+            });
+        });
+
+      })
+      .catch(e => {
+        console.log(`Failed to add Patient to EHR`);
+        console.log(e);
+      })
+  };
+
+  const pollPacio = 
+    ({ pacioEhrComparisonUrl, pacioEhrUrl, pacioEhrUrlQuery }) =>
+    () => {
+      // connect to the PACIO FHIR server, assume it is an open FHIR server
+      const pacioFhirClient = FHIR.client({
+        serverUrl: pacioEhrUrl
+      });
+
+      // pull the PACIO discharge notification
+      pacioFhirClient.request(pacioEhrUrlQuery)
+        .then(pacioDischarge => {
+          let pacioDischargeEntries = pacioDischarge?.entry[0]?.resource?.entry;
+
+          let documentReference = null;
+
+          for (const dischargeEntry of pacioDischargeEntries) {
+            const dischargeResource = dischargeEntry?.resource;
+            switch (dischargeResource?.resourceType) {
+              case 'MessageHeader':
+                console.log('  Process MessageHeader');
+                const destination = dischargeResource?.destination[0]?.endpoint;
+                if (destination.toUpperCase() != pacioEhrComparisonUrl.toUpperCase()) {
+                  console.log(`Message not meant for us (${destination}), skipping...`)
+                  return;
+                }
+                break;
+              case 'DocumentReference':
+                console.log('  Process DocumentReference (TOC)');
+                documentReference = dischargeResource;
+                break;
+            }
+          }
+
+          if (!documentReference) {
+            console.log('PACIO Discharge Notification missing DocumentReference');
+            console.log(pacioDischarge);
+            return;
+          }
+
+          // pull the TOC from the PACIO server, assume same base url as discharge notification
+          const pacioTocUrl = documentReference?.content[0]?.attachment?.url;
+          let pacioTocQuery = pacioTocUrl.replace(pacioEhrUrl, '');
+
+          pacioFhirClient.request(pacioTocQuery)
+            .then(pacioToc => {
+              parsePacioToc(pacioToc);
+            })
+            .catch(e => {
+              console.log('Failed to retrieve PACIO TOC');
+              console.log(e);
+            });
+        })
+        .catch(e => {
+          console.log('Failed to retrieve PACIO Discharge Notification');
+          console.log(e);
+        })
     };
 
   const resetHeaderDefinitions = [
@@ -167,9 +379,20 @@ const SettingsSection = props => {
       parameter: 'Task'
     },
     {
+      display: 'Clear EHR Patient',
+      key: 'clearPatient',
+      reset: clearPatient,
+    },
+    {
       display: 'Reconnect EHR',
       key: 'reconnectEHR',
       reset: reconnectEhr,
+      variant: 'contained'
+    },
+    {
+      display: 'Poll PACIO Patient Discharge Notifications',
+      key: 'pollPACIO',
+      reset: pollPacio,
       variant: 'contained'
     }
   ];
