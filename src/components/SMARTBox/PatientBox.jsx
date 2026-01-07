@@ -20,7 +20,7 @@ import {
 
 const PatientBox = props => {
   const [globalState] = useContext(SettingsContext);
-  
+
   const [state, setState] = useState({
     request: '',
     deviceRequests: {},

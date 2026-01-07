@@ -12,7 +12,6 @@ import PatientSection from './PatientSection';
 import SettingsSection from './SettingsSection';
 import TasksSection from './TasksSection';
 
-
 import { logout } from '../../util/auth';
 
 const Home = props => {
@@ -86,9 +85,7 @@ const Home = props => {
           {section ? (
             <Grid className={classes.spacer} item xs={5}>
               <span className={classes.loginIcon}>
-                <CommunicationsDialog 
-                  client={props.client} token={token}
-                />
+                <CommunicationsDialog client={props.client} token={token} />
                 &nbsp;&nbsp;
                 <AccountBoxIcon sx={{ fontSize: 48, verticalAlign: 'middle' }} /> {token.name}
                 <Button variant="outlined" className={classes.whiteButton} onClick={logout}>

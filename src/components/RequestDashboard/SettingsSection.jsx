@@ -98,65 +98,62 @@ const SettingsSection = props => {
         });
     };
 
-  const clearResourceWithParams = 
-    (type, params) => {
-      console.log('Clear ' + type + 's from the EHR');
-      let query = type;
-      if (params != '') {
-        query = type+params;
-        console.log('    -> with params ' + params);
-      }
-      client
-        .request(query, { flat: true })
-        .then(result => {
-          console.log(result);
-          result.forEach(resource => {
-            console.log('Delete ' + type + ': ' + resource.id);
-            client
-              .delete(type + '/' + resource.id)
-              .then(result => {
-                console.log(result);
-              })
-              .catch(e => {
-                console.log('Failed to delete ' + type + ' ' + resource.id);
-                console.log(e);
-              });
-          });
-        })
-        .catch(e => {
-          console.log('Failed to retrieve list of ' + type + 's');
+  const clearResourceWithParams = async (type, params) => {
+    console.log('Clear ' + type + 's from the EHR');
+    let query = type;
+    if (params != '') {
+      query = type + params;
+      console.log('    -> with params ' + params);
+    }
+
+    try {
+      const result = await client.request(query, { flat: true });
+      console.log(result);
+
+      // Delete all resources in parallel and wait for all to complete
+      const deletePromises = result.map(async resource => {
+        console.log('Delete ' + type + ': ' + resource.id);
+        try {
+          const deleteResult = await client.delete(type + '/' + resource.id);
+          console.log(deleteResult);
+        } catch (e) {
+          console.log('Failed to delete ' + type + ' ' + resource.id);
           console.log(e);
-        }); 
-    };
+        }
+      });
+
+      await Promise.all(deletePromises);
+      console.log(`Finished deleting all ${type}s`);
+    } catch (e) {
+      console.log('Failed to retrieve list of ' + type + 's');
+      console.log(e);
+    }
+  };
 
   const clearResource =
-    ( {}, type ) =>
+    ({}, type) =>
     () => {
       // Delete all resources of type type
       clearResourceWithParams(type, '');
     };
 
-  const clearPatient = 
+  const clearPatient =
     ({ patientOfInterest }) =>
-    () => {
-      console.log(`clear patient ${patientOfInterest}`)
+    async () => {
+      console.log(`clear patient ${patientOfInterest}`);
 
-      // Delete the MedicationRequests for the Patient
-      clearResourceWithParams('MedicationRequest', `?subject=${patientOfInterest}`);
+      try {
+        // Delete related resources first
+        await clearResourceWithParams('MedicationRequest', `?subject=${patientOfInterest}`);
+        await clearResourceWithParams('Communication', `?subject=${patientOfInterest}`);
+        await clearResourceWithParams('Coverage', `?beneficiary=${patientOfInterest}`);
 
-      // Delete the Communications for the Patient
-      clearResourceWithParams('Communication', `?subject=${patientOfInterest}`);
-
-      // Delete the Patient
-      let query = `Patient/${patientOfInterest}`;
-      client.delete(query)
-        .then(result => {
-          console.log(result);
-        })
-        .catch(e => {
-          console.log('Failed to delete ' + query);
-          console.log(e);
-        });
+        // Finally delete the patient
+        const result = await client.delete(`Patient/${patientOfInterest}`);
+        console.log('Successfully deleted patient:', result);
+      } catch (e) {
+        console.log('Failed to delete patient:', e);
+      }
     };
 
   const reconnectEhr =
@@ -175,57 +172,58 @@ const SettingsSection = props => {
     const currentDate = new Date(ts);
 
     const communication = {
-      resourceType: "Communication",
-      status: "in-progress",
+      resourceType: 'Communication',
+      status: 'in-progress',
       category: [
         {
           coding: [
             {
-              system: "http://acme.org/messagetypes",
-              code: "Alert"
+              system: 'http://acme.org/messagetypes',
+              code: 'Alert'
             }
           ],
-          text: "Alert"
+          text: 'Alert'
         }
       ],
       subject: {
-        reference: "Patient/" + patientId
+        reference: 'Patient/' + patientId
       },
       sent: currentDate.toISOString(),
       received: currentDate.toISOString(),
       recipient: [
         {
-          reference: "Practitioner/" + practitionerId
+          reference: 'Practitioner/' + practitionerId
         }
       ],
       sender: {
-        reference: "Device/f001"
+        reference: 'Device/f001'
       },
       payload: [
         {
           contentString: message
         }
       ]
-    }
+    };
 
     return communication;
-  }
+  };
 
   const addCommunication = (patientId, message) => {
     // add a communication notifying the practitioner that the resources were created
     const communication = createCommunication(patientId, userId, message);
 
-    client.create(communication)
+    client
+      .create(communication)
       .then(result => {
         //console.log(result);
       })
       .catch(e => {
         console.log('Failed to add Communication to EHR');
         console.log(e);
-      })
+      });
   };
 
-  const parsePacioToc = async (pacioToc) => {
+  const parsePacioToc = async pacioToc => {
     console.log('    Parse PACIO TOC');
     let medicationStatementList = [];
     let patient = null;
@@ -265,41 +263,53 @@ const SettingsSection = props => {
     const newPrescriberId = state.pacioNewPrescriberId;
     const configuredPatientId = state.pacioPatientId;
     const configuredCoverageId = state.pacioCoverageId;
-    
-    console.log(`    Converting MedicationStatements to MedicationRequests with prescriber: ${newPrescriberId}`);
+
+    console.log(
+      `    Converting MedicationStatements to MedicationRequests with prescriber: ${newPrescriberId}`
+    );
 
     // Determine which patient to use
     let targetPatient = null;
-    
+
     if (configuredPatientId) {
       // Use configured patient ID
       console.log(`    Using configured patient ID: ${configuredPatientId}`);
       try {
         targetPatient = await client.request(`Patient/${configuredPatientId}`);
-        console.log(`    Found patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`);
+        console.log(
+          `    Found patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`
+        );
       } catch (e) {
         console.log(`    Error fetching configured patient ${configuredPatientId}:`, e);
       }
     }
-    
+
     if (!targetPatient) {
       // Create new patient from TOC bundle
       console.log('    Creating new patient from TOC bundle');
       try {
         targetPatient = await client.create(patient);
-        console.log(`    Created new patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`);
-        addCommunication(targetPatient.id, `Added new patient (${getPatientFirstAndLastName(targetPatient)}) from transfer of care`);
+        console.log(
+          `    Created new patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`
+        );
+        addCommunication(
+          targetPatient.id,
+          `Added new patient (${getPatientFirstAndLastName(targetPatient)}) from transfer of care`
+        );
       } catch (e) {
         console.log('    Failed to create patient:', e);
         return;
       }
     } else {
-      addCommunication(targetPatient.id, `Received transfer of care notification for patient (${getPatientFirstAndLastName(targetPatient)})`);
+      addCommunication(
+        targetPatient.id,
+        `Received transfer of care notification for patient (${getPatientFirstAndLastName(targetPatient)})`
+      );
     }
 
     // Determine which coverage to use
     let coverageId = null;
-    
+
     if (configuredCoverageId) {
       // Use configured coverage ID
       console.log(`    Using configured coverage ID: ${configuredCoverageId}`);
@@ -313,7 +323,7 @@ const SettingsSection = props => {
         console.log(`    Error fetching configured coverage ${configuredCoverageId}:`, e);
       }
     }
-    
+
     if (!coverageId) {
       // Create new proper coverage
       console.log('    Creating new coverage');
@@ -334,11 +344,13 @@ const SettingsSection = props => {
               value: 'Medicare Part A'
             }
           ],
-          payor: [{
-            reference: 'Organization/org1234'
-          }]
+          payor: [
+            {
+              reference: 'Organization/org1234'
+            }
+          ]
         };
-        
+
         const coverageResult = await client.create(coverage);
         coverageId = coverageResult.id;
         console.log(`    Created new coverage: ${coverageId}`);
@@ -374,9 +386,11 @@ const SettingsSection = props => {
 
       // Add insurance/coverage reference if available
       if (coverageId) {
-        medicationRequest.insurance = [{
-          reference: `Coverage/${coverageId}`
-        }];
+        medicationRequest.insurance = [
+          {
+            reference: `Coverage/${coverageId}`
+          }
+        ];
       }
 
       // Copy medication information
@@ -404,19 +418,25 @@ const SettingsSection = props => {
         }
       ];
 
-      const medName = medicationRequest.medicationCodeableConcept?.coding?.[0]?.display || 'Unknown medication';
-      
+      const medName =
+        medicationRequest.medicationCodeableConcept?.coding?.[0]?.display || 'Unknown medication';
+
       try {
         const medicationRequestResult = await client.create(medicationRequest);
-        console.log(`    Added new MedicationRequest for ${medName} (ID: ${medicationRequestResult.id})`);
-        addCommunication(patientId, `Added new MedicationRequest for ${medName} from transfer of care`);
+        console.log(
+          `    Added new MedicationRequest for ${medName} (ID: ${medicationRequestResult.id})`
+        );
+        addCommunication(
+          patientId,
+          `Added new MedicationRequest for ${medName} from transfer of care`
+        );
       } catch (e) {
         console.log(`    Failed to add MedicationRequest for ${medName}:`, e);
       }
     }
   };
 
-  const pollPacio = 
+  const pollPacio =
     ({ pacioEhrComparisonUrl, pacioEhrUrl, pacioEhrUrlQuery }) =>
     () => {
       // connect to the PACIO FHIR server, assume it is an open FHIR server
@@ -425,7 +445,8 @@ const SettingsSection = props => {
       });
 
       // pull the PACIO discharge notification
-      pacioFhirClient.request(pacioEhrUrlQuery)
+      pacioFhirClient
+        .request(pacioEhrUrlQuery)
         .then(pacioDischarge => {
           let pacioDischargeEntries = pacioDischarge?.entry[0]?.resource?.entry;
 
@@ -438,7 +459,7 @@ const SettingsSection = props => {
                 console.log('  Process MessageHeader');
                 const destination = dischargeResource?.destination[0]?.endpoint;
                 if (destination.toUpperCase() != pacioEhrComparisonUrl.toUpperCase()) {
-                  console.log(`Message not meant for us (${destination}), skipping...`)
+                  console.log(`Message not meant for us (${destination}), skipping...`);
                   return;
                 }
                 break;
@@ -459,7 +480,8 @@ const SettingsSection = props => {
           const pacioTocUrl = documentReference?.content[0]?.attachment?.url;
           let pacioTocQuery = pacioTocUrl.replace(pacioEhrUrl, '');
 
-          pacioFhirClient.request(pacioTocQuery)
+          pacioFhirClient
+            .request(pacioTocQuery)
             .then(pacioToc => {
               parsePacioToc(pacioToc);
             })
@@ -471,7 +493,7 @@ const SettingsSection = props => {
         .catch(e => {
           console.log('Failed to retrieve PACIO Discharge Notification');
           console.log(e);
-        })
+        });
     };
 
   const resetHeaderDefinitions = [
@@ -506,7 +528,7 @@ const SettingsSection = props => {
     {
       display: 'Clear EHR Patient',
       key: 'clearPatient',
-      reset: clearPatient,
+      reset: clearPatient
     },
     {
       display: 'Reconnect EHR',

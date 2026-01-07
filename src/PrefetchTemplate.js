@@ -3,10 +3,9 @@
 export class PrefetchTemplate {
   static generatePrefetchMap(settings = null) {
     // If no settings provided, use defaults from data.js
-    const includePharmacy = settings?.includePharmacyInPreFetch ?? 
-                           headerDefinitions.includePharmacyInPreFetch.default;
-    const pharmacyId = settings?.pharmacyId ?? 
-                      headerDefinitions.pharmacyId.default;
+    const includePharmacy =
+      settings?.includePharmacyInPreFetch ?? headerDefinitions.includePharmacyInPreFetch.default;
+    const pharmacyId = settings?.pharmacyId ?? headerDefinitions.pharmacyId.default;
 
     const prefetchMap = new Map();
 
@@ -64,7 +63,7 @@ export class PrefetchTemplate {
   ) {
     const prefetchMap = PrefetchTemplate.generatePrefetchMap(settings);
     const paramElementMap = PrefetchTemplate.generateParamElementMap();
-    
+
     var resolvedQueries = new Map();
     for (var i = 0; i < prefetchKeys.length; i++) {
       var prefetchKey = prefetchKeys[i];
@@ -73,7 +72,7 @@ export class PrefetchTemplate {
       // Regex source: https://regexland.com/all-between-specified-characters/
       var parametersToFill = query.match(/(?<={{).*?(?=}})/gs);
       var resolvedQuery = query.slice();
-      
+
       if (parametersToFill) {
         for (var j = 0; j < parametersToFill.length; j++) {
           var unresolvedParameter = parametersToFill[j];
