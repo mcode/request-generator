@@ -120,6 +120,11 @@ const headerDefinitions = {
     display: 'Patient ID (for Clear)',
     type: 'input'
   },
+  pacioNewPrescriberId: {
+    display: 'PACIO New Prescriber ID',
+    type: 'input',
+    default: env.get('VITE_PACIO_NEW_PRESCRIBER_ID').asString()
+  },
   hookToSend: {
     display: 'Send hook on patient select',
     type: 'dropdown',

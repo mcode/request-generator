@@ -227,7 +227,7 @@ const SettingsSection = props => {
 
   const parsePacioToc = (pacioToc) => {
     console.log('    Parse PACIO TOC');
-    let medicationRequestList = [];
+    let medicationStatementList = [];
     let patient = null;
 
     pacioToc?.entry.forEach(tocEntry => {
@@ -244,10 +244,10 @@ const SettingsSection = props => {
           tocResource?.entry.forEach(bundleEntry => {
             const bundleEntryResource = bundleEntry?.resource;
             switch (bundleEntryResource?.resourceType) {
-              case 'MedicationRequest':
-                // find the MedicationRequests
-                console.log('        Found MedicationRequst');
-                medicationRequestList.push(bundleEntryResource);
+              case 'MedicationStatement':
+                // find the MedicationStatements
+                console.log('        Found MedicationStatement');
+                medicationStatementList.push(bundleEntryResource);
                 break;
             }
           });
@@ -262,6 +262,10 @@ const SettingsSection = props => {
       return;
     }
 
+    // Get the new prescriber ID from settings
+    const newPrescriberId = state.pacioNewPrescriberId;
+    console.log(`    Converting MedicationStatements to MedicationRequests with prescriber: ${newPrescriberId}`);
+
     // add the Patient to the EHR
     client.create(patient)
       .then(patientResult => {
@@ -269,14 +273,58 @@ const SettingsSection = props => {
         console.log(`    Added new patient (${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
         addCommunication(newPatientId, `Added new patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
 
-        // add the MedicationRequests to the EHR
-        medicationRequestList.forEach(medicationRequest => {
-          medicationRequest.subject.reference = `Patient/${newPatientId}`;
+        // Convert MedicationStatements to MedicationRequests and add to EHR
+        medicationStatementList.forEach(medicationStatement => {
+          // Create a new MedicationRequest from the MedicationStatement
+          const medicationRequest = {
+            resourceType: 'MedicationRequest',
+            meta: {
+              profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest']
+            },
+            status: 'active',
+            intent: 'order',
+            subject: {
+              reference: `Patient/${newPatientId}`,
+              display: getPatientFirstAndLastName(patientResult)
+            },
+            authoredOn: new Date().toISOString().split('T')[0],
+            requester: {
+              reference: `Practitioner/${newPrescriberId}`,
+              display: 'Transfer Prescriber'
+            }
+          };
+
+          // Copy medication information
+          if (medicationStatement.medicationCodeableConcept) {
+            medicationRequest.medicationCodeableConcept = medicationStatement.medicationCodeableConcept;
+          } else if (medicationStatement.medicationReference) {
+            medicationRequest.medicationReference = medicationStatement.medicationReference;
+          }
+
+          // Copy dosage if available
+          if (medicationStatement.dosage && medicationStatement.dosage.length > 0) {
+            medicationRequest.dosageInstruction = medicationStatement.dosage.map((dosage, index) => ({
+              sequence: index + 1,
+              text: dosage.text,
+              timing: dosage.timing,
+              route: dosage.route,
+              doseAndRate: dosage.doseAndRate
+            }));
+          }
+
+          // Add note about transfer
+          medicationRequest.note = [
+            {
+              text: `Continued from previous care. Original medication statement: ${medicationStatement.id || 'unknown'}`
+            }
+          ];
+
+          const medName = medicationRequest.medicationCodeableConcept?.coding?.[0]?.display || 'Unknown medication';
           
           client.create(medicationRequest)
             .then(medicationRequestResult => {
-              console.log(`    Added new MedicationRequest (for ${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
-              addCommunication(newPatientId, `Added new MedicationRequest for patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
+              console.log(`    Added new MedicationRequest for ${medName} (for ${getPatientFirstAndLastName(patientResult)} - ${newPatientId}) to EHR`)
+              addCommunication(newPatientId, `Added new MedicationRequest from MedicationStatement ${medName} - patient (${getPatientFirstAndLastName(patientResult)}) to EHR`);
             })
             .catch(e => {
               console.log(`Failed to add MedicationRequest to EHR`);
