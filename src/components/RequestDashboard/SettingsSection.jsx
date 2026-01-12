@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import {
   Button,
   Checkbox,
@@ -45,8 +45,7 @@ const SettingsSection = props => {
   const [state, dispatch, updateSetting, readSettings, saveSettings] =
     React.useContext(SettingsContext);
 
-  // State for PACIO automatic polling
-  const [lastPacioTimestamp, setLastPacioTimestamp] = useState(null);
+  const lastPacioTimestamp = useRef(null);
 
   const fieldHeaders = Object.keys(headerDefinitions)
     .map(key => ({ ...headerDefinitions[key], key }))
@@ -308,15 +307,6 @@ const SettingsSection = props => {
         }
       };
 
-      // Add insurance/coverage reference if available
-      if (coverageId) {
-        medicationRequest.insurance = [
-          {
-            reference: `Coverage/${coverageId}`
-          }
-        ];
-      }
-
       // Copy medication information
       if (medicationStatement.medicationCodeableConcept) {
         medicationRequest.medicationCodeableConcept = medicationStatement.medicationCodeableConcept;
@@ -370,9 +360,9 @@ const SettingsSection = props => {
 
       // Build query URL
       let query = '?type=message&_format=json';
-      if (lastPacioTimestamp) {
-        query += `&_lastUpdated=gt${lastPacioTimestamp}`;
-        console.log(`  Using timestamp filter: ${lastPacioTimestamp}`);
+      if (lastPacioTimestamp.current) {
+        query += `&_lastUpdated=gt${lastPacioTimestamp.current}`;
+        console.log(`  Using timestamp filter: ${lastPacioTimestamp.current}`);
       } else {
         console.log('  First poll - no timestamp filter');
       }
@@ -388,7 +378,7 @@ const SettingsSection = props => {
       if (searchBundle?.meta?.lastUpdated) {
         const serverTimestamp = searchBundle.meta.lastUpdated;
         console.log(`  Server timestamp: ${serverTimestamp}`);
-        setLastPacioTimestamp(serverTimestamp);
+        lastPacioTimestamp.current = serverTimestamp;
       }
 
       if (searchBundle?.entry && searchBundle.entry.length > 0) {
@@ -443,7 +433,7 @@ const SettingsSection = props => {
   useEffect(() => {
     if (state.pacioEhrUrl) {
       console.log('PACIO URL changed, resetting timestamp for fresh poll');
-      setLastPacioTimestamp(null);
+      lastPacioTimestamp.current = null;
     }
   }, [state.pacioEhrUrl]);
 
@@ -462,7 +452,7 @@ const SettingsSection = props => {
     }, 30000); // 30 seconds
 
     return () => clearInterval(interval);
-  }, [state.pacioEhrUrl, lastPacioTimestamp]);
+  }, [state.pacioEhrUrl]);
 
   const resetHeaderDefinitions = [
     {
