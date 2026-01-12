@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -44,6 +44,9 @@ const SettingsSection = props => {
 
   const [state, dispatch, updateSetting, readSettings, saveSettings] =
     React.useContext(SettingsContext);
+
+  // State for PACIO automatic polling
+  const [lastPacioTimestamp, setLastPacioTimestamp] = useState(null);
 
   const fieldHeaders = Object.keys(headerDefinitions)
     .map(key => ({ ...headerDefinitions[key], key }))
@@ -132,9 +135,9 @@ const SettingsSection = props => {
 
   const clearResource =
     ({}, type) =>
-    () => {
+    async () => {
       // Delete all resources of type type
-      clearResourceWithParams(type, '');
+      return await clearResourceWithParams(type, '');
     };
 
   const clearPatient =
@@ -224,7 +227,7 @@ const SettingsSection = props => {
   };
 
   const parsePacioToc = async pacioToc => {
-    console.log('    Parse PACIO TOC');
+    console.log('    Parse PACIO TOC Bundle');
     let medicationStatementList = [];
     let patient = null;
 
@@ -249,7 +252,6 @@ const SettingsSection = props => {
                 break;
             }
           });
-
           break;
       }
     });
@@ -259,104 +261,26 @@ const SettingsSection = props => {
       return;
     }
 
-    // Get settings
+    // Get prescriber from settings
     const newPrescriberId = state.pacioNewPrescriberId;
-    const configuredPatientId = state.pacioPatientId;
-    const configuredCoverageId = state.pacioCoverageId;
-
     console.log(
       `    Converting MedicationStatements to MedicationRequests with prescriber: ${newPrescriberId}`
     );
 
-    // Determine which patient to use
     let targetPatient = null;
-
-    if (configuredPatientId) {
-      // Use configured patient ID
-      console.log(`    Using configured patient ID: ${configuredPatientId}`);
-      try {
-        targetPatient = await client.request(`Patient/${configuredPatientId}`);
-        console.log(
-          `    Found patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`
-        );
-      } catch (e) {
-        console.log(`    Error fetching configured patient ${configuredPatientId}:`, e);
-      }
-    }
-
-    if (!targetPatient) {
-      // Create new patient from TOC bundle
-      console.log('    Creating new patient from TOC bundle');
-      try {
-        targetPatient = await client.create(patient);
-        console.log(
-          `    Created new patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`
-        );
-        addCommunication(
-          targetPatient.id,
-          `Added new patient (${getPatientFirstAndLastName(targetPatient)}) from transfer of care`
-        );
-      } catch (e) {
-        console.log('    Failed to create patient:', e);
-        return;
-      }
-    } else {
+    console.log('    Creating new patient from TOC bundle');
+    try {
+      targetPatient = await client.create(patient);
+      console.log(
+        `    Created new patient: ${getPatientFirstAndLastName(targetPatient)} (${targetPatient.id})`
+      );
       addCommunication(
         targetPatient.id,
-        `Received transfer of care notification for patient (${getPatientFirstAndLastName(targetPatient)})`
+        `Added new patient (${getPatientFirstAndLastName(targetPatient)}) from transfer of care`
       );
-    }
-
-    // Determine which coverage to use
-    let coverageId = null;
-
-    if (configuredCoverageId) {
-      // Use configured coverage ID
-      console.log(`    Using configured coverage ID: ${configuredCoverageId}`);
-      try {
-        const coverageResult = await client.request(`Coverage/${configuredCoverageId}`);
-        if (coverageResult) {
-          coverageId = configuredCoverageId;
-          console.log(`    Found coverage: ${coverageId}`);
-        }
-      } catch (e) {
-        console.log(`    Error fetching configured coverage ${configuredCoverageId}:`, e);
-      }
-    }
-
-    if (!coverageId) {
-      // Create new proper coverage
-      console.log('    Creating new coverage');
-      try {
-        const coverage = {
-          resourceType: 'Coverage',
-          status: 'active',
-          beneficiary: {
-            reference: `Patient/${targetPatient.id}`
-          },
-          subscriberId: '1EG4TE5MK73',
-          class: [
-            {
-              type: {
-                system: 'http://hl7.org/fhir/coverage-class',
-                code: 'plan'
-              },
-              value: 'Medicare Part A'
-            }
-          ],
-          payor: [
-            {
-              reference: 'Organization/org1234'
-            }
-          ]
-        };
-
-        const coverageResult = await client.create(coverage);
-        coverageId = coverageResult.id;
-        console.log(`    Created new coverage: ${coverageId}`);
-      } catch (e) {
-        console.log('    Warning: Could not create coverage:', e);
-      }
+    } catch (e) {
+      console.log('    Failed to create patient:', e);
+      return;
     }
 
     // Convert MedicationStatements to MedicationRequests
@@ -423,9 +347,7 @@ const SettingsSection = props => {
 
       try {
         const medicationRequestResult = await client.create(medicationRequest);
-        console.log(
-          `    Added new MedicationRequest for ${medName} (ID: ${medicationRequestResult.id})`
-        );
+        console.log(`    Added new MedicationRequest for ${medName} (ID: ${medicationRequestResult.id})`);
         addCommunication(
           patientId,
           `Added new MedicationRequest for ${medName} from transfer of care`
@@ -436,65 +358,111 @@ const SettingsSection = props => {
     }
   };
 
-  const pollPacio =
-    ({ pacioEhrComparisonUrl, pacioEhrUrl, pacioEhrUrlQuery }) =>
-    () => {
-      // connect to the PACIO FHIR server, assume it is an open FHIR server
+  const pollPacioNotifications = async () => {
+    const pacioEhrUrl = state.pacioEhrUrl;
+
+    if (!pacioEhrUrl) {
+      return;
+    }
+
+    try {
+      console.log('Polling PACIO discharge notifications...');
+
+      // Build query URL
+      let query = '?type=message&_format=json';
+      if (lastPacioTimestamp) {
+        query += `&_lastUpdated=gt${lastPacioTimestamp}`;
+        console.log(`  Using timestamp filter: ${lastPacioTimestamp}`);
+      } else {
+        console.log('  First poll - no timestamp filter');
+      }
+
       const pacioFhirClient = FHIR.client({
         serverUrl: pacioEhrUrl
       });
 
-      // pull the PACIO discharge notification
-      pacioFhirClient
-        .request(pacioEhrUrlQuery)
-        .then(pacioDischarge => {
-          let pacioDischargeEntries = pacioDischarge?.entry[0]?.resource?.entry;
+      // Fetch discharge notifications
+      const searchBundle = await pacioFhirClient.request(query);
 
-          let documentReference = null;
+      // Update timestamp from server response for next poll
+      if (searchBundle?.meta?.lastUpdated) {
+        const serverTimestamp = searchBundle.meta.lastUpdated;
+        console.log(`  Server timestamp: ${serverTimestamp}`);
+        setLastPacioTimestamp(serverTimestamp);
+      }
 
-          for (const dischargeEntry of pacioDischargeEntries) {
-            const dischargeResource = dischargeEntry?.resource;
-            switch (dischargeResource?.resourceType) {
-              case 'MessageHeader':
-                console.log('  Process MessageHeader');
-                const destination = dischargeResource?.destination[0]?.endpoint;
-                if (destination.toUpperCase() != pacioEhrComparisonUrl.toUpperCase()) {
-                  console.log(`Message not meant for us (${destination}), skipping...`);
-                  return;
+      if (searchBundle?.entry && searchBundle.entry.length > 0) {
+        console.log(`  Found ${searchBundle.entry.length} discharge notification(s)`);
+
+        for (const notificationEntry of searchBundle.entry) {
+          const notificationBundle = notificationEntry.resource;
+
+          if (
+            notificationBundle?.resourceType === 'Bundle' &&
+            notificationBundle.type === 'message'
+          ) {
+            console.log(`  Processing notification bundle: ${notificationBundle.id}`);
+
+            // Find DocumentReference in the notification bundle
+            let documentReference = null;
+            if (notificationBundle.entry) {
+              for (const entry of notificationBundle.entry) {
+                if (entry.resource?.resourceType === 'DocumentReference') {
+                  documentReference = entry.resource;
+                  console.log('    Found DocumentReference (TOC)');
+                  break;
                 }
-                break;
-              case 'DocumentReference':
-                console.log('  Process DocumentReference (TOC)');
-                documentReference = dischargeResource;
-                break;
+              }
+            }
+
+            if (documentReference?.content?.[0]?.attachment?.url) {
+              const tocBundleUrl = documentReference.content[0].attachment.url;
+              console.log(`    Fetching TOC bundle from: ${tocBundleUrl}`);
+
+              // Fetch and process the TOC bundle
+              try {
+                const tocBundle = await pacioFhirClient.request(tocBundleUrl);
+                await parsePacioToc(tocBundle);
+              } catch (e) {
+                console.log(`    Failed to fetch/process TOC bundle:`, e);
+              }
+            } else {
+              console.log('    No DocumentReference with TOC bundle URL found');
             }
           }
+        }
+      } else {
+        console.log('  No new notifications found');
+      }
+    } catch (e) {
+      console.log('Failed to poll PACIO notifications:', e);
+    }
+  };
 
-          if (!documentReference) {
-            console.log('PACIO Discharge Notification missing DocumentReference');
-            console.log(pacioDischarge);
-            return;
-          }
+  // Reset timestamp when PACIO URL changes (switching servers)
+  useEffect(() => {
+    if (state.pacioEhrUrl) {
+      console.log('PACIO URL changed, resetting timestamp for fresh poll');
+      setLastPacioTimestamp(null);
+    }
+  }, [state.pacioEhrUrl]);
 
-          // pull the TOC from the PACIO server, assume same base url as discharge notification
-          const pacioTocUrl = documentReference?.content[0]?.attachment?.url;
-          let pacioTocQuery = pacioTocUrl.replace(pacioEhrUrl, '');
+  // Setup automatic polling on component mount
+  useEffect(() => {
+    if (!state.pacioEhrUrl) {
+      return;
+    }
 
-          pacioFhirClient
-            .request(pacioTocQuery)
-            .then(pacioToc => {
-              parsePacioToc(pacioToc);
-            })
-            .catch(e => {
-              console.log('Failed to retrieve PACIO TOC');
-              console.log(e);
-            });
-        })
-        .catch(e => {
-          console.log('Failed to retrieve PACIO Discharge Notification');
-          console.log(e);
-        });
-    };
+    // Poll immediately on mount or URL change
+    pollPacioNotifications();
+
+    // Then poll every 30 seconds
+    const interval = setInterval(() => {
+      pollPacioNotifications();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [state.pacioEhrUrl, lastPacioTimestamp]);
 
   const resetHeaderDefinitions = [
     {
@@ -534,12 +502,6 @@ const SettingsSection = props => {
       display: 'Reconnect EHR',
       key: 'reconnectEHR',
       reset: reconnectEhr,
-      variant: 'contained'
-    },
-    {
-      display: 'Poll PACIO Patient Discharge Notifications',
-      key: 'pollPACIO',
-      reset: pollPacio,
       variant: 'contained'
     }
   ];
