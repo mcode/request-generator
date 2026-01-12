@@ -364,7 +364,7 @@ const SettingsSection = props => {
         query += `&_lastUpdated=gt${lastPacioTimestamp.current}`;
         console.log(`  Using timestamp filter: ${lastPacioTimestamp.current}`);
       } else {
-        console.log('  First poll - no timestamp filter');
+        console.log('  First poll - no timestamp filter, skipping saving old messages');
       }
 
       const pacioFhirClient = FHIR.client({
@@ -374,56 +374,60 @@ const SettingsSection = props => {
       // Fetch discharge notifications
       const searchBundle = await pacioFhirClient.request(query);
 
+      // ignore the first message, don't save old bundles
+      if (lastPacioTimestamp.current) {  
+        if (searchBundle?.entry && searchBundle.entry.length > 0) {
+          console.log(`  Found ${searchBundle.entry.length} discharge notification(s)`);
+
+          for (const notificationEntry of searchBundle.entry) {
+            const notificationBundle = notificationEntry.resource;
+
+            if (
+              notificationBundle?.resourceType === 'Bundle' &&
+              notificationBundle.type === 'message'
+            ) {
+              console.log(`  Processing notification bundle: ${notificationBundle.id}`);
+
+              // Find DocumentReference in the notification bundle
+              let documentReference = null;
+              if (notificationBundle.entry) {
+                for (const entry of notificationBundle.entry) {
+                  if (entry.resource?.resourceType === 'DocumentReference') {
+                    documentReference = entry.resource;
+                    console.log('    Found DocumentReference (TOC)');
+                    break;
+                  }
+                }
+              }
+
+              if (documentReference?.content?.[0]?.attachment?.url) {
+                const tocBundleUrl = documentReference.content[0].attachment.url;
+                console.log(`    Fetching TOC bundle from: ${tocBundleUrl}`);
+
+                // Fetch and process the TOC bundle
+                try {
+                  const tocBundle = await pacioFhirClient.request(tocBundleUrl);
+                  await parsePacioToc(tocBundle);
+                } catch (e) {
+                  console.log(`    Failed to fetch/process TOC bundle:`, e);
+                }
+              } else {
+                console.log('    No DocumentReference with TOC bundle URL found');
+              }
+            }
+          }
+        } else {
+          console.log('  No new notifications found');
+        }
+      }
+
       // Update timestamp from server response for next poll
       if (searchBundle?.meta?.lastUpdated) {
         const serverTimestamp = searchBundle.meta.lastUpdated;
         console.log(`  Server timestamp: ${serverTimestamp}`);
         lastPacioTimestamp.current = serverTimestamp;
       }
-
-      if (searchBundle?.entry && searchBundle.entry.length > 0) {
-        console.log(`  Found ${searchBundle.entry.length} discharge notification(s)`);
-
-        for (const notificationEntry of searchBundle.entry) {
-          const notificationBundle = notificationEntry.resource;
-
-          if (
-            notificationBundle?.resourceType === 'Bundle' &&
-            notificationBundle.type === 'message'
-          ) {
-            console.log(`  Processing notification bundle: ${notificationBundle.id}`);
-
-            // Find DocumentReference in the notification bundle
-            let documentReference = null;
-            if (notificationBundle.entry) {
-              for (const entry of notificationBundle.entry) {
-                if (entry.resource?.resourceType === 'DocumentReference') {
-                  documentReference = entry.resource;
-                  console.log('    Found DocumentReference (TOC)');
-                  break;
-                }
-              }
-            }
-
-            if (documentReference?.content?.[0]?.attachment?.url) {
-              const tocBundleUrl = documentReference.content[0].attachment.url;
-              console.log(`    Fetching TOC bundle from: ${tocBundleUrl}`);
-
-              // Fetch and process the TOC bundle
-              try {
-                const tocBundle = await pacioFhirClient.request(tocBundleUrl);
-                await parsePacioToc(tocBundle);
-              } catch (e) {
-                console.log(`    Failed to fetch/process TOC bundle:`, e);
-              }
-            } else {
-              console.log('    No DocumentReference with TOC bundle URL found');
-            }
-          }
-        }
-      } else {
-        console.log('  No new notifications found');
-      }
+      
     } catch (e) {
       console.log('Failed to poll PACIO notifications:', e);
     }
