@@ -158,6 +158,19 @@ export default makeStyles(
       borderColor: 'white !important',
       marginRight: '5px !important',
       marginLeft: '20px !important'
+    },
+    communicationHeader: {
+      fontSize: '12px',
+      color: '#777',
+      borderBottom: '1px solid #e3e3ef'
+    },
+    communicationDescription: {
+      fontSize: '18px',
+      padding: '8px 0px 10px 2px'
+    },
+    communicationHeaderButton: {
+      height: '40px',
+      borderBottom: '1px solid #e3e3ef'
     }
   }),
 
