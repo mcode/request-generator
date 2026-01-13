@@ -101,7 +101,20 @@ const headerDefinitions = {
     type: 'check',
     default: false
   },
-
+  pacioEhrUrl: {
+    display: 'PACIO EHR Base URL',
+    type: 'input',
+    default: env.get('VITE_PACIO_EHR_URL').asString()
+  },
+  pacioNewPrescriberId: {
+    display: 'PACIO New Prescriber ID',
+    type: 'input',
+    default: env.get('VITE_PACIO_NEW_PRESCRIBER_ID').asString()
+  },
+  patientOfInterest: {
+    display: 'Patient ID (for Clear)',
+    type: 'input'
+  },
   hookToSend: {
     display: 'Send hook on patient select',
     type: 'dropdown',
