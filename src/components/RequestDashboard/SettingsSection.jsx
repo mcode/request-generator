@@ -375,7 +375,7 @@ const SettingsSection = props => {
       const searchBundle = await pacioFhirClient.request(query);
 
       // ignore the first message, don't save old bundles
-      // if (lastPacioTimestamp.current) {  
+      if (lastPacioTimestamp.current) {  
         if (searchBundle?.entry && searchBundle.entry.length > 0) {
           console.log(`  Found ${searchBundle.entry.length} discharge notification(s)`);
 
@@ -419,7 +419,7 @@ const SettingsSection = props => {
         } else {
           console.log('  No new notifications found');
         }
-      // }
+      }
 
       // Update timestamp from server response for next poll
       if (searchBundle?.meta?.lastUpdated) {
