@@ -121,7 +121,7 @@ function quantityUnitOfMeasureFromDrugFormCode(dispenseRequest) {
   // https://terminology.hl7.org/5.0.0/CodeSystem-v3-orderableDrugForm.html
   // Return NCPDP QuantityUnitOfMeasure
   if (
-    dispenseRequest.quantity.system.toLowerCase().endsWith('v3-orderableDrugForm'.toLowerCase())
+    dispenseRequest?.quantity?.system?.toLowerCase().endsWith('v3-orderableDrugForm'.toLowerCase())
   ) {
     // is a subset of the codes, not a complete list
     switch (dispenseRequest.quantity.code.toUpperCase()) {
@@ -253,19 +253,21 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   medicationPrescribed.appendChild(drugCoded);
 
   //     Medication Quantity
+  console.log(medicationRequestResource);
   const dispenseRequest = medicationRequestResource.dispenseRequest;
-  var quantity = doc.createElement('Quantity');
-  xmlAddTextNode(doc, quantity, 'Value', dispenseRequest.quantity.value);
-  xmlAddTextNode(doc, quantity, 'CodeListQualifier', 38); // Original Quantity
-  var quantityUnitOfMeasure = doc.createElement('QuantityUnitOfMeasure');
-  xmlAddTextNode(
-    doc,
-    quantityUnitOfMeasure,
-    'Code',
-    quantityUnitOfMeasureFromDrugFormCode(dispenseRequest)
-  );
-  quantity.appendChild(quantityUnitOfMeasure);
-  medicationPrescribed.appendChild(quantity);
+    var quantity = doc.createElement('Quantity');
+    xmlAddTextNode(doc, quantity, 'Value', dispenseRequest?.quantity?.value ? dispenseRequest?.quantity?.value : '');
+    xmlAddTextNode(doc, quantity, 'CodeListQualifier', 38); // Original Quantity
+    var quantityUnitOfMeasure = doc.createElement('QuantityUnitOfMeasure');
+    xmlAddTextNode(
+      doc,
+      quantityUnitOfMeasure,
+      'Code',
+      quantityUnitOfMeasureFromDrugFormCode(dispenseRequest ? dispenseRequest : {})
+    );
+    quantity.appendChild(quantityUnitOfMeasure);
+    medicationPrescribed.appendChild(quantity);
+
 
   //     Medication Written Date
   var writtenDate = doc.createElement('WrittenDate');
@@ -280,13 +282,17 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     doc,
     medicationPrescribed,
     'NumberOfRefills',
-    dispenseRequest.numberOfRepeatsAllowed
+    dispenseRequest?.numberOfRepeatsAllowed ? dispenseRequest?.numberOfRepeatsAllowed : ''
   );
 
+
   //     Medication Sig
-  var sig = doc.createElement('Sig');
-  xmlAddTextNode(doc, sig, 'SigText', medicationRequestResource.dosageInstruction[0].text);
-  medicationPrescribed.appendChild(sig);
+    var dosageInstruction = medicationRequestResource?.dosageInstruction;
+    var dosageText = dosageInstruction ? dosageInstruction [0]?.text : ''
+    var sig = doc.createElement('Sig');
+    xmlAddTextNode(doc, sig, 'SigText', dosageText);
+    medicationPrescribed.appendChild(sig);
+
 
   //     Medication REMS
   // A - Prescriber has checked REMS and the prescriber's actions have been completed.
