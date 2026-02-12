@@ -136,7 +136,13 @@ Following are a list of modifiable paths:
 | VITE_USE_INTERMEDIARY                                 | false                                                                                                | When true, the app will send all CDS Hooks and REMS ETASU check calls to the intermediary defined in VITE_INTERMEDIARY.                      |
 | VITE_INTERMEDIARY                                     | `http:/localhost:3030`                                                                              | The base url of the intermediary.                      |
 | VITE_USE_PHARMACY_IN_PREFETCH                         | true                                                                                                 | When true, the app will send pharmacy information to the rems admin in the CDS Hooks prefetch                     |
-| VITE_PHARMACY_ID                                     | `pharm0111`                                                                              | The pharmacy ID to use in the CDS Hooks Prefetch                      | 
+| VITE_PHARMACY_ID                                     | `pharm0111`                                                                              | The pharmacy ID to use in the CDS Hooks Prefetch                      |
+| HTTPS | `false` | Enable HTTPS for the server. Set to `true` to use HTTPS with valid certificate and key paths. |
+| HTTPS_CERT_PATH | `server.cert` | Path to a certificate for encryption, allowing HTTPS. Unnecessary if using HTTP. |
+| HTTPS_KEY_PATH | `server.key` | Path to a key for encryption, allowing HTTPS. Unnecessary if using HTTP. |
+| VITE_HOOK_TO_SEND | `patient-view` | Specifies which CDS Hook type to send by default (e.g., patient-view, order-sign, order-select, encounter-start). |
+| VITE_URL_FILTER | `http://localhost:3000/*` | URL filtering pattern for request validation. |
+| VITE_DISABLE_MEDICATION_STATUS | `false` | When set to true, disables the medication status display in the UI. |
 
 # Data Rights
 This repository has been forked from the [HL7-DaVinci/crd-request-generator](https://github.com/HL7-DaVinci/crd-request-generator) repository. As such, the following data rights apply to all changes made on this fork of the repository, starting with release 0.1 and onward.

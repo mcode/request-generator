@@ -16,6 +16,16 @@ const headerDefinitions = {
     type: 'check',
     default: env.get('VITE_USE_INTERMEDIARY').asBool()
   },
+  usePharmacyIntermediary: {
+    type: 'check',
+    display: 'Use Pharmacy Intermediary (NCPDP NewRx)',
+    default: env.get('VITE_USE_PHARMACY_INTERMEDIARY').asBool() || false
+  },
+  pharmacyIntermediaryUrl: {
+    type: 'input',
+    display: 'Pharmacy Intermediary URL (NCPDP Endpoint)',
+    default: env.get('VITE_PHARMACY_INTERMEDIARY').asString() || 'http://localhost:3003/ncpdp/script'
+  },
   alternativeTherapy: {
     display: 'Alternative Therapy Cards Allowed',
     type: 'check',
@@ -101,7 +111,20 @@ const headerDefinitions = {
     type: 'check',
     default: false
   },
-
+  pacioEhrUrl: {
+    display: 'PACIO EHR Base URL',
+    type: 'input',
+    default: env.get('VITE_PACIO_EHR_URL').asString()
+  },
+  pacioNewPrescriberId: {
+    display: 'PACIO New Prescriber ID',
+    type: 'input',
+    default: env.get('VITE_PACIO_NEW_PRESCRIBER_ID').asString()
+  },
+  patientOfInterest: {
+    display: 'Patient ID (for Clear)',
+    type: 'input'
+  },
   hookToSend: {
     display: 'Send hook on patient select',
     type: 'dropdown',
