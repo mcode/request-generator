@@ -220,8 +220,13 @@ const RequestBox = props => {
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
   const sendRx = async () => {
-    console.log('Sending NewRx to: ' + pimsUrl);
-    console.log('Getting case number ');
+    // Use intermediary or direct based on toggle
+    const ncpdpEndpoint = globalState.usePharmacyIntermediary 
+      ? globalState.pharmacyIntermediaryUrl 
+      : pimsUrl;
+    
+    console.log('Sending NewRx to: ' + ncpdpEndpoint);
+    console.log('Getting case number');
     const medication = createMedicationFromMedicationRequest(request);
     const body = makeBody(medication);
     const standardEtasuUrl = getMedicationSpecificEtasuUrl(
@@ -260,7 +265,7 @@ const RequestBox = props => {
     const serializer = new XMLSerializer();
 
     // Sending NewRx to the Pharmacy
-    fetch(pimsUrl, {
+    fetch(ncpdpEndpoint, {
       method: 'POST',
       //mode: 'no-cors',
       headers: {
