@@ -16,6 +16,16 @@ const headerDefinitions = {
     type: 'check',
     default: env.get('VITE_USE_INTERMEDIARY').asBool()
   },
+  usePharmacyIntermediary: {
+    type: 'check',
+    display: 'Use Pharmacy Intermediary (NCPDP NewRx)',
+    default: env.get('VITE_USE_PHARMACY_INTERMEDIARY').asBool() || false
+  },
+  pharmacyIntermediaryUrl: {
+    type: 'input',
+    display: 'Pharmacy Intermediary URL (NCPDP Endpoint)',
+    default: env.get('VITE_PHARMACY_INTERMEDIARY').asString() || 'http://localhost:3003/ncpdp/script'
+  },
   alternativeTherapy: {
     display: 'Alternative Therapy Cards Allowed',
     type: 'check',
