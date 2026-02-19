@@ -59,6 +59,7 @@ function createMedicationDispenseFromMedicationRequest(medicationRequest) {
   medicationDispense.authorizingPrescription = [
     { reference: 'MedicationRequest/' + medicationRequest.id }
   ];
+  medicationDispense.note = [ { text: "Medication sent to pharmacy" } ];
   return medicationDispense;
 }
 

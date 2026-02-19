@@ -11,6 +11,7 @@ export const MedicationStatusModal = props => {
   const [spin, setSpin] = useState(false);
   const color = getStatusColor(medicationDispense?.status);
   const status = getStatusText(medicationDispense?.status);
+  const note = medicationDispense?.note ? medicationDispense?.note[0]?.text : "";
 
   useEffect(() => {
     if (update) {
@@ -29,6 +30,7 @@ export const MedicationStatusModal = props => {
             <Grid item xs={10}>
               <div className="bundle-entry">ID: {getIdText(medicationDispense)}</div>
               <div className="bundle-entry">Status: {status}</div>
+              <div className="bundle-entry">Note: {note}</div>
             </Grid>
             <Grid item xs={2}>
               <div className="bundle-entry">

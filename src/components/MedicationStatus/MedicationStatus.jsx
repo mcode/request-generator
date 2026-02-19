@@ -43,10 +43,11 @@ export const getStatusColor = status => {
   switch (status) {
     case 'completed':
       return 'green';
+    case 'on-hold':
+      return '#f0ad4e';
     case 'preparation':
     case 'in-progress':
     case 'cancelled':
-    case 'on-hold':
     case 'entered-in-error':
     case 'stopped':
     case 'declined':
@@ -62,10 +63,11 @@ export const getStatusText = status => {
       return 'Picked Up';
     case 'unknown':
       return 'Not Started';
+    case 'on-hold':
+      return 'On Hold';
     case 'preparation':
     case 'in-progress':
     case 'cancelled':
-    case 'on-hold':
     case 'entered-in-error':
     case 'stopped':
     case 'declined':
