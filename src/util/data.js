@@ -12,9 +12,9 @@ const headerDefinitions = {
     default: env.get('VITE_PHARMACY_ID').asString() || 'pharm0111'
   },
   useIntermediary: {
-    display: 'Use Intermediary',
+    display: 'Use Prescriber Intermediary',
     type: 'check',
-    default: env.get('VITE_USE_INTERMEDIARY').asBool()
+    default: env.get('VITE_USE_PRESCRIBER_INTERMEDIARY').asBool()
   },
   usePharmacyIntermediary: {
     type: 'check',
