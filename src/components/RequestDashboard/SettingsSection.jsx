@@ -158,6 +158,21 @@ const SettingsSection = props => {
       }
     };
 
+  const clearIntermediaryHookSessions =
+    ({ intermediaryUrl }) =>
+    async () => {
+      console.log('Clearing intermediary hook sessions');
+      try {
+        const response = await fetch(`${intermediaryUrl}/api/sessions/clear`, {
+          method: 'POST'
+        });
+        const result = await response.json();
+        console.log(`Cleared ${result.deletedCount} session(s)`);
+      } catch (error) {
+        console.log('Failed to clear intermediary sessions:', error);
+      }
+    };
+
   const reconnectEhr =
     ({ baseUrl, redirect }) =>
     () => {
@@ -468,6 +483,11 @@ const SettingsSection = props => {
       display: 'Reset REMS-Admin Database',
       key: 'resetRemsAdmin',
       reset: resetRemsAdmin
+    },
+    {
+      display: 'Clear Intermediary Hook Sessions',
+      key: 'clearIntermediaryHookSessions',
+      reset: clearIntermediaryHookSessions
     },
     {
       display: 'Clear EHR In-Progress Forms',
