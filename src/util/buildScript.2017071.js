@@ -4,9 +4,14 @@ import { getDrugCodeableConceptFromMedicationRequest } from './fhir';
 
 var SCRIPT_VERSION = '20170715';
 
+function safeText(value) {
+  if (value === null || value === undefined) return '';
+  return String(value);
+}
+
 function xmlAddTextNode(xmlDoc, parent, sectionName, value) {
   var section = xmlDoc.createElement(sectionName);
-  var textNode = xmlDoc.createTextNode(value);
+  var textNode = xmlDoc.createTextNode(safeText(value));
   section.appendChild(textNode);
   parent.appendChild(section);
 }
@@ -14,24 +19,24 @@ function xmlAddTextNode(xmlDoc, parent, sectionName, value) {
 function xmlAddTextNodeWithAttribute(xmlDoc, parent, sectionName, value, attrName, attrValue) {
   var section = xmlDoc.createElement(sectionName);
   section.setAttribute(attrName, attrValue);
-  var textNode = xmlDoc.createTextNode(value);
+  var textNode = xmlDoc.createTextNode(safeText(value));
   section.appendChild(textNode);
   parent.appendChild(section);
 }
 
 function buildNewRxName(doc, nameResource) {
   var name = doc.createElement('Name');
-  xmlAddTextNode(doc, name, 'LastName', nameResource.family);
-  xmlAddTextNode(doc, name, 'FirstName', nameResource.given[0]);
+  xmlAddTextNode(doc, name, 'LastName', nameResource?.family);
+  xmlAddTextNode(doc, name, 'FirstName', nameResource?.given?.[0]);
   return name;
 }
 
 function buildNewRxAddress(doc, addressResource) {
   var address = doc.createElement('Address');
-  xmlAddTextNode(doc, address, 'AddressLine1', addressResource.line[0]);
-  xmlAddTextNode(doc, address, 'City', addressResource.city);
-  xmlAddTextNode(doc, address, 'StateProvince', addressResource.state);
-  xmlAddTextNode(doc, address, 'PostalCode', addressResource.postalCode);
+  xmlAddTextNode(doc, address, 'AddressLine1', addressResource?.line?.[0]);
+  xmlAddTextNode(doc, address, 'City', addressResource?.city);
+  xmlAddTextNode(doc, address, 'StateProvince', addressResource?.state);
+  xmlAddTextNode(doc, address, 'PostalCode', addressResource?.postalCode);
   xmlAddTextNode(doc, address, 'Country', 'US'); // assume US for now
   return address;
 }
@@ -41,12 +46,12 @@ function buildNewRxPatient(doc, patientResource) {
   var humanPatient = doc.createElement('HumanPatient');
 
   //     Patient Name
-  const patientNameResource = patientResource.name[0];
-  humanPatient.appendChild(buildNewRxName(doc, patientNameResource));
+  const patientNameResource = patientResource?.name?.[0];
+  humanPatient.appendChild(buildNewRxName(doc, patientNameResource ?? {}));
 
   //     Patient Gender and Sex
   var gender = 'U'; // unknown
-  var patientResourceGender = patientResource.gender.toLowerCase();
+  var patientResourceGender = patientResource?.gender?.toLowerCase() ?? '';
   if (patientResourceGender === 'male') {
     gender = 'M'; // male
   } else if (patientResourceGender === 'female') {
@@ -58,22 +63,23 @@ function buildNewRxPatient(doc, patientResource) {
 
   //     Patient Birth Date
   var dateOfBirth = doc.createElement('DateOfBirth');
-  xmlAddTextNode(doc, dateOfBirth, 'Date', patientResource.birthDate);
+  xmlAddTextNode(doc, dateOfBirth, 'Date', patientResource?.birthDate);
   humanPatient.appendChild(dateOfBirth);
 
   //     Patient Address
-  const patientAddressResource = patientResource.address[0];
-  humanPatient.appendChild(buildNewRxAddress(doc, patientAddressResource));
+  const patientAddressResource = patientResource?.address?.[0];
+  humanPatient.appendChild(buildNewRxAddress(doc, patientAddressResource ?? {}));
 
   patient.appendChild(humanPatient);
   return patient;
 }
 
 function getPractitionerNpi(practitionerResource) {
-  for (let i = 0; i < practitionerResource.identifier.length; i++) {
-    let id = practitionerResource.identifier[i];
-    if (id.system && id.system.includes('us-npi')) {
-      return id.value;
+  const identifiers = practitionerResource?.identifier ?? [];
+  for (let i = 0; i < identifiers.length; i++) {
+    let id = identifiers[i];
+    if (id?.system && id.system.includes('us-npi')) {
+      return id.value ?? null;
     }
   }
   return null;
@@ -91,22 +97,23 @@ function buildNewRxPrescriber(doc, practitionerResource, npi) {
   }
 
   //     Prescriber Name
-  const practitionerNameResource = practitionerResource.name[0];
-  nonVeterinarian.appendChild(buildNewRxName(doc, practitionerNameResource));
+  const practitionerNameResource = practitionerResource?.name?.[0];
+  nonVeterinarian.appendChild(buildNewRxName(doc, practitionerNameResource ?? {}));
 
   //     Prescriber Address
-  const practitionerAddressResource = practitionerResource.address[0];
-  nonVeterinarian.appendChild(buildNewRxAddress(doc, practitionerAddressResource));
+  const practitionerAddressResource = practitionerResource?.address?.[0];
+  nonVeterinarian.appendChild(buildNewRxAddress(doc, practitionerAddressResource ?? {}));
 
   //     Prescriber Phone Number and Email
   const communicationNumbers = doc.createElement('CommunicationNumbers');
-  for (let i = 0; i < practitionerResource.telecom.length; i++) {
-    const telecom = practitionerResource.telecom[i];
-    if (telecom.system === 'phone') {
+  const telecomList = practitionerResource?.telecom ?? [];
+  for (let i = 0; i < telecomList.length; i++) {
+    const telecom = telecomList[i];
+    if (telecom?.system === 'phone') {
       const primaryTelephone = doc.createElement('PrimaryTelephone');
       xmlAddTextNode(doc, primaryTelephone, 'Number', telecom.value);
       communicationNumbers.appendChild(primaryTelephone);
-    } else if (telecom.system === 'email') {
+    } else if (telecom?.system === 'email') {
       xmlAddTextNode(doc, communicationNumbers, 'ElectronicMail', telecom.value);
     }
   }
@@ -225,16 +232,18 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   var drugCoded = doc.createElement('DrugCoded');
 
   // loop through the coding values and find the ndc code and the rxnorm code
-  let medicationCodingList =
-    getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding;
 
-  var drugDisplay = 'undefined';
+  const medicationCodingList =
+    getDrugCodeableConceptFromMedicationRequest(medicationRequestResource)?.coding ?? [];
+
+  var drugDisplay = '';
   for (let i = 0; i < medicationCodingList.length; i++) {
     const coding = medicationCodingList[i];
-    const system = coding.system.toLowerCase();
+    const system = coding?.system?.toLowerCase() ?? '';
 
     // get the display from first drug coding that contains a display value
-    if (coding.display && drugDisplay == 'undefined') {
+
+    if (coding?.display && !drugDisplay) {
       drugDisplay = coding.display;
     }
 
@@ -253,25 +262,23 @@ function buildNewRxMedication(doc, medicationRequestResource) {
   medicationPrescribed.appendChild(drugCoded);
 
   //     Medication Quantity
-  console.log(medicationRequestResource);
-  const dispenseRequest = medicationRequestResource.dispenseRequest;
-    var quantity = doc.createElement('Quantity');
-    xmlAddTextNode(doc, quantity, 'Value', dispenseRequest?.quantity?.value ? dispenseRequest?.quantity?.value : '');
-    xmlAddTextNode(doc, quantity, 'CodeListQualifier', 38); // Original Quantity
-    var quantityUnitOfMeasure = doc.createElement('QuantityUnitOfMeasure');
-    xmlAddTextNode(
-      doc,
-      quantityUnitOfMeasure,
-      'Code',
-      quantityUnitOfMeasureFromDrugFormCode(dispenseRequest ? dispenseRequest : {})
-    );
-    quantity.appendChild(quantityUnitOfMeasure);
-    medicationPrescribed.appendChild(quantity);
-
+  const dispenseRequest = medicationRequestResource?.dispenseRequest;
+  var quantity = doc.createElement('Quantity');
+  xmlAddTextNode(doc, quantity, 'Value', dispenseRequest?.quantity?.value);
+  xmlAddTextNode(doc, quantity, 'CodeListQualifier', 38); // Original Quantity
+  var quantityUnitOfMeasure = doc.createElement('QuantityUnitOfMeasure');
+  xmlAddTextNode(
+    doc,
+    quantityUnitOfMeasure,
+    'Code',
+    quantityUnitOfMeasureFromDrugFormCode(dispenseRequest ?? {})
+  );
+  quantity.appendChild(quantityUnitOfMeasure);
+  medicationPrescribed.appendChild(quantity);
 
   //     Medication Written Date
   var writtenDate = doc.createElement('WrittenDate');
-  xmlAddTextNode(doc, writtenDate, 'Date', medicationRequestResource.authoredOn);
+  xmlAddTextNode(doc, writtenDate, 'Date', medicationRequestResource?.authoredOn);
   medicationPrescribed.appendChild(writtenDate);
 
   //     Medication Substitutions (0 - None)
@@ -282,17 +289,15 @@ function buildNewRxMedication(doc, medicationRequestResource) {
     doc,
     medicationPrescribed,
     'NumberOfRefills',
-    dispenseRequest?.numberOfRepeatsAllowed ? dispenseRequest?.numberOfRepeatsAllowed : ''
+    dispenseRequest?.numberOfRepeatsAllowed
   );
 
-
   //     Medication Sig
-    var dosageInstruction = medicationRequestResource?.dosageInstruction;
-    var dosageText = dosageInstruction ? dosageInstruction [0]?.text : ''
-    var sig = doc.createElement('Sig');
-    xmlAddTextNode(doc, sig, 'SigText', dosageText);
-    medicationPrescribed.appendChild(sig);
-
+  const dosageInstruction = medicationRequestResource?.dosageInstruction;
+  const dosageText = dosageInstruction?.[0]?.text;
+  var sig = doc.createElement('Sig');
+  xmlAddTextNode(doc, sig, 'SigText', dosageText);
+  medicationPrescribed.appendChild(sig);
 
   //     Medication REMS
   // A - Prescriber has checked REMS and the prescriber's actions have been completed.
