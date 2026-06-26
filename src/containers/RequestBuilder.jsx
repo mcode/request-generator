@@ -9,6 +9,7 @@ import buildRequest from '../util/buildRequest.js';
 import { types, PATIENT_VIEW } from '../util/data.js';
 import { createJwt } from '../util/auth.js';
 import { getMedicationSpecificCdsHooksUrl, prepPrefetch } from '../util/util.js';
+import { getDrugCodeFromMedicationRequest } from '../util/fhir.js';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -263,6 +264,38 @@ const RequestBuilder = props => {
     }));
   };
 
+  const getPrefetchObject = prefetchedResources => {
+    if (prefetchedResources instanceof Map) {
+      return Object.fromEntries(prefetchedResources);
+    }
+    return { ...(prefetchedResources || {}) };
+  };
+
+  const selectRequestResource = selectedRequest => {
+    if (!selectedRequest?.id) {
+      return;
+    }
+
+    const coding = getDrugCodeFromMedicationRequest(selectedRequest) || {};
+    setState(prevState => ({
+      ...prevState,
+      request: selectedRequest,
+      code: coding.code || null,
+      codeSystem: coding.system || null,
+      display:
+        coding.display ||
+        selectedRequest.medicationCodeableConcept?.text ||
+        selectedRequest.medicationReference?.display ||
+        null,
+      prefetchedResources: {
+        ...getPrefetchObject(prevState.prefetchedResources),
+        request: selectedRequest
+      },
+      medicationDispense: null,
+      response: {}
+    }));
+  };
+
   const clearState = () => {
     setState(prevState => ({
       ...prevState,
@@ -376,6 +409,7 @@ const RequestBuilder = props => {
                 loading={state.loading}
                 patientFhirQuery={globalState.patientFhirQuery}
                 prefetchCompleted={state.prefetchCompleted}
+                selectRequestResource={selectRequestResource}
               />
             </Grid>
           )}

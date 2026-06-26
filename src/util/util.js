@@ -107,11 +107,16 @@ const getMedicationSpecificRemsAdminUrl = (codeableConcept, globalState, endpoin
   if (globalState.useIntermediary) {
     serverUrl = `${globalState.intermediaryUrl}/${serviceEndpoints[endpointType]}`;
   } else {
-    const display = codeableConcept?.coding?.[0]?.display;
-    const rxnorm = codeableConcept?.coding?.[0]?.code;
+    const ndc = codeableConcept?.coding?.find(coding =>
+      coding?.system?.toLowerCase().endsWith('/ndc')
+    )?.code;
+    const rxnorm = codeableConcept?.coding?.find(coding =>
+      coding?.system?.toLowerCase().includes('rxnorm')
+    )?.code;
+    const display = codeableConcept?.coding?.find(coding => coding?.display)?.display;
 
-    if (!rxnorm) {
-      console.log("ERROR: unknown MedicationRequest code: '", rxnorm);
+    if (!rxnorm && !ndc) {
+      console.log("ERROR: unknown MedicationRequest code: '", codeableConcept);
       return undefined;
     }
 
@@ -130,8 +135,14 @@ const getMedicationSpecificRemsAdminUrl = (codeableConcept, globalState, endpoin
     }
 
     serverUrl = Object.values(globalState.medicationRequestToRemsAdmins).find(
-      value => Number(value.rxnorm) === Number(rxnorm) && value.endpointType === endpointType
+      value => value.ndc === ndc && value.endpointType === endpointType
     )?.remsAdmin;
+
+    if (!serverUrl) {
+      serverUrl = Object.values(globalState.medicationRequestToRemsAdmins).find(
+        value => Number(value.rxnorm) === Number(rxnorm) && value.endpointType === endpointType
+      )?.remsAdmin;
+    }
 
     if (!serverUrl) {
       console.log(`Medication ${display} is not a REMS medication`);

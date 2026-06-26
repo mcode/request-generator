@@ -64,6 +64,38 @@ const SettingsSection = props => {
     dispatch({ type: actionTypes.resetSettings });
   };
 
+  const getPpaPharmacyEndpoints = () =>
+    Array.isArray(state.ppaPharmacyEndpoints) ? state.ppaPharmacyEndpoints : [];
+
+  const updatePpaPharmacyEndpoint = (index, value) => {
+    updateSetting(
+      'ppaPharmacyEndpoints',
+      getPpaPharmacyEndpoints().map((endpoint, i) =>
+        i === index ? { ...endpoint, ...value } : endpoint
+      )
+    );
+  };
+
+  const addPpaPharmacyEndpoint = () => {
+    updateSetting('ppaPharmacyEndpoints', [
+      ...getPpaPharmacyEndpoints(),
+      {
+        enabled: true,
+        id: 'PharmacyNew',
+        name: 'New Pharmacy',
+        url: 'http://localhost:5051/ncpdp/script',
+        scriptUrl: 'http://localhost:5051/ncpdp/script'
+      }
+    ]);
+  };
+
+  const deletePpaPharmacyEndpoint = index => {
+    updateSetting(
+      'ppaPharmacyEndpoints',
+      getPpaPharmacyEndpoints().filter((_endpoint, i) => i !== index)
+    );
+  };
+
   const resetPims =
     ({ pimsUrl }) =>
     () => {
@@ -520,90 +552,207 @@ const SettingsSection = props => {
     }
   ];
 
-  let firstCheckbox = true;
-  let showBreak = true;
+  const pharmacySettingKeys = new Set([
+    'includePharmacyInPreFetch',
+    'pharmacyId',
+    'usePharmacyIntermediary',
+    'pharmacyIntermediaryUrl',
+    'pimsUrl',
+    'ppaLocatorMode',
+    'ppaSubstitutionAllowed',
+    'ppaPharmacyEndpoints',
+    'ppaDefaultState',
+    'ppaDefaultPostalCode'
+  ]);
+  const primaryFields = fieldHeaders.filter(({ key }) => !pharmacySettingKeys.has(key));
+  const pharmacyFields = fieldHeaders.filter(({ key }) => pharmacySettingKeys.has(key));
+
+  const renderSettingFields = fields => {
+    let firstCheckbox = true;
+
+    return fields.map(({ key, type, display }) => {
+      switch (type) {
+        case 'input':
+          return (
+            <Grid key={key} item xs={6}>
+              {(state.useDefaultUser && key === 'defaultUser') || key !== 'defaultUser' ? (
+                <div>
+                  <TextField
+                    label={display}
+                    variant="outlined"
+                    value={state[key]}
+                    onChange={event => updateSetting(key, event.target.value)}
+                    sx={{ width: '100%' }}
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+            </Grid>
+          );
+        case 'check': {
+          const showBreak = firstCheckbox;
+          firstCheckbox = false;
+          return (
+            <React.Fragment key={key}>
+              {showBreak ? <Grid item xs={12}></Grid> : ''}
+              <Grid item xs={3}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={Boolean(state[key])}
+                      onChange={event => updateSetting(key, event.target.checked)}
+                    />
+                  }
+                  label={display}
+                />
+              </Grid>
+            </React.Fragment>
+          );
+        }
+        case 'dropdown':
+          return (
+            <React.Fragment key={key}>
+              <Grid key={key} item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="dropdown-label">Hook to send when selecting a patient</InputLabel>
+                  <Select
+                    labelId="dropdown-label"
+                    id="dropdown"
+                    value={state[key]}
+                    label="Hook to send when selecting a patient"
+                    onChange={event => updateSetting(key, event.target.value)}
+                    sx={{ width: '100%' }}
+                  >
+                    <MenuItem key={PATIENT_VIEW} value={PATIENT_VIEW}>
+                      {PATIENT_VIEW}
+                    </MenuItem>
+                    <MenuItem key={ENCOUNTER_START} value={ENCOUNTER_START}>
+                      {ENCOUNTER_START}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </React.Fragment>
+          );
+        case 'ppaEndpointTable':
+          return (
+            <Grid key={key} item xs={12}>
+              <TableContainer
+                component={Paper}
+                sx={{
+                  border: '1px solid #535353',
+                  'td, th': { border: 0 },
+                  'td, input': { py: 1 }
+                }}
+              >
+                <Table size="small" aria-label="PPA pharmacy endpoints table">
+                  <TableHead>
+                    <TableRow sx={{ th: { fontWeight: 'bold' } }}>
+                      <TableCell width={110}>Enabled</TableCell>
+                      <TableCell width={180}>Pharmacy ID</TableCell>
+                      <TableCell width={220}>Display Name</TableCell>
+                      <TableCell>PPA URL</TableCell>
+                      <TableCell>SCRIPT URL</TableCell>
+                      <TableCell width={110} />
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {getPpaPharmacyEndpoints().map((endpoint, index) => (
+                      <TableRow key={`${endpoint.id}-${index}`}>
+                        <TableCell>
+                          <Checkbox
+                            checked={endpoint.enabled !== false}
+                            onChange={event =>
+                              updatePpaPharmacyEndpoint(index, {
+                                enabled: event.target.checked
+                              })
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            variant="outlined"
+                            value={endpoint.id || ''}
+                            onChange={event =>
+                              updatePpaPharmacyEndpoint(index, { id: event.target.value })
+                            }
+                            sx={{ width: '100%' }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            variant="outlined"
+                            value={endpoint.name || ''}
+                            onChange={event =>
+                              updatePpaPharmacyEndpoint(index, { name: event.target.value })
+                            }
+                            sx={{ width: '100%' }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            variant="outlined"
+                            value={endpoint.url || ''}
+                            onChange={event =>
+                              updatePpaPharmacyEndpoint(index, { url: event.target.value })
+                            }
+                            sx={{ width: '100%' }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            variant="outlined"
+                            value={endpoint.scriptUrl || ''}
+                            onChange={event =>
+                              updatePpaPharmacyEndpoint(index, { scriptUrl: event.target.value })
+                            }
+                            sx={{ width: '100%' }}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <Tooltip title="Delete this pharmacy endpoint">
+                            <IconButton
+                              color="primary"
+                              onClick={() => deletePpaPharmacyEndpoint(index)}
+                              size="large"
+                            >
+                              <DeleteIcon fontSize="large" />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <Button
+                          variant="outlined"
+                          startIcon={<AddIcon />}
+                          onClick={addPpaPharmacyEndpoint}
+                        >
+                          Add Pharmacy Endpoint
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          );
+        default:
+          return (
+            <div key={key}>
+              <p className="setting-header">{display}</p>
+            </div>
+          );
+      }
+    });
+  };
 
   return (
     <Grid container spacing={2} sx={{ padding: '20px' }}>
       <Grid container item xs={12} direction="row" spacing={2}>
-        {fieldHeaders.map(({ key, type, display }) => {
-          switch (type) {
-            case 'input':
-              return (
-                <Grid key={key} item xs={6}>
-                  {(state['useDefaultUser'] && key === 'defaultUser') || key != 'defaultUser' ? (
-                    <div>
-                      <TextField
-                        label={display}
-                        variant="outlined"
-                        value={state[key]}
-                        onChange={event => updateSetting(key, event.target.value)}
-                        sx={{ width: '100%' }}
-                      />
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </Grid>
-              );
-            case 'check':
-              if (firstCheckbox) {
-                firstCheckbox = false;
-                showBreak = true;
-              } else {
-                showBreak = false;
-              }
-              return (
-                <React.Fragment key={key}>
-                  {showBreak ? <Grid item xs={12}></Grid> : ''}
-                  <Grid item xs={3}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={Boolean(state[key])}
-                          onChange={event => updateSetting(key, event.target.checked)}
-                        />
-                      }
-                      label={display}
-                    />
-                  </Grid>
-                </React.Fragment>
-              );
-            case 'dropdown':
-              return (
-                <React.Fragment key={key}>
-                  <Grid key={key} item xs={6}>
-                    <FormControl fullWidth>
-                      <InputLabel id="dropdown-label">
-                        Hook to send when selecting a patient
-                      </InputLabel>
-                      <Select
-                        labelId="dropdown-label"
-                        id="dropdown"
-                        value={state[key]}
-                        label="Hook to send when selecting a patient"
-                        onChange={event => updateSetting(key, event.target.value)}
-                        sx={{ width: '100%' }}
-                      >
-                        <MenuItem key={PATIENT_VIEW} value={PATIENT_VIEW}>
-                          {PATIENT_VIEW}
-                        </MenuItem>
-                        <MenuItem key={ENCOUNTER_START} value={ENCOUNTER_START}>
-                          {ENCOUNTER_START}
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </React.Fragment>
-              );
-            default:
-              return (
-                <div key={key}>
-                  <p className="setting-header">{display}</p>
-                </div>
-              );
-          }
-        })}
+        {renderSettingFields(primaryFields)}
       </Grid>
 
       <Grid item xs={12} sx={{ width: '100%', overflow: 'hidden' }}>
@@ -622,6 +771,7 @@ const SettingsSection = props => {
                 <TableRow sx={{ th: { fontWeight: 'bold' } }}>
                   <TableCell width={500}>Medication Display</TableCell>
                   <TableCell width={200}>Medication RxNorm Code</TableCell>
+                  <TableCell width={200}>Medication NDC</TableCell>
                   <TableCell width={200}>Hook / Endpoint</TableCell>
                   <TableCell width={500}>REMS Admin URL</TableCell>
                   {/* This empty TableCell corresponds to the add and delete 
@@ -657,6 +807,20 @@ const SettingsSection = props => {
                               type: actionTypes.updateCdsHookSetting,
                               settingId: key,
                               value: { rxnorm: event.target.value }
+                            })
+                          }
+                          sx={{ width: '100%' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <TextField
+                          variant="outlined"
+                          value={row.ndc || ''}
+                          onChange={event =>
+                            dispatch({
+                              type: actionTypes.updateCdsHookSetting,
+                              settingId: key,
+                              value: { ndc: event.target.value }
                             })
                           }
                           sx={{ width: '100%' }}
@@ -728,6 +892,13 @@ const SettingsSection = props => {
             </Table>
           )}
         </TableContainer>
+      </Grid>
+
+      <Grid container item xs={12} direction="row" spacing={2}>
+        <Grid item xs={12}>
+          <p className="setting-header">Pharmacy Settings</p>
+        </Grid>
+        {renderSettingFields(pharmacyFields)}
       </Grid>
 
       {/* spacer */}
