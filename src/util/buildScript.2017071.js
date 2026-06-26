@@ -312,7 +312,8 @@ export default function buildNewRxRequest(
   patientResource,
   practitionerResource,
   medicationRequestResource,
-  caseNumber
+  caseNumber,
+  pharmacyId = 'Pharmacy 123'
 ) {
   var doc = document.implementation.createDocument('', '', null);
   var message = doc.createElement('Message');
@@ -342,7 +343,7 @@ export default function buildNewRxRequest(
   xmlAddTextNode(doc, header, 'PrescriberOrderNumber', medicationRequestResource?.id);
 
   // To
-  xmlAddTextNodeWithAttribute(doc, header, 'To', 'Pharmacy 123', 'Qualifier', 'P');
+  xmlAddTextNodeWithAttribute(doc, header, 'To', pharmacyId, 'Qualifier', 'P');
 
   message.appendChild(header);
 

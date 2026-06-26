@@ -1,7 +1,7 @@
-import { Button, ButtonGroup, Grid } from '@mui/material';
+import { Button, ButtonGroup, Checkbox, FormControlLabel, Grid } from '@mui/material';
 import _ from 'lodash';
 import { SettingsContext } from '../../containers/ContextProvider/SettingsProvider.jsx';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import buildNewRxRequest from '../../util/buildScript.2017071.js';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -18,8 +18,27 @@ import {
   getMedicationSpecificEtasuUrl,
   getPatientFirstAndLastName
 } from '../../util/util.js';
+import {
+  applySelectedProductToMedicationRequest,
+  buildPpaRequest,
+  getNdcCoding,
+  getSelectedProductFromPpaResponse,
+  getMedicationDisplay
+} from '../../util/buildPpa.js';
+import {
+  getEquivalentPpaCandidates,
+  getPpaProductConfigByNdc
+} from '../../util/ppaProductEquivalents.js';
 import './request.css';
 import axios from 'axios';
+
+const initialPpaState = {
+  checking: false,
+  results: [],
+  selectedProduct: null,
+  selectedPharmacy: null,
+  message: ''
+};
 
 const RequestBox = props => {
   const [state, setState] = useState({
@@ -27,7 +46,8 @@ const RequestBox = props => {
     response: {},
     submittedRx: false
   });
-  const [globalState] = useContext(SettingsContext);
+  const [ppaState, setPpaState] = useState(initialPpaState);
+  const [globalState, , updateSetting] = useContext(SettingsContext);
 
   const {
     prefetchedResources,
@@ -42,17 +62,33 @@ const RequestBox = props => {
     smartAppUrl,
     client,
     pimsUrl,
-    prefetchCompleted
+    prefetchCompleted,
+    selectRequestResource
   } = props;
   const emptyField = <span className="empty-field">empty</span>;
+  const lastRequestId = useRef(request?.id || '');
 
-  const submitPatientView = () => {
-    submitInfo(prepPrefetch(prefetchedResources), null, patient, PATIENT_VIEW);
+  const getPrefetchObject = () => {
+    if (prefetchedResources instanceof Map) {
+      return Object.fromEntries(prefetchedResources);
+    }
+    return { ...(prefetchedResources || {}) };
   };
 
-  const submitOrderSign = request => {
-    if (!_.isEmpty(request)) {
-      submitInfo(prepPrefetch(prefetchedResources), request, patient, ORDER_SIGN);
+  const getPrefetchForRequest = selectedRequest =>
+    prepPrefetch({
+      ...getPrefetchObject(),
+      request: selectedRequest
+    });
+
+  const submitPatientView = () => {
+    submitInfo(prepPrefetch(getPrefetchObject()), null, patient, PATIENT_VIEW);
+  };
+
+  const submitOrderSign = async () => {
+    const requestForSign = await getRequestForSelectedProduct();
+    if (!_.isEmpty(requestForSign)) {
+      submitInfo(getPrefetchForRequest(requestForSign), requestForSign, patient, ORDER_SIGN);
     }
   };
 
@@ -216,6 +252,235 @@ const RequestBox = props => {
     };
   };
 
+  const parseJsonSetting = (value, fallback) => {
+    try {
+      const parsed = JSON.parse(value || '');
+      return Array.isArray(parsed) ? parsed : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const getConfiguredPharmacies = () => {
+    const fallback = [
+      {
+        id: 'Pharmacy123',
+        name: 'PIMS Pharmacy A',
+        url: 'http://localhost:5051/ncpdp/script',
+        scriptUrl: 'http://localhost:5051/ncpdp/script'
+      }
+    ];
+
+    const configured = Array.isArray(globalState.ppaPharmacyEndpoints)
+      ? globalState.ppaPharmacyEndpoints
+      : parseJsonSetting(globalState.ppaEndpointList, fallback);
+
+    return configured.filter(pharmacy => pharmacy.enabled !== false && pharmacy.id && pharmacy.url);
+  };
+
+  const getPpaCandidates = () => {
+    const ndcCoding = getNdcCoding(request);
+    const baseProduct = {
+      ndc: ndcCoding?.code,
+      display: ndcCoding?.display || getMedicationDisplay(request)
+    };
+    if (!globalState.ppaSubstitutionAllowed) {
+      return baseProduct.ndc ? [baseProduct] : [];
+    }
+
+    const genericCandidates = getEquivalentPpaCandidates(baseProduct.ndc);
+
+    return [baseProduct, ...genericCandidates].filter(candidate => candidate.ndc);
+  };
+
+  const getAvailabilityResultLabel = result => {
+    const requested = result.requestedProduct?.display || 'Requested product';
+    const selected = result.selectedProduct?.display;
+    const product =
+      selected && selected !== requested ? `${requested} -> ${selected}` : requested;
+
+    return `${result.pharmacy?.name}: ${product} - ${result.reasonCode}`;
+  };
+
+  const getSelectedPharmacyScriptEndpoint = () => {
+    if (!ppaState.selectedPharmacy?.url) {
+      return pimsUrl;
+    }
+
+    return (
+      ppaState.selectedPharmacy.scriptUrl ||
+      ppaState.selectedPharmacy.ncpdpScriptUrl ||
+      ppaState.selectedPharmacy.url
+    );
+  };
+
+  const getPharmacyPpaEndpoint = pharmacy =>
+    pharmacy?.scriptUrl || pharmacy?.ncpdpScriptUrl || pharmacy?.url || pimsUrl;
+
+  const buildMedicationRequestIdFromTemplate = template =>
+    template?.replace('{patientId}', patient?.id || '');
+
+  const getSelectedMedicationRequestId = selectedProduct => {
+    const productConfig = getPpaProductConfigByNdc(selectedProduct?.ndc);
+    return (
+      selectedProduct?.medicationRequestId ||
+      productConfig?.medicationRequestId ||
+      buildMedicationRequestIdFromTemplate(
+        selectedProduct?.medicationRequestIdTemplate ||
+          productConfig?.medicationRequestIdTemplate
+      )
+    );
+  };
+
+  useEffect(() => {
+    const currentRequestId = request?.id || '';
+    if (lastRequestId.current && lastRequestId.current !== currentRequestId) {
+      const selectedRequestId = getSelectedMedicationRequestId(ppaState.selectedProduct);
+      if (!selectedRequestId || selectedRequestId !== currentRequestId) {
+        setPpaState(initialPpaState);
+      }
+    }
+    lastRequestId.current = currentRequestId;
+  }, [request?.id]);
+
+  const getRequestForProduct = async selectedProduct => {
+    if (!selectedProduct?.ndc) {
+      return request;
+    }
+
+    const selectedMedicationRequestId = getSelectedMedicationRequestId(selectedProduct);
+    if (selectedMedicationRequestId && selectedMedicationRequestId === request?.id) {
+      return request;
+    }
+
+    if (selectedMedicationRequestId && client) {
+      try {
+        return await client.request(`MedicationRequest/${selectedMedicationRequestId}`);
+      } catch (error) {
+        console.log(
+          `Unable to load selected MedicationRequest/${selectedMedicationRequestId}; keeping current request`,
+          error
+        );
+        return request;
+      }
+    }
+
+    if (selectedMedicationRequestId) {
+      return request;
+    }
+
+    return applySelectedProductToMedicationRequest(request, selectedProduct);
+  };
+
+  const getRequestForSelectedProduct = () => getRequestForProduct(ppaState.selectedProduct);
+
+  const selectRequestForProduct = async selectedProduct => {
+    const selectedRequest = await getRequestForProduct(selectedProduct);
+    if (selectedRequest?.id && selectedRequest.id !== request?.id) {
+      selectRequestResource?.(selectedRequest);
+    }
+    return selectedRequest;
+  };
+
+  const getPatientPreferenceState = () =>
+    patient?.address?.find(address => address?.state)?.state || globalState.ppaDefaultState || 'MA';
+
+  const getPatientPreferencePostalCode = () =>
+    patient?.address?.find(address => address?.postalCode)?.postalCode ||
+    globalState.ppaDefaultPostalCode ||
+    undefined;
+
+  const checkAvailability = async () => {
+    setPpaState({
+      ...initialPpaState,
+      checking: true
+    });
+
+    const pharmacies = globalState.ppaLocatorMode
+      ? getConfiguredPharmacies()
+      : getConfiguredPharmacies().slice(0, 1);
+    const candidates = getPpaCandidates();
+    const results = [];
+    const substitutionAllowed = Boolean(globalState.ppaSubstitutionAllowed);
+
+    for (const pharmacy of pharmacies) {
+      for (const candidate of candidates) {
+        const endpoint = globalState.usePharmacyIntermediary
+          ? globalState.pharmacyIntermediaryUrl
+          : getPharmacyPpaEndpoint(pharmacy);
+        const ppaRequest = buildPpaRequest({
+          patient,
+          practitioner: getPrefetchObject().practitioner,
+          medicationRequest: request,
+          pharmacy,
+          substitutionAllowed,
+          patientPreferenceState: getPatientPreferenceState(),
+          patientPreferencePostalCode: getPatientPreferencePostalCode(),
+          overrideProduct: candidate
+        });
+
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ppaRequest)
+          });
+          const responseJson = await response.json().catch(() => null);
+          if (!response.ok || !responseJson) {
+            throw new Error(`PPA lookup failed with HTTP ${response.status}`);
+          }
+          const result = getSelectedProductFromPpaResponse(responseJson, {
+            ...candidate,
+            pharmacyId: pharmacy.id,
+            pharmacyName: pharmacy.name
+          });
+          const resultWithContext = {
+            ...result,
+            pharmacy,
+            requestedProduct: candidate,
+            endpoint,
+            httpStatus: response.status
+          };
+          results.push(resultWithContext);
+
+          if (result.approved) {
+            await selectRequestForProduct(result.selectedProduct);
+            setPpaState(prev => ({
+              ...prev,
+              checking: false,
+              results,
+              selectedProduct: result.selectedProduct,
+              selectedPharmacy: pharmacy,
+              message: `${result.reasonCode}: ${result.selectedProduct.display || candidate.display} available at ${pharmacy.name}`
+            }));
+            return;
+          }
+        } catch (error) {
+          results.push({
+            approved: false,
+            reasonCode: 'ERROR',
+            pharmacy,
+            requestedProduct: candidate,
+            endpoint,
+            error: error.message
+          });
+        }
+      }
+    }
+
+    setPpaState(prev => ({
+      ...prev,
+      checking: false,
+      results,
+      selectedProduct: null,
+      selectedPharmacy: null,
+      message: 'No configured pharmacy returned an approved availability response'
+    }));
+  };
+
   /**
    * Send NewRx for new Medication to the Pharmacy Information System (PIMS)
    */
@@ -223,14 +488,15 @@ const RequestBox = props => {
     // Use intermediary or direct based on toggle
     const ncpdpEndpoint = globalState.usePharmacyIntermediary 
       ? globalState.pharmacyIntermediaryUrl 
-      : pimsUrl;
+      : getSelectedPharmacyScriptEndpoint();
     
     console.log('Sending NewRx to: ' + ncpdpEndpoint);
     console.log('Getting case number');
-    const medication = createMedicationFromMedicationRequest(request);
+    const requestForDispense = await getRequestForSelectedProduct();
+    const medication = createMedicationFromMedicationRequest(requestForDispense);
     const body = makeBody(medication);
     const standardEtasuUrl = getMedicationSpecificEtasuUrl(
-      getDrugCodeableConceptFromMedicationRequest(request),
+      getDrugCodeableConceptFromMedicationRequest(requestForDispense),
       globalState
     );
     let caseNumber = '';
@@ -253,10 +519,11 @@ const RequestBox = props => {
 
     // build the NewRx Message
     var newRx = buildNewRxRequest(
-      prefetchedResources.patient,
-      prefetchedResources.practitioner,
-      request,
-      caseNumber
+      getPrefetchObject().patient,
+      getPrefetchObject().practitioner,
+      requestForDispense,
+      caseNumber,
+      ppaState.selectedPharmacy?.id || 'Pharmacy 123'
     );
 
     console.log('Prepared NewRx:');
@@ -278,7 +545,7 @@ const RequestBox = props => {
         console.log('Successfully sent NewRx to PIMS');
 
         // create the MedicationDispense
-        var medicationDispense = createMedicationDispenseFromMedicationRequest(request);
+        var medicationDispense = createMedicationDispenseFromMedicationRequest(requestForDispense);
         console.log('Create MedicationDispense:');
         console.log(medicationDispense);
 
@@ -312,6 +579,7 @@ const RequestBox = props => {
 
   const disableSendToCRD = isOrderNotSelected() || loading;
   const disableSendRx = isOrderNotSelected() || loading;
+  const disableCheckAvailability = isOrderNotSelected() || loading || ppaState.checking;
   const disableLaunchSmartOnFhir = isPatientNotSelected();
 
   return (
@@ -340,10 +608,37 @@ const RequestBox = props => {
             <Button onClick={sendRx} disabled={disableSendRx}>
               Send Rx to Pharmacy
             </Button>
-            <Button onClick={() => submitOrderSign(request)} disabled={disableSendToCRD}>
+            <Button onClick={checkAvailability} disabled={disableCheckAvailability}>
+              {ppaState.checking ? 'Checking Availability' : 'Check Availability'}
+            </Button>
+            <Button
+              onClick={submitOrderSign}
+              disabled={disableSendToCRD}
+            >
               Sign Order
             </Button>
           </ButtonGroup>
+          <div style={{ marginTop: '12px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={Boolean(globalState.ppaSubstitutionAllowed)}
+                  onChange={event => updateSetting('ppaSubstitutionAllowed', event.target.checked)}
+                />
+              }
+              label="Allow substitutions"
+            />
+            {ppaState.message && <span>{ppaState.message}</span>}
+          </div>
+          {ppaState.results.length > 0 && (
+            <div style={{ marginTop: '8px' }}>
+              {ppaState.results.map((result, index) => (
+                <div key={`${result.pharmacy?.id}-${result.requestedProduct?.ndc}-${index}`}>
+                  {getAvailabilityResultLabel(result)}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <Snackbar

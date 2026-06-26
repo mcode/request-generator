@@ -1,5 +1,31 @@
 import env from 'env-var';
 
+const parseJsonArray = (value, fallback) => {
+  try {
+    const parsed = JSON.parse(value || '');
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const defaultPpaPharmacyEndpoints = [
+  {
+    enabled: true,
+    id: 'Pharmacy123',
+    name: 'PIMS Pharmacy A',
+    url: 'http://localhost:5051/ncpdp/script',
+    scriptUrl: 'http://localhost:5051/ncpdp/script'
+  },
+  {
+    enabled: true,
+    id: 'Pharmacy456',
+    name: 'PIMS Pharmacy B',
+    url: 'http://localhost:5151/ncpdp/script',
+    scriptUrl: 'http://localhost:5151/ncpdp/script'
+  }
+];
+
 const headerDefinitions = {
   includePharmacyInPreFetch: {
     display: 'Include Pharmacy in Prefetch',
@@ -18,7 +44,7 @@ const headerDefinitions = {
   },
   usePharmacyIntermediary: {
     type: 'check',
-    display: 'Use Pharmacy Intermediary (NCPDP NewRx)',
+    display: 'Use Pharmacy Intermediary',
     default: env.get('VITE_USE_PHARMACY_INTERMEDIARY').asBool() || false
   },
   pharmacyIntermediaryUrl: {
@@ -86,6 +112,31 @@ const headerDefinitions = {
     type: 'input',
     default: env.get('VITE_PIMS_SERVER').asString()
   },
+  ppaLocatorMode: {
+    display: 'Use Product Locator Across Pharmacies',
+    type: 'check',
+    default: env.get('VITE_PPA_LOCATOR_MODE').asBool() || false
+  },
+  ppaSubstitutionAllowed: {
+    display: 'Allow Product Substitution in Availability Lookup',
+    type: 'check',
+    default: env.get('VITE_PPA_SUBSTITUTION_ALLOWED').default('true').asBool()
+  },
+  ppaPharmacyEndpoints: {
+    display: 'PPA Pharmacy Endpoints',
+    type: 'ppaEndpointTable',
+    default: parseJsonArray(env.get('VITE_PPA_ENDPOINTS').asString(), defaultPpaPharmacyEndpoints)
+  },
+  ppaDefaultState: {
+    display: 'Default PPA Pickup State',
+    type: 'input',
+    default: env.get('VITE_PPA_DEFAULT_STATE').asString() || 'MA'
+  },
+  ppaDefaultPostalCode: {
+    display: 'Default PPA Pickup ZIP',
+    type: 'input',
+    default: env.get('VITE_PPA_DEFAULT_POSTAL_CODE').asString() || ''
+  },
   responseExpirationDays: {
     display: 'In Progress Form Expiration Days',
     type: 'input',
@@ -152,6 +203,7 @@ const serviceEndpoints = {
 const medicationRequestToRemsAdmins = Object.freeze([
   {
     rxnorm: 2183126,
+    ndc: '65597-407-20',
     display: 'Turalio 200 MG Oral Capsule',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
@@ -171,7 +223,29 @@ const medicationRequestToRemsAdmins = Object.freeze([
     ]
   },
   {
+    rxnorm: 2183126,
+    ndc: '99999-407-20',
+    display: 'Pexidartinib Hydrochloride 200 MG Oral Capsule',
+    endpoints: [
+      { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8095/cds-services/rems-order-sign' },
+      {
+        endpointType: ORDER_SELECT,
+        remsAdmin: 'http://localhost:8095/cds-services/rems-order-select'
+      },
+      {
+        endpointType: PATIENT_VIEW,
+        remsAdmin: 'http://localhost:8095/cds-services/rems-patient-view'
+      },
+      {
+        endpointType: ENCOUNTER_START,
+        remsAdmin: 'http://localhost:8095/cds-services/rems-encounter-start'
+      },
+      { endpointType: REMS_ETASU, remsAdmin: 'http://localhost:8095/4_0_0/' + ETASU_ENDPOINT }
+    ]
+  },
+  {
     rxnorm: 6064,
+    ndc: '0245-0571-01',
     display: 'Isotretinoin 20 MG Oral Capsule',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
@@ -192,6 +266,7 @@ const medicationRequestToRemsAdmins = Object.freeze([
   },
   {
     rxnorm: 1237051,
+    ndc: '63459-502-30',
     display: 'TIRF 200 UG Oral Transmucosal Lozenge',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },
@@ -212,6 +287,7 @@ const medicationRequestToRemsAdmins = Object.freeze([
   },
   {
     rxnorm: 1666386,
+    ndc: '58604-214-30',
     display: 'Addyi 100 MG Oral Tablet',
     endpoints: [
       { endpointType: ORDER_SIGN, remsAdmin: 'http://localhost:8090/cds-services/rems-order-sign' },

@@ -41,7 +41,18 @@ function getDrugCodeableConceptFromMedicationRequest(medicationRequest) {
  */
 function getDrugCodeFromMedicationRequest(medicationRequest) {
   const codeableConcept = getDrugCodeableConceptFromMedicationRequest(medicationRequest);
-  return codeableConcept?.coding?.[0];
+  const codings = codeableConcept?.coding ?? [];
+  const ndcCoding = codings.find(coding => coding?.system?.toLowerCase().endsWith('/ndc'));
+  if (ndcCoding) {
+    return {
+      ...ndcCoding,
+      display:
+        ndcCoding.display ||
+        codings.find(coding => coding?.display)?.display ||
+        codeableConcept?.text
+    };
+  }
+  return codings[0];
 }
 
 function createMedicationDispenseFromMedicationRequest(medicationRequest) {

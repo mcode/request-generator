@@ -108,10 +108,11 @@ export const initialState = (() => {
   });
 
   medicationRequestToRemsAdmins.forEach(row => {
-    const { rxnorm, display, endpoints } = row;
+    const { rxnorm, ndc, display, endpoints } = row;
     endpoints.forEach(({ endpointType, remsAdmin }) => {
       const key = `${rxnorm}_${endpointType}`;
-      state.medicationRequestToRemsAdmins[key] = { rxnorm, display, endpointType, remsAdmin };
+      const settingKey = ndc ? `${ndc}_${endpointType}` : key;
+      state.medicationRequestToRemsAdmins[settingKey] = { rxnorm, ndc, display, endpointType, remsAdmin };
     });
   });
   return state;
