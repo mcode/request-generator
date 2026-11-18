@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import FHIR from 'fhirclient';
+import FHIR from 'fhirclient/browser';
 import Home from '../components/RequestDashboard/Home';
 import BackOffice from './BackOffice/BackOffice';
 

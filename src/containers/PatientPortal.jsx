@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import useStyles from './styles/styles';
-import FHIR from 'fhirclient';
+import FHIR from 'fhirclient/browser';
 import Login from '../components/Auth/Login';
 import Dashboard from '../components/Dashboard/Dashboard';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';

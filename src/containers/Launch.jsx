@@ -1,6 +1,6 @@
 import env from 'env-var';
 import queryString from 'querystring';
-import FHIR from 'fhirclient';
+import FHIR from 'fhirclient/browser';
 import { memo, useEffect, useState } from 'react';
 import RegisterPage from './register/RegisterPage';
 
