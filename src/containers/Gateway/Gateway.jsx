@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import FHIR from 'fhirclient';
+import FHIR from 'fhirclient/browser';
 import env from 'env-var';
 import { Button, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';

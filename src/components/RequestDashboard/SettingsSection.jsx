@@ -23,7 +23,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 import env from 'env-var';
-import FHIR from 'fhirclient';
+import FHIR from 'fhirclient/browser';
 
 import {
   headerDefinitions,
